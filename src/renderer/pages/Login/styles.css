@@ -1,0 +1,28 @@
+.Login_Page_Container {
+  display: flex;
+  align-items: stretch;
+
+  background-color: #4158D0;
+  background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+
+}
+
+.Login_Page_Left {
+  width: 60rem;
+  height: 100vh;
+}
+
+.Login_Form_Container {
+  width: 40rem;
+  min-width: 20rem;
+  padding: 10rem;
+
+  background: rgba(255, 255, 255, 0.75);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.Login_Form_Item {
+  margin: 5px 0px 0px 5px !important;
+}

@@ -9,6 +9,8 @@
   "files.exclude": {
     ".erb": true,
     "**/node_modules": true,
+    "*.md": true,
+    "LICENSE": true,
   },
 
   "javascript.validate.enable": false,

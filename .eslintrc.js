@@ -3,6 +3,15 @@ module.exports = {
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
+    'react/self-closing-comp': 'off',
+    'react/prefer-stateless-function': 'off',
+    'jsx-a11y/alt-text': 'warn',
+    'react/button-has-type': 'off',
+    'max-classes-per-file': 'off',
+    'prettier/prettier': 'off',
+    '@typescript-eslint/ban-types': 'warn',
+    'no-console': 'off',
+    'react/jsx-curly-brace-presence': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
