@@ -12,6 +12,8 @@ module.exports = {
     '@typescript-eslint/ban-types': 'warn',
     'no-console': 'off',
     'react/jsx-curly-brace-presence': 'off',
+    'react/no-unused-state': 'warn',
+    'react/destructuring-assignment': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
