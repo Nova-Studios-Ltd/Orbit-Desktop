@@ -14,6 +14,11 @@ module.exports = {
     'react/jsx-curly-brace-presence': 'off',
     'react/no-unused-state': 'warn',
     'react/destructuring-assignment': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
+    'react/prop-types': 'warn',
+    'import/prefer-default-export': 'off',
+    'spaced-comment': 'off',
+    '@typescript-eslint/naming-convention': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
