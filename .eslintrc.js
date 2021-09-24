@@ -19,6 +19,8 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'spaced-comment': 'off',
     '@typescript-eslint/naming-convention': 'off',
+    'import/no-cycle': 'warn',
+    'prefer-destructuring': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

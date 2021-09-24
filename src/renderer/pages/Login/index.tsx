@@ -1,6 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { withRouter } from 'react-router';
 import LoginForm from './LoginForm';
 
 function Login() {

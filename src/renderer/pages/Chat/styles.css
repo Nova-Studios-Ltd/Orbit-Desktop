@@ -1,22 +1,33 @@
 .Chat_Page_Container {
   width: 100%;
   height: 100vh;
-  padding: 10px;
   box-sizing: border-box;
 }
 
+.Chat_Page_Header {
+  background: rgba(50, 50, 50, 0.1);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .Chat_Page_Bottom {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  background: rgba(50, 50, 50, 0.1);
   position: absolute;
   bottom: 0;
   width: 100%;
-  margin-bottom: 1rem;
+  border-top: 1rem solid transparent;
+  border-bottom: 1rem solid transparent;
   display: flex;
+  align-items: center;
   box-sizing: border-box;
 }
 
 .Chat_MessageInput {
   position: relative;
-  margin-right: 20px !important;
   width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -24,9 +35,11 @@
   box-sizing: border-box;
 }
 
-.Chat_SendButton {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 10% !important;
-  box-sizing: border-box;
+.Chat_IconButton {
+  width: 50px;
+  height: 50px;
+}
+
+.Chat_MessageCanvas {
+  width: 100%;
 }

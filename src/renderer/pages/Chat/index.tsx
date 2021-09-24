@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
-//import { Send } from '@mui/icons-material';
+import { Send, Logout as LogoutIcon } from '@mui/icons-material';
+import { Helmet } from 'react-helmet';
 import MessageCanvas from './MessageCanvas';
+import { Navigate } from '../../RendererHelperFunctions';
 
 class MessageInput extends React.Component {
   constructor(props: any) {
@@ -22,26 +24,40 @@ class MessageInput extends React.Component {
     }
   }
 
+  handleClick(event: any) {
+
+  }
+
   setValue(text: string) {
     this.setState({message: text});
   }
 
   render() {
     return (
-      <TextField className="Chat_MessageInput" value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+      <div className="Chat_Page_Bottom">
+        <TextField className="Chat_MessageInput" value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+        <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
+      </div>
     );
   }
+}
+
+function Logout() {
+  Navigate("/login");
 }
 
 export default function Chat() {
   return (
     <div className="Chat_Page_Container">
-      <Typography className="" variant="h3">Chat</Typography>
-      <MessageCanvas />
-      <div className="Chat_Page_Bottom">
-        <MessageInput />
-        {/* <IconButton className="Chat_SendButton"><Send /></IconButton> */}
+      <Helmet>
+        <title>Chat</title>
+      </Helmet>
+      <div className="Chat_Page_Header">
+        <IconButton className="Chat_IconButton" onClick={Logout}><LogoutIcon /></IconButton>
+        <Typography variant="h5">Chat</Typography>
       </div>
+      <MessageCanvas />
+      <MessageInput />
     </div>
   );
 }

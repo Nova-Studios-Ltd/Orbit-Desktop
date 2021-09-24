@@ -1,7 +1,8 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { Button, TextField, Typography } from '@mui/material/';
 import './interfaces';
+import { Authenticate, Navigate } from '../../RendererHelperFunctions';
+import Credentials from '../../Credentials';
 
 function FormHeader({heading, body} : FormHeaderProps)
 {
@@ -51,15 +52,9 @@ function FormTextField({handler, id, label, required, sensitive} : FormTextField
 }
 
 class LoginForm extends React.Component {
-
-  history: History;
-  location: Location;
-
   constructor(props: any) {
     super(props);
     this.state = {username: "", password: "", address: ""};
-    this.history = props.history;
-    this.location = props.location;
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -72,20 +67,8 @@ class LoginForm extends React.Component {
 
   handleSubmit(event: any) {
     const { username, password, address } = this.state;
-    console.log(`Username: ${username}, Password: ${password}, Address: ${address}`);
-    this.Navigate("/chat");
+    Authenticate(new Credentials(username, password, address));
     event.preventDefault();
-  }
-
-  Navigate(path: string)
-  {
-    try {
-      this.history.push(path);
-      console.log(`Current URL: ${window.location.href}`)
-    }
-    catch (error) {
-      console.error(error);
-    }
   }
 
   render() {
@@ -93,14 +76,16 @@ class LoginForm extends React.Component {
       <form className="Login_Form_Container" onSubmit={this.handleSubmit}>
         <FormHeader heading="Nova Chat 3.0" body="Welcome!" />
         <FormStatusField message="" type="info" />
-        <FormTextField id="username" label="Username" handler={this.handleChange} />
-        <FormTextField id="password" label="Password" sensitive handler={this.handleChange} />
+        <FormTextField id="username" label="Username" required handler={this.handleChange} />
+        <FormTextField id="password" label="Password" required sensitive handler={this.handleChange} />
         <br />
-        <FormTextField id="address" label="Server Address" handler={this.handleChange} />
+        <FormTextField id="address" label="Server Address" required handler={this.handleChange} />
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
+        <br />
+        <Button className="Login_Form_Item" variant="contained" onClick={() => {Navigate("/chat");}}>Bypass</Button>
       </form>
     );
   }
 }
 
-export default withRouter(LoginForm);
+export default LoginForm;
