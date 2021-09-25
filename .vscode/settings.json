@@ -11,6 +11,10 @@
     "**/node_modules": true,
     "*.md": true,
     "LICENSE": true,
+    "babel.config.js": true,
+    ".eslintcache": true,
+    ".eslintignore": true,
+    "**/*.lock": true,
   },
 
   "javascript.validate.enable": false,

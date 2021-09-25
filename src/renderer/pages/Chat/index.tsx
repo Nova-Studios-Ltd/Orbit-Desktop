@@ -3,7 +3,7 @@ import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from './MessageCanvas';
-import { Navigate } from '../../RendererHelperFunctions';
+import { Navigate } from '../../helpers';
 
 class MessageInput extends React.Component {
   constructor(props: any) {

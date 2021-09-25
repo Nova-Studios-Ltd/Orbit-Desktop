@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, TextField, Typography, Link } from '@mui/material/';
-import './interfaces';
-import { Authenticate, Navigate, SendIPCMessageToMain } from '../../helpers';
+import '../Login/interfaces';
+import { Authenticate, Navigate } from '../../helpers';
 import Credentials from '../../Credentials';
 
 function FormHeader({heading, body} : FormHeaderProps)
@@ -51,7 +51,7 @@ function FormTextField({handler, id, label, required, sensitive} : FormTextField
   );
 }
 
-class LoginForm extends React.Component {
+class RegisterForm extends React.Component {
   constructor(props: any) {
     super(props);
     this.state = {username: "", password: "", address: ""};
@@ -82,12 +82,11 @@ class LoginForm extends React.Component {
         <FormTextField id="address" label="Server Address" required handler={this.handleChange} />
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
         <br />
-        <Typography className="Login_Form_Item" variant="body1">Don't have an account? <Link style={{cursor: "pointer"}} href="/register">Sign Up</Link></Typography>
+        <Typography className="Login_Form_Item" variant="body1">Don't have an account? <Link href="/register">Sign Up</Link></Typography>
         <Button className="Login_Form_Item" variant="contained" onClick={() => {Navigate("/chat");}}>Bypass</Button>
-        <Button className="Login_Form_Item" variant="contained" onClick={() => {SendIPCMessageToMain('test', null);}}>Test IPC</Button>
       </form>
     );
   }
 }
 
-export default LoginForm;
+export default RegisterForm;

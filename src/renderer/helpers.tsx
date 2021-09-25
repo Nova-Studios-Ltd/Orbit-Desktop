@@ -4,10 +4,10 @@ import Credentials from './Credentials';
 export const history = createBrowserHistory();
 export const { ipcRenderer } = window.electron;
 
-export function SendIPCMessage(channel: string, data: any) {
+export function SendIPCMessageToMain(channel: string, data: any) {
   try {
     const json_data = JSON.stringify(data);
-    window.Electron.ipcRenderer.send(channel, json_data)
+    ipcRenderer.send(channel, json_data);
   }
   catch (ex) {
     console.error(ex);

@@ -3,7 +3,7 @@ import { Router, Redirect, Route } from 'react-router-dom';
 import './App.global.css';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
-import { history } from './RendererHelperFunctions';
+import { history } from './helpers';
 
 function App() {
   return (
