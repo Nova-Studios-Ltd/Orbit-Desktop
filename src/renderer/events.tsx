@@ -1,5 +1,5 @@
 import { ipcRenderer } from './helpers';
 
-ipcRenderer.on('test', () => {
-  console.log("Works");
+ipcRenderer.on('test', (event: any, data: any) => {
+  console.log(`(Renderer) Received: ${data}`);
 });

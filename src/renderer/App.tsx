@@ -4,6 +4,7 @@ import './App.global.css';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import { history } from './helpers';
+import './events';
 
 function App() {
   return (
