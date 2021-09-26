@@ -22,6 +22,7 @@ module.exports = {
     'import/no-cycle': 'warn',
     'prefer-destructuring': 'warn',
     'no-empty': 'off'
+    'jsx-a11y/anchor-is-valid': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
