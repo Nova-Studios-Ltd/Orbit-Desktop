@@ -15,6 +15,6 @@ interface FormTextFieldProps {
 
 interface FormStatusFieldProps {
   message: string,
-  type: string
+  type: string,
 }
 

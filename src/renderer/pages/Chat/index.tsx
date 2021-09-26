@@ -56,8 +56,10 @@ export default function Chat() {
         <IconButton className="Chat_IconButton" onClick={Logout}><LogoutIcon /></IconButton>
         <Typography variant="h5">Chat</Typography>
       </div>
-      <MessageCanvas />
-      <MessageInput />
+      <div className="Chat_Page_Body">
+        <MessageCanvas />
+        <MessageInput />
+      </div>
     </div>
   );
 }

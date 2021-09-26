@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, TextField, Typography, Link } from '@mui/material/';
-import './interfaces';
+import '../../interfaces';
 import { Authenticate, Navigate, SendIPCMessageToMain } from '../../helpers';
 import Credentials from '../../Credentials';
 
@@ -14,10 +14,15 @@ function FormHeader({heading, body} : FormHeaderProps)
   );
 }
 
-function FormStatusField({message, type} : FormStatusFieldProps)
-{
-  function getType()
+class FormStatusField extends React.Component {
+  constructor(props: FormStatusFieldProps) {
+    super(props);
+    this.state = {message: props.message, type: props.type};
+  }
+
+  getType()
   {
+    const { type } = this.state;
     switch (String(type).toLowerCase())
     {
       case "info":
@@ -31,15 +36,21 @@ function FormStatusField({message, type} : FormStatusFieldProps)
     }
   }
 
-  const styles = {
-    color: getType()
+  update(message: string, type: string) {
+    this.setState({"message": message, "type": type});
   }
 
-  return (
-    <div>
-    <Typography className="Login_Form_Item" variant="body1" style={styles}>{message}</Typography>
-  </div>
-  );
+  render() {
+    const styles = {
+      color: this.getType()
+    }
+
+    return (
+      <div>
+      <Typography className="Login_Form_Item" variant="body1" style={styles}>{this.state.message}</Typography>
+    </div>
+    );
+  }
 }
 
 function FormTextField({handler, id, label, required, sensitive} : FormTextFieldProps) {
@@ -75,14 +86,14 @@ class LoginForm extends React.Component {
     return (
       <form className="Login_Form_Container" onSubmit={this.handleSubmit}>
         <FormHeader heading="Nova Chat 3.0" body="Welcome!" />
-        <FormStatusField message="" type="info" />
+        <FormStatusField />
         <FormTextField id="username" label="Username" required handler={this.handleChange} />
         <FormTextField id="password" label="Password" required sensitive handler={this.handleChange} />
         <br />
         <FormTextField id="address" label="Server Address" required handler={this.handleChange} />
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
         <br />
-        <Typography className="Login_Form_Item" variant="body1">Don't have an account? <Link style={{cursor: "pointer"}} href="/register">Sign Up</Link></Typography>
+        <Typography className="Login_Form_Item" variant="body1">Don&apos;t have an account? <Link style={{cursor: "pointer"}} onClick={() => {Navigate("/register");}}>Sign Up</Link></Typography>
         <Button className="Login_Form_Item" variant="contained" onClick={() => {Navigate("/chat");}}>Bypass</Button>
         <Button className="Login_Form_Item" variant="contained" onClick={() => {SendIPCMessageToMain('test', null);}}>Test IPC</Button>
       </form>

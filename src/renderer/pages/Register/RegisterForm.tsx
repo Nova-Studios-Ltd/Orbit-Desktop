@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, TextField, Typography, Link } from '@mui/material/';
-import '../Login/interfaces';
+import '../../interfaces';
 import { Authenticate, Navigate } from '../../helpers';
 import Credentials from '../../Credentials';
 
