@@ -22,8 +22,8 @@ export default class Message extends React.Component {
           <Avatar src={this.avatarSrc} />
         </div>
         <div className="Chat_Message_Right">
-          <Typography>{this.senderName}</Typography>
-          <Typography>{this.message}</Typography>
+          <Typography className="Chat_Message_Name" fontWeight="bold">{this.senderName}</Typography>
+          <Typography className="Chat_Message_Content">{this.message}</Typography>
         </div>
       </div>
     );

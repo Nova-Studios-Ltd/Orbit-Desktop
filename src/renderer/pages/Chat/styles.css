@@ -15,8 +15,8 @@
 }
 
 .Chat_Page_Body {
-  display: grid;
-  grid-template-rows: auto calc(88px + 4rem);
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
@@ -25,6 +25,7 @@
   padding-right: 0.5rem !important;
   background: rgba(50, 50, 50, 0.1);
   width: 100%;
+  align-self: flex-end;
   border-top: 1rem solid transparent;
   border-bottom: 1rem solid transparent;
   display: flex;
@@ -56,15 +57,24 @@
 }
 
 .Chat_Message {
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
 }
 
 .Chat_Message_Left {
-
+  margin: 0.5rem;
 }
 
 .Chat_Message_Right {
+  margin-left: 1rem;
+  align-self: center;
+}
+
+.Chat_Message_Name {
+
+}
+
+.Chat_Message_Content {
 
 }
