@@ -46,6 +46,10 @@ function Logout() {
   Navigate("/login");
 }
 
+export function LoadMessageFeed(channelData: string) {
+  const messages = JSON.parse(channelData);
+}
+
 export default function Chat() {
   return (
     <div className="Chat_Page_Container">

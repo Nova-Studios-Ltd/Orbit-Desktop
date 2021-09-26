@@ -21,6 +21,7 @@ module.exports = {
     '@typescript-eslint/naming-convention': 'off',
     'import/no-cycle': 'warn',
     'prefer-destructuring': 'warn',
+    'no-empty': 'off'
   },
   parserOptions: {
     ecmaVersion: 2020,
