@@ -3,7 +3,7 @@ import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from './MessageCanvas';
-import { Navigate } from '../../helpers';
+import { Navigate, ipcRenderer } from '../../helpers';
 
 class MessageInput extends React.Component {
   constructor(props: any) {
@@ -20,6 +20,7 @@ class MessageInput extends React.Component {
   handleKeyDown(event: any) {
     if (event.keyCode === 13) {
       console.log(`Message Sent: ${this.state.message}`);
+      ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', this.state.message);
       this.setValue("");
     }
   }
@@ -48,6 +49,7 @@ function Logout() {
 
 export function LoadMessageFeed(channelData: string) {
   const messages = JSON.parse(channelData);
+  console.log(messages);
 }
 
 export default function Chat() {

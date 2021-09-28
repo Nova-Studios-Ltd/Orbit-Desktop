@@ -49,3 +49,25 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
     return true;
   }).catch((error) => {console.error(error)});
 });
+
+ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    const data = JSON.stringify({Content: contents})
+    const re = request({
+      method: 'POST',
+      url: `https://localhost:44365/Message/${channel_uuid}/Messages`
+    }); 
+    re.setHeader('Authorization', token);
+    re.setHeader('Content-Type', 'application/json');
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.on('response', (response) => {
+      console.log(response.statusCode);
+    })
+    re.write(data);
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+})
