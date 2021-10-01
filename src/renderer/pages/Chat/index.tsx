@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
+import Message from './Message';
 import MessageCanvas from './MessageCanvas';
 import { Navigate, ipcRenderer } from '../../helpers';
 
 class MessageInput extends React.Component {
+  MessageInputObject: RefObject<MessageInput>;
+
   constructor(props: any) {
     super(props);
     this.state = {message: ""};
+    this.MessageInputObject = React.createRef().current;
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -26,7 +30,9 @@ class MessageInput extends React.Component {
   }
 
   handleClick(event: any) {
-
+    console.log(`Message Sent: ${this.state.message}`);
+    ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', this.state.message);
+    this.MessageInputObject.setValue("");
   }
 
   setValue(text: string) {
@@ -36,12 +42,14 @@ class MessageInput extends React.Component {
   render() {
     return (
       <div className="Chat_Page_Bottom">
-        <TextField className="Chat_MessageInput" value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+        <TextField className="Chat_MessageInput" ref={this.MessageInputObject} value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
         <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
       </div>
     );
   }
 }
+
+let CanvasObject = React.createRef().current;
 
 function Logout() {
   Navigate("/login");
@@ -63,7 +71,7 @@ export default function Chat() {
         <Typography variant="h5">Chat</Typography>
       </div>
       <div className="Chat_Page_Body">
-        <MessageCanvas />
+        <MessageCanvas ref={CanvasObject}/>
         <MessageInput />
       </div>
     </div>

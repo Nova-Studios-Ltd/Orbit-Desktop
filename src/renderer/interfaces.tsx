@@ -8,6 +8,7 @@ interface FormHeaderProps {
 interface FormTextFieldProps {
   handler: any,
   id: string,
+  classNames: string,
   label: string,
   required?: boolean,
   sensitive?: boolean

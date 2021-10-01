@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, TextField, Typography, Link } from '@mui/material/';
+import { Accordion, AccordionSummary, AccordionDetails, Button, TextField, Typography, Link } from '@mui/material/';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import '../../interfaces';
-import { Authenticate, Navigate, SendIPCMessageToMain } from '../../helpers';
+import { Authenticate, Navigate } from '../../helpers';
 import Credentials from '../../Credentials';
 
 function FormHeader({heading, body} : FormHeaderProps)
@@ -53,12 +54,19 @@ class FormStatusField extends React.Component {
   }
 }
 
-function FormTextField({handler, id, label, required, sensitive} : FormTextFieldProps) {
+function FormTextField({handler, id, classNames, label, required, sensitive} : FormTextFieldProps) {
 
   const fieldType = sensitive ? "password" : "text";
+  let finalClassNames = null;
+  if (classNames != null) {
+    finalClassNames = `Login_Form_Item ${classNames}`;
+  }
+  else {
+    finalClassNames = "Login_Form_Item";
+  }
 
   return (
-    <TextField className="Login_Form_Item" name={id} label={label} type={fieldType} required={required} variant="outlined" onChange={handler} />
+    <TextField className={finalClassNames} name={id} label={label} type={fieldType} required={required} variant="outlined" onChange={handler} />
   );
 }
 
@@ -83,6 +91,8 @@ class LoginForm extends React.Component {
   }
 
   render() {
+    const AdvancedOptionsAccordionStyles = `Login_Form_Item Login_Form_AdvancedOptionsAccordion`
+
     return (
       <form className="Login_Form_Container" onSubmit={this.handleSubmit}>
         <FormHeader heading="Nova Chat 3.0" body="Welcome!" />
@@ -90,12 +100,19 @@ class LoginForm extends React.Component {
         <FormTextField id="username" label="Username" required handler={this.handleChange} />
         <FormTextField id="password" label="Password" required sensitive handler={this.handleChange} />
         <br />
-        <FormTextField id="address" label="Server Address" required handler={this.handleChange} />
+        <Accordion className={AdvancedOptionsAccordionStyles}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="body1">Advanced</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormTextField classNames="LoginFormAccordionOption" id="address" label="Server Address" handler={this.handleChange} />
+          </AccordionDetails>
+        </Accordion>
+        <br />
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
         <br />
         <Typography className="Login_Form_Item" variant="body1">Don&apos;t have an account? <Link style={{cursor: "pointer"}} onClick={() => {Navigate("/register");}}>Sign Up</Link></Typography>
         <Button className="Login_Form_Item" variant="contained" onClick={() => {Navigate("/chat");}}>Bypass</Button>
-        <Button className="Login_Form_Item" variant="contained" onClick={() => {SendIPCMessageToMain('test', null);}}>Test IPC</Button>
       </form>
     );
   }
