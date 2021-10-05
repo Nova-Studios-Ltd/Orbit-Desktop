@@ -6,7 +6,7 @@ const { request } = net;
 ipcMain.on('begin_auth', (event, data: Credentials) => {
   const re = request({
     method: "GET",
-    url: `https://localhost:44365/Login?username=${data.username}&password=${data.password}`
+    url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
   });
   re.on('response', (response) => {
     response.on("data", (json) => {
@@ -31,7 +31,7 @@ ipcMain.on('begin_auth', (event, data: Credentials) => {
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   const re = request({
     method: 'GET',
-    url: `https://localhost:44365/Message/${channel_uuid}/Messages`,
+    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`,
   });
 
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
@@ -56,7 +56,7 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
     const data = JSON.stringify({Content: contents})
     const re = request({
       method: 'POST',
-      url: `https://localhost:44365/Message/${channel_uuid}/Messages`
+      url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`
     }); 
     re.setHeader('Authorization', token);
     re.setHeader('Content-Type', 'application/json');
