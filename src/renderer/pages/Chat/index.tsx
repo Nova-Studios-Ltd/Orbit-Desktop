@@ -1,6 +1,6 @@
 import React, { RefObject } from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
-import { Send, Logout as LogoutIcon } from '@mui/icons-material';
+import { Send, Logout as LogoutIcon, MessageSharp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
@@ -77,8 +77,18 @@ export default class Chat extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: JSON) {
-
+  onReceivedChannelData(messages: JSON[]) {
+    for (let index = 0; index < messages.length; index++) {
+      const message = messages[index];
+      const canvas = this.state.CanvasObject;
+      // Testing purposes
+      if (canvas != null) {
+        canvas.append(<Message message={message}/>);
+      }
+      else {
+        console.error("Canvas is null");
+      }
+    }
   }
 
   sendMessage(message: string) {

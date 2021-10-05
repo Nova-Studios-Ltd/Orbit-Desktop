@@ -10,8 +10,8 @@ export default class Message extends React.Component {
   constructor(props: any) {
     super(props);
     this.uuid = props.uuid;
-    this.username = props.username || "Unknown";
-    this.message = props.message || "Message";
+    this.username = props.author || "Unknown";
+    this.message = props.content || "Message";
     this.avatarSrc = props.avatarSrc;
   }
 
