@@ -1,5 +1,5 @@
 import { ipcRenderer, Navigate } from './helpers';
-import { LoadMessageFeed } from './pages/Chat/index';
+import { LoadMessageFeed } from './helpers';
 
 ipcRenderer.on('end_auth', (data: boolean) => {
   if (data) {

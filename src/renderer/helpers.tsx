@@ -15,6 +15,16 @@ export function Navigate(path: string)
   }
 }
 
+export function Logout() {
+  Navigate("/login");
+}
+
+export function LoadMessageFeed(channelData: string) {
+  const messages = JSON.parse(channelData);
+  console.log(messages);
+  return messages;
+}
+
 export function Authenticate(data: Credentials) {
   console.log(`Username: ${data.username}, Password: ${data.password}, Address: ${data.address}`);
   // TODO: Implement code for establishing connection to server
