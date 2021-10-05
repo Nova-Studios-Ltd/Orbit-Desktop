@@ -65,6 +65,7 @@ export default class Chat extends React.Component {
     this.state = { CanvasObject: null};
     this.init = this.init.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
   }
 
   init(e: MessageCanvas) {
@@ -78,9 +79,10 @@ export default class Chat extends React.Component {
   }
 
   onReceivedChannelData(messages: JSON[]) {
+    const canvas = this.state.CanvasObject;
+
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];
-      const canvas = this.state.CanvasObject;
       // Testing purposes
       if (canvas != null) {
         canvas.append(<Message message={message}/>);
@@ -98,7 +100,7 @@ export default class Chat extends React.Component {
     const canvas = this.state.CanvasObject;
     // Testing purposes
     if (canvas != null) {
-      canvas.append(<Message message={message}/>);
+      canvas.append(<Message message={message} author="You" />);
     }
     else {
       console.error("Canvas is null");

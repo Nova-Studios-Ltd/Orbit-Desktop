@@ -15,7 +15,9 @@ export default class MessageCanvas extends React.Component {
   }
 
   append(message: Message) {
-    this.setState({messages: this.state.messages, message});
+    console.log(`Canvas received new message: ${message.message}`);
+    const updatedMessages = [this.state.messages, message];
+    this.setState({messages: updatedMessages});
   }
 
   remove(uuid: string) {
