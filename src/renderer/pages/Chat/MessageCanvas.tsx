@@ -8,16 +8,26 @@ export default class MessageCanvas extends React.Component {
     this.append = this.append.bind(this);
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
+    this.printMessageState = this.printMessageState.bind(this);
   }
 
   state = {
     messages: [] as Array<Message>
   }
 
+  printMessageState() {
+    console.log(`Message State: ${this.state.messages}`);
+  }
+
   append(message: Message) {
-    console.log(`Canvas received new message: ${message.message}`);
-    const updatedMessages = [this.state.messages, message];
-    this.setState({messages: updatedMessages});
+    console.log(`Canvas received message: ${message.message}`);
+    if (this.state.messages.length > 0)
+    {
+      this.setState(previousState => ({messages: [previousState.messages, message]}), () => { this.printMessageState(); });
+    }
+    else {
+      this.setState({messages: [message]}, () => { this.printMessageState(); });
+    }
   }
 
   remove(uuid: string) {
@@ -36,7 +46,9 @@ export default class MessageCanvas extends React.Component {
   render() {
     return (
       <div className="Chat_MessageCanvas">
-        {this.state.messages}
+        {this.state.messages.map(message => (
+          <Message message={message.message} author={message.author} avatarSrc={message.avatarSrc} uuid={message.uuid}/>
+        ))}
       </div>
     );
   }

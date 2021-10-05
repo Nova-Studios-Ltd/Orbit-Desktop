@@ -85,7 +85,8 @@ export default class Chat extends React.Component {
       const message = messages[index];
       // Testing purposes
       if (canvas != null) {
-        canvas.append(<Message message={message}/>);
+        const msgObj = new Message({ message: message, author: "You (remote)" });
+        canvas.append(msgObj);
       }
       else {
         console.error("Canvas is null");
@@ -100,7 +101,8 @@ export default class Chat extends React.Component {
     const canvas = this.state.CanvasObject;
     // Testing purposes
     if (canvas != null) {
-      canvas.append(<Message message={message} author="You" />);
+      const msgObj = new Message({ message: message, author: "You" });
+      canvas.append(msgObj);
     }
     else {
       console.error("Canvas is null");
