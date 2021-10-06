@@ -71,3 +71,26 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
     return true;
   }).catch((error) => {console.error(error)});
 })
+
+ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_uuid: string) => {
+  const re = request({
+    method: 'GET',
+    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_uuid}`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        console.log("Got channel update");
+        event.sender.send('receivedChannelUpdate', json.toString());
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+})
