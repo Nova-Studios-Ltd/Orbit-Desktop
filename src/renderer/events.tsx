@@ -27,7 +27,11 @@ ipcRenderer.on('end_auth', (data: boolean) => {
     //socket = new WebSocket(`wss://localhost:44365/Events/Listen?user_uuid=${uuid}`)  
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {
-      console.log(message);
+      var event = JSON.parse(message.data);
+      console.log(event);
+      if (event.EventType == 0) {
+        ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
+      }
     };
     socket.onerror = function (error) {
       console.error(error);

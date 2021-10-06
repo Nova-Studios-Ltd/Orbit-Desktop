@@ -72,6 +72,7 @@ export default class Chat extends React.Component {
     if (e != null) {
       this.setState({CanvasObject: e});
       ipcRenderer.on('receivedChannelData', (data: string) => { this.onReceivedChannelData(LoadMessageFeed(data))} );
+      ipcRenderer.on('receivedChannelUpdate', (data: string) => { this.onReceivedChannelData([JSON.parse(data)]); });
     }
     else {
       console.error("Message canvas initialization error.")
@@ -98,7 +99,7 @@ export default class Chat extends React.Component {
     console.log(`Message Sent: ${message}`);
     ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', message);
 
-    const canvas = this.state.CanvasObject;
+    /*const canvas = this.state.CanvasObject;
     // Testing purposes
     if (canvas != null) {
       const msgObj = new Message({ message: message, author: "You" });
@@ -106,7 +107,7 @@ export default class Chat extends React.Component {
     }
     else {
       console.error("Canvas is null");
-    }
+    }*/
   }
 
   render() {
