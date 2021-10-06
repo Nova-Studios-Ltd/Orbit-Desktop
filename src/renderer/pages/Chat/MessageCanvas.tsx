@@ -8,27 +8,21 @@ export default class MessageCanvas extends React.Component {
     this.append = this.append.bind(this);
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
-    this.printMessageState = this.printMessageState.bind(this);
   }
 
   state = {
     messages: [] as Array<Message>
   }
 
-  printMessageState() {
-    console.log(`Message State: ${this.state.messages}`);
-  }
-
   append(message: Message) {
-    console.log(`Canvas received message: ${message.message}`);
     if (this.state.messages.length > 0)
     {
-      var oldState = this.state;
+      let oldState = this.state;
       oldState.messages.push(message);
       this.setState({messages: oldState.messages});
     }
     else {
-      this.setState({messages: [message]}, () => { this.printMessageState(); });
+      this.setState({messages: [message]});
     }
   }
 
