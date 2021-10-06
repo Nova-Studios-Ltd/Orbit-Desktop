@@ -86,7 +86,7 @@ export default class Chat extends React.Component {
       let message = messages[index];
       // Testing purposes
       if (canvas != null) {
-        const msgObj = new Message({ message: message.content, author: message.author });
+        const msgObj = new Message({ message: message.content, author: message.author, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}` });
         canvas.append(msgObj);
       }
       else {
