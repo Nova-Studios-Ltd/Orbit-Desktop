@@ -29,6 +29,8 @@
   border-top: 1rem solid transparent;
   border-bottom: 1rem solid transparent;
   display: flex;
+  position: absolute;
+  bottom: 0;
   align-items: center;
   box-sizing: border-box;
   margin-bottom: auto;

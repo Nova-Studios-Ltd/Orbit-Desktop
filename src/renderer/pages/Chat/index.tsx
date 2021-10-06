@@ -1,4 +1,5 @@
-import React, { RefObject } from 'react';
+import React, { createRef, DOMElement, Ref, RefObject } from 'react';
+import { ReactHeight } from 'react-height';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon, MessageSharp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
@@ -11,7 +12,8 @@ class MessageInput extends React.Component {
 
   constructor(props: any) {
     super(props);
-    this.state = {message: ""};
+    this.state = {message: "", bottom_height: 0};
+
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -51,9 +53,11 @@ class MessageInput extends React.Component {
 
   render() {
     return (
-      <div className="Chat_Page_Bottom">
-        <TextField className="Chat_MessageInput" value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-        <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
+      <div style={{height: "188px"}}>
+          <div className="Chat_Page_Bottom">
+              <TextField className="Chat_MessageInput" value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+              <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
+        </div>
       </div>
     );
   }
@@ -65,6 +69,7 @@ export default class Chat extends React.Component {
     this.state = { CanvasObject: null};
     this.init = this.init.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
   }
 
@@ -79,19 +84,21 @@ export default class Chat extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: JSON[]) {
+  appendToCanvas(message: JSON) {
     const canvas = this.state.CanvasObject;
+    if (canvas != null) {
+      const msgObj = new Message({ message: message.content, author: message.author, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` });
+      canvas.append(msgObj);
+    }
+    else {
+      console.error("Canvas is null");
+    }
+  }
 
+  onReceivedChannelData(messages: JSON[]) {
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
-      // Testing purposes
-      if (canvas != null) {
-        const msgObj = new Message({ message: message.content, author: message.author, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` });
-        canvas.append(msgObj);
-      }
-      else {
-        console.error("Canvas is null");
-      }
+      this.appendToCanvas(message);
     }
   }
 
@@ -101,16 +108,6 @@ export default class Chat extends React.Component {
       console.log(`Message Sent: ${message}`);
       ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', message);
     }
-
-    /*const canvas = this.state.CanvasObject;
-    // Testing purposes
-    if (canvas != null) {
-      const msgObj = new Message({ message: message, author: "You" });
-      canvas.append(msgObj);
-    }
-    else {
-      console.error("Canvas is null");
-    }*/
   }
 
   render() {
