@@ -4,10 +4,10 @@ import Credentials from './Credentials';
 export const history = createBrowserHistory();
 export const { ipcRenderer } = window.electron;
 
-export function Navigate(path: string)
+export function Navigate(path: string, data: any)
 {
   try {
-    history.push(path);
+    history.push(path, data);
     console.log(`Current URL: ${window.location.href}`)
   }
   catch (error) {

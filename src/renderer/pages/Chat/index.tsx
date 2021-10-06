@@ -83,10 +83,10 @@ export default class Chat extends React.Component {
     const canvas = this.state.CanvasObject;
 
     for (let index = 0; index < messages.length; index++) {
-      const message = messages[index];
+      let message = messages[index];
       // Testing purposes
       if (canvas != null) {
-        const msgObj = new Message({ message: message.content, author: "You (remote)" });
+        const msgObj = new Message({ message: message.content, author: message.author });
         canvas.append(msgObj);
       }
       else {
@@ -96,8 +96,11 @@ export default class Chat extends React.Component {
   }
 
   sendMessage(message: string) {
-    console.log(`Message Sent: ${message}`);
-    ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', message);
+    if (message.length > 0)
+    {
+      console.log(`Message Sent: ${message}`);
+      ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', message);
+    }
 
     /*const canvas = this.state.CanvasObject;
     // Testing purposes
