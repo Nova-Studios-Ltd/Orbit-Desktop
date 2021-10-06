@@ -23,7 +23,9 @@ export default class MessageCanvas extends React.Component {
     console.log(`Canvas received message: ${message.message}`);
     if (this.state.messages.length > 0)
     {
-      this.setState(previousState => ({messages: [previousState.messages, message]}), () => { this.printMessageState(); });
+      var oldState = this.state;
+      oldState.messages.push(message);
+      this.setState({messages: oldState.messages});
     }
     else {
       this.setState({messages: [message]}, () => { this.printMessageState(); });
@@ -44,11 +46,12 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
+    console.log(this.state.messages);
+    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} uuid={m.uuid}/>));
+    console.log(`${messagesToRender.length}/${this.state.messages.length}`);
     return (
       <div className="Chat_MessageCanvas">
-        {this.state.messages.map(message => (
-          <Message message={message.message} author={message.author} avatarSrc={message.avatarSrc} uuid={message.uuid}/>
-        ))}
+        {messagesToRender}
       </div>
     );
   }

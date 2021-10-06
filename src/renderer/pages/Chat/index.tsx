@@ -85,7 +85,7 @@ export default class Chat extends React.Component {
       const message = messages[index];
       // Testing purposes
       if (canvas != null) {
-        const msgObj = new Message({ message: message, author: "You (remote)" });
+        const msgObj = new Message({ message: message.content, author: "You (remote)" });
         canvas.append(msgObj);
       }
       else {
