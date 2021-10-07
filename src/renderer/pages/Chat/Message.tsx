@@ -1,5 +1,5 @@
 import { Avatar, Typography } from '@mui/material';
-import React from 'react';
+import React, { DOMElement, Ref } from 'react';
 
 // <Message content="Message" author="User" uuid={internalShit} avatarSrc="URL to user's avatar" />
 
@@ -8,6 +8,8 @@ export default class Message extends React.Component {
   author: string;
   message: string;
   avatarSrc: string;
+  ref: Ref<any>;
+  divRef: Ref<HTMLDivElement>;
 
   constructor(props: any) {
     super(props);
@@ -15,11 +17,19 @@ export default class Message extends React.Component {
     this.author = props.author || "Unknown";
     this.message = props.message || "Message";
     this.avatarSrc = props.avatarSrc;
+    this.ref = props.ref;
+
+    this.divRef = React.createRef();
+  }
+
+  componentDidMount() {
+    if (this.divRef != null)
+      this.divRef.current.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   render() {
     return (
-      <div className="Chat_Message">
+      <div className="Chat_Message" ref={this.divRef}>
         <div className="Chat_Message_Left">
           <Avatar src={this.avatarSrc} />
         </div>
