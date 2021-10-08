@@ -84,7 +84,7 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_uuid: s
     re.on('response', (response) => {
       response.on('data', (json) => {
         console.log("Got channel update");
-        event.sender.send('receivedChannelUpdate', json.toString());
+        event.sender.send('receivedChannelUpdateEvent', json.toString());
       });
     });
     re.on('error', (error) => {
