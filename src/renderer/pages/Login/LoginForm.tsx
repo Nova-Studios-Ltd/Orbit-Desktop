@@ -112,7 +112,6 @@ class LoginForm extends React.Component {
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
         <br />
         <Typography className="Login_Form_Item" variant="body1">Don&apos;t have an account? <Link style={{cursor: "pointer"}} onClick={() => {Navigate("/register");}}>Sign Up</Link></Typography>
-        <Button className="Login_Form_Item" variant="contained" onClick={() => {Navigate("/chat");}}>Bypass</Button>
       </form>
     );
   }

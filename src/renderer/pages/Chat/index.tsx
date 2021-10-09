@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
 import { Logout, LoadMessageFeed, ipcRenderer, Navigate, events } from '../../helpers';
+import ChannelView from './ChannelView';
 
 class MessageInput extends React.Component {
   forwardMessageCallback: Function;
@@ -139,8 +140,13 @@ export default class Chat extends React.Component {
           <Typography variant="h5">Chat</Typography>
         </div>
         <div className="Chat_Page_Body">
-          <MessageCanvas init={this.init}/>
-          <MessageInput onMessagePush={this.sendMessage}/>
+          <div className="Chat_Page_Body_Left">
+            <ChannelView />
+          </div>
+          <div className="Chat_Page_Body_Right">
+            <MessageCanvas init={this.init}/>
+            <MessageInput onMessagePush={this.sendMessage}/>
+          </div>
         </div>
       </div>
     );

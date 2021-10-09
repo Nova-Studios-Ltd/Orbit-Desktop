@@ -16,6 +16,17 @@
 
 .Chat_Page_Body {
   display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.Chat_Page_Body_Left {
+  display: flex;
+  flex-direction: column;
+}
+
+.Chat_Page_Body_Right {
+  display: flex;
   flex-direction: column;
   height: 100%;
 }
@@ -34,6 +45,12 @@
   align-items: center;
   box-sizing: border-box;
   margin-bottom: auto;
+}
+
+.Chat_Page_ChannelView {
+  width: 20rem;
+  height: 100%;
+  background: rgba(25, 25, 25, 0.1);
 }
 
 .Chat_MessageInput {
