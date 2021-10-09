@@ -53,7 +53,7 @@ class MessageInput extends React.Component {
 
   render() {
     return (
-      <div style={{height: "188px"}}>
+      <div style={{height: "195px"}}>
           <div className="Chat_Page_Bottom">
               <TextField className="Chat_MessageInput" placeholder="Type your message here..." value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
               <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
@@ -79,7 +79,7 @@ export default class Chat extends React.Component {
       ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data)));
       ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)]));
 
-      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: string) => this.onReceivedMessageEdit(id, data));      
+      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: string) => this.onReceivedMessageEdit(id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {

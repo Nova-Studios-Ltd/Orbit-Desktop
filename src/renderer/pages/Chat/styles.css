@@ -80,3 +80,8 @@
 .Chat_Message_Content {
 
 }
+
+.Chat_Message_Image {
+  height: 50%;
+  width: 50%;
+}
