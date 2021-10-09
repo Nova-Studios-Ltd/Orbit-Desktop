@@ -26,16 +26,16 @@ export default class MessageCanvas extends React.Component {
     }
   }
 
-  remove(uuid: string) {
-    const messages = this.state.messages;
-    const index = messages.findIndex(e => e.uuid === uuid);
+  remove(id: string) {
+    let messages = this.state.messages;
+    let index = messages.findIndex(e => e.uuid === id);
     if (index > -1) {
-      const updatedMessages = messages.splice(index, 1);
-      this.setState({messages: updatedMessages});
+      messages.splice(index, 1);
+      this.setState({messages: [...messages]});
     }
   }
 
-  edit(uuid: string, newMessage: string) {
+  edit(id: string, newMessage: string) {
     console.warn("Message editing is not implemented");
   }
 

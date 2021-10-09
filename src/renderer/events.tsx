@@ -1,5 +1,4 @@
-import { ipcRenderer, Navigate } from './helpers';
-import { LoadMessageFeed } from './helpers';
+import { ipcRenderer, Navigate, events } from './helpers';
 
 function getCookie(cname: string) {
   let name = cname + "=";
@@ -31,6 +30,9 @@ ipcRenderer.on('end_auth', (data: boolean) => {
       console.log(event);
       if (event.EventType == 0) {
         ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
+      }
+      else if (event.EventType == 1) {
+        events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
       }
     };
     socket.onerror = function (error) {

@@ -1,11 +1,11 @@
 import React, { createRef, DOMElement, Ref, RefObject } from 'react';
 import { ReactHeight } from 'react-height';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
-import { Send, Logout as LogoutIcon, MessageSharp } from '@mui/icons-material';
+import { Send, Logout as LogoutIcon, MessageSharp, CompareSharp, CatchingPokemonSharp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
-import { Logout, LoadMessageFeed, ipcRenderer, Navigate } from '../../helpers';
+import { Logout, LoadMessageFeed, ipcRenderer, Navigate, events } from '../../helpers';
 
 class MessageInput extends React.Component {
   forwardMessageCallback: Function;
@@ -76,8 +76,11 @@ export default class Chat extends React.Component {
   init(e: MessageCanvas) {
     if (e != null) {
       this.setState({CanvasObject: e});
-      ipcRenderer.on('receivedChannelData', (data: string) => { this.onReceivedChannelData(LoadMessageFeed(data))} );
-      ipcRenderer.on('receivedChannelUpdate', (data: string) => { this.onReceivedChannelData([JSON.parse(data)]); });
+      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data)));
+      ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)]));
+
+      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: string) => this.onReceivedMessageEdit(id, data));      
+      events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
       console.error("Message canvas initialization error.")
@@ -85,9 +88,10 @@ export default class Chat extends React.Component {
   }
 
   appendToCanvas(message: JSON) {
+    console.log(message);
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message({ message: message.content, author: message.author, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` });
+      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` });
       canvas.append(msgObj);
     }
     else {
@@ -99,6 +103,20 @@ export default class Chat extends React.Component {
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
       this.appendToCanvas(message);
+    }
+  }
+
+  onReceivedMessageEdit(id: string, data: string) {
+    const canvas = this.state.CanvasObject;
+    if (canvas != null) {
+      canvas.edit(id, data);
+    }
+  }
+
+  onReceivedMessageDelete(channel_uuid: string, message_id: string) {
+    const canvas = this.state.CanvasObject;
+    if (canvas != null) {
+      canvas.remove(message_id);
     }
   }
 
