@@ -27,11 +27,12 @@ export default class MessageCanvas extends React.Component {
   }
 
   remove(id: string) {
-    let messages = this.state.messages;
-    let index = messages.findIndex(e => e.uuid === id);
+    let oldState = this.state;
+    let index = oldState.messages.findIndex(e => e.uuid === id);
     if (index > -1) {
-      messages.splice(index, 1);
-      this.setState({messages: [...messages]});
+      oldState.messages.splice(index, 1);
+      this.setState({messages: []});
+      this.setState({messages: oldState.messages});
     }
   }
 
