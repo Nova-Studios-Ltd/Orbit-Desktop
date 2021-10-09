@@ -13,8 +13,8 @@ export class MessageImage extends React.Component {
 
   render() {
     return (
-      <Typography className="Chat_Message_Content" >
-        {this.message == this.imageSrc ? null : <>{this.message} <Link href={this.imageSrc}>{this.imageSrc}</Link></>}
+      <Typography className="Chat_Message_Content" style={({marginBottom: '0.8rem'})}>
+        {this.message == this.imageSrc ? null : <>{this.message} <Link target="_blank" href={this.imageSrc}>{this.imageSrc}</Link></>}
           <Card className="Chat_Message_Image">
             <CardMedia
             component="img"
@@ -77,8 +77,11 @@ export default class Message extends React.Component {
 
     let messageContentObject = [] as any;
     const message = this.message.split(/( |\n)/g);
+    var first = true;
     message.forEach(word => {
-      if (this.validURL(word)) messageContentObject.push(<MessageImage message={this.message.replaceAll(word, "")} src={word} />)
+      var m = (first)? this.message.replaceAll(word, "") : "";
+      if (this.validURL(word)) messageContentObject.push(<MessageImage key={word} message={word} src={word} />)
+      first = false;
     });
     if (messageContentObject.length == 0) messageContentObject.push(<Typography className="Chat_Message_Content">{this.message}</Typography>);
 
