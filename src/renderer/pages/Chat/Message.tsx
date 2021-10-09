@@ -78,7 +78,7 @@ export default class Message extends React.Component {
     let messageContentObject = [] as any;
     const message = this.message.split(/( |\n)/g);
     message.forEach(word => {
-      if (this.validURL(word)) messageContentObject.push(<MessageImage message={word} src={word} />)
+      if (this.validURL(word)) messageContentObject.push(<MessageImage message={this.message.replaceAll(word, "")} src={word} />)
     });
     if (messageContentObject.length == 0) messageContentObject.push(<Typography className="Chat_Message_Content">{this.message}</Typography>);
 
