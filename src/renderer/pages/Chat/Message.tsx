@@ -1,5 +1,6 @@
-import { Avatar, Card, CardMedia, Link, Typography } from '@mui/material';
+import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
+import { ipcRenderer } from 'renderer/helpers';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -42,6 +43,8 @@ export default class Message extends React.Component {
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
+    this.deleteMessage = this.deleteMessage.bind(this);
+
     this.divRef = React.createRef();
   }
 
@@ -58,6 +61,10 @@ export default class Message extends React.Component {
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
       '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
     return !!pattern.test(str);
+  }
+
+  deleteMessage() {
+    ipcRenderer.send('requestDeleteMessage', 'b1642a0175554994b3f593f191c610b5', this.uuid);
   }
 
   render() {
@@ -93,6 +100,7 @@ export default class Message extends React.Component {
         <div className="Chat_Message_Right">
           <Typography className="Chat_Message_Name" fontWeight="bold">{this.author}</Typography>
           {messageContentObject}
+          <button onClick={this.deleteMessage}>Delete</button>
         </div>
       </div>
     );

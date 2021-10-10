@@ -57,7 +57,7 @@ class MessageInput extends React.Component {
       <div style={{height: "195px"}}>
           <div className="Chat_Page_Bottom">
               <TextField className="Chat_MessageInput" placeholder="Type your message here..." value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-              <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send /></IconButton>
+              <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send/></IconButton>
         </div>
       </div>
     );
