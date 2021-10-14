@@ -8,6 +8,7 @@ import ChannelView from './ChannelView';
 import Channel from './Channel';
 import MessageInput from './MessageInput';
 import UIHeader from './UIHeader';
+import GLOBALS from '../../Globals'
 
 export default class Chat extends React.Component {
   constructor(props: any) {
@@ -37,17 +38,30 @@ export default class Chat extends React.Component {
 
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
-      this.setState({ChannelList: channelList }, () => {this.addChannel(JSON.parse("{\"channelName\":\"Main Channel\", \"channelID\":\"0\"}"));});
-      //
-      //  Put channel listener here?
-      //
+      this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse("{\"channelName\":\"Main Channel\", \"channelID\":\"0\"}"))*/);
+      ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
+      ipcRenderer.on('receivedChannelInfo', (data: string) => this.onReceivedChannelInfo(JSON.parse(data)));
     }
     else {
       console.error("Channel list initialization error.")
     }
   }
 
-  appendToCanvas(message: JSON) {
+  onReceivedChannels(data: any) {
+    for (let channel = 0; channel < data.length; channel++) {
+      //this.addChannel({channelName: data[channel], channelID: data[channel]});
+      ipcRenderer.send("requestChannelInfo", data[channel]);
+    }
+  }
+
+  onReceivedChannelInfo(data: any) {
+    if (data.isGroup)
+      this.addChannel({channelName: data.groupName, channelID: data.table_Id});
+    else
+      this.addChannel({channelName: data.channelName, channelID: data.table_Id});
+  }
+
+  appendToCanvas(message: any) {
     console.log(message);
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
@@ -59,7 +73,14 @@ export default class Chat extends React.Component {
     }
   }
 
-  addChannel(channel: JSON) {
+  clearCanvas() {
+    const canvas = this.state.CanvasObject;
+    if (canvas != null) {
+      canvas.clear();
+    }
+  }
+
+  addChannel(channel: any) {
     const channelList = this.state.ChannelList;
     if (channelList != null) {
       const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID });
@@ -71,6 +92,7 @@ export default class Chat extends React.Component {
   }
 
   onReceivedChannelData(messages: JSON[]) {
+    this.clearCanvas();
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
       this.appendToCanvas(message);
@@ -95,7 +117,7 @@ export default class Chat extends React.Component {
     if (message.length > 0)
     {
       console.log(`Message Sent: ${message}`);
-      ipcRenderer.send('sendMessageToServer', 'b1642a0175554994b3f593f191c610b5', message);
+      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message);
     }
   }
 

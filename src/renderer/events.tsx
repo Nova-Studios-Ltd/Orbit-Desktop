@@ -20,7 +20,8 @@ let socket : WebSocket;
 ipcRenderer.on('end_auth', (data: boolean) => {
   if (data) {
     Navigate("/chat", null);
-    ipcRenderer.send('requestChannelData', 'b1642a0175554994b3f593f191c610b5');
+    ipcRenderer.send('requestChannels');
+    //ipcRenderer.send('requestChannelData', 'b1642a0175554994b3f593f191c610b5');
     console.log(getCookie("userData"));
     const { token, uuid } = JSON.parse(getCookie("userData"));
     //socket = new WebSocket(`wss://localhost:44365/Events/Listen?user_uuid=${uuid}`)

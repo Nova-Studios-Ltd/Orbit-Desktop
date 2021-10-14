@@ -28,6 +28,50 @@ ipcMain.on('begin_auth', (event, data: Credentials) => {
   re.end();
 });
 
+ipcMain.on('requestChannels', (event, channel_uuid: string) => {
+  const re = request({
+    method: 'GET',
+    url: `https://api.novastudios.tk/User/Channels`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        event.sender.send('receivedChannels', json.toString());
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+});
+
+ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
+  const re = request({
+    method: 'GET',
+    url: `https://api.novastudios.tk/Channel/${channel_uuid}`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        event.sender.send('receivedChannelInfo', json.toString());
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+});
+
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   const re = request({
     method: 'GET',

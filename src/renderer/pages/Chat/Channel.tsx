@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Typography } from '@mui/material';
 import GLOBALS from '../../Globals'
+import { ipcRenderer } from '../../helpers';
 
 export default class Channel extends React.Component {
   channelName: string;
@@ -17,6 +18,7 @@ export default class Channel extends React.Component {
   channelClicked() {
     GLOBALS.currentChannel = this.channelID;
     console.log(`Selected Channel: ${GLOBALS.currentChannel}`);
+    ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
   }
 
   render() {

@@ -1,5 +1,6 @@
 import React from 'react';
 import Message from './Message';
+import GLOBALS from '../../Globals';
 
 export default class MessageCanvas extends React.Component {
   constructor(props: any) {
@@ -38,6 +39,10 @@ export default class MessageCanvas extends React.Component {
 
   edit(id: string, newMessage: string) {
     console.warn("Message editing is not implemented");
+  }
+
+  clear() {
+    this.setState({messages: []});
   }
 
   render() {

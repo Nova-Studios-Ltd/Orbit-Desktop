@@ -1,6 +1,7 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
 import { ipcRenderer } from 'renderer/helpers';
+import GLOBALS from '../../Globals';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -64,7 +65,7 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.send('requestDeleteMessage', 'b1642a0175554994b3f593f191c610b5', this.uuid);
+    ipcRenderer.send('requestDeleteMessage', GLOBALS.currentChannel, this.uuid);
   }
 
   render() {
