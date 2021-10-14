@@ -14,15 +14,15 @@ export class MessageImage extends React.Component {
 
   render() {
     return (
-      <Typography className="Chat_Message_Content" style={({marginBottom: '0.8rem'})}>
-        {this.message == this.imageSrc ? null : <>{this.message} <Link target="_blank" href={this.imageSrc}>{this.imageSrc}</Link></>}
+      <div className="Chat_Message_Content" style={({marginBottom: '0.8rem'})}>
+        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target="_blank" href={this.imageSrc}>{this.imageSrc}</Link></>}
           <Card className="Chat_Message_Image">
             <CardMedia
             component="img"
             image={this.imageSrc}
           />
           </Card>
-      </Typography>
+      </div>
     );
   }
 }

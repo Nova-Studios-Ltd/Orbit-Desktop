@@ -52,15 +52,21 @@
 }
 
 .Chat_Page_ChannelView {
-  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 20rem;
   height: 100%;
   background: rgba(25, 25, 25, 0.1);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .Chat_Page_Channel {
   width: 100%;
   height: 50px;
   padding: 5px;
+  margin: 0.15rem;
   box-sizing: border-box;
   background: rgb(200, 200, 200);
   cursor: pointer;
@@ -92,7 +98,6 @@
   padding: 0.5rem;
   display: flex;
   flex-direction: row;
-  animation: annoy 1s linear infinite;
 }
 
 .Chat_Message_Left {
@@ -124,9 +129,4 @@
 .Chat_Channel_Message_Preview {
   font-size: smaller !important;
   color: rgb(80, 80, 80) !important;
-}
-
-@keyframes annoy {
-  from {transform: rotate(0deg);}
-  to {transform: rotate(360deg);}
 }

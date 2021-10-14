@@ -1,25 +1,29 @@
 import React from 'react';
+import { List as ListIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
 import { Logout, LoadMessageFeed, ipcRenderer, events } from '../../helpers';
 import ChannelView from './ChannelView';
+import Channel from './Channel';
 import MessageInput from './MessageInput';
 import UIHeader from './UIHeader';
 
 export default class Chat extends React.Component {
   constructor(props: any) {
     super(props);
-    this.state = { CanvasObject: null};
-    this.init = this.init.bind(this);
+    this.state = { CanvasObject: null, ChannelList: null};
+    this.initCanvas = this.initCanvas.bind(this);
+    this.initChannelView = this.initChannelView.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
   }
 
-  init(e: MessageCanvas) {
-    if (e != null) {
-      this.setState({CanvasObject: e});
+  initCanvas(canvas: MessageCanvas) {
+    if (canvas != null) {
+      this.setState({CanvasObject: canvas });
+
       ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data)));
       ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)]));
 
@@ -31,6 +35,18 @@ export default class Chat extends React.Component {
     }
   }
 
+  initChannelView(channelList: ChannelView) {
+    if (channelList != null) {
+      this.setState({ChannelList: channelList }, () => {this.addChannel(JSON.parse("{\"channelName\":\"Main Channel\", \"channelID\":\"0\"}"));});
+      //
+      //  Put channel listener here?
+      //
+    }
+    else {
+      console.error("Channel list initialization error.")
+    }
+  }
+
   appendToCanvas(message: JSON) {
     console.log(message);
     const canvas = this.state.CanvasObject;
@@ -39,7 +55,18 @@ export default class Chat extends React.Component {
       canvas.append(msgObj);
     }
     else {
-      console.error("Canvas is null");
+      console.error("(When Appending Message) Canvas is null");
+    }
+  }
+
+  addChannel(channel: JSON) {
+    const channelList = this.state.ChannelList;
+    if (channelList != null) {
+      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID });
+      channelList.addChannel(channelObj);
+    }
+    else {
+      console.error("(When Adding Channel) ChannelList is null");
     }
   }
 
@@ -80,12 +107,12 @@ export default class Chat extends React.Component {
         </Helmet>
         <div className="Chat_Page_Body">
           <div className="Chat_Page_Body_Left">
-            <UIHeader />
-            <ChannelView />
+            <UIHeader caption="Channels" icon={<ListIcon />} />
+            <ChannelView init={this.initChannelView} />
           </div>
           <div className="Chat_Page_Body_Right">
-            <UIHeader />
-            <MessageCanvas init={this.init}/>
+          <UIHeader caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
+            <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
         </div>
