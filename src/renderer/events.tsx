@@ -19,7 +19,7 @@ function getCookie(cname: string) {
 let socket : WebSocket;
 ipcRenderer.on('end_auth', (data: boolean) => {
   if (data) {
-    Navigate("/chat");
+    Navigate("/chat", null);
     ipcRenderer.send('requestChannelData', 'b1642a0175554994b3f593f191c610b5');
     console.log(getCookie("userData"));
     const { token, uuid } = JSON.parse(getCookie("userData"));
@@ -28,7 +28,10 @@ ipcRenderer.on('end_auth', (data: boolean) => {
     socket.onmessage = function (message) {
       var event = JSON.parse(message.data);
       console.log(event);
-      if (event.EventType == 0) {
+      if (event.EventType == -1) {
+        console.log("<Beat>")
+      }
+      else if (event.EventType == 0) {
         ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
       }
       else if (event.EventType == 1) {
