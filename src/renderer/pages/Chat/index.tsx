@@ -25,8 +25,8 @@ export default class Chat extends React.Component {
     if (canvas != null) {
       this.setState({CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data)));
-      ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)]));
+      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data), false));
+      ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)], true));
 
       ipcRenderer.on('receivedMessageEditEvent', (id: string, data: string) => this.onReceivedMessageEdit(id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
@@ -91,8 +91,9 @@ export default class Chat extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: JSON[]) {
-    this.clearCanvas();
+  onReceivedChannelData(messages: JSON[], isUpdate: boolean) {
+    if (!isUpdate)
+      this.clearCanvas();
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
       this.appendToCanvas(message);
