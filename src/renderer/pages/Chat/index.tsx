@@ -1,68 +1,11 @@
-import React, { createRef, DOMElement, Ref, RefObject } from 'react';
-import { ReactHeight } from 'react-height';
-import { Button, IconButton, TextField, Typography } from '@mui/material/';
-import { Send, Logout as LogoutIcon, MessageSharp, CompareSharp, CatchingPokemonSharp } from '@mui/icons-material';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
-import { Logout, LoadMessageFeed, ipcRenderer, Navigate, events } from '../../helpers';
+import { Logout, LoadMessageFeed, ipcRenderer, events } from '../../helpers';
 import ChannelView from './ChannelView';
-
-class MessageInput extends React.Component {
-  forwardMessageCallback: Function;
-
-  constructor(props: any) {
-    super(props);
-    this.state = {message: "", bottom_height: 0};
-
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.forwardMessage = this.forwardMessage.bind(this);
-
-    this.forwardMessageCallback = props.onMessagePush;
-  }
-
-  forwardMessage(message: string) {
-    if (this.forwardMessageCallback != null) {
-      this.forwardMessageCallback(message);
-    }
-    else {
-      console.error("forwardMessageCallback is null");
-    }
-  }
-
-  handleChange(event: any) {
-    this.setMessageTo(event.target.value);
-  }
-
-  handleKeyDown(event: any) {
-    if (event.keyCode === 13) {
-      this.forwardMessage(this.state.message);
-      this.setMessageTo("");
-    }
-  }
-
-  handleClick(event: any) {
-    this.forwardMessage(this.state.message);
-    this.setMessageTo("");
-  }
-
-  setMessageTo(text: string) {
-    this.setState({message: text});
-  }
-
-  render() {
-    return (
-      <div style={{height: "195px"}}>
-          <div className="Chat_Page_Bottom">
-              <TextField className="Chat_MessageInput" placeholder="Type your message here..." value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-              <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send/></IconButton>
-        </div>
-      </div>
-    );
-  }
-}
+import MessageInput from './MessageInput';
+import UIHeader from './UIHeader';
 
 export default class Chat extends React.Component {
   constructor(props: any) {
@@ -135,15 +78,13 @@ export default class Chat extends React.Component {
         <Helmet>
           <title>Chat</title>
         </Helmet>
-        <div className="Chat_Page_Header">
-          <IconButton className="Chat_IconButton" onClick={Logout}><LogoutIcon /></IconButton>
-          <Typography variant="h5">Chat</Typography>
-        </div>
         <div className="Chat_Page_Body">
           <div className="Chat_Page_Body_Left">
+            <UIHeader />
             <ChannelView />
           </div>
           <div className="Chat_Page_Body_Right">
+            <UIHeader />
             <MessageCanvas init={this.init}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>

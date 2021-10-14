@@ -1,0 +1,30 @@
+import React from 'react';
+import { Card, Typography } from '@mui/material';
+import GLOBALS from '../../Globals'
+
+export default class Channel extends React.Component {
+  channelName: string;
+  channelID: string;
+
+  constructor(props) {
+    super(props);
+    this.channelName = props.channelName;
+    this.channelID = props.channelID;
+
+    this.channelClicked = this.channelClicked.bind(this);
+  }
+
+  channelClicked() {
+    GLOBALS.currentChannel = this.channelID;
+    console.log(`Selected Channel: ${GLOBALS.currentChannel}`);
+  }
+
+  render() {
+    return(
+      <Card className="Chat_Page_Channel" onClick={this.channelClicked}>
+        <Typography className="Chat_Channel_Caption" variant="subtitle1">{this.channelName}</Typography>
+        <Typography className="Chat_Channel_Message_Preview" variant="body1" fontWeight="light">Latest message should show up here</Typography>
+      </Card>
+    );
+  }
+}
