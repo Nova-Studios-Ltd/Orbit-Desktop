@@ -55,13 +55,22 @@ export default class Message extends React.Component {
   }
 
   validURL(str: string) {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    var pattern = new RegExp('^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)');
     return !!pattern.test(str);
+  }
+
+  imageURL(url: string) {
+    if (this.hasExt(url)) {
+      return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+    }
+    else {
+    }
+  }
+
+  hasExt(url: string) {
+    var parts = url.split('/');
+    var last  = parts.pop();
+    return (parts.length > 3) && (last.indexOf('.') != -1);
   }
 
   deleteMessage() {
@@ -88,7 +97,7 @@ export default class Message extends React.Component {
     var first = true;
     message.forEach(word => {
       var m = (first)? this.message.replaceAll(word, "") : "";
-      if (this.validURL(word)) messageContentObject.push(<MessageImage key={word} message={word} src={word} />)
+      if (this.validURL(word) && this.imageURL(word)) messageContentObject.push(<MessageImage key={word} message={word} src={word} />)
       first = false;
     });
     if (messageContentObject.length == 0) messageContentObject.push(<Typography className="Chat_Message_Content">{this.message}</Typography>);
