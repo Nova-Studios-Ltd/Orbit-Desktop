@@ -60,25 +60,7 @@ export default class Message extends React.Component {
   }
 
   imageURL(url: string) {
-    if (this.hasExt(url)) {
-      return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
-    }
-    else {
-      /*var request = new XMLHttpRequest();
-      request.open("HEAD", url);
-      return (Boolean)(request.onload = () => {
-        var contentType = request.getResponseHeader("Content-Type");
-        if (contentType?.indexOf("image") != -1) return true;
-        return false;
-      });*/
-      return false;
-    }
-  }
-
-  hasExt(url: string) {
-    var parts = url.split('/');
-    var last = parts.at(-1);
-    return (parts.length > 3) && (last.indexOf('.') != -1);
+    return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
   }
 
   deleteMessage() {
