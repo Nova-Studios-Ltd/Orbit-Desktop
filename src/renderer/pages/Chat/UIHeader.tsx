@@ -1,13 +1,14 @@
 import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
+import { UIHeaderProps } from 'renderer/interfaces';
 
 export default class UIHeader extends React.Component {
   caption: string;
   icon: any;
-  iconButtonClicked: any;
+  iconButtonClicked: Function;
   misc: any;
 
-  constructor(props) {
+  constructor(props: UIHeaderProps) {
     super(props);
     this.caption = props.caption;
     this.icon = props.icon;
@@ -16,19 +17,19 @@ export default class UIHeader extends React.Component {
   }
 
   render() {
-    let IconOrIconButtonObject = null;
-    if (this.props.icon != null) {
+    let IconObject = null;
+    if (this.icon != null) {
       if (this.iconButtonClicked != null) {
-        IconOrIconButtonObject = <IconButton className="UIHeader_IconButton" onClick={this.iconButtonClicked}>{this.icon}</IconButton>;
+        IconObject = <IconButton className="UIHeader_IconButton" onClick={this.iconButtonClicked}>{this.icon}</IconButton>;
       }
       else {
-        IconOrIconButtonObject = <Icon className="UIHeader_Icon">{this.icon}</Icon>;
+        IconObject = <Icon className="UIHeader_Icon">{this.icon}</Icon>;
       }
     }
 
     return(
       <div className="UIHeader_Container">
-          {IconOrIconButtonObject}
+          {IconObject}
           <Typography variant="h5">{this.caption}</Typography>
           <div className="UIHeader_Misc">
             {this.misc}

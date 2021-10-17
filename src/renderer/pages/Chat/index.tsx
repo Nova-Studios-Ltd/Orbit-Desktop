@@ -3,22 +3,31 @@ import { List as ListIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from './Message';
 import MessageCanvas from './MessageCanvas';
-import { Logout, LoadMessageFeed, ipcRenderer, events } from '../../helpers';
+import { Logout, LoadMessageFeed, ipcRenderer, events } from 'renderer/helpers';
 import ChannelView from './ChannelView';
 import Channel from './Channel';
 import MessageInput from './MessageInput';
 import UIHeader from './UIHeader';
-import GLOBALS from '../../Globals'
+import GLOBALS from 'renderer/Globals'
+import { ChatPageProps, MessageProps } from 'renderer/interfaces';
 
 export default class Chat extends React.Component {
-  constructor(props: any) {
+  messageReceivedSound: HTMLAudioElement;
+
+  constructor(props: ChatPageProps) {
     super(props);
-    this.state = { CanvasObject: null, ChannelList: null};
     this.initCanvas = this.initCanvas.bind(this);
     this.initChannelView = this.initChannelView.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
+
+    this.messageReceivedSound = new Audio("assets/sounds/bell.oga");
+  }
+
+  state = {
+    CanvasObject: null as unknown as MessageCanvas,
+    ChannelList: null as unknown as ChannelView
   }
 
   initCanvas(canvas: MessageCanvas) {
@@ -65,7 +74,7 @@ export default class Chat extends React.Component {
     console.log(message);
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` });
+      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` } as MessageProps);
       canvas.append(msgObj);
     }
     else {
@@ -92,6 +101,7 @@ export default class Chat extends React.Component {
   }
 
   onReceivedChannelData(messages: JSON[], isUpdate: boolean) {
+    this.messageReceivedSound.play();
     if (!isUpdate)
       this.clearCanvas();
     for (let index = 0; index < messages.length; index++) {

@@ -1,5 +1,5 @@
 import { createBrowserHistory } from 'history';
-import Credentials from './Credentials';
+import Credentials from 'main/Credentials';
 import { UiEvents } from './uiEvents';
 
 export const history = createBrowserHistory();

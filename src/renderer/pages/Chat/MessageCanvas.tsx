@@ -1,9 +1,10 @@
 import React from 'react';
 import Message from './Message';
-import GLOBALS from '../../Globals';
+import GLOBALS from 'renderer/Globals';
+import { MessageCanvasProps } from 'renderer/interfaces';
 
 export default class MessageCanvas extends React.Component {
-  constructor(props: any) {
+  constructor(props: MessageCanvasProps) {
     super(props);
     props.init(this);
     this.append = this.append.bind(this);

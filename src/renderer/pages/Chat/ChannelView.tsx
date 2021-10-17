@@ -2,7 +2,7 @@ import React from 'react';
 import Channel from './Channel';
 
 export default class ChannelView extends React.Component {
-  constructor(props) {
+  constructor(props: ChannelViewProps) {
     super(props);
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
@@ -10,7 +10,7 @@ export default class ChannelView extends React.Component {
   }
 
   state = {
-    channels: []
+    channels: [] as Channel[],
   }
 
   addChannel(channel: Channel) {

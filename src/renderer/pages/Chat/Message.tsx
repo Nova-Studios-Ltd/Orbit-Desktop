@@ -1,13 +1,14 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
 import { ipcRenderer } from 'renderer/helpers';
-import GLOBALS from '../../Globals';
+import GLOBALS from 'renderer/Globals';
+import { MessageProps, MessageImageProps } from 'renderer/interfaces';
 
 export class MessageImage extends React.Component {
   message: string;
   imageSrc: string;
 
-  constructor(props: any) {
+  constructor(props: MessageImageProps) {
     super(props);
     this.message = props.message;
     this.imageSrc = props.src;
@@ -36,7 +37,7 @@ export default class Message extends React.Component {
   ref: Ref<any>;
   divRef: Ref<HTMLDivElement>;
 
-  constructor(props: any) {
+  constructor(props: MessageProps) {
     super(props);
     this.uuid = props.uuid;
     this.author = props.author || "Unknown";

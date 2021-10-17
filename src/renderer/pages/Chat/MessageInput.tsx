@@ -1,13 +1,13 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon } from '@mui/icons-material';
+import { MessageInputProps } from 'renderer/interfaces';
 
 export default class MessageInput extends React.Component {
   forwardMessageCallback: Function;
 
-  constructor(props: any) {
+  constructor(props: MessageInputProps) {
     super(props);
-    this.state = {message: "", bottom_height: 0};
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -15,6 +15,10 @@ export default class MessageInput extends React.Component {
     this.forwardMessage = this.forwardMessage.bind(this);
 
     this.forwardMessageCallback = props.onMessagePush;
+  }
+
+  state = {
+    message: "" as string
   }
 
   forwardMessage(message: string) {
