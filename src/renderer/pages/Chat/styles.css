@@ -4,6 +4,15 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 2rem;
+}
+
+.UIHeader_Icon {
+  padding: 8px;
+}
+
+.UIHeader_IconButton {
+
 }
 
 .UIHeader_Misc {
