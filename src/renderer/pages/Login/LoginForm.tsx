@@ -1,9 +1,9 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, TextField, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import '../../interfaces';
-import { Authenticate, Navigate } from '../../helpers';
-import Credentials from '../../Credentials';
+import { Authenticate, Navigate } from 'renderer/helpers';
+import Credentials from 'main/Credentials';
+import { FormHeaderProps, FormStatusFieldProps, FormTextFieldProps, LoginFormProps } from 'renderer/interfaces';
 
 function FormHeader({heading, body} : FormHeaderProps)
 {
@@ -71,16 +71,19 @@ function FormTextField({handler, id, classNames, label, required, sensitive} : F
 }
 
 class LoginForm extends React.Component {
-  constructor(props: any) {
+  constructor(props: LoginFormProps) {
     super(props);
     props.init(this);
-    this.state = {username: "", password: "", address: ""};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-
+  state = {
+    username: "" as string,
+    password: "" as string,
+    address: ""  as string
+  }
 
   handleChange(event: any) {
     const { name, value } = event.target;

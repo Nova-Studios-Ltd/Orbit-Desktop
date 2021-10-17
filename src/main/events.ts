@@ -1,5 +1,5 @@
 import { ipcMain, net, session } from 'electron';
-import Credentials from '../renderer/Credentials';
+import Credentials from 'main/Credentials';
 
 const { request } = net;
 
@@ -11,11 +11,11 @@ ipcMain.on('begin_auth', (event, data: Credentials) => {
   re.on('response', (response) => {
     response.on("data", (json) => {
       const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
-      session.defaultSession.cookies.set(cookie).then(() => 
+      session.defaultSession.cookies.set(cookie).then(() =>
       {
         event.sender.send("end_auth", true);
         return null;
-      }).catch((e) => 
+      }).catch((e) =>
       {
         console.error(e);
         event.sender.send("end_auth", false);
@@ -101,7 +101,7 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
     const re = request({
       method: 'POST',
       url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`
-    }); 
+    });
     re.setHeader('Authorization', token);
     re.setHeader('Content-Type', 'application/json');
     re.on('error', (error) => {

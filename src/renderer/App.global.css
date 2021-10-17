@@ -1,4 +1,5 @@
 @import "pages/Login/styles.css";
+@import "pages/Register/styles.css";
 @import "pages/Chat/styles.css";
 
 html, body {

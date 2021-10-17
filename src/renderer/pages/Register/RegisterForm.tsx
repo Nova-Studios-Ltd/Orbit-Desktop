@@ -1,13 +1,16 @@
 import React from 'react';
 import { Button, TextField, Typography, Link } from '@mui/material/';
-import '../../interfaces';
+import { RegisterFormProps, FormTextFieldProps } from 'renderer/interfaces';
 
 class RegisterForm extends React.Component {
-  constructor(props: any) {
+  constructor(props: RegisterFormProps) {
     super(props);
-    this.state = {};
 
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  state = {
+
   }
 
   FormTextField({handler, id, classNames, label, required, sensitive} : FormTextFieldProps) {
@@ -33,7 +36,7 @@ class RegisterForm extends React.Component {
   render() {
     return (
       <form className="Register_Form_Container" onSubmit={this.handleSubmit}>
-        <this.FormTextField />
+        <this.FormTextField label="Test" />
       </form>
     );
   }
