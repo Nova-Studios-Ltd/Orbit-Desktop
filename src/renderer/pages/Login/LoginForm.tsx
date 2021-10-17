@@ -73,11 +73,14 @@ function FormTextField({handler, id, classNames, label, required, sensitive} : F
 class LoginForm extends React.Component {
   constructor(props: any) {
     super(props);
+    props.init(this);
     this.state = {username: "", password: "", address: ""};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
+
 
   handleChange(event: any) {
     const { name, value } = event.target;
@@ -100,7 +103,7 @@ class LoginForm extends React.Component {
         <FormTextField id="username" label="Username" required handler={this.handleChange} />
         <FormTextField id="password" label="Password" required sensitive handler={this.handleChange} />
         <br />
-        <Accordion className={AdvancedOptionsAccordionStyles}>
+        <Accordion disabled className={AdvancedOptionsAccordionStyles}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="body1">Advanced</Typography>
           </AccordionSummary>
@@ -111,7 +114,7 @@ class LoginForm extends React.Component {
         <br />
         <Button className="Login_Form_Item" variant="outlined" type="submit">Login</Button>
         <br />
-        <Typography className="Login_Form_Item" variant="body1">Don&apos;t have an account? <Link style={{cursor: "pointer"}} onClick={() => {Navigate("/register");}}>Sign Up</Link></Typography>
+        <Typography className="Login_Form_Item" variant="body1">Don&apos;t have an account? <Link style={{cursor: "pointer"}} onClick={() => {Navigate("/register", null);}}>Sign Up</Link></Typography>
       </form>
     );
   }
