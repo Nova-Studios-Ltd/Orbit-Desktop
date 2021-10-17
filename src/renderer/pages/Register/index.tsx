@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import RegisterForm from './RegisterForm';
 
-function Login() {
+function Register() {
 
   return (
     <div className="">
@@ -9,10 +10,10 @@ function Login() {
         <title>Register</title>
       </Helmet>
 
-
+      <RegisterForm />
 
     </div>
   );
 }
 
-export default Login;
+export default Register;

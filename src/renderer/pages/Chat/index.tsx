@@ -134,7 +134,7 @@ export default class Chat extends React.Component {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className="Chat_Page_Body_Right">
-          <UIHeader caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
+            <UIHeader caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
