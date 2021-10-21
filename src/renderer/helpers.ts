@@ -18,7 +18,7 @@ export function Navigate(path: string, data: any)
 }
 
 export function Logout() {
-  Navigate("/login");
+  Navigate("/login", null);
 }
 
 export function LoadMessageFeed(channelData: string) {
@@ -27,6 +27,6 @@ export function LoadMessageFeed(channelData: string) {
   return messages;
 }
 
-export function Authenticate(data: Credentials, callback: Function) {
-  ipcRenderer.send("begin_auth", data, callback);
+export function Authenticate(data: Credentials) {
+  ipcRenderer.send("begin_auth", data);
 }

@@ -13,6 +13,7 @@ class LoginForm extends React.Component {
     super(props);
     props.init(this);
 
+    this.authCallback = this.authCallback.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -31,12 +32,8 @@ class LoginForm extends React.Component {
 
   handleSubmit(event: any) {
     const { username, password, address } = this.state;
-    Authenticate(new Credentials(username, password, address), (e) => this.authCallback(e));
+    Authenticate(new Credentials(username, password, address));
     event.preventDefault();
-  }
-
-  authCallback(status: string) {
-    this.updateStatus(status, FormStatusType.error);
   }
 
   updateStatus(message: string, type: FormStatusType) {
