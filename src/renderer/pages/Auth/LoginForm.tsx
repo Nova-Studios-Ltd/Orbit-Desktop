@@ -13,7 +13,6 @@ class LoginForm extends React.Component {
     super(props);
     props.init(this);
 
-    this.authCallback = this.authCallback.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
