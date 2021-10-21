@@ -1,28 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Ref } from 'react'
+import { FormEventHandler, ReactChildren, Ref } from 'react'
+import FormStatusTuple, { FormStatusType } from './components/Form/FormStatusTypes';
 
 // Page Props
+
+export interface AuthPageProps {
+  login?: Boolean,
+  register?: Boolean,
+}
 
 export interface ChatPageProps {
 
 }
 
-// Component Props
+// Generic Component Props
 
-export interface UIHeaderProps {
+export interface HeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
   misc: any
 }
 
-export interface LoginFormProps {
-  init: Function
-}
-
-export interface RegisterFormProps {
-
+export interface AuthFormProps {
+  headerHeading: string,
+  headerBody: string,
+  status: FormStatusTuple,
+  onSubmit: FormEventHandler<HTMLFormElement>,
+  children: ReactChildren
 }
 
 export interface FormHeaderProps {
@@ -31,17 +37,17 @@ export interface FormHeaderProps {
 }
 
 export interface FormTextFieldProps {
-  handler: any,
   id: string,
   classNames: string,
   label: string,
   required?: boolean,
-  sensitive?: boolean
+  sensitive?: boolean,
+  onChange: any
 }
 
 export interface FormStatusFieldProps {
   message: string,
-  type: string
+  type: FormStatusType
 }
 
 export interface ChannelProps {
@@ -73,4 +79,27 @@ export interface MessageCanvasProps {
 export interface MessageInputProps {
   init: Function,
   onMessagePush: Function
+}
+
+// Custom Instances
+
+// Custom Component Props
+
+export interface LoginFormProps extends AuthFormProps {
+  onSubmit: FormEventHandler<LoginFormElement>,
+  init: Function
+}
+
+export interface RegisterFormProps {
+
+}
+
+// Custom Form Elements
+
+export interface LoginFormElements extends HTMLFormControlsCollection {
+
+}
+
+export interface LoginFormElement extends HTMLFormElement {
+  elements: LoginFormElements
 }

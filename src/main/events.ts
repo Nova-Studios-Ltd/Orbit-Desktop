@@ -3,7 +3,7 @@ import Credentials from 'main/Credentials';
 
 const { request } = net;
 
-ipcMain.on('begin_auth', (event, data: Credentials) => {
+ipcMain.on('begin_auth', (event, data: Credentials, callback: Function) => {
   const re = request({
     method: "GET",
     url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
@@ -17,6 +17,9 @@ ipcMain.on('begin_auth', (event, data: Credentials) => {
         return null;
       }).catch((e) =>
       {
+        if (callback != null) {
+          callback(e);
+        }
         console.error(e);
         event.sender.send("end_auth", false);
       });

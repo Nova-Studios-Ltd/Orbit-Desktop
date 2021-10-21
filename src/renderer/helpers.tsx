@@ -27,8 +27,6 @@ export function LoadMessageFeed(channelData: string) {
   return messages;
 }
 
-export function Authenticate(data: Credentials) {
-  console.log(`Username: ${data.username}, Password: ${data.password}, Address: ${data.address}`);
-  // TODO: Implement code for establishing connection to server
-  ipcRenderer.send("begin_auth", data);
+export function Authenticate(data: Credentials, callback: Function) {
+  ipcRenderer.send("begin_auth", data, callback);
 }

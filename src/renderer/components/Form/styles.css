@@ -1,0 +1,13 @@
+.AuthForm_Container {
+  min-width: 20rem;
+  padding: 10rem;
+
+  background: rgba(255, 255, 255, 0.75);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.Generic_Form_Item {
+  margin: 5px 0px 0px 5px !important;
+}

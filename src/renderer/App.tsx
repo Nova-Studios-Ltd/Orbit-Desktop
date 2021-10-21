@@ -1,21 +1,24 @@
 import React from 'react';
 import { Router, Redirect, Route } from 'react-router-dom';
-import './App.global.css';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Chat from './pages/Chat';
-import { history } from './helpers';
-import './events';
+import 'renderer/App.global.css';
+import AuthPage from 'renderer/pages/Auth';
+import ChatPage from 'renderer/pages/Chat';
+import { history } from 'renderer/helpers';
+import 'renderer/events';
 
 function App() {
   return (
     <Router history={history}>
-      <Route path="/">
+      <Route exact path={["/", "/index", "/index.html"]}>
         <Redirect to="/login" />
       </Route>
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/chat" component={Chat} />
+      <Route path="/login">
+        <AuthPage login/>
+      </Route>
+      <Route path="/register">
+        <AuthPage register/>
+      </Route>
+      <Route path="/chat" component={ChatPage} />
     </Router>
   );
 }

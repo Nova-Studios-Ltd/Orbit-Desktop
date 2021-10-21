@@ -1,17 +1,17 @@
 import React from 'react';
 import { List as ListIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
-import Message from './Message';
-import MessageCanvas from './MessageCanvas';
+import Message from 'renderer/components/Messages/Message';
+import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import { Logout, LoadMessageFeed, ipcRenderer, events } from 'renderer/helpers';
-import ChannelView from './ChannelView';
-import Channel from './Channel';
-import MessageInput from './MessageInput';
-import UIHeader from './UIHeader';
+import ChannelView from 'renderer/components/Channels/ChannelView';
+import Channel from 'renderer/components/Channels/Channel';
+import MessageInput from 'renderer/components/Messages/MessageInput';
+import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'renderer/Globals'
 import { ChatPageProps, MessageProps } from 'renderer/interfaces';
 
-export default class Chat extends React.Component {
+export default class ChatPage extends React.Component {
   messageReceivedSound: HTMLAudioElement;
 
   constructor(props: ChatPageProps) {
@@ -140,11 +140,11 @@ export default class Chat extends React.Component {
         </Helmet>
         <div className="Chat_Page_Body">
           <div className="Chat_Page_Body_Left">
-            <UIHeader caption="Channels" icon={<ListIcon />} />
+            <Header caption="Channels" icon={<ListIcon />} />
             <ChannelView init={this.initChannelView} />
           </div>
           <div className="Chat_Page_Body_Right">
-            <UIHeader caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
+            <Header caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
