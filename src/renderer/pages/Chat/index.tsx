@@ -50,6 +50,7 @@ export default class Chat extends React.Component {
       this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse("{\"channelName\":\"Main Channel\", \"channelID\":\"0\"}"))*/);
       ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
       ipcRenderer.on('receivedChannelInfo', (data: string) => this.onReceivedChannelInfo(JSON.parse(data)));
+      events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
       console.error("Channel list initialization error.")

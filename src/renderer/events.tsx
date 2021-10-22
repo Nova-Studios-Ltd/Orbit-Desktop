@@ -38,6 +38,12 @@ ipcRenderer.on('end_auth', (data: boolean) => {
       else if (event.EventType == 1) {
         events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
       }
+      else if (event.EventType == 2) {
+        
+      }
+      else if (event.EventType == 3) {
+        events.send('receivedChannelCreatedEvent', event.Channel);
+      }
     };
     socket.onerror = function (error) {
       console.error(error);
