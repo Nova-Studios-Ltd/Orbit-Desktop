@@ -18,7 +18,7 @@ export function Navigate(path: string, data: any)
 }
 
 export function Logout() {
-  Navigate("/login");
+  Navigate("/login", null);
 }
 
 export function LoadMessageFeed(channelData: string) {
@@ -28,7 +28,5 @@ export function LoadMessageFeed(channelData: string) {
 }
 
 export function Authenticate(data: Credentials) {
-  console.log(`Username: ${data.username}, Password: ${data.password}, Address: ${data.address}`);
-  // TODO: Implement code for establishing connection to server
   ipcRenderer.send("begin_auth", data);
 }

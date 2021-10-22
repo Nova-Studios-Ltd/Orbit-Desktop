@@ -1,6 +1,6 @@
-@import "pages/Login/styles.css";
-@import "pages/Register/styles.css";
+@import "pages/Auth/styles.css";
 @import "pages/Chat/styles.css";
+@import "components/styles.css";
 
 html, body {
   height: 100%;
