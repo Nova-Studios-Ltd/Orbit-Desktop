@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography } from '@mui/material';
+import { Card, Typography, Avatar } from '@mui/material';
 import GLOBALS from 'renderer/Globals'
 import { ipcRenderer } from 'renderer/helpers';
 import { IChannelProps } from 'renderer/interfaces';
