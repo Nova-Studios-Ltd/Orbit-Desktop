@@ -27,6 +27,10 @@ export function LoadMessageFeed(channelData: string) {
   return messages;
 }
 
-export function Authenticate(data: Credentials) {
-  ipcRenderer.send("begin_auth", data);
+export async function Authenticate(data: Credentials) {
+  return await ipcRenderer.invoke("begin_auth", data);
+}
+
+export async function Register(data: Credentials) {
+  ipcRenderer.send("register", data);
 }

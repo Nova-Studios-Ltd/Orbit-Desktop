@@ -1,40 +1,44 @@
 import React, { FormEventHandler, ReactChildren } from 'react';
-import { AuthFormProps } from 'renderer/interfaces';
+import { IAuthFormProps } from 'renderer/interfaces';
 import FormStatusField from './FormStatusField';
 import FormHeader from './FormHeader';
-import FormStatusTuple, { FormStatusType } from './FormStatusTypes';
+import { FormStatusType } from './FormStatusTypes';
 
 export default class AuthForm extends React.Component {
-  headerHeading: string;
-  headerBody: string;
-  handleSubmit: FormEventHandler<HTMLFormElement>;
-  children: ReactChildren;
+  headerHeading?: string;
+  headerBody?: string;
+  statusMessage?: string;
+  statusType?: FormStatusType;
+  handleSubmit?: FormEventHandler<HTMLFormElement>;
+  children?: JSX.Element|JSX.Element[];;
+  props: IAuthFormProps;
 
-  constructor(props: AuthFormProps) {
+  constructor(props: IAuthFormProps) {
     super(props);
+    this.props = props;
     this.handleSubmit = props.onSubmit;
-    this.headerHeading = props.headerHeading;
-    this.headerBody = props.headerBody;
+
+    this.headerHeading = props.headerHeading || "";
+    this.headerBody = props.headerBody || "";
+    if (props.status != null) {
+      this.statusMessage = props.status.message || "";
+      this.statusType = props.status.type || FormStatusType.default;
+    }
+    else {
+      this.statusMessage = "";
+      this.statusType = FormStatusType.default;
+    }
     this.children = props.children;
 
-    this.state = { status: props.status as FormStatusTuple };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  state = {
-    status: null as unknown as FormStatusTuple
-  }
-
-  updateStatus(message: string, type: FormStatusType) {
-    this.setState({ status: new FormStatusTuple(message, type) });
+    if (this.handleSubmit != null)
+      this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   render() {
     return(
       <form className="AuthForm_Container" onSubmit={this.handleSubmit}>
         <FormHeader heading={this.headerHeading} body={this.headerBody} />
-        <FormStatusField message={this.state.status != null ? this.state.status.message : ""} type={this.state.status != null ? this.state.status.type : FormStatusType.default} />
+        <FormStatusField message={this.statusMessage} type={this.statusType} />
         {this.children}
       </form>
     );

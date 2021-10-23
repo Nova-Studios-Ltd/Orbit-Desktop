@@ -1,23 +1,25 @@
 import React from 'react';
 import { TextField } from '@mui/material';
-import { FormTextFieldProps } from 'renderer/interfaces';
+import { IFormTextFieldProps } from 'renderer/interfaces';
 
 export default class FormTextField extends React.Component {
-  id: string
-  classNames: string
-  label: string
-  required?: boolean
-  sensitive?: boolean
-  onChange: any
+  id: string;
+  classNames?: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+  sensitive?: boolean;
+  onChange?: Function;
 
-  constructor(props: FormTextFieldProps) {
+  constructor(props: IFormTextFieldProps) {
     super(props);
-    this.id = props.id;
-    this.classNames = props.classNames;
-    this.label = props.label;
-    this.required = props.required;
-    this.sensitive = props.sensitive;
-    this.onChange = props.onChange;
+    this.id = props.id || "";
+    this.classNames = props.classNames || "";
+    this.label = props.label || "";
+    this.description = props.description || "";
+    this.required = props.required || false;
+    this.sensitive = props.sensitive || false;
+    this.onChange = props.onChange || function(){};
   }
 
   render() {
@@ -31,7 +33,7 @@ export default class FormTextField extends React.Component {
     }
 
     return (
-      <TextField className={finalClassNames} name={this.id} label={this.label} type={fieldType} required={this.required} variant="outlined" onChange={this.onChange} />
+      <TextField className={finalClassNames} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant="outlined" onChange={this.onChange} />
     );
   }
 }

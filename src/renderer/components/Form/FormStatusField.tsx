@@ -1,22 +1,19 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { FormStatusFieldProps } from 'renderer/interfaces';
+import { IFormStatusFieldProps } from 'renderer/interfaces';
 import { FormStatusType } from './FormStatusTypes';
 
 export default class FormStatusField extends React.Component {
-  constructor(props: FormStatusFieldProps) {
-    super(props);
-    this.state = {message: props.message as string, type: props.type as FormStatusType};
-  }
+  props: IFormStatusFieldProps;
 
-  state = {
-    message: "",
-    type: null as unknown as FormStatusType
+  constructor(props: IFormStatusFieldProps) {
+    super(props);
+    this.props = props;
   }
 
   getType()
   {
-    const { type } = this.state;
+    const { type } = this.props;
     switch (type)
     {
       case FormStatusType.info:
@@ -25,13 +22,11 @@ export default class FormStatusField extends React.Component {
         return "#f2c41d"
       case FormStatusType.error:
         return "#ff0011"
+      case FormStatusType.success:
+        return "#27D507"
       default:
         return "#000000"
     }
-  }
-
-  update(message: string, type: FormStatusType) {
-    this.setState({"message": message, "type": type});
   }
 
   render() {
@@ -41,7 +36,7 @@ export default class FormStatusField extends React.Component {
 
     return (
       <div>
-      <Typography className="Generic_Form_Item" variant="body1" style={styles}>{this.state.message}</Typography>
+      <Typography className="Generic_Form_Item" variant="body1" style={styles}>{this.props.message}</Typography>
     </div>
     );
   }

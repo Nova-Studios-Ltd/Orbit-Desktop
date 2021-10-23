@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import { AuthPageProps } from 'renderer/interfaces'
+import { IAuthPageProps } from 'renderer/interfaces'
 
 function LoginInit(form: LoginForm) {
 
@@ -15,7 +15,7 @@ function RegisterInit(form: RegisterForm) {
 export default class AuthPage extends React.Component {
   formType: Number;
 
-  constructor(props: AuthPageProps) {
+  constructor(props: IAuthPageProps) {
     super(props);
     this.formType = (() => {
       if (props.register)
@@ -28,16 +28,16 @@ export default class AuthPage extends React.Component {
   render() {
     const title = this.formType == 1 ? "Register" : "Login";
     const form = this.formType == 1 ? <RegisterForm init={RegisterInit}/> : <LoginForm init={LoginInit}/>;
+    const background = this.formType == 1 ? "Register_Page_Container_Type" : "Login_Page_Container_Type" ;
+    const AuthPageContainerClassNames = `Auth_Page_Container ${background}`
 
     return (
-      <div className="Auth_Page_Container">
+      <div className={AuthPageContainerClassNames}>
         <Helmet>
           <title>{title}</title>
         </Helmet>
 
-        <div className="Auth_Page_Left">
-          <div className="Auth_Page_Left_Art" />
-        </div>
+        <div className="Auth_Page_Left" />
 
         {form}
 

@@ -5,61 +5,62 @@ import FormStatusTuple, { FormStatusType } from './components/Form/FormStatusTyp
 
 // Page Props
 
-export interface AuthPageProps {
+export interface IAuthPageProps {
   login?: Boolean,
   register?: Boolean,
 }
 
-export interface ChatPageProps {
+export interface IChatPageProps {
 
 }
 
 // Generic Component Props
 
-export interface HeaderProps {
+export interface IHeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
   misc: any
 }
 
-export interface AuthFormProps {
-  headerHeading: string,
-  headerBody: string,
-  status: FormStatusTuple,
-  onSubmit: FormEventHandler<HTMLFormElement>,
-  children: ReactChildren
+export interface IAuthFormProps {
+  headerHeading?: string,
+  headerBody?: string,
+  status?: FormStatusTuple,
+  onSubmit?: FormEventHandler<HTMLFormElement>,
+  children?: JSX.Element|JSX.Element[]
 }
 
-export interface FormHeaderProps {
-  heading: string,
-  body: string
+export interface IFormHeaderProps {
+  heading?: string,
+  body?: string
 }
 
-export interface FormTextFieldProps {
+export interface IFormTextFieldProps {
   id: string,
-  classNames: string,
+  classNames?: string,
   label: string,
+  description?: string,
   required?: boolean,
   sensitive?: boolean,
-  onChange: any
+  onChange?: Function
 }
 
-export interface FormStatusFieldProps {
-  message: string,
-  type: FormStatusType
+export interface IFormStatusFieldProps {
+  message?: string,
+  type?: FormStatusType
 }
 
-export interface ChannelProps {
+export interface IChannelProps {
   channelName: string,
   channelID: string
 }
 
-export interface ChannelViewProps {
+export interface IChannelViewProps {
   init: Function
 }
 
-export interface MessageProps {
+export interface IMessageProps {
   uuid: string,
   author: string,
   message: string,
@@ -67,16 +68,16 @@ export interface MessageProps {
   ref: Ref<any>
 }
 
-export interface MessageImageProps {
+export interface IMessageImageProps {
   message: string,
   src: string
 }
 
-export interface MessageCanvasProps {
+export interface IMessageCanvasProps {
   init: Function
 }
 
-export interface MessageInputProps {
+export interface IMessageInputProps {
   init: Function,
   onMessagePush: Function
 }
@@ -90,21 +91,17 @@ export interface IMessageContent {
 
 // Custom Component Props
 
-export interface LoginFormProps extends AuthFormProps {
-  onSubmit: FormEventHandler<LoginFormElement>,
+export interface ILoginFormProps extends IAuthFormProps {
   init: Function
 }
 
-export interface RegisterFormProps {
+export interface IRegisterFormProps {
 
 }
 
-// Custom Form Elements
+// Implementation Prototypes
 
-export interface LoginFormElements extends HTMLFormControlsCollection {
-
-}
-
-export interface LoginFormElement extends HTMLFormElement {
-  elements: LoginFormElements
+export interface IAuthForm {
+  handleChange: Function,
+  handleSubmit: Function
 }

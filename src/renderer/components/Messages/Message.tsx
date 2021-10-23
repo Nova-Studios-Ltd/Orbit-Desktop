@@ -8,7 +8,7 @@ export class MessageImage extends React.Component {
   message: string;
   imageSrc: string;
 
-  constructor(props: MessageImageProps) {
+  constructor(props: IMessageImageProps) {
     super(props);
     this.message = props.message;
     this.imageSrc = props.src;
@@ -33,7 +33,7 @@ export class MessageVideo extends React.Component {
   message: string;
   videoSrc: string;
 
-  constructor(props: MessageImageProps) {
+  constructor(props: IMessageImageProps) {
     super(props);
     this.message = props.message;
     this.videoSrc = props.src;
@@ -49,7 +49,7 @@ export class MessageVideo extends React.Component {
             src={this.videoSrc}
             controls
             />
-            
+
           </Card>
       </div>
     );
@@ -75,7 +75,7 @@ export default class Message extends React.Component {
   ref: Ref<any>;
   divRef: Ref<HTMLDivElement>;
 
-  constructor(props: MessageProps) {
+  constructor(props: IMessageProps) {
     super(props);
     this.uuid = props.uuid;
     this.author = props.author || "Unknown";

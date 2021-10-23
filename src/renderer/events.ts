@@ -56,6 +56,9 @@ ipcRenderer.on('end_auth', (data: boolean) => {
     }
     return true;
   }
+  else {
+
+  }
 });
 
 //ipcRenderer.on('receivedChannelData', (data: string) => LoadMessageFeed(data));

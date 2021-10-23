@@ -1,9 +1,11 @@
 import { ipcMain, net, session } from 'electron';
 import Credentials from 'main/Credentials';
+import { FormAuthStatusType } from './FormAuthStatusTypes';
 
 const { request } = net;
 
-ipcMain.on('begin_auth', (event, data: Credentials) => {
+ipcMain.handle('begin_auth', (event, data: Credentials) => {
+  let result = FormAuthStatusType.unknown;
   const re = request({
     method: "GET",
     url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
@@ -13,19 +15,31 @@ ipcMain.on('begin_auth', (event, data: Credentials) => {
       const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
       session.defaultSession.cookies.set(cookie).then(() =>
       {
-        event.sender.send("end_auth", true);
-        return null;
+        const json_obj = JSON.parse(json.toString());
+        if (json_obj.token != null) {
+          event.sender.send("end_auth", true);
+          result = FormAuthStatusType.success;
+        }
+        event.sender.send("end_auth", false);
+        result = FormAuthStatusType.genericIncorrectUsernamePassword;
       }).catch((e) =>
       {
         console.error(e);
         event.sender.send("end_auth", false);
+        result = FormAuthStatusType.serverError;
       });
     });
   });
   re.on("error", (error) => {
     console.log(error);
+    result = FormAuthStatusType.networkTimeout;
   });
   re.end();
+  return result;
+});
+
+ipcMain.on('register', (event, data: Credentials) => {
+
 });
 
 ipcMain.on('requestChannels', (event, channel_uuid: string) => {

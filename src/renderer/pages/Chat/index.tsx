@@ -9,12 +9,12 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'renderer/Globals'
-import { ChatPageProps, MessageProps } from 'renderer/interfaces';
+import { IChatPageProps, IMessageProps } from 'renderer/interfaces';
 
 export default class ChatPage extends React.Component {
   messageReceivedSound: HTMLAudioElement;
 
-  constructor(props: ChatPageProps) {
+  constructor(props: IChatPageProps) {
     super(props);
     this.initCanvas = this.initCanvas.bind(this);
     this.initChannelView = this.initChannelView.bind(this);
@@ -75,7 +75,7 @@ export default class ChatPage extends React.Component {
     console.log(message);
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` } as MessageProps);
+      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` } as IMessageProps);
       canvas.append(msgObj);
     }
     else {

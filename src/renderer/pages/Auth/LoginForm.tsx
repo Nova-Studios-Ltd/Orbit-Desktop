@@ -3,15 +3,19 @@ import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'renderer/helpers';
 import Credentials from 'main/Credentials';
-import { LoginFormProps } from 'renderer/interfaces';
+import { ILoginFormProps } from 'renderer/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple, { FormStatusType } from 'renderer/components/Form/FormStatusTypes';
+import { FormAuthStatusType } from 'main/FormAuthStatusTypes';
+import { IAuthForm } from 'renderer/interfaces'
 
-class LoginForm extends React.Component {
-  constructor(props: LoginFormProps) {
+class LoginForm extends React.Component implements IAuthForm {
+  constructor(props: ILoginFormProps) {
     super(props);
     props.init(this);
+
+    this.state = {username: "", password: "", address: "", status: new FormStatusTuple(undefined, undefined)}
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,17 +25,33 @@ class LoginForm extends React.Component {
     username: "" as string,
     password: "" as string,
     address: ""  as string,
-    status: null as unknown as FormStatusTuple
+    status: new FormStatusTuple(undefined, undefined) as FormStatusTuple
   }
 
-  handleChange(event: any) {
+  handleChange(event: React.FormEvent<HTMLFormElement>) {
     const { name, value } = event.target;
     this.setState({[name]: value});
   }
 
-  handleSubmit(event: any) {
+  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { username, password, address } = this.state;
-    Authenticate(new Credentials(username, password, address));
+    Authenticate(new Credentials(username, password, address)).then((result) => {
+      console.warn(result);
+      switch (result) {
+        case FormAuthStatusType.success:
+          this.updateStatus("Yay, logged in successfully! Redirecting...", FormStatusType.success);
+          break;
+        case FormAuthStatusType.genericIncorrectUsernamePassword:
+          this.updateStatus("Incorrect Username or Password", FormStatusType.error);
+          break;
+        case FormAuthStatusType.networkTimeout:
+          this.updateStatus("Unable to connect to server (are you connected to the internet?)", FormStatusType.error);
+          break;
+        case FormAuthStatusType.serverError:
+          this.updateStatus("Uhh, the server seems to have encountered an error. Try again?", FormStatusType.error);
+          break;
+      }
+    });
     event.preventDefault();
   }
 
@@ -40,10 +60,10 @@ class LoginForm extends React.Component {
   }
 
   render() {
-    const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`
+    const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading="Nova Chat 3.0" headerBody="Welcome!" status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading="Nova Chat 3.0" headerBody="Welcome! Please log in to continue." status={this.state.status}>
         <FormTextField id="username" label="Username" required onChange={this.handleChange} />
         <FormTextField id="password" label="Password" required sensitive onChange={this.handleChange} />
         <br />
