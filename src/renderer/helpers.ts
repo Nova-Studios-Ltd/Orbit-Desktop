@@ -17,10 +17,6 @@ export function Navigate(path: string, data: any)
   }
 }
 
-export function Logout() {
-  Navigate("/login", null);
-}
-
 export function LoadMessageFeed(channelData: string) {
   const messages = JSON.parse(channelData);
   console.log(messages);

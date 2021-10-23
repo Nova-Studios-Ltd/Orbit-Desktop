@@ -3,12 +3,12 @@ import { List as ListIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Logout, LoadMessageFeed, ipcRenderer, events } from 'renderer/helpers';
+import { Navigate, LoadMessageFeed, ipcRenderer, events } from 'renderer/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
-import GLOBALS from 'renderer/Globals'
+import GLOBALS from 'renderer/globals'
 import { IChatPageProps, IMessageProps } from 'renderer/interfaces';
 
 export default class ChatPage extends React.Component {
@@ -21,6 +21,7 @@ export default class ChatPage extends React.Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
+    this.Logout = this.Logout.bind(this);
 
     this.messageReceivedSound = new Audio("assets/sounds/bell.oga");
   }
@@ -133,6 +134,15 @@ export default class ChatPage extends React.Component {
     }
   }
 
+  Logout() {
+    ipcRenderer.removeAllListeners('receivedChannelData');
+    ipcRenderer.removeAllListeners('receivedChannelUpdateEvent');
+    ipcRenderer.removeAllListeners('receivedMessageEditEvent');
+    ipcRenderer.removeAllListeners('receivedChannels');
+    ipcRenderer.removeAllListeners('receivedChannelInfo');
+    Navigate("/login", null);
+  }
+
   render() {
     return (
       <div className="Chat_Page_Container">
@@ -145,7 +155,7 @@ export default class ChatPage extends React.Component {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className="Chat_Page_Body_Right">
-            <Header caption="Chat" icon={<LogoutIcon />} onClick={Logout} />
+            <Header caption="Chat" icon={<LogoutIcon />} onClick={this.Logout} />
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>

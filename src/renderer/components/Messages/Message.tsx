@@ -1,7 +1,7 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
 import { ipcRenderer } from 'renderer/helpers';
-import GLOBALS from 'renderer/Globals';
+import GLOBALS from 'renderer/globals';
 import { IMessageProps, IMessageImageProps, IMessageContent } from 'renderer/interfaces';
 
 export class MessageImage extends React.Component {
@@ -59,7 +59,7 @@ export class MessageVideo extends React.Component {
 class MessageContent extends React.Component {
   type: string;
   url: string;
-  
+
   constructor(props: IMessageContent) {
     super(props);
     this.type = props.type;
@@ -95,13 +95,13 @@ export default class Message extends React.Component {
   async componentDidMount() {
     if (this.divRef != null)
       this.divRef.current.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
-    
+
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     if (links == null) return;
     let messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
-      if (this.imageURL(link) || await this.checkImageHeader(link)) { 
+      if (this.imageURL(link) || await this.checkImageHeader(link)) {
         messageLinks.push(new MessageContent({type: 'image', url: link}));
       }
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
