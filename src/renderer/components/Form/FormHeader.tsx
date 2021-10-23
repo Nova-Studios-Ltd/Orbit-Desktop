@@ -3,13 +3,13 @@ import { Typography } from '@mui/material';
 import { FormHeaderProps } from 'renderer/interfaces';
 
 export default class FormHeader extends React.Component {
-  heading: string;
-  body: string;
+  heading?: string;
+  body?: string;
 
   constructor(props: FormHeaderProps) {
     super(props);
-    this.heading = props.heading;
-    this.body = props.body;
+    this.heading = props.heading || "";
+    this.body = props.body || "";
   }
 
   render() {

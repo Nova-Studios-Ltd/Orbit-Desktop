@@ -24,30 +24,31 @@ export interface HeaderProps {
 }
 
 export interface AuthFormProps {
-  headerHeading: string,
-  headerBody: string,
-  status: FormStatusTuple,
-  onSubmit: FormEventHandler<HTMLFormElement>,
-  children: ReactChildren
+  headerHeading?: string,
+  headerBody?: string,
+  status?: FormStatusTuple,
+  onSubmit?: FormEventHandler<HTMLFormElement>,
+  children?: JSX.Element|JSX.Element[]
 }
 
 export interface FormHeaderProps {
-  heading: string,
-  body: string
+  heading?: string,
+  body?: string
 }
 
 export interface FormTextFieldProps {
   id: string,
-  classNames: string,
+  classNames?: string,
   label: string,
+  description?: string,
   required?: boolean,
   sensitive?: boolean,
-  onChange: any
+  onChange?: Function
 }
 
 export interface FormStatusFieldProps {
-  message: string,
-  type: FormStatusType
+  message?: string,
+  type?: FormStatusType
 }
 
 export interface ChannelProps {
@@ -86,7 +87,6 @@ export interface MessageInputProps {
 // Custom Component Props
 
 export interface LoginFormProps extends AuthFormProps {
-  onSubmit: FormEventHandler<LoginFormElement>,
   init: Function
 }
 
@@ -94,12 +94,9 @@ export interface RegisterFormProps {
 
 }
 
-// Custom Form Elements
+// Implementation Prototypes
 
-export interface LoginFormElements extends HTMLFormControlsCollection {
-
-}
-
-export interface LoginFormElement extends HTMLFormElement {
-  elements: LoginFormElements
+export interface IAuthForm {
+  handleChange: Function,
+  handleSubmit: Function
 }
