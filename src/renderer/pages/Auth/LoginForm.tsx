@@ -15,6 +15,8 @@ class LoginForm extends React.Component implements IAuthForm {
     super(props);
     props.init(this);
 
+    this.state = {username: "", password: "", address: "", status: new FormStatusTuple(undefined, undefined)}
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
