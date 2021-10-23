@@ -2,7 +2,7 @@ import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material
 import React, { DOMElement, Ref } from 'react';
 import { ipcRenderer } from 'renderer/helpers';
 import GLOBALS from 'renderer/Globals';
-import { MessageProps, MessageImageProps, IMessageContent } from 'renderer/interfaces';
+import { IMessageProps, IMessageImageProps, IMessageContent } from 'renderer/interfaces';
 
 export class MessageImage extends React.Component {
   message: string;
