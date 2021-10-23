@@ -81,6 +81,11 @@ export interface MessageInputProps {
   onMessagePush: Function
 }
 
+export interface IMessageContent {
+  type: string,
+  url: string
+}
+
 // Custom Instances
 
 // Custom Component Props

@@ -2,7 +2,7 @@ import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material
 import React, { DOMElement, Ref } from 'react';
 import { ipcRenderer } from 'renderer/helpers';
 import GLOBALS from 'renderer/Globals';
-import { MessageProps, MessageImageProps } from 'renderer/interfaces';
+import { MessageProps, MessageImageProps, IMessageContent } from 'renderer/interfaces';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -56,6 +56,17 @@ export class MessageVideo extends React.Component {
   }
 }
 
+class MessageContent extends React.Component {
+  type: string;
+  url: string;
+  
+  constructor(props: IMessageContent) {
+    super(props);
+    this.type = props.type;
+    this.url = props.url;
+  }
+}
+
 export default class Message extends React.Component {
   uuid: string;
   author: string;
@@ -77,9 +88,27 @@ export default class Message extends React.Component {
     this.divRef = React.createRef();
   }
 
-  componentDidMount() {
+  state = {
+    links: [] as Array<MessageContent>
+  }
+
+  async componentDidMount() {
     if (this.divRef != null)
       this.divRef.current.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+    
+    let links = this.message.match(/(https:\/\/[\S]*)/g);
+    if (links == null) return;
+    let messageLinks = [] as Array<MessageContent>;
+    for (let l = 0; l < links.length; l++) {
+      const link = links[l];
+      if (this.imageURL(link) || await this.checkImageHeader(link)) { 
+        messageLinks.push(new MessageContent({type: 'image', url: link}));
+      }
+      else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
+        messageLinks.push(new MessageContent({type: 'video', url: link}));
+      }
+    }
+    this.setState({links: messageLinks});
   }
 
   validURL(str: string) {
@@ -87,8 +116,26 @@ export default class Message extends React.Component {
     return !!pattern.test(str);
   }
 
+  async checkImageHeader(url: string) {
+    try {
+      const res = await fetch(url, {method: 'HEAD'});
+      const buff = await res.blob();
+      return buff.type.startsWith('image/');
+    }
+    catch {return false;}
+  }
+
+  async checkVideoHeader(url: string) {
+    try {
+      const res = await fetch(url, {method: 'HEAD'});
+      const buff = await res.blob();
+      return buff.type.startsWith('video/');
+    }
+    catch {return false;}
+  }
+
   imageURL(url: string) {
-    return(url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
+    return (url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
   }
 
   videoURL(url: string) {
@@ -101,15 +148,16 @@ export default class Message extends React.Component {
 
   render() {
     let messageContentObject = [] as any;
-    let content = this.message.split(/(https:\/\/[a-zA-Z0-9\_\-\.\/\%]*)/g);
-    let links = this.message.match(/(https:\/\/[a-zA-Z0-9\_\-\.\/\%]*)/g);
+    let content = this.message.split(/(https:\/\/[\S]*)/g);
+    let links = this.message.match(/(https:\/\/[\S]*)/g);
     let containsText = false;
+    console.log(links);
     content.forEach(word => {
       if (!this.validURL(word) && word != "") containsText = true;
     });
 
     if (containsText) {
-      const mes = this.message.split(/(https:\/\/[a-zA-Z0-9\_\-\.\/\%]*)/g);
+      const mes = this.message.split(/(https:\/\/[\S]*)/g);
       var messageParts = [] as any[];
       console.log(mes);
       mes.forEach(word => {
@@ -120,12 +168,19 @@ export default class Message extends React.Component {
       messageContentObject.push(<Typography className="Chat_Message_Content">{messageParts}</Typography>);
     }
 
-    if (links != null && links.length > 0) {
+    /*if (links != null && links.length > 0) {
       links.forEach(link => {
         if (this.imageURL(link)) messageContentObject.push(<MessageImage key={link} message={link} src={link} />);
         else if (this.videoURL(link)) messageContentObject.push(<MessageVideo key={link} message={link} src={link} />);
       });
-    }
+    }*/
+    console.log(this.state.links);
+    this.state.links.forEach(link => {
+      if (link.type == 'image')
+        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'video')
+        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
+    });
 
     return (
       <div className="Chat_Message" ref={this.divRef}>

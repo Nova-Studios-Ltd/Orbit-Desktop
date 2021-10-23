@@ -93,7 +93,7 @@ export default class ChatPage extends React.Component {
   addChannel(channel: any) {
     const channelList = this.state.ChannelList;
     if (channelList != null) {
-      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID });
+      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID});
       channelList.addChannel(channelObj);
     }
     else {
