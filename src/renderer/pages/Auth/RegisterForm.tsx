@@ -5,6 +5,8 @@ import { LoginFormProps } from 'renderer/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import { IAuthForm } from 'renderer/interfaces'
+import { Register } from 'renderer/helpers';
+import Credentials from 'main/Credentials';
 
 class RegisterForm extends React.Component implements IAuthForm {
   constructor(props: LoginFormProps) {
@@ -29,7 +31,8 @@ class RegisterForm extends React.Component implements IAuthForm {
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    console.log(`Username: ${this.state.username}; Password: ${this.state.password}`);
+    const { username, password, address } = this.state;
+    Register(new Credentials(username, password, address));
     event.preventDefault();
   }
 

@@ -38,6 +38,10 @@ ipcMain.handle('begin_auth', (event, data: Credentials) => {
   return result;
 });
 
+ipcMain.on('register', (event, data: Credentials) => {
+
+});
+
 ipcMain.on('requestChannels', (event, channel_uuid: string) => {
   const re = request({
     method: 'GET',
