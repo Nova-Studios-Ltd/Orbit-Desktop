@@ -4,7 +4,7 @@ import { FormAuthStatusType } from './FormAuthStatusTypes';
 
 const { request } = net;
 
-ipcMain.handle('begin_auth', (event, data: Credentials) => {
+ipcMain.handle('begin_auth', async (event, data: Credentials) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
     method: "GET",
@@ -35,6 +35,12 @@ ipcMain.handle('begin_auth', (event, data: Credentials) => {
     result = FormAuthStatusType.networkTimeout;
   });
   re.end();
+  await async function() {
+    while (result == 6) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }();
+
   return result;
 });
 

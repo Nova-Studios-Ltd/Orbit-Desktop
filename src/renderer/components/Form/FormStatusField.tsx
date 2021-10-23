@@ -36,8 +36,8 @@ export default class FormStatusField extends React.Component {
 
     return (
       <div>
-      <Typography className="Generic_Form_Item" variant="body1" style={styles}>{this.props.message}</Typography>
-    </div>
+        <Typography className="Generic_Form_Item" variant="body1" style={styles}>{this.props.message}</Typography>
+      </div>
     );
   }
 }
