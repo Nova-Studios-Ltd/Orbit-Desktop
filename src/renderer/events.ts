@@ -49,7 +49,7 @@ ipcRenderer.on('end_auth', (data: boolean) => {
       console.error(error);
     };
     socket.onopen = function () {
-      socket.send("Test");
+      socket.send(token);
     };
     socket.onclose = function (event) {
       console.log(event);
