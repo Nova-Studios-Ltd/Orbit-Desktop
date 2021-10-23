@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
-import { HeaderProps } from 'renderer/interfaces';
+import { IHeaderProps } from 'renderer/interfaces';
 
 export default class Header extends React.Component {
   caption: string;
@@ -8,7 +8,7 @@ export default class Header extends React.Component {
   iconButtonClicked: Function;
   misc: any;
 
-  constructor(props: HeaderProps) {
+  constructor(props: IHeaderProps) {
     super(props);
     this.caption = props.caption;
     this.icon = props.icon;

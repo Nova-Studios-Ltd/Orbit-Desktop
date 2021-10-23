@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField } from '@mui/material';
-import { FormTextFieldProps } from 'renderer/interfaces';
+import { IFormTextFieldProps } from 'renderer/interfaces';
 
 export default class FormTextField extends React.Component {
   id: string;
@@ -11,7 +11,7 @@ export default class FormTextField extends React.Component {
   sensitive?: boolean;
   onChange?: Function;
 
-  constructor(props: FormTextFieldProps) {
+  constructor(props: IFormTextFieldProps) {
     super(props);
     this.id = props.id || "";
     this.classNames = props.classNames || "";

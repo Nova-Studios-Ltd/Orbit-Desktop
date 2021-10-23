@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send, Logout as LogoutIcon } from '@mui/icons-material';
-import { MessageInputProps } from 'renderer/interfaces';
+import { IMessageInputProps } from 'renderer/interfaces';
 
 export default class MessageInput extends React.Component {
   forwardMessageCallback: Function;
 
-  constructor(props: MessageInputProps) {
+  constructor(props: IMessageInputProps) {
     super(props);
 
     this.handleKeyDown = this.handleKeyDown.bind(this);

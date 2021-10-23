@@ -2,13 +2,13 @@ import React from 'react';
 import { Card, Typography } from '@mui/material';
 import GLOBALS from 'renderer/Globals'
 import { ipcRenderer } from 'renderer/helpers';
-import { ChannelProps } from 'renderer/interfaces';
+import { IChannelProps } from 'renderer/interfaces';
 
 export default class Channel extends React.Component {
   channelName: string;
   channelID: string;
 
-  constructor(props: ChannelProps) {
+  constructor(props: IChannelProps) {
     super(props);
     this.channelName = props.channelName;
     this.channelID = props.channelID;

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { FormHeaderProps } from 'renderer/interfaces';
+import { IFormHeaderProps } from 'renderer/interfaces';
 
 export default class FormHeader extends React.Component {
   heading?: string;
   body?: string;
 
-  constructor(props: FormHeaderProps) {
+  constructor(props: IFormHeaderProps) {
     super(props);
     this.heading = props.heading || "";
     this.body = props.body || "";

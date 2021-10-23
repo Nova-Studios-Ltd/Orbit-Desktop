@@ -5,25 +5,25 @@ import FormStatusTuple, { FormStatusType } from './components/Form/FormStatusTyp
 
 // Page Props
 
-export interface AuthPageProps {
+export interface IAuthPageProps {
   login?: Boolean,
   register?: Boolean,
 }
 
-export interface ChatPageProps {
+export interface IChatPageProps {
 
 }
 
 // Generic Component Props
 
-export interface HeaderProps {
+export interface IHeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
   misc: any
 }
 
-export interface AuthFormProps {
+export interface IAuthFormProps {
   headerHeading?: string,
   headerBody?: string,
   status?: FormStatusTuple,
@@ -31,12 +31,12 @@ export interface AuthFormProps {
   children?: JSX.Element|JSX.Element[]
 }
 
-export interface FormHeaderProps {
+export interface IFormHeaderProps {
   heading?: string,
   body?: string
 }
 
-export interface FormTextFieldProps {
+export interface IFormTextFieldProps {
   id: string,
   classNames?: string,
   label: string,
@@ -46,21 +46,21 @@ export interface FormTextFieldProps {
   onChange?: Function
 }
 
-export interface FormStatusFieldProps {
+export interface IFormStatusFieldProps {
   message?: string,
   type?: FormStatusType
 }
 
-export interface ChannelProps {
+export interface IChannelProps {
   channelName: string,
   channelID: string
 }
 
-export interface ChannelViewProps {
+export interface IChannelViewProps {
   init: Function
 }
 
-export interface MessageProps {
+export interface IMessageProps {
   uuid: string,
   author: string,
   message: string,
@@ -68,16 +68,16 @@ export interface MessageProps {
   ref: Ref<any>
 }
 
-export interface MessageImageProps {
+export interface IMessageImageProps {
   message: string,
   src: string
 }
 
-export interface MessageCanvasProps {
+export interface IMessageCanvasProps {
   init: Function
 }
 
-export interface MessageInputProps {
+export interface IMessageInputProps {
   init: Function,
   onMessagePush: Function
 }
@@ -86,11 +86,11 @@ export interface MessageInputProps {
 
 // Custom Component Props
 
-export interface LoginFormProps extends AuthFormProps {
+export interface ILoginFormProps extends IAuthFormProps {
   init: Function
 }
 
-export interface RegisterFormProps {
+export interface IRegisterFormProps {
 
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import { AuthPageProps } from 'renderer/interfaces'
+import { IAuthPageProps } from 'renderer/interfaces'
 
 function LoginInit(form: LoginForm) {
 
@@ -15,7 +15,7 @@ function RegisterInit(form: RegisterForm) {
 export default class AuthPage extends React.Component {
   formType: Number;
 
-  constructor(props: AuthPageProps) {
+  constructor(props: IAuthPageProps) {
     super(props);
     this.formType = (() => {
       if (props.register)

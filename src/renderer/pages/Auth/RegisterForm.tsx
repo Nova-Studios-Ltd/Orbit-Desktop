@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { LoginFormProps } from 'renderer/interfaces';
+import { ILoginFormProps } from 'renderer/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import { IAuthForm } from 'renderer/interfaces'
@@ -9,7 +9,7 @@ import { Register } from 'renderer/helpers';
 import Credentials from 'main/Credentials';
 
 class RegisterForm extends React.Component implements IAuthForm {
-  constructor(props: LoginFormProps) {
+  constructor(props: ILoginFormProps) {
     super(props);
     props.init(this);
 
