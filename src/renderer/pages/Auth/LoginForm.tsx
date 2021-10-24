@@ -36,7 +36,7 @@ class LoginForm extends React.Component implements IAuthForm {
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { username, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
-    Authenticate(new Credentials(username, password, address)).then((result) => {
+    Authenticate(new Credentials({username: username, password: password, address: address})).then((result) => {
       switch (result) {
         case FormAuthStatusType.success:
           this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);

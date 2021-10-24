@@ -1,9 +1,13 @@
-export default class Credentials {
-  username: string;
-  password: string;
-  address: string;
+import { ICredentialsProps } from "renderer/interfaces";
 
-  constructor(username, password, address) {
+export default class Credentials {
+  email?: string;
+  username?: string;
+  password?: string;
+  address?: string;
+
+  constructor({ email, username, password, address} : ICredentialsProps) {
+    this.email = email;
     this.username = username;
     this.password = password;
     this.address = address;

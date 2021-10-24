@@ -66,7 +66,7 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
       }
     })
   });
-  const data = JSON.stringify({username: creds.username, password: creds.password, email: 'N/A'})
+  const data = JSON.stringify({username: creds.username, password: creds.password, email: creds.email})
   re.write(data);
   re.end();
 
