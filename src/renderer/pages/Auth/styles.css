@@ -1,5 +1,5 @@
 Link {
-  cursor: "pointer";
+  cursor: 'pointer';
 }
 
 .Auth_Page_Container {
@@ -20,8 +20,9 @@ Link {
 }
 
 .Auth_Page_Left {
-  width: 60rem;
+  width: 70%;
   height: 100vh;
+  transition: width 200ms ease;
 }
 
 .Authentication_Form_AdvancedOptionsAccordion {
@@ -30,4 +31,16 @@ Link {
 
 .LoginFormAccordionOption {
   width: 100%;
+}
+
+@media screen and (min-width:800px) and (max-width: 900px) {
+  .Auth_Page_Left {
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .Auth_Page_Left {
+    width: 0%;
+  }
 }

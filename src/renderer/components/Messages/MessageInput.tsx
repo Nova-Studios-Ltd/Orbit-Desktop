@@ -18,7 +18,7 @@ export default class MessageInput extends React.Component {
   }
 
   state = {
-    message: "" as string
+    message: '' as string
   }
 
   forwardMessage(message: string) {
@@ -26,7 +26,7 @@ export default class MessageInput extends React.Component {
       this.forwardMessageCallback(message);
     }
     else {
-      console.error("forwardMessageCallback is null");
+      console.error('forwardMessageCallback is null');
     }
   }
 
@@ -37,13 +37,13 @@ export default class MessageInput extends React.Component {
   handleKeyDown(event: any) {
     if (event.keyCode === 13) {
       this.forwardMessage(this.state.message);
-      this.setMessageTo("");
+      this.setMessageTo('');
     }
   }
 
   handleClick(event: any) {
     this.forwardMessage(this.state.message);
-    this.setMessageTo("");
+    this.setMessageTo('');
   }
 
   setMessageTo(text: string) {
@@ -52,9 +52,9 @@ export default class MessageInput extends React.Component {
 
   render() {
     return (
-      <div className="Chat_Page_Bottom">
-          <TextField className="Chat_MessageInput" placeholder="Type your message here..." value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-          <IconButton className="Chat_IconButton" onClick={this.handleClick}><Send/></IconButton>
+      <div className='Chat_Page_Bottom'>
+          <TextField className='Chat_MessageInput' placeholder='Type your message here...' value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+          <IconButton className='Chat_IconButton' onClick={this.handleClick}><Send/></IconButton>
       </div>
     );
   }

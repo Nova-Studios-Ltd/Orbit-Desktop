@@ -1,18 +1,20 @@
 import React from 'react';
-import { List as ListIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import { Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, LoadMessageFeed, ipcRenderer, events } from 'renderer/helpers';
+import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel } from 'renderer/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'renderer/globals'
-import { IChatPageProps, IMessageProps } from 'renderer/interfaces';
+import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'renderer/interfaces';
+import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 
 export default class ChatPage extends React.Component {
   messageReceivedSound: HTMLAudioElement;
+  UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
 
   constructor(props: IChatPageProps) {
     super(props);
@@ -23,12 +25,29 @@ export default class ChatPage extends React.Component {
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Logout = this.Logout.bind(this);
 
-    this.messageReceivedSound = new Audio("assets/sounds/bell.oga");
+    this.UserDropdownMenuFunctions = { logout: this.Logout };
+
+    this.messageReceivedSound = new Audio('assets/sounds/bell.oga');
   }
 
   state = {
     CanvasObject: null as unknown as MessageCanvas,
     ChannelList: null as unknown as ChannelView
+  }
+
+  preloadChannel() {
+    if (GLOBALS.currentChannel.length < 1) {
+      const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
+      if (lastOpenedChannel != null) {
+        ipcRenderer.send('requestChannelData', lastOpenedChannel);
+      } else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null) {
+        ipcRenderer.send('requestChannelData', this.state.ChannelList.state.channels[0].channelID);
+        setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
+      }
+    }
+    else {
+      ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
+    }
   }
 
   initCanvas(canvas: MessageCanvas) {
@@ -42,26 +61,26 @@ export default class ChatPage extends React.Component {
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
-      console.error("Message canvas initialization error.")
+      console.error('Message canvas initialization error.')
     }
   }
 
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
-      this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse("{\"channelName\":\"Main Channel\", \"channelID\":\"0\"}"))*/);
+      this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse('{\'channelName\':\'Main Channel\', \'channelID\':\'0\'}'))*/);
       ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
       ipcRenderer.on('receivedChannelInfo', (data: string) => this.onReceivedChannelInfo(JSON.parse(data)));
       events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
-      console.error("Channel list initialization error.")
+      console.error('Channel list initialization error.')
     }
   }
 
   onReceivedChannels(data: any) {
     for (let channel = 0; channel < data.length; channel++) {
       //this.addChannel({channelName: data[channel], channelID: data[channel]});
-      ipcRenderer.send("requestChannelInfo", data[channel]);
+      ipcRenderer.send('requestChannelInfo', data[channel]);
     }
   }
 
@@ -80,7 +99,7 @@ export default class ChatPage extends React.Component {
       canvas.append(msgObj);
     }
     else {
-      console.error("(When Appending Message) Canvas is null");
+      console.error('(When Appending Message) Canvas is null');
     }
   }
 
@@ -94,11 +113,12 @@ export default class ChatPage extends React.Component {
   addChannel(channel: any) {
     const channelList = this.state.ChannelList;
     if (channelList != null) {
-      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID});
+      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID, channelIcon: 'https://cdn.novastudios.tk/public/54c241e.png'});
       channelList.addChannel(channelObj);
+      this.preloadChannel();
     }
     else {
-      console.error("(When Adding Channel) ChannelList is null");
+      console.error('(When Adding Channel) ChannelList is null');
     }
   }
 
@@ -140,22 +160,22 @@ export default class ChatPage extends React.Component {
     ipcRenderer.removeAllListeners('receivedMessageEditEvent');
     ipcRenderer.removeAllListeners('receivedChannels');
     ipcRenderer.removeAllListeners('receivedChannelInfo');
-    Navigate("/login", null);
+    Navigate('/login', null);
   }
 
   render() {
     return (
-      <div className="Chat_Page_Container">
+      <div className='Chat_Page_Container'>
         <Helmet>
           <title>Chat</title>
         </Helmet>
-        <div className="Chat_Page_Body">
-          <div className="Chat_Page_Body_Left">
-            <Header caption="Channels" icon={<ListIcon />} />
+        <div className='Chat_Page_Body'>
+          <div className='Chat_Page_Body_Left'>
+            <Header caption='Channels' icon={<ListIcon />} />
             <ChannelView init={this.initChannelView} />
           </div>
-          <div className="Chat_Page_Body_Right">
-            <Header caption="Chat" icon={<LogoutIcon />} onClick={this.Logout} />
+          <div className='Chat_Page_Body_Right'>
+            <Header caption='Chat' icon={<ChatIcon />} misc={<UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions}/>} />
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>

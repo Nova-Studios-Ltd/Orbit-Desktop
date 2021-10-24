@@ -24,9 +24,13 @@ export function LoadMessageFeed(channelData: string) {
 }
 
 export async function Authenticate(data: Credentials) {
-  return await ipcRenderer.invoke("begin_auth", data);
+  return await ipcRenderer.invoke('begin_auth', data);
 }
 
 export async function Register(data: Credentials) {
-  return await ipcRenderer.invoke("register", data);
+  return await ipcRenderer.invoke('register', data);
+}
+
+export function setDefaultChannel(channelID: string) {
+  localStorage.setItem('lastOpenedChannel', channelID);
 }

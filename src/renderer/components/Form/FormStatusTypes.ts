@@ -14,7 +14,7 @@ export default class FormStatusTuple {
     if (message != null)
     this.message = message;
     else
-      this.message = "";
+      this.message = '';
 
     if (type != null)
       this.type = type;

@@ -41,27 +41,6 @@
   margin-bottom: auto;
 }
 
-.Chat_Page_ChannelView {
-  display: flex;
-  flex-direction: column;
-  width: 20rem;
-  height: 100%;
-  background: rgba(25, 25, 25, 0.1);
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.Chat_Page_Channel {
-  height: 50px;
-  padding: 5px;
-  margin: 0.15rem;
-  position: relative;
-  box-sizing: border-box;
-  background: rgb(200, 200, 200);
-  cursor: pointer;
-}
-
 .Chat_MessageInput {
   position: relative;
   width: 100%;
@@ -110,13 +89,4 @@
 .Chat_Message_Image {
   height: 50%;
   width: 50%;
-}
-
-.Chat_Channel_Caption {
-  line-height: 1 !important;
-}
-
-.Chat_Channel_Message_Preview {
-  font-size: smaller !important;
-  color: rgb(80, 80, 80) !important;
 }

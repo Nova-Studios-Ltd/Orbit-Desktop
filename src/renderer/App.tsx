@@ -9,16 +9,16 @@ import 'renderer/events';
 function App() {
   return (
     <Router history={history}>
-      <Route exact path={["/", "/index", "/index.html"]}>
-        <Redirect to="/login" />
+      <Route exact path={['/', '/index', '/index.html']}>
+        <Redirect to='/login' />
       </Route>
-      <Route path="/login">
+      <Route path='/login'>
         <AuthPage login/>
       </Route>
-      <Route path="/register">
+      <Route path='/register'>
         <AuthPage register/>
       </Route>
-      <Route path="/chat" component={ChatPage} />
+      <Route path='/chat' component={ChatPage} />
     </Router>
   );
 }

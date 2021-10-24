@@ -1,8 +1,10 @@
 import React from 'react';
+import { IChannelViewProps } from 'renderer/interfaces';
 import Channel from './Channel';
 
+
 export default class ChannelView extends React.Component {
-  constructor(props: ChannelViewProps) {
+  constructor(props: IChannelViewProps) {
     super(props);
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
@@ -28,7 +30,7 @@ export default class ChannelView extends React.Component {
     const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} channelID={c.channelID} />));
 
     return(
-      <div className="Chat_Page_ChannelView">
+      <div className='Chat_ChannelView'>
           {channels}
       </div>
     );

@@ -15,16 +15,16 @@ class LoginForm extends React.Component implements IAuthForm {
     super(props);
     props.init(this);
 
-    this.state = {username: "", password: "", address: "", status: new FormStatusTuple(undefined, undefined)}
+    this.state = {username: '', password: '', address: '', status: new FormStatusTuple(undefined, undefined)}
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   state = {
-    username: "" as string,
-    password: "" as string,
-    address: ""  as string,
+    username: '' as string,
+    password: '' as string,
+    address: ''  as string,
     status: new FormStatusTuple(undefined, undefined) as FormStatusTuple
   }
 
@@ -35,19 +35,20 @@ class LoginForm extends React.Component implements IAuthForm {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { username, password, address } = this.state;
+    this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
     Authenticate(new Credentials(username, password, address)).then((result) => {
       switch (result) {
         case FormAuthStatusType.success:
-          this.updateStatus("Yay, logged in successfully! Redirecting...", FormStatusType.success);
+          this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);
           break;
         case FormAuthStatusType.genericIncorrectUsernamePassword:
-          this.updateStatus("Incorrect Username or Password", FormStatusType.error);
+          this.updateStatus('Incorrect Username or Password', FormStatusType.error);
           break;
         case FormAuthStatusType.networkTimeout:
-          this.updateStatus("Unable to connect to server (are you connected to the internet?)", FormStatusType.error);
+          this.updateStatus('Unable to connect to server (try checking your internet connection, or making sure the address is correct)', FormStatusType.error);
           break;
         case FormAuthStatusType.serverError:
-          this.updateStatus("Uhh, the server seems to have encountered an error. Try again?", FormStatusType.error);
+          this.updateStatus('Uhh, the server seems to have encountered an error. Try again?', FormStatusType.error);
           break;
       }
     });
@@ -62,22 +63,22 @@ class LoginForm extends React.Component implements IAuthForm {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading="Nova Chat 3.0" headerBody="Welcome! Please log in to continue." status={this.state.status}>
-        <FormTextField id="username" label="Username" required onChange={this.handleChange} />
-        <FormTextField id="password" label="Password" required sensitive onChange={this.handleChange} />
+      <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Welcome! Please log in to continue.' status={this.state.status}>
+        <FormTextField id='username' label='Username' required onChange={this.handleChange} />
+        <FormTextField id='password' label='Password' required sensitive onChange={this.handleChange} />
         <br />
         <Accordion disabled className={AdvancedOptionsAccordionStyles}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body1">Advanced</Typography>
+            <Typography variant='body1'>Advanced</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <FormTextField classNames="LoginFormAccordionOption" id="address" label="Server Address" onChange={this.handleChange} />
+            <FormTextField classNames='LoginFormAccordionOption' id='address' label='Server Address' onChange={this.handleChange} />
           </AccordionDetails>
         </Accordion>
         <br />
-        <Button className="Generic_Form_Item" variant="outlined" type="submit">Login</Button>
+        <Button className='Generic_Form_Item' variant='outlined' type='submit'>Login</Button>
         <br />
-        <Typography className="Generic_Form_Item" variant="body1">Don&apos;t have an account? <Link href="/register">Sign Up</Link></Typography>
+        <Typography className='Generic_Form_Item' variant='body1'>Don&apos;t have an account? <Link href='/register'>Sign Up</Link></Typography>
       </AuthForm>
     );
   }

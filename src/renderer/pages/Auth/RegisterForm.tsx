@@ -13,16 +13,16 @@ class RegisterForm extends React.Component implements IAuthForm {
     super(props);
     props.init(this);
 
-    this.state = { username: "", password: "", address: ""}
+    this.state = { username: '', password: '', address: ''}
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   state = {
-    username: "" as string,
-    password: "" as string,
-    address: ""  as string
+    username: '' as string,
+    password: '' as string,
+    address: ''  as string
   }
 
   handleChange(event: React.FormEvent<HTMLInputElement>) {
@@ -44,22 +44,22 @@ class RegisterForm extends React.Component implements IAuthForm {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading="Nova Chat 3.0" headerBody="Register for a NovaChat account.">
-        <FormTextField id="username" classNames="Generic_Form_Item_Left" label="Username" description="Your new username." required onChange={this.handleChange} />
-        <FormTextField id="password" classNames="Generic_Form_Item_Right" label="Password" description="Your new password." required sensitive onChange={this.handleChange} />
+      <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Register for a NovaChat account.'>
+        <FormTextField id='username' classNames='Generic_Form_Item_Left' label='Username' description='Your new username.' required onChange={this.handleChange} />
+        <FormTextField id='password' classNames='Generic_Form_Item_Right' label='Password' description='Your new password.' required sensitive onChange={this.handleChange} />
         <br />
         <Accordion disabled className={AdvancedOptionsAccordionStyles}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body1">Advanced</Typography>
+            <Typography variant='body1'>Advanced</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <FormTextField classNames="LoginFormAccordionOption" id="address" label="Server Address" onChange={this.handleChange} />
+            <FormTextField classNames='LoginFormAccordionOption' id='address' label='Server Address' onChange={this.handleChange} />
           </AccordionDetails>
         </Accordion>
         <br />
-        <Button className="Generic_Form_Item" variant="outlined" type="submit">Register</Button>
+        <Button className='Generic_Form_Item' variant='outlined' type='submit'>Register</Button>
         <br />
-        <Typography className="Generic_Form_Item" variant="body1">Already have an account? <Link href="/login">Log In</Link></Typography>
+        <Typography className='Generic_Form_Item' variant='body1'>Already have an account? <Link href='/login'>Log In</Link></Typography>
       </AuthForm>
     );
   }
