@@ -1,3 +1,4 @@
+import GLOBALS from './globals';
 import { ipcRenderer, Navigate, events } from './helpers';
 
 function getCookie(cname: string) {
@@ -24,6 +25,8 @@ ipcRenderer.on('end_auth', (data: boolean) => {
     //ipcRenderer.send('requestChannelData', 'b1642a0175554994b3f593f191c610b5');
     console.log(getCookie('userData'));
     const { token, uuid } = JSON.parse(getCookie('userData'));
+    GLOBALS.Token = token;
+    GLOBALS.UUID = uuid;
     //socket = new WebSocket(`wss://localhost:44365/Events/Listen?user_uuid=${uuid}`)
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {

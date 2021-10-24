@@ -1,5 +1,7 @@
 const GLOBALS = {
-  currentChannel: ''
+  currentChannel: '',
+  UUID: '',
+  Token: ''
 }
 
 export default GLOBALS;
