@@ -35,10 +35,12 @@ class RegisterForm extends React.Component implements IAuthForm {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { email, username, password, address } = this.state;
-    Register(new Credentials({email: email, username: username, password: password, address: address})).then((result) => {
+    Register(new Credentials({email: email, username: username, password: password, address: address})).then(async (result) => {
       switch (result) {
         case true:
           this.updateStatus('Registered Successfully!', FormStatusType.success);
+          await new Promise(target => setTimeout(target, 2000));
+          Navigate("/login", null);
           break;
         case false:
           this.updateStatus('Error registering for account. Please check your account details and try again.', FormStatusType.error);
