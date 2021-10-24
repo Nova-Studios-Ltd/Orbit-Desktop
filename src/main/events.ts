@@ -5,12 +5,13 @@ import TimeoutUntil from './timeout';
 
 const { request } = net;
 
-ipcMain.handle('begin_auth', async (event, data: Credentials) => {
+ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
+    method: 'POST',
+    url: `https://api.novastudios.tk/Login`
   });
+  re.setHeader('Content-Type', 'application/json');
   re.on('response', (response) => {
     response.on('data', (json) => {
       const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
@@ -35,6 +36,8 @@ ipcMain.handle('begin_auth', async (event, data: Credentials) => {
     console.log(error);
     result = FormAuthStatusType.networkTimeout;
   });
+  const data = JSON.stringify({password: creds.password, email: creds.email})
+  re.write(data);
   re.end();
 
   await TimeoutUntil(result, 6, true);
