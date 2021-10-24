@@ -39,7 +39,7 @@ Link {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 900px) {
   .Auth_Page_Left {
     width: 0%;
   }
