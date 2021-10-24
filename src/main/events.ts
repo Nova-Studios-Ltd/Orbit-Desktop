@@ -48,6 +48,7 @@ ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
 ipcMain.handle('register', async (event, creds: Credentials) => {
   let result = null;
   const re = request({method: 'POST', url: `https://api.novastudios.tk/Register`});
+  //const re = request({method: 'POST', url: `https://localhost:44365/Register`});
   re.setHeader('Content-Type', 'application/json');
   re.on('error', (error) => {
     console.error(error);
@@ -58,6 +59,9 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
       let json = JSON.parse(data.toString());
       if (response.statusCode == 200 && json.Status == undefined) {
         result = true;
+      }
+      else {
+        result = false;
       }
     })
   });
