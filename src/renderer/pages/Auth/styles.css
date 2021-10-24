@@ -15,8 +15,8 @@ Link {
 }
 
 .Register_Page_Container_Type {
-  background-color: #ffba08;
-  background-image: linear-gradient(43deg, rgba(255,186,8,1) 0%, rgba(241,255,0,1) 46%, rgba(0,212,255,1) 100%);
+  background-color: #0892ff;
+  background: linear-gradient(43deg, #0892ff 0%, #00ff11d8 46%, #00d4ff 100%);;
 }
 
 .Auth_Page_Left {
