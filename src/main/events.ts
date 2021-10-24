@@ -45,7 +45,9 @@ ipcMain.handle('begin_auth', async (event, data: Credentials) => {
 });
 
 ipcMain.handle('register', async (event, data: Credentials) => {
-
+  //return true;
+  //or
+  //return false;
 });
 
 ipcMain.on('requestChannels', (event, channel_uuid: string) => {

@@ -96,6 +96,13 @@ export interface IUserDropdownMenuFunctions {
   logout: Function
 }
 
+export interface ICredentialsProps {
+  email?: string,
+  username?: string,
+  password?: string,
+  address?: string
+}
+
 // Custom Instances
 
 // Custom Component Props
