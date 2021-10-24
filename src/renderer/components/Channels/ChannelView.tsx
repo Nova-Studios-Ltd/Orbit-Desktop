@@ -27,7 +27,7 @@ export default class ChannelView extends React.Component {
 
   render() {
     console.log(`Channels: ${this.state.channels}`);
-    const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} channelID={c.channelID} />));
+    const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} channelID={c.channelID} channelIcon={c.channelIcon} />));
 
     return(
       <div className='Chat_ChannelView'>
