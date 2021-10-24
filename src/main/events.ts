@@ -53,9 +53,12 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
     result = false;
   });
   re.on('response', (response) => {
-    if (response.statusCode == 200) {
-      result = true;
-    }
+    response.on('data', (data) => {
+      let json = JSON.parse(data.toString());
+      if (response.statusCode == 200 && json.Status == undefined) {
+        result = true;
+      }
+    })
   });
   const data = JSON.stringify({username: creds.username, password: creds.password, email: 'N/A'})
   re.write(data);
