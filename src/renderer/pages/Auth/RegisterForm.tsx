@@ -5,7 +5,7 @@ import { ILoginFormProps } from 'renderer/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import { IAuthForm } from 'renderer/interfaces'
-import { Register } from 'renderer/helpers';
+import { Navigate, Register } from 'renderer/helpers';
 import Credentials from 'main/Credentials';
 
 class RegisterForm extends React.Component implements IAuthForm {
@@ -32,7 +32,11 @@ class RegisterForm extends React.Component implements IAuthForm {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { username, password, address } = this.state;
-    Register(new Credentials(username, password, address));
+    Register(new Credentials(username, password, address)).then(result => {
+      if (result)
+        Navigate("/login", null);
+      //TODO Handle registration failed
+    })
     event.preventDefault();
   }
 

@@ -28,5 +28,5 @@ export async function Authenticate(data: Credentials) {
 }
 
 export async function Register(data: Credentials) {
-  ipcRenderer.send("register", data);
+  return await ipcRenderer.invoke("register", data);
 }
