@@ -5,13 +5,12 @@ import TimeoutUntil from './timeout';
 
 const { request } = net;
 
-ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
+ipcMain.handle('begin_auth', async (event, data: Credentials) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
-    method: 'POST',
-    url: `https://api.novastudios.tk/Login`
+    method: 'GET',
+    url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
   });
-  re.setHeader('Content-Type', 'application/json');
   re.on('response', (response) => {
     response.on('data', (json) => {
       const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
@@ -36,11 +35,9 @@ ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
     console.log(error);
     result = FormAuthStatusType.networkTimeout;
   });
-  const data = JSON.stringify({password: creds.password, email: creds.email})
-  re.write(data);
   re.end();
 
-  await TimeoutUntil(result, !6);
+  await TimeoutUntil(result, 6, true);
 
   return result;
 });
@@ -59,20 +56,13 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
       if (response.statusCode == 200 && json.Status == undefined) {
         result = true;
       }
-      else {
-        result = false;
-      }
     })
   });
   const data = JSON.stringify({username: creds.username, password: creds.password, email: creds.email})
   re.write(data);
   re.end();
 
-  await async function() {
-    while (result == null) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-  }();
+  await TimeoutUntil(result, null, true);
   return result;
 });
 
