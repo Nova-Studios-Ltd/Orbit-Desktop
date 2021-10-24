@@ -15,14 +15,14 @@ class LoginForm extends React.Component implements IAuthForm {
     super(props);
     props.init(this);
 
-    this.state = {username: '', password: '', address: '', status: new FormStatusTuple(undefined, undefined)}
+    this.state = {email: '', password: '', address: '', status: new FormStatusTuple(undefined, undefined)}
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   state = {
-    username: '' as string,
+    email: '' as string,
     password: '' as string,
     address: ''  as string,
     status: new FormStatusTuple(undefined, undefined) as FormStatusTuple
@@ -34,9 +34,9 @@ class LoginForm extends React.Component implements IAuthForm {
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    const { username, password, address } = this.state;
+    const { email, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
-    Authenticate(new Credentials({username: username, password: password, address: address})).then((result) => {
+    Authenticate(new Credentials({email: email, password: password, address: address})).then((result) => {
       switch (result) {
         case FormAuthStatusType.success:
           this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);
@@ -64,7 +64,7 @@ class LoginForm extends React.Component implements IAuthForm {
 
     return (
       <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Welcome! Please log in to continue.' status={this.state.status}>
-        <FormTextField id='username' label='Username' required onChange={this.handleChange} />
+        <FormTextField id='email' label='Email' required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' required sensitive onChange={this.handleChange} />
         <br />
         <Accordion disabled className={AdvancedOptionsAccordionStyles}>

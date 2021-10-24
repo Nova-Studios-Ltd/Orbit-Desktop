@@ -1,6 +1,7 @@
 import { ipcMain, net, session } from 'electron';
 import Credentials from 'main/Credentials';
 import { FormAuthStatusType } from './FormAuthStatusTypes';
+import TimeoutUntil from './timeout';
 
 const { request } = net;
 
@@ -35,11 +36,8 @@ ipcMain.handle('begin_auth', async (event, data: Credentials) => {
     result = FormAuthStatusType.networkTimeout;
   });
   re.end();
-  await async function() {
-    while (result == 6) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-  }();
+
+  await TimeoutUntil(result, !6);
 
   return result;
 });
