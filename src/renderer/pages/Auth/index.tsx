@@ -26,9 +26,9 @@ export default class AuthPage extends React.Component {
   }
 
   render() {
-    const title = this.formType == 1 ? "Register" : "Login";
+    const title = this.formType == 1 ? 'Register' : 'Login';
     const form = this.formType == 1 ? <RegisterForm init={RegisterInit}/> : <LoginForm init={LoginInit}/>;
-    const background = this.formType == 1 ? "Register_Page_Container_Type" : "Login_Page_Container_Type" ;
+    const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
     const AuthPageContainerClassNames = `Auth_Page_Container ${background}`
 
     return (
@@ -37,7 +37,7 @@ export default class AuthPage extends React.Component {
           <title>{title}</title>
         </Helmet>
 
-        <div className="Auth_Page_Left" />
+        <div className='Auth_Page_Left' />
 
         {form}
 

@@ -7,30 +7,30 @@ const { request } = net;
 ipcMain.handle('begin_auth', async (event, data: Credentials) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
-    method: "GET",
+    method: 'GET',
     url: `https://api.novastudios.tk/Login?username=${data.username}&password=${data.password}`
   });
   re.on('response', (response) => {
-    response.on("data", (json) => {
+    response.on('data', (json) => {
       const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
       session.defaultSession.cookies.set(cookie).then(() =>
       {
         const json_obj = JSON.parse(json.toString());
         if (json_obj.token != null) {
-          event.sender.send("end_auth", true);
+          event.sender.send('end_auth', true);
           result = FormAuthStatusType.success;
         }
-        event.sender.send("end_auth", false);
+        event.sender.send('end_auth', false);
         result = FormAuthStatusType.genericIncorrectUsernamePassword;
       }).catch((e) =>
       {
         console.error(e);
-        event.sender.send("end_auth", false);
+        event.sender.send('end_auth', false);
         result = FormAuthStatusType.serverError;
       });
     });
   });
-  re.on("error", (error) => {
+  re.on('error', (error) => {
     console.log(error);
     result = FormAuthStatusType.networkTimeout;
   });
@@ -44,7 +44,7 @@ ipcMain.handle('begin_auth', async (event, data: Credentials) => {
   return result;
 });
 
-ipcMain.on('register', (event, data: Credentials) => {
+ipcMain.handle('register', async (event, data: Credentials) => {
 
 });
 
@@ -114,6 +114,30 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   }).catch((error) => {console.error(error)});
 });
 
+ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
+  console.log(`requestChannelMessagePreview called for channel ${channel_uuid}`);
+  const re = request({
+    method: 'GET',
+    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        console.log(json.toString());
+        event.sender.send('receivedChannelMessagePreview', json.toString());
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+});
+
 ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
     const { token } = JSON.parse(userData[0].value);
@@ -147,7 +171,7 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
-        console.log("Got channel update");
+        console.log('Got channel update');
         event.sender.send('receivedChannelUpdateEvent', json.toString());
       });
     });

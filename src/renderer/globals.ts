@@ -1,5 +1,5 @@
 const GLOBALS = {
-  currentChannel: ""
+  currentChannel: ''
 }
 
 export default GLOBALS;

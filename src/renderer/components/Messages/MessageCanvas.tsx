@@ -39,7 +39,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   edit(id: string, newMessage: string) {
-    console.warn("Message editing is not implemented");
+    console.warn('Message editing is not implemented');
   }
 
   clear() {
@@ -51,7 +51,7 @@ export default class MessageCanvas extends React.Component {
     const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} uuid={m.uuid} />));
     console.log(`${messagesToRender.length}/${this.state.messages.length}`);
     return (
-      <div className="Chat_MessageCanvas">
+      <div className='Chat_MessageCanvas'>
         {messagesToRender}
       </div>
     );

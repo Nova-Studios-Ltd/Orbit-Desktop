@@ -16,11 +16,11 @@ export class MessageImage extends React.Component {
 
   render() {
     return (
-      <div className="Chat_Message_Content" style={({marginBottom: '0.8rem'})}>
-        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target="_blank" href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className="Chat_Message_Image">
+      <div className='Chat_Message_Content' style={({marginBottom: '0.8rem'})}>
+        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
+          <Card className='Chat_Message_Image'>
             <CardMedia
-            component="img"
+            component='img'
             src={this.imageSrc}
           />
           </Card>
@@ -41,11 +41,11 @@ export class MessageVideo extends React.Component {
 
   render() {
     return (
-      <div className="Chat_Message_Content" style={({marginBottom: '0.8rem'})}>
-        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target="_blank" href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className="Chat_Message_Image">
+      <div className='Chat_Message_Content' style={({marginBottom: '0.8rem'})}>
+        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
+          <Card className='Chat_Message_Image'>
             <CardMedia
-            component="video"
+            component='video'
             src={this.videoSrc}
             controls
             />
@@ -78,8 +78,8 @@ export default class Message extends React.Component {
   constructor(props: IMessageProps) {
     super(props);
     this.uuid = props.uuid;
-    this.author = props.author || "Unknown";
-    this.message = props.message || "Message";
+    this.author = props.author || 'Unknown';
+    this.message = props.message || 'Message';
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
@@ -94,7 +94,7 @@ export default class Message extends React.Component {
 
   async componentDidMount() {
     if (this.divRef != null)
-      this.divRef.current.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+      this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
 
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     if (links == null) return;
@@ -153,7 +153,7 @@ export default class Message extends React.Component {
     let containsText = false;
     console.log(links);
     content.forEach(word => {
-      if (!this.validURL(word) && word != "") containsText = true;
+      if (!this.validURL(word) && word != '') containsText = true;
     });
 
     if (containsText) {
@@ -161,11 +161,11 @@ export default class Message extends React.Component {
       var messageParts = [] as any[];
       console.log(mes);
       mes.forEach(word => {
-        if (this.validURL(word)) messageParts.push(<Link target="_blank" href={word}>{word}</Link>);
+        if (this.validURL(word)) messageParts.push(<Link target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
       });
 
-      messageContentObject.push(<Typography className="Chat_Message_Content">{messageParts}</Typography>);
+      messageContentObject.push(<Typography className='Chat_Message_Content'>{messageParts}</Typography>);
     }
 
     /*if (links != null && links.length > 0) {
@@ -183,12 +183,12 @@ export default class Message extends React.Component {
     });
 
     return (
-      <div className="Chat_Message" ref={this.divRef}>
-        <div className="Chat_Message_Left">
+      <div className='Chat_Message' ref={this.divRef}>
+        <div className='Chat_Message_Left'>
           <Avatar src={this.avatarSrc} />
         </div>
-        <div className="Chat_Message_Right">
-          <Typography className="Chat_Message_Name" fontWeight="bold">{this.author}</Typography>
+        <div className='Chat_Message_Right'>
+          <Typography className='Chat_Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
           <button onClick={this.deleteMessage}>Delete</button>
         </div>

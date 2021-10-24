@@ -1,0 +1,44 @@
+.Chat_ChannelView {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  height: 100%;
+  background: rgba(25, 25, 25, 0.1);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.Chat_Channel {
+  height: 50px;
+  padding: 5px;
+  margin: 0.15rem;
+  position: relative;
+  box-sizing: border-box;
+  background: rgb(200, 200, 200);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+}
+
+.Channel_Left {
+
+}
+
+.Channel_Right {
+  padding: 5px;
+  align-self: center;
+}
+
+.Channel_Icon {
+
+}
+
+.Channel_Caption {
+  line-height: 1 !important;
+}
+
+.Channel_Message_Preview {
+  font-size: smaller !important;
+  color: rgb(80, 80, 80) !important;
+}

@@ -53,7 +53,8 @@ export interface IFormStatusFieldProps {
 
 export interface IChannelProps {
   channelName: string,
-  channelID: string
+  channelID: string,
+  channelIcon?: string
 }
 
 export interface IChannelViewProps {
@@ -85,6 +86,14 @@ export interface IMessageInputProps {
 export interface IMessageContent {
   type: string,
   url: string
+}
+
+export interface IUserDropdownMenu {
+  menuFunctions: Array<Function>
+}
+
+export interface IUserDropdownMenuFunctions {
+  logout: Function
 }
 
 // Custom Instances
