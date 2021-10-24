@@ -5,7 +5,7 @@ import { ILoginFormProps } from 'renderer/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import { IAuthForm } from 'renderer/interfaces'
-import { Register } from 'renderer/helpers';
+import { Navigate, Register } from 'renderer/helpers';
 import Credentials from 'main/Credentials';
 import FormStatusTuple, { FormStatusType } from 'renderer/components/Form/FormStatusTypes';
 

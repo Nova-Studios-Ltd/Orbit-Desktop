@@ -44,10 +44,29 @@ ipcMain.handle('begin_auth', async (event, data: Credentials) => {
   return result;
 });
 
-ipcMain.handle('register', async (event, data: Credentials) => {
-  //return true;
-  //or
-  //return false;
+ipcMain.handle('register', async (event, creds: Credentials) => {
+  let result = null;
+  const re = request({method: 'POST', url: `https://api.novastudios.tk/Register`});
+  re.setHeader('Content-Type', 'application/json');
+  re.on('error', (error) => {
+    console.error(error);
+    result = false;
+  });
+  re.on('response', (response) => {
+    if (response.statusCode == 200) {
+      result = true;
+    }
+  });
+  const data = JSON.stringify({username: creds.username, password: creds.password, email: creds.email})
+  re.write(data);
+  re.end();
+
+  await async function() {
+    while (result == null) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }();
+  return result;
 });
 
 ipcMain.on('requestChannels', (event, channel_uuid: string) => {

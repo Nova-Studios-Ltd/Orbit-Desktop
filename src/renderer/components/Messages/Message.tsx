@@ -135,7 +135,7 @@ export default class Message extends React.Component {
   }
 
   imageURL(url: string) {
-    return (url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
+    return (url.match(/\.(jpeg|jpg|png|gif|webp)$/) != null);
   }
 
   videoURL(url: string) {
