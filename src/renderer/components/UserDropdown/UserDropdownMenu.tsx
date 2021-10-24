@@ -1,6 +1,7 @@
 import React, { ReactElement, Ref, RefObject } from 'react';
 import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem } from '@mui/material';
 import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'renderer/interfaces';
+import GLOBALS from 'renderer/globals';
 
 export default class UserDropdownMenu extends React.Component {
   menuFunctions: IUserDropdownMenuFunctions;
@@ -44,7 +45,7 @@ export default class UserDropdownMenu extends React.Component {
     return(
       <div>
         <IconButton onClick={this.buttonClicked}>
-          <Avatar />
+          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.UUID}?size=64`}/>
         </IconButton>
 
       <Menu
