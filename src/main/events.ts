@@ -57,7 +57,7 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
   re.on('response', (response) => {
     response.on('data', (data) => {
       let json = JSON.parse(data.toString());
-      if (response.statusCode == 200 && json.Status == undefined) {
+      if (response.statusCode == 200 && json.status == undefined) {
         result = true;
       }
       else {
