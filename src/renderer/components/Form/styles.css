@@ -1,6 +1,8 @@
 .AuthForm_Container {
   width: 30%;
   padding: 10rem;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   background: rgba(255, 255, 255, 0.75);
 
@@ -16,6 +18,8 @@
 
 .Generic_Form_Item {
   margin: 5px 0px 0px 5px !important;
+  min-width: 15rem;
+  max-width: 23rem;
 }
 
 .Generic_Form_Item_Left {

@@ -1,5 +1,6 @@
 .Auth_Page_Container {
   display: flex;
+  height: 100%;
   align-items: stretch;
   justify-content: flex-end;
   background-color: #FFFFFF;
@@ -33,7 +34,7 @@
 
 .Auth_Page_Left {
   width: 70%;
-  height: 100vh;
+  height: 100%;
   transition: width 200ms ease;
 }
 
