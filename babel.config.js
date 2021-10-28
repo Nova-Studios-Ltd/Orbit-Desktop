@@ -11,6 +11,7 @@ const productionPlugins = [
   require('@babel/plugin-transform-react-constant-elements'),
   require('@babel/plugin-transform-react-inline-elements'),
   require('babel-plugin-transform-react-remove-prop-types'),
+  require('@babel/plugin-transform-runtime'),
   [
     require('babel-plugin-direct-import'),
     { modules: ['@mui/material', '@mui/icons-material'] },
