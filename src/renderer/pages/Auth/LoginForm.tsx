@@ -78,7 +78,7 @@ class LoginForm extends React.Component implements IAuthForm {
         <br />
         <Button className='Generic_Form_Item' variant='outlined' type='submit'>Login</Button>
         <br />
-        <Typography className='Generic_Form_Item' variant='body1'>Don&apos;t have an account? <Link href='/register'>Sign Up</Link></Typography>
+        <Typography className='Generic_Form_Item' variant='body1'>Don&apos;t have an account? <Link className='AuthForm_Link' onClick={() => {Navigate('/register', null);}}>Sign Up</Link></Typography>
       </AuthForm>
     );
   }

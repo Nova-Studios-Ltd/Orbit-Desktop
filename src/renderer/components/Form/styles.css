@@ -10,6 +10,10 @@
   transition: width 200ms ease;
 }
 
+.AuthForm_Link {
+  cursor: pointer;
+}
+
 .Generic_Form_Item {
   margin: 5px 0px 0px 5px !important;
 }

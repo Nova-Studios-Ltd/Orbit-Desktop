@@ -1,17 +1,17 @@
 import React from 'react';
-import { Router, Redirect, Route } from 'react-router-dom';
-import 'renderer/App.global.css';
+import { Router, Route } from 'react-router-dom';
+import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
-import { history } from 'renderer/helpers';
-import 'renderer/events';
+import { history, Navigate } from './helpers';
+import './events';
+import GLOBALS from './globals';
+
+Navigate(GLOBALS.HomePath, null);
 
 function App() {
   return (
     <Router history={history}>
-      <Route exact path={['/', '/index', '/index.html']}>
-        <Redirect to='/login' />
-      </Route>
       <Route path='/login'>
         <AuthPage login/>
       </Route>

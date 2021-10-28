@@ -40,7 +40,7 @@ class RegisterForm extends React.Component implements IAuthForm {
         case true:
           this.updateStatus('Registered Successfully!', FormStatusType.success);
           await new Promise(target => setTimeout(target, 2000));
-          Navigate("/login", null);
+          Navigate('/login', null);
           break;
         case false:
           this.updateStatus('Error registering for account. Please check your account details and try again.', FormStatusType.error);
@@ -74,7 +74,7 @@ class RegisterForm extends React.Component implements IAuthForm {
         <br />
         <Button className='Generic_Form_Item' variant='outlined' type='submit'>Register</Button>
         <br />
-        <Typography className='Generic_Form_Item' variant='body1'>Already have an account? <Link href='/login'>Log In</Link></Typography>
+        <Typography className='Generic_Form_Item' variant='body1'>Already have an account? <Link className='AuthForm_Link' onClick={() => {Navigate('/login', null);}}>Log In</Link></Typography>
       </AuthForm>
     );
   }

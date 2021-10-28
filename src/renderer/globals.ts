@@ -1,7 +1,8 @@
 const GLOBALS = {
   currentChannel: '',
   UUID: '',
-  Token: ''
+  Token: '',
+  HomePath: '/login'
 }
 
 export default GLOBALS;

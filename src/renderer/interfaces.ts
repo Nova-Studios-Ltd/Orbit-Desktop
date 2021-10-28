@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { FormEventHandler, ReactChildren, Ref } from 'react'
-import FormStatusTuple, { FormStatusType } from './components/Form/FormStatusTypes';
+import FormStatusTuple, { FormStatusType } from 'renderer/components/Form/FormStatusTypes';
 
 // Page Props
 
@@ -89,7 +89,9 @@ export interface IMessageContent {
 }
 
 export interface IUserDropdownMenu {
-  menuFunctions: Array<Function>
+  menuFunctions: {
+    logout: Function
+  }
 }
 
 export interface IUserDropdownMenuFunctions {
