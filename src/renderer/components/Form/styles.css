@@ -18,8 +18,8 @@
 
 .Generic_Form_Item {
   margin: 5px 0px 0px 5px !important;
-  min-width: 15rem;
-  max-width: 23rem;
+  min-width: 15rem !important;
+  max-width: 23rem !important;
 }
 
 .Generic_Form_Item_Left {
