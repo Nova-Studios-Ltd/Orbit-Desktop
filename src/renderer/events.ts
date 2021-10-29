@@ -22,16 +22,12 @@ ipcRenderer.on('end_auth', (data: boolean) => {
   if (data) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
-    //ipcRenderer.send('requestChannelData', 'b1642a0175554994b3f593f191c610b5');
-    console.log(getCookie('userData'));
     const { token, uuid } = JSON.parse(getCookie('userData'));
     GLOBALS.Token = token;
     GLOBALS.CurrentUserUUID = uuid;
-    //socket = new WebSocket(`wss://localhost:44365/Events/Listen?user_uuid=${uuid}`)
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {
       var event = JSON.parse(message.data);
-      console.log(event);
       if (event.EventType == -1) {
         console.log('<Beat>')
       }

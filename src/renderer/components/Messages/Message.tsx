@@ -1,8 +1,9 @@
-import { Avatar, Card, CardMedia, Link, Typography, Button } from '@mui/material';
+import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
-import { ipcRenderer } from 'renderer/helpers';
+import { ipcRenderer, ShowToast } from 'renderer/helpers';
 import GLOBALS from 'renderer/globals';
-import { IMessageProps, IMessageImageProps, IMessageContent } from 'renderer/interfaces';
+import { IMessageProps, IMessageImageProps, IMessageContent, IMessageContextMenu, IMessageContextMenuFunctions } from 'renderer/interfaces';
+import { clipboard } from 'electron';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -68,7 +69,8 @@ class MessageContent extends React.Component {
 }
 
 export default class Message extends React.Component {
-  uuid: string;
+  messageUUID: string;
+  authorUUID: string;
   author: string;
   message: string;
   avatarSrc: string;
@@ -77,20 +79,54 @@ export default class Message extends React.Component {
 
   constructor(props: IMessageProps) {
     super(props);
-    this.uuid = props.uuid;
+    this.messageUUID = props.messageUUID;
+    this.authorUUID = props.authorUUID;
     this.author = props.author || 'Unknown';
     this.message = props.message || 'Message';
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
-    this.showContextMenu = this.showContextMenu.bind(this);
+    this.state = { links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
+
+    this.openContextMenu = this.openContextMenu.bind(this);
+    this.closeContextMenu = this.closeContextMenu.bind(this);
+    this.menuItemClicked = this.menuItemClicked.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
 
     this.divRef = React.createRef();
   }
 
+  openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
+    console.log(`Right clicked on message ${this.messageUUID}`);
+    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+  }
+
+  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+    switch(event.target.id) {
+      case 'edit':
+        ShowToast(); // Not implemented
+        break;
+      case 'copy':
+        await ipcRenderer.invoke('copyToClipboard', this.message).then((result: Boolean) => {
+          ShowToast(); // Pass arguments for clipboard success
+        });
+        break;
+      case 'delete':
+        this.deleteMessage();
+        break;
+    }
+
+    this.setState({ open: false, anchorEl: null });
+  }
+
+  closeContextMenu(event: any) {
+    this.setState({ open: false, anchorEl: null });
+  }
+
   state = {
-    links: [] as Array<MessageContent>
+    links: [] as Array<MessageContent>,
+    anchorEl: null,
+    open: false
   }
 
   async componentDidMount() {
@@ -144,12 +180,7 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.send('requestDeleteMessage', GLOBALS.currentChannel, this.uuid);
-  }
-
-  showContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-    // TODO: Show context menu
-    console.log(`Right clicked on message ${this.uuid}`);
+    ipcRenderer.send('requestDeleteMessage', GLOBALS.currentChannel, this.messageUUID);
   }
 
   render() {
@@ -157,7 +188,6 @@ export default class Message extends React.Component {
     let content = this.message.split(/(https:\/\/[\S]*)/g);
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     let containsText = false;
-    console.log(links);
     content.forEach(word => {
       if (!this.validURL(word) && word != '') containsText = true;
     });
@@ -165,7 +195,6 @@ export default class Message extends React.Component {
     if (containsText) {
       const mes = this.message.split(/(https:\/\/[\S]*)/g);
       var messageParts = [] as any[];
-      console.log(mes);
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
@@ -180,7 +209,6 @@ export default class Message extends React.Component {
         else if (this.videoURL(link)) messageContentObject.push(<MessageVideo key={link} message={link} src={link} />);
       });
     }*/
-    console.log(this.state.links);
     this.state.links.forEach(link => {
       if (link.type == 'image')
         messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
@@ -189,15 +217,27 @@ export default class Message extends React.Component {
     });
 
     return (
-      <div className='Chat_Message' ref={this.divRef} onContextMenu={this.showContextMenu}>
+      <div className='Chat_Message' ref={this.divRef} onContextMenu={this.openContextMenu}>
         <div className='Chat_Message_Left'>
           <Avatar src={this.avatarSrc} />
         </div>
         <div className='Chat_Message_Right'>
           <Typography className='Chat_Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
-          <button onClick={this.deleteMessage}>Delete</button>
         </div>
+        <Menu
+          id='userdropdown-menu'
+          anchorEl={this.state.anchorEl}
+          open={this.state.open}
+          onClose={this.closeContextMenu}
+          MenuListProps={{
+            'aria-labelledby': 'message-context-menu',
+          }}
+        >
+          { this.authorUUID == GLOBALS.CurrentUserUUID ? <MenuItem id='edit' onClick={(event) => this.menuItemClicked(event)}>Edit</MenuItem> : null }
+          <MenuItem id='copy' onClick={(event) => this.menuItemClicked(event)}>Copy</MenuItem>
+          { this.authorUUID == GLOBALS.CurrentUserUUID ? <MenuItem id='delete' onClick={(event) => this.menuItemClicked(event)}>Delete</MenuItem> : null }
+        </Menu>
       </div>
     );
   }

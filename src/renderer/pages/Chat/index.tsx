@@ -92,10 +92,9 @@ export default class ChatPage extends React.Component {
   }
 
   appendToCanvas(message: any) {
-    console.log(message);
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message({ message: message.content, author: message.author, uuid: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` } as IMessageProps);
+      const msgObj = new Message({ message: message.content, author: message.author, authorUUID: message.author_UUID, messageUUID: message.message_Id, avatarSrc: `https://api.novastudios.tk/Media/Avatar/${message.author_UUID}?size=64` } as IMessageProps);
       canvas.append(msgObj);
     }
     else {
@@ -130,7 +129,6 @@ export default class ChatPage extends React.Component {
       let message = messages[index];
       if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.CurrentUserUUID) {
         this.messageReceivedSound.play();
-        console.log("Played sound on message receive");
       }
       this.appendToCanvas(message);
     }
@@ -153,7 +151,6 @@ export default class ChatPage extends React.Component {
   sendMessage(message: string) {
     if (message.length > 0)
     {
-      console.log(`Message Sent: ${message}`);
       ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message);
     }
   }

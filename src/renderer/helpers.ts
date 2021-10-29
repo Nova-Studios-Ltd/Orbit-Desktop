@@ -10,7 +10,6 @@ export function Navigate(path: string, data: any)
 {
   try {
     history.push(path, data);
-    console.log(`Current URL: ${window.location.href}`)
   }
   catch (error) {
     console.error(error);
@@ -19,7 +18,6 @@ export function Navigate(path: string, data: any)
 
 export function LoadMessageFeed(channelData: string) {
   const messages = JSON.parse(channelData);
-  console.log(messages);
   return messages;
 }
 
@@ -33,4 +31,8 @@ export async function Register(data: Credentials) {
 
 export function setDefaultChannel(channelID: string) {
   localStorage.setItem('lastOpenedChannel', channelID);
+}
+
+export function ShowToast() {
+
 }

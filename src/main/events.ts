@@ -1,4 +1,4 @@
-import { ipcMain, net, session } from 'electron';
+import { clipboard, ipcMain, net, session } from 'electron';
 import Credentials from 'main/Credentials';
 import { FormAuthStatusType } from './FormAuthStatusTypes';
 import TimeoutUntil from './timeout';
@@ -183,7 +183,7 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
     re.end();
     return true;
   }).catch((error) => {console.error(error)});
-})
+});
 
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
   const re = request({
@@ -206,7 +206,7 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
     re.end();
     return true;
   }).catch((error) => {console.error(error)});
-})
+});
 
 ipcMain.on('requestDeleteMessage', (event, channel_uuid: string, message_id: string) => {
   const re = request({
@@ -224,3 +224,12 @@ ipcMain.on('requestDeleteMessage', (event, channel_uuid: string, message_id: str
     return true;
   }).catch((error) => {console.error(error)});
 })
+
+ipcMain.handle('copyToClipboard', async (_, data: string) => {
+  try {
+    clipboard.writeText(data);
+    return true;
+  } catch {
+    return false;
+  }
+});

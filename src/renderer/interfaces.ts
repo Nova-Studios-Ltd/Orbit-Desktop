@@ -62,7 +62,8 @@ export interface IChannelViewProps {
 }
 
 export interface IMessageProps {
-  uuid: string,
+  messageUUID: string,
+  authorUUID: string,
   author: string,
   message: string,
   avatarSrc: string,

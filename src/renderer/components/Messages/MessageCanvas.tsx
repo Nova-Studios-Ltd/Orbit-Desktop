@@ -30,7 +30,7 @@ export default class MessageCanvas extends React.Component {
 
   remove(id: string) {
     let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.uuid === id);
+    let index = oldState.messages.findIndex(e => e.messageUUID === id);
     if (index > -1) {
       oldState.messages.splice(index, 1);
       this.setState({messages: []});
@@ -40,7 +40,7 @@ export default class MessageCanvas extends React.Component {
 
   edit(id: string, newMessage: string) {
     let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.uuid == id);
+    let index = oldState.messages.findIndex(e => e.messageUUID == id);
     if (index > -1) {
       oldState.messages[index].message = newMessage;
       this.setState({messages: oldState.messages});
@@ -52,9 +52,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    console.log(this.state.messages);
-    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} uuid={m.uuid} />));
-    console.log(`${messagesToRender.length}/${this.state.messages.length}`);
+    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />));
     return (
       <div className='Chat_MessageCanvas'>
         {messagesToRender}
