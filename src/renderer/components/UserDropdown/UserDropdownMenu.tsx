@@ -45,7 +45,7 @@ export default class UserDropdownMenu extends React.Component {
     return(
       <div>
         <IconButton onClick={this.buttonClicked}>
-          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.UUID}?size=64`} />
+          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.CurrentUserUUID}?size=64`} />
         </IconButton>
 
       <Menu

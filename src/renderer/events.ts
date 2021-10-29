@@ -26,7 +26,7 @@ ipcRenderer.on('end_auth', (data: boolean) => {
     console.log(getCookie('userData'));
     const { token, uuid } = JSON.parse(getCookie('userData'));
     GLOBALS.Token = token;
-    GLOBALS.UUID = uuid;
+    GLOBALS.CurrentUserUUID = uuid;
     //socket = new WebSocket(`wss://localhost:44365/Events/Listen?user_uuid=${uuid}`)
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {

@@ -1,6 +1,6 @@
 const GLOBALS = {
   currentChannel: '',
-  UUID: '',
+  CurrentUserUUID: '',
   Token: '',
   HomePath: '/login'
 }

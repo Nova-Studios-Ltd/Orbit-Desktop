@@ -83,6 +83,7 @@ export default class Message extends React.Component {
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
+    this.showContextMenu = this.showContextMenu.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
 
     this.divRef = React.createRef();
@@ -146,6 +147,11 @@ export default class Message extends React.Component {
     ipcRenderer.send('requestDeleteMessage', GLOBALS.currentChannel, this.uuid);
   }
 
+  showContextMenu(event: React.MouseEvent<HTMLDivElement>) {
+    // TODO: Show context menu
+    console.log(`Right clicked on message ${this.uuid}`);
+  }
+
   render() {
     let messageContentObject = [] as any;
     let content = this.message.split(/(https:\/\/[\S]*)/g);
@@ -183,7 +189,7 @@ export default class Message extends React.Component {
     });
 
     return (
-      <div className='Chat_Message' ref={this.divRef}>
+      <div className='Chat_Message' ref={this.divRef} onContextMenu={this.showContextMenu}>
         <div className='Chat_Message_Left'>
           <Avatar src={this.avatarSrc} />
         </div>

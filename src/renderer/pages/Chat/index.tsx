@@ -123,11 +123,15 @@ export default class ChatPage extends React.Component {
   }
 
   onReceivedChannelData(messages: JSON[], isUpdate: boolean) {
-    this.messageReceivedSound.play();
     if (!isUpdate)
       this.clearCanvas();
+
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
+      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.CurrentUserUUID) {
+        this.messageReceivedSound.play();
+        console.log("Played sound on message receive");
+      }
       this.appendToCanvas(message);
     }
   }
