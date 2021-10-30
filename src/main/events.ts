@@ -164,6 +164,7 @@ ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
 });
 
 ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
+  console.log(channel_uuid);
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
     const { token } = JSON.parse(userData[0].value);
     const data = JSON.stringify({Content: contents})

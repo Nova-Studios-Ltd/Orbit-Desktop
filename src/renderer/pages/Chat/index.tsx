@@ -39,9 +39,11 @@ export default class ChatPage extends React.Component {
     if (GLOBALS.currentChannel.length < 1) {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
       if (lastOpenedChannel != null) {
+        GLOBALS.currentChannel = lastOpenedChannel;
         ipcRenderer.send('requestChannelData', lastOpenedChannel);
       } else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null) {
         ipcRenderer.send('requestChannelData', this.state.ChannelList.state.channels[0].channelID);
+        GLOBALS.currentChannel = this.state.ChannelList.state.channels[0].channelID;
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
       }
     }
@@ -86,9 +88,9 @@ export default class ChatPage extends React.Component {
 
   onReceivedChannelInfo(data: any) {
     if (data.isGroup)
-      this.addChannel({channelName: data.groupName, channelID: data.table_Id});
+      this.addChannel({channelName: data.groupName, channelID: data.table_Id, channelIcon: 'https://cdn.novastudios.tk/public/54c241e.png'});
     else
-      this.addChannel({channelName: data.channelName, channelID: data.table_Id});
+      this.addChannel({channelName: data.channelName, channelID: data.table_Id, channelIcon: `https://api.novastudios.tk/Media/Avatar/${data.channelIcon}?size=64`});
   }
 
   appendToCanvas(message: any) {
@@ -112,8 +114,7 @@ export default class ChatPage extends React.Component {
   addChannel(channel: any) {
     const channelList = this.state.ChannelList;
     if (channelList != null) {
-      const channelObj = new Channel({ channelName: channel.channelName, channelID: channel.channelID, channelIcon: 'https://cdn.novastudios.tk/public/54c241e.png'});
-      channelList.addChannel(channelObj);
+      channelList.addChannel(new Channel({ channelName: channel.channelName, channelID: channel.channelID, channelIcon: channel.channelIcon}));
       this.preloadChannel();
     }
     else {
