@@ -124,6 +124,7 @@ export default class Message extends React.Component {
   }
 
   state = {
+    hasNonLinkText: false,
     links: [] as Array<MessageContent>,
     anchorEl: null,
     open: false
@@ -133,8 +134,12 @@ export default class Message extends React.Component {
     if (this.divRef != null)
       this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
 
+    let hasNonLinkText = false;
     let links = this.message.match(/(https:\/\/[\S]*)/g);
-    if (links == null) return;
+    if (links == null) {
+      this.setState({hasNonLinkText: true});
+      return;
+    }
     let messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
@@ -144,8 +149,11 @@ export default class Message extends React.Component {
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
         messageLinks.push(new MessageContent({type: 'video', url: link}));
       }
+      else {
+        hasNonLinkText = true;
+      }
     }
-    this.setState({links: messageLinks});
+    this.setState({links: messageLinks, hasNonLinkText: hasNonLinkText});
   }
 
   validURL(str: string) {
@@ -192,7 +200,7 @@ export default class Message extends React.Component {
       if (!this.validURL(word) && word != '') containsText = true;
     });
 
-    if (containsText) {
+    if (this.state.hasNonLinkText) {
       const mes = this.message.split(/(https:\/\/[\S]*)/g);
       var messageParts = [] as any[];
       mes.forEach(word => {
