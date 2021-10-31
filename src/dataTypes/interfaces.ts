@@ -113,6 +113,11 @@ export interface IToastProps {
   statusType?: ToastStausType;
 }
 
+export interface IMessageDeleteRequestArgs {
+  channelID: string,
+  messageID: string
+}
+
 // Custom Component Props
 
 export interface ILoginFormProps extends IAuthFormProps {

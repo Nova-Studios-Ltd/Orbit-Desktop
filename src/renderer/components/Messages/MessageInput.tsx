@@ -53,7 +53,7 @@ export default class MessageInput extends React.Component {
   render() {
     return (
       <div className='Chat_Page_Bottom'>
-          <TextField className='Chat_MessageInput' placeholder='Type your message here...' value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+          <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
           <IconButton className='Chat_IconButton' onClick={this.handleClick}><Send/></IconButton>
       </div>
     );

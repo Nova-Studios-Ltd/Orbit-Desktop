@@ -41,52 +41,8 @@
   margin-bottom: auto;
 }
 
-.Chat_MessageInput {
-  position: relative;
-  width: 100%;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex: 1;
-  box-sizing: border-box;
-}
-
 .Chat_IconButton {
   width: 50px;
   height: 50px;
 }
 
-.Chat_MessageCanvas {
-  width: 100%;
-  height: 100%;
-  margin-top: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.Chat_Message {
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: row;
-}
-
-.Chat_Message_Left {
-  margin: 0.5rem;
-}
-
-.Chat_Message_Right {
-  margin-left: 1rem;
-  align-self: center;
-}
-
-.Chat_Message_Name {
-
-}
-
-.Chat_Message_Content {
-
-}
-
-.Chat_Message_Image {
-  height: 50%;
-  width: 50%;
-}

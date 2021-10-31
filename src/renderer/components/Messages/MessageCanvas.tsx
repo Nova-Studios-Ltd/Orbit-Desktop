@@ -54,7 +54,7 @@ export default class MessageCanvas extends React.Component {
   render() {
     const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />));
     return (
-      <div className='Chat_MessageCanvas'>
+      <div className='MessageCanvas'>
         {messagesToRender}
       </div>
     );

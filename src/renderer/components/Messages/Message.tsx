@@ -17,9 +17,9 @@ export class MessageImage extends React.Component {
 
   render() {
     return (
-      <div className='Chat_Message_Content' style={({marginBottom: '0.8rem'})}>
+      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className='Chat_Message_Image'>
+          <Card className='Message_Image'>
             <CardMedia
             component='img'
             src={this.imageSrc}
@@ -42,9 +42,9 @@ export class MessageVideo extends React.Component {
 
   render() {
     return (
-      <div className='Chat_Message_Content' style={({marginBottom: '0.8rem'})}>
+      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Chat_Message_Image'>
+          <Card className='Message_Image'>
             <CardMedia
             component='video'
             src={this.videoSrc}
@@ -90,6 +90,8 @@ export default class Message extends React.Component {
 
     this.openContextMenu = this.openContextMenu.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
+    this.mouseEnter = this.mouseEnter.bind(this);
+    this.mouseLeave = this.mouseLeave.bind(this);
     this.menuItemClicked = this.menuItemClicked.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
     this.isOwnMessage = this.isOwnMessage.bind(this);
@@ -122,6 +124,18 @@ export default class Message extends React.Component {
 
   closeContextMenu(event: any) {
     this.setState({ open: false, anchorEl: null });
+  }
+
+  mouseEnter(event: any) {
+    if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
+      event.currentTarget.className = 'Message Message_Hover';
+    }
+  }
+
+  mouseLeave(event: any) {
+    if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
+      event.currentTarget.className = 'Message';
+    }
   }
 
   state = {
@@ -189,7 +203,7 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('requestDeleteMessage', GLOBALS.currentChannel, this.messageUUID).then((result) => {
+    ipcRenderer.invoke('requestDeleteMessage', { channelID: GLOBALS.currentChannel, messageID: this.messageUUID} ).then((result: Boolean) => {
       if (result) {
         toast.success("Message deleted successfully");
       } else {
@@ -219,7 +233,7 @@ export default class Message extends React.Component {
         else messageParts.push(word);
       });
 
-      messageContentObject.push(<Typography className='Chat_Message_Content'>{messageParts}</Typography>);
+      messageContentObject.push(<Typography className='Message_Content'>{messageParts}</Typography>);
     }
 
     /*if (links != null && links.length > 0) {
@@ -236,12 +250,12 @@ export default class Message extends React.Component {
     });
 
     return (
-      <div className='Chat_Message' ref={this.divRef} onContextMenu={this.openContextMenu}>
-        <div className='Chat_Message_Left'>
+      <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
+        <div className='Message_Left'>
           <Avatar src={this.avatarSrc} />
         </div>
-        <div className='Chat_Message_Right'>
-          <Typography className='Chat_Message_Name' fontWeight='bold'>{this.author}</Typography>
+        <div className='Message_Right'>
+          <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
         </div>
         <Menu

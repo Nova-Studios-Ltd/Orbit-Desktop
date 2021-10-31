@@ -1,3 +1,4 @@
+import { IMessageDeleteRequestArgs } from 'dataTypes/interfaces';
 import { clipboard, ipcMain, net, session } from 'electron';
 import Credentials from '../dataTypes/Credentials';
 import { FormAuthStatusType } from '../dataTypes/enums';
@@ -209,12 +210,12 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
   }).catch((error) => {console.error(error)});
 });
 
-ipcMain.handle('requestDeleteMessage', async (event, channel_uuid: string, message_id: string) => {
+ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequestArgs) => {
   let result = false;
 
   const re = request({
     method: 'DELETE',
-    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_id}`,
+    url: `https://api.novastudios.tk/Message/${data.channelID}/Messages/${data.messageID}`,
   });
 
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
@@ -227,6 +228,7 @@ ipcMain.handle('requestDeleteMessage', async (event, channel_uuid: string, messa
     result = true;
   }).catch((error) => {console.error(error)});
 
+  await TimeoutUntil(result, true, false);
   return result;
 })
 

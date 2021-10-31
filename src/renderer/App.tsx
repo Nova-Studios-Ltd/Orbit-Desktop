@@ -20,7 +20,9 @@ function App() {
         closeOnClick
         rtl={false}
         draggable
-        pauseOnHover={false} />
+        pauseOnHover={false}
+        pauseOnFocusLoss={false}
+        />
       <Router history={history}>
         <Route path='/login'>
           <AuthPage login/>
