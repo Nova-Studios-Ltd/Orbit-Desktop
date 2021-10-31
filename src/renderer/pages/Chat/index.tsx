@@ -9,7 +9,7 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'renderer/globals'
-import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'renderer/interfaces';
+import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 
 export default class ChatPage extends React.Component {

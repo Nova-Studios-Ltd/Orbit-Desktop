@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { IFormStatusFieldProps } from 'renderer/interfaces';
-import { FormStatusType } from './FormStatusTypes';
+import { IFormStatusFieldProps } from 'dataTypes/interfaces';
+import { FormStatusType } from 'dataTypes/FormStatusTypes';
 
 export default class FormStatusField extends React.Component {
   props: IFormStatusFieldProps;

@@ -1,6 +1,7 @@
 @import 'pages/Auth/styles.css';
 @import 'pages/Chat/styles.css';
 @import 'components/styles.css';
+@import '~react-toastify/dist/ReactToastify.min.css';
 
 html, body {
   height: 100%;

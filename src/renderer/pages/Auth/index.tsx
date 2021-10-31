@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import { IAuthPageProps } from 'renderer/interfaces'
+import { IAuthPageProps } from 'dataTypes/interfaces'
 
 function LoginInit(form: LoginForm) {
 

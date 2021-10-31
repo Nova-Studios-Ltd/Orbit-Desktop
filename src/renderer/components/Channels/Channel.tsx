@@ -2,7 +2,7 @@ import React, { RefObject } from 'react';
 import { Card, Typography, Avatar, CardMedia } from '@mui/material';
 import GLOBALS from 'renderer/globals'
 import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'renderer/helpers';
-import { IChannelProps } from 'renderer/interfaces';
+import { IChannelProps } from 'dataTypes/interfaces';
 import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 
 export default class Channel extends React.Component {

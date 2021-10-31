@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { FormEventHandler, ReactChildren, Ref } from 'react'
-import FormStatusTuple, { FormStatusType } from 'renderer/components/Form/FormStatusTypes';
+import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
+import { ToastStausType } from 'dataTypes/enums';
 
 // Page Props
 
@@ -106,7 +107,11 @@ export interface ICredentialsProps {
   address?: string
 }
 
-// Custom Instances
+export interface IToastProps {
+  title: string;
+  body?: string;
+  statusType?: ToastStausType;
+}
 
 // Custom Component Props
 

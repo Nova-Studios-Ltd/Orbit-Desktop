@@ -1,4 +1,4 @@
-import { ICredentialsProps } from 'renderer/interfaces';
+import { ICredentialsProps } from 'dataTypes/interfaces';
 
 export default class Credentials {
   email?: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IChannelViewProps } from 'renderer/interfaces';
+import { IChannelViewProps } from 'dataTypes/interfaces';
 import Channel from './Channel';
 
 

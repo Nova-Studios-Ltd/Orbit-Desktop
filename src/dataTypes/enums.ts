@@ -7,3 +7,10 @@ export enum FormAuthStatusType {
   serverError,
   unknown
 }
+
+export enum ToastStausType {
+  info = 'info',
+  success = 'success',
+  warning = 'warning',
+  error = 'error'
+}

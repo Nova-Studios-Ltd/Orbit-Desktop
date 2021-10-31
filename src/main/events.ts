@@ -1,6 +1,6 @@
 import { clipboard, ipcMain, net, session } from 'electron';
-import Credentials from 'main/Credentials';
-import { FormAuthStatusType } from './FormAuthStatusTypes';
+import Credentials from '../dataTypes/Credentials';
+import { FormAuthStatusType } from '../dataTypes/enums';
 import TimeoutUntil from './timeout';
 
 const { request } = net;
@@ -209,7 +209,9 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
   }).catch((error) => {console.error(error)});
 });
 
-ipcMain.on('requestDeleteMessage', (event, channel_uuid: string, message_id: string) => {
+ipcMain.handle('requestDeleteMessage', async (event, channel_uuid: string, message_id: string) => {
+  let result = false;
+
   const re = request({
     method: 'DELETE',
     url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_id}`,
@@ -222,8 +224,10 @@ ipcMain.on('requestDeleteMessage', (event, channel_uuid: string, message_id: str
       console.error(error);
     });
     re.end();
-    return true;
+    result = true;
   }).catch((error) => {console.error(error)});
+
+  return result;
 })
 
 ipcMain.handle('copyToClipboard', async (_, data: string) => {
