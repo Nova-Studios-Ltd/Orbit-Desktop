@@ -88,9 +88,9 @@ export default class ChatPage extends React.Component {
 
   onReceivedChannelInfo(data: any) {
     if (data.isGroup)
-      this.addChannel({channelName: data.groupName, channelID: data.table_Id, channelIcon: 'https://cdn.novastudios.tk/public/54c241e.png'});
+      this.addChannel({channelName: data.groupName, channelID: data.table_Id, channelIcon: data.channelIcon});
     else
-      this.addChannel({channelName: data.channelName, channelID: data.table_Id, channelIcon: `https://api.novastudios.tk/Media/Avatar/${data.channelIcon}?size=64`});
+      this.addChannel({channelName: data.channelName, channelID: data.table_Id, channelIcon: data.channelIcon});
   }
 
   appendToCanvas(message: any) {
