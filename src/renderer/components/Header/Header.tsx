@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
-import { IHeaderProps } from 'renderer/interfaces';
+import { IHeaderProps } from 'dataTypes/interfaces';
 
 export default class Header extends React.Component {
   caption: string;

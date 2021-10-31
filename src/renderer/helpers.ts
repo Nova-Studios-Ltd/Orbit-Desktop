@@ -1,5 +1,5 @@
 import { createBrowserHistory } from 'history';
-import Credentials from 'main/Credentials';
+import Credentials from 'dataTypes/Credentials';
 import { UiEvents } from './uiEvents';
 
 export const history = createBrowserHistory();
@@ -31,8 +31,4 @@ export async function Register(data: Credentials) {
 
 export function setDefaultChannel(channelID: string) {
   localStorage.setItem('lastOpenedChannel', channelID);
-}
-
-export function ShowToast() {
-
 }

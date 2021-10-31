@@ -1,9 +1,9 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
-import { ipcRenderer, ShowToast } from 'renderer/helpers';
+import { ipcRenderer } from 'renderer/helpers';
 import GLOBALS from 'renderer/globals';
-import { IMessageProps, IMessageImageProps, IMessageContent, IMessageContextMenu, IMessageContextMenuFunctions } from 'renderer/interfaces';
-import { clipboard } from 'electron';
+import { IMessageProps, IMessageImageProps, IMessageContent } from 'dataTypes/interfaces';
+import { toast } from 'react-toastify';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -92,6 +92,7 @@ export default class Message extends React.Component {
     this.closeContextMenu = this.closeContextMenu.bind(this);
     this.menuItemClicked = this.menuItemClicked.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
+    this.isOwnMessage = this.isOwnMessage.bind(this);
 
     this.divRef = React.createRef();
   }
@@ -104,11 +105,11 @@ export default class Message extends React.Component {
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.target.id) {
       case 'edit':
-        ShowToast(); // Not implemented
+        toast.warn('Not Implemented');// Not implemented
         break;
       case 'copy':
         await ipcRenderer.invoke('copyToClipboard', this.message).then((result: Boolean) => {
-          ShowToast(); // Pass arguments for clipboard success
+          toast.info('Copied text to clipboard!');// Pass arguments for clipboard success
         });
         break;
       case 'delete':
@@ -188,7 +189,17 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.send('requestDeleteMessage', GLOBALS.currentChannel, this.messageUUID);
+    ipcRenderer.invoke('requestDeleteMessage', GLOBALS.currentChannel, this.messageUUID).then((result) => {
+      if (result) {
+        toast.success("Message deleted successfully");
+      } else {
+        toast.error("Failed to delete message");
+      }
+    });
+  }
+
+  isOwnMessage() {
+    return this.authorUUID == GLOBALS.CurrentUserUUID;
   }
 
   render() {
@@ -242,9 +253,9 @@ export default class Message extends React.Component {
             'aria-labelledby': 'message-context-menu',
           }}
         >
-          { this.authorUUID == GLOBALS.CurrentUserUUID ? <MenuItem id='edit' onClick={(event) => this.menuItemClicked(event)}>Edit</MenuItem> : null }
+          { this.isOwnMessage() ? <MenuItem id='edit' onClick={(event) => this.menuItemClicked(event)}>Edit</MenuItem> : null }
           <MenuItem id='copy' onClick={(event) => this.menuItemClicked(event)}>Copy</MenuItem>
-          { this.authorUUID == GLOBALS.CurrentUserUUID ? <MenuItem id='delete' onClick={(event) => this.menuItemClicked(event)}>Delete</MenuItem> : null }
+          { this.isOwnMessage() ? <MenuItem id='delete' onClick={(event) => this.menuItemClicked(event)}>Delete</MenuItem> : null }
         </Menu>
       </div>
     );
