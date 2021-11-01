@@ -1,5 +1,5 @@
-import GLOBALS from './globals';
-import { ipcRenderer, Navigate, events } from './helpers';
+import GLOBALS from 'shared/globals';
+import { ipcRenderer, Navigate, events } from '../shared/helpers';
 
 function getCookie(cname: string) {
   let name = cname + '=';
@@ -18,7 +18,7 @@ function getCookie(cname: string) {
 }
 
 let socket : WebSocket;
-ipcRenderer.on('end_auth', (data: boolean) => {
+ipcRenderer.on('endAuth', (data: boolean) => {
   if (data) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Authenticate, Navigate } from 'renderer/helpers';
+import { Authenticate, Navigate } from 'shared/helpers';
 import Credentials from 'dataTypes/Credentials';
 import { ILoginFormProps } from 'dataTypes/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';

@@ -1,9 +1,11 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
-import { ipcRenderer } from 'renderer/helpers';
-import GLOBALS from 'renderer/globals';
+import { ipcRenderer } from 'shared/helpers';
+import GLOBALS from 'shared/globals';
 import { IMessageProps, IMessageImageProps, IMessageContent } from 'dataTypes/interfaces';
 import { toast } from 'react-toastify';
+import AppNotification from 'renderer/components/Notification/Notification';
+import { NotificationAudienceType, NotificationStatusType } from 'dataTypes/enums';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -73,6 +75,7 @@ export default class Message extends React.Component {
   authorUUID: string;
   author: string;
   message: string;
+  timestamp: string;
   avatarSrc: string;
   ref: Ref<any>;
   divRef: Ref<HTMLDivElement>;
@@ -83,6 +86,7 @@ export default class Message extends React.Component {
     this.authorUUID = props.authorUUID;
     this.author = props.author || 'Unknown';
     this.message = props.message || 'Message';
+    this.timestamp = props.timestamp;
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
@@ -100,18 +104,17 @@ export default class Message extends React.Component {
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-    console.log(`Right clicked on message ${this.messageUUID}`);
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.target.id) {
       case 'edit':
-        toast.warn('Not Implemented');// Not implemented
+        new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.warning, notificationAudience: NotificationAudienceType.app }).show();
         break;
       case 'copy':
         await ipcRenderer.invoke('copyToClipboard', this.message).then((result: Boolean) => {
-          toast.info('Copied text to clipboard!');// Pass arguments for clipboard success
+          new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         });
         break;
       case 'delete':
@@ -205,9 +208,9 @@ export default class Message extends React.Component {
   deleteMessage() {
     ipcRenderer.invoke('requestDeleteMessage', { channelID: GLOBALS.currentChannel, messageID: this.messageUUID} ).then((result: Boolean) => {
       if (result) {
-        toast.success("Message deleted successfully");
+        new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
-        toast.error("Failed to delete message");
+        new AppNotification({ body: 'Failed to delete message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
       }
     });
   }
@@ -253,6 +256,7 @@ export default class Message extends React.Component {
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>
           <Avatar src={this.avatarSrc} />
+          <span>{this.timestamp}</span>
         </div>
         <div className='Message_Right'>
           <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>

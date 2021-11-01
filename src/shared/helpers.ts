@@ -1,10 +1,10 @@
 import { createBrowserHistory } from 'history';
 import Credentials from 'dataTypes/Credentials';
-import { UiEvents } from './uiEvents';
+import { UIEvents } from 'renderer/UIEvents';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer } = window.electron;
-export const events = new UiEvents();
+export const events = new UIEvents();
 
 export function Navigate(path: string, data: any)
 {
@@ -22,7 +22,7 @@ export function LoadMessageFeed(channelData: string) {
 }
 
 export async function Authenticate(data: Credentials) {
-  return await ipcRenderer.invoke('begin_auth', data);
+  return await ipcRenderer.invoke('beginAuth', data);
 }
 
 export async function Register(data: Credentials) {

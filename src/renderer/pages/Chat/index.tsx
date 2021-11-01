@@ -3,17 +3,17 @@ import { Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel } from 'renderer/helpers';
+import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
-import GLOBALS from 'renderer/globals'
+import GLOBALS from 'shared/globals'
 import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
+import AppNotification from 'renderer/components/Notification/Notification';
 
 export default class ChatPage extends React.Component {
-  messageReceivedSound: HTMLAudioElement;
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
 
   constructor(props: IChatPageProps) {
@@ -26,8 +26,6 @@ export default class ChatPage extends React.Component {
     this.Logout = this.Logout.bind(this);
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
-
-    this.messageReceivedSound = new Audio('assets/sounds/bell.oga');
   }
 
   state = {
@@ -129,7 +127,7 @@ export default class ChatPage extends React.Component {
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
       if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.CurrentUserUUID) {
-        this.messageReceivedSound.play();
+        new AppNotification({playSound: true}).show();
       }
       this.appendToCanvas(message);
     }

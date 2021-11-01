@@ -1,7 +1,7 @@
 import React, { ReactElement, Ref, RefObject } from 'react';
 import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem } from '@mui/material';
 import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
-import GLOBALS from 'renderer/globals';
+import GLOBALS from 'shared/globals';
 
 export default class UserDropdownMenu extends React.Component {
   menuFunctions: IUserDropdownMenuFunctions;

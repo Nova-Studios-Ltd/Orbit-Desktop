@@ -2,7 +2,7 @@
 
 import { FormEventHandler, ReactChildren, Ref } from 'react'
 import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
-import { ToastStausType } from 'dataTypes/enums';
+import { NotificationStatusType, NotificationAudienceType } from 'dataTypes/enums';
 
 // Page Props
 
@@ -67,6 +67,7 @@ export interface IMessageProps {
   authorUUID: string,
   author: string,
   message: string,
+  timestamp: string,
   avatarSrc: string,
   ref: Ref<any>
 }
@@ -107,10 +108,12 @@ export interface ICredentialsProps {
   address?: string
 }
 
-export interface IToastProps {
-  title: string;
-  body?: string;
-  statusType?: ToastStausType;
+export interface INotificationProps {
+  title?: string,
+  body?: string,
+  playSound?: Boolean,
+  notificationType?: NotificationStatusType,
+  notificationAudience?: NotificationAudienceType
 }
 
 export interface IMessageDeleteRequestArgs {
