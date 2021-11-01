@@ -14,6 +14,8 @@ import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu'
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Button, IconButton } from '@mui/material';
 import { Add as PlusIcon } from '@mui/icons-material';
+import { NotificationAudienceType } from 'dataTypes/enums';
+import { Beforeunload } from 'react-beforeunload';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -130,7 +132,8 @@ export default class ChatPage extends React.Component {
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
       if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.CurrentUserUUID) {
-        new AppNotification({playSound: true}).show();
+        new AppNotification({title: message.author, body: message.content, notificationAudience: NotificationAudienceType.both, playSound: true}).show();
+
       }
       this.appendToCanvas(message);
     }
@@ -177,6 +180,7 @@ export default class ChatPage extends React.Component {
         <Helmet>
           <title>Chat</title>
         </Helmet>
+        <Beforeunload onBeforeunload={this.Logout} />
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
             <Header caption='Channels' icon={<ListIcon />} misc={<IconButton onClick={this.createChannel}><PlusIcon /></IconButton>} />
