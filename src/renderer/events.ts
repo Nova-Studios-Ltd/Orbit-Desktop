@@ -38,7 +38,7 @@ ipcRenderer.on('endAuth', (data: boolean) => {
         events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
       }
       else if (event.EventType == 2) {
-
+        ipcRenderer.send('requestMessage', event.Channel, event.Message);
       }
       else if (event.EventType == 3) {
         events.send('receivedChannelCreatedEvent', event.Channel);

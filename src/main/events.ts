@@ -97,6 +97,29 @@ ipcMain.on('requestChannels', (event, channel_uuid: string) => {
   }).catch((error) => {console.error(error)});
 });
 
+ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) => {
+  const re = request({
+    method: 'GET',
+    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_id}`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        console.log(json.toString());
+        event.sender.send('receivedMessageEditEvent', message_id, JSON.parse(json.toString()));
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+})
+
 ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
   const re = request({
     method: 'GET',
