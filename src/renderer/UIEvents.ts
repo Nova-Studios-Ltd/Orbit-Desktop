@@ -1,4 +1,4 @@
-export class UiEvents {
+export class UIEvents {
     events: { [id: string] : any; } = {};
 
     on(event: string, callback: any) {

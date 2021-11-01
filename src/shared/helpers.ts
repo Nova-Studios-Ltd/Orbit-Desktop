@@ -1,10 +1,10 @@
 import { createBrowserHistory } from 'history';
 import Credentials from 'dataTypes/Credentials';
-import { UiEvents } from '../renderer/uiEvents';
+import { UIEvents } from 'renderer/UIEvents';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer } = window.electron;
-export const events = new UiEvents();
+export const events = new UIEvents();
 
 export function Navigate(path: string, data: any)
 {
