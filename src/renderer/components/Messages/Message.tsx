@@ -225,6 +225,7 @@ export default class Message extends React.Component {
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     let containsText = false;
     content.forEach(word => {
+      
       if (!this.validURL(word) && word != '') containsText = true;
     });
 
