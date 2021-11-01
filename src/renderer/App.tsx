@@ -3,9 +3,9 @@ import { Router, Route } from 'react-router-dom';
 import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
-import { history, Navigate } from './helpers';
+import { history, Navigate } from 'shared/helpers';
 import './events';
-import GLOBALS from './globals';
+import GLOBALS from 'shared/globals';
 import { ToastContainer } from 'react-toastify';
 
 Navigate(GLOBALS.HomePath, null);
@@ -13,7 +13,7 @@ Navigate(GLOBALS.HomePath, null);
 function App() {
   return (
     <>
-      <ToastContainer position="bottom-left"
+      <ToastContainer position='bottom-left'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}

@@ -1,5 +1,6 @@
-import { IMessageDeleteRequestArgs } from 'dataTypes/interfaces';
-import { clipboard, ipcMain, net, session } from 'electron';
+import { IMessageDeleteRequestArgs, INotificationProps } from 'dataTypes/interfaces';
+import { NotificationStatusType } from 'dataTypes/enums';
+import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../dataTypes/Credentials';
 import { FormAuthStatusType } from '../dataTypes/enums';
 import TimeoutUntil from './timeout';
@@ -239,4 +240,8 @@ ipcMain.handle('copyToClipboard', async (_, data: string) => {
   } catch {
     return false;
   }
+});
+
+ipcMain.on('toast', (_, notification: INotificationProps) => {
+  new Notification({ title: notification.title, body: notification.body }).show();
 });

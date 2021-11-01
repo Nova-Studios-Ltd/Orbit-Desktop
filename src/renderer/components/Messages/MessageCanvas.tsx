@@ -1,6 +1,6 @@
 import React from 'react';
 import Message from './Message';
-import GLOBALS from 'renderer/globals';
+import GLOBALS from 'shared/globals';
 import { IMessageCanvasProps } from 'dataTypes/interfaces';
 
 export default class MessageCanvas extends React.Component {

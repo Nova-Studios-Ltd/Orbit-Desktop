@@ -1,6 +1,6 @@
 import { createBrowserHistory } from 'history';
 import Credentials from 'dataTypes/Credentials';
-import { UiEvents } from './uiEvents';
+import { UiEvents } from '../renderer/uiEvents';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer } = window.electron;
