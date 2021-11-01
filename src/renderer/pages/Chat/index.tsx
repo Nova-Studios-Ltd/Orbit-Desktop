@@ -59,7 +59,7 @@ export default class ChatPage extends React.Component {
       ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data), false));
       ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)], true));
 
-      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: string) => this.onReceivedMessageEdit(id, data));
+      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: any) => this.onReceivedMessageEdit(id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
@@ -135,10 +135,11 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedMessageEdit(id: string, data: string) {
+  onReceivedMessageEdit(id: string, data: any) {
     const canvas = this.state.CanvasObject;
+    console.log(id);
     if (canvas != null) {
-      canvas.edit(id, data);
+      canvas.edit(id, data.content);
     }
   }
 
