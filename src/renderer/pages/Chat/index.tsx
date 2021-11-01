@@ -12,6 +12,8 @@ import GLOBALS from 'shared/globals'
 import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
+import { Button, IconButton } from '@mui/material';
+import { Add as PlusIcon } from '@mui/icons-material';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -24,6 +26,7 @@ export default class ChatPage extends React.Component {
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Logout = this.Logout.bind(this);
+    this.createChannel = this.createChannel.bind(this);
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
   }
@@ -154,6 +157,10 @@ export default class ChatPage extends React.Component {
     }
   }
 
+  createChannel() {
+
+  }
+
   Logout() {
     ipcRenderer.removeAllListeners('receivedChannelData');
     ipcRenderer.removeAllListeners('receivedChannelUpdateEvent');
@@ -171,7 +178,7 @@ export default class ChatPage extends React.Component {
         </Helmet>
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
-            <Header caption='Channels' icon={<ListIcon />} />
+            <Header caption='Channels' icon={<ListIcon />} misc={<IconButton onClick={this.createChannel}><PlusIcon /></IconButton>} />
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>

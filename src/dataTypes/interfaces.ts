@@ -121,6 +121,10 @@ export interface IMessageDeleteRequestArgs {
   messageID: string
 }
 
+export interface IPopoutDialog {
+
+}
+
 // Custom Component Props
 
 export interface ILoginFormProps extends IAuthFormProps {
