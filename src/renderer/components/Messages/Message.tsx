@@ -90,6 +90,8 @@ export default class Message extends React.Component {
     this.avatarSrc = props.avatarSrc;
     this.ref = props.ref;
 
+    console.log(this.message);
+
     this.state = { links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
 
     this.openContextMenu = this.openContextMenu.bind(this);
@@ -225,7 +227,7 @@ export default class Message extends React.Component {
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     let containsText = false;
     content.forEach(word => {
-      
+
       if (!this.validURL(word) && word != '') containsText = true;
     });
 
