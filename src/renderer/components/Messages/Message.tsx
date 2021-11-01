@@ -114,7 +114,7 @@ export default class Message extends React.Component {
         break;
       case 'copy':
         await ipcRenderer.invoke('copyToClipboard', this.message).then((result: Boolean) => {
-          new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+          new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         });
         break;
       case 'delete':
