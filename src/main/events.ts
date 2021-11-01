@@ -7,7 +7,7 @@ import TimeoutUntil from './timeout';
 
 const { request } = net;
 
-ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
+ipcMain.handle('beginAuth', async (event, creds: Credentials) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
     method: 'POST',
@@ -21,15 +21,15 @@ ipcMain.handle('begin_auth', async (event, creds: Credentials) => {
       {
         const json_obj = JSON.parse(json.toString());
         if (json_obj.token != null) {
-          event.sender.send('end_auth', true);
+          event.sender.send('endAuth', true);
           result = FormAuthStatusType.success;
         }
-        event.sender.send('end_auth', false);
+        event.sender.send('endAuth', false);
         result = FormAuthStatusType.genericIncorrectUsernamePassword;
       }).catch((e) =>
       {
         console.error(e);
-        event.sender.send('end_auth', false);
+        event.sender.send('endAuth', false);
         result = FormAuthStatusType.serverError;
       });
     });

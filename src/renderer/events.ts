@@ -18,7 +18,7 @@ function getCookie(cname: string) {
 }
 
 let socket : WebSocket;
-ipcRenderer.on('end_auth', (data: boolean) => {
+ipcRenderer.on('endAuth', (data: boolean) => {
   if (data) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
