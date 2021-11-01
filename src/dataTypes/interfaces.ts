@@ -15,6 +15,10 @@ export interface IChatPageProps {
 
 }
 
+export interface ISettingsPageProps {
+
+}
+
 // Generic Component Props
 
 export interface IHeaderProps {
