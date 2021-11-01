@@ -43,7 +43,9 @@ export default class MessageCanvas extends React.Component {
     let index = oldState.messages.findIndex(e => e.messageUUID == id);
     console.log(index);
     if (index > -1) {
-      oldState.messages[index].message = newMessage;
+      let m = oldState.messages[index];
+      oldState.messages[index] = new Message({ message: newMessage, author: m.author, authorUUID: m.authorUUID, messageUUID: m.messageUUID, avatarSrc: m.avatarSrc } as IMessageProps);
+      this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
   }
