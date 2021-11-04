@@ -131,7 +131,7 @@ export default class ChatPage extends React.Component {
 
     for (let index = 0; index < messages.length; index++) {
       let message = messages[index];
-      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.CurrentUserUUID) {
+      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.userData.uuid) {
         new AppNotification({title: message.author, body: message.content, notificationAudience: NotificationAudienceType.both, playSound: true}).show();
 
       }
@@ -187,7 +187,7 @@ export default class ChatPage extends React.Component {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
-            <Header caption='Chat' icon={<ChatIcon />} misc={<UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions}/>} />
+            <Header caption='Chat' icon={<ChatIcon />} misc={<UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />} />
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>

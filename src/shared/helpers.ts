@@ -32,3 +32,7 @@ export async function Register(data: Credentials) {
 export function setDefaultChannel(channelID: string) {
   localStorage.setItem('lastOpenedChannel', channelID);
 }
+
+export async function copyToClipboard(text: string) {
+  return await ipcRenderer.invoke('copyToClipboard', text);
+}

@@ -1,3 +1,4 @@
+import UserData from 'dataTypes/UserData';
 import GLOBALS from 'shared/globals';
 import { ipcRenderer, Navigate, events } from '../shared/helpers';
 
@@ -23,8 +24,9 @@ ipcRenderer.on('endAuth', (data: boolean) => {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
     const { token, uuid } = JSON.parse(getCookie('userData'));
-    GLOBALS.Token = token;
-    GLOBALS.CurrentUserUUID = uuid;
+    GLOBALS.userData.token = token;
+    GLOBALS.userData.uuid = uuid;
+    ipcRenderer.send('requestUserData', uuid);
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {
       var event = JSON.parse(message.data);
@@ -57,6 +59,15 @@ ipcRenderer.on('endAuth', (data: boolean) => {
   }
   else {
 
+  }
+});
+
+ipcRenderer.on('receivedUserData', (data: string) => {
+  console.warn(data);
+  if (data != null) {
+    const userData = JSON.parse(data) as UserData;
+    GLOBALS.userData.username = userData.username;
+    GLOBALS.userData.discriminator = userData.discriminator;
   }
 });
 
