@@ -1,7 +1,8 @@
+import UserData from "dataTypes/UserData";
+
 const GLOBALS = {
+  userData: new UserData(null),
   currentChannel: '',
-  CurrentUserUUID: '',
-  Token: '',
   HomePath: '/login',
   NotificationAssetPath: 'assets/sounds/bell.oga'
 }

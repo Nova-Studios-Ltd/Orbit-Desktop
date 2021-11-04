@@ -3,6 +3,7 @@
 import { FormEventHandler, ReactChildren, Ref } from 'react'
 import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
 import { NotificationStatusType, NotificationAudienceType } from 'dataTypes/enums';
+import UserData from './UserData';
 
 // Page Props
 
@@ -98,7 +99,8 @@ export interface IMessageContent {
 export interface IUserDropdownMenu {
   menuFunctions: {
     logout: Function
-  }
+  },
+  userData: UserData
 }
 
 export interface IUserDropdownMenuFunctions {
@@ -127,6 +129,14 @@ export interface IMessageDeleteRequestArgs {
 
 export interface IPopoutDialog {
 
+}
+
+export interface IUserData {
+  username: string,
+  uuid: string,
+  token: string,
+  discriminator: string,
+  avatarSrc: string
 }
 
 // Custom Component Props

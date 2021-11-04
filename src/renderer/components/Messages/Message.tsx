@@ -1,6 +1,6 @@
 import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import React, { DOMElement, Ref } from 'react';
-import { ipcRenderer } from 'shared/helpers';
+import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 import { IMessageProps, IMessageImageProps, IMessageContent } from 'dataTypes/interfaces';
 import { toast } from 'react-toastify';
@@ -115,8 +115,10 @@ export default class Message extends React.Component {
         new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.warning, notificationAudience: NotificationAudienceType.app }).show();
         break;
       case 'copy':
-        await ipcRenderer.invoke('copyToClipboard', this.message).then((result: Boolean) => {
-          new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+        await copyToClipboard(this.message).then((result: Boolean) => {
+          if (result) {
+            new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+          }
         });
         break;
       case 'delete':
@@ -218,7 +220,7 @@ export default class Message extends React.Component {
   }
 
   isOwnMessage() {
-    return this.authorUUID == GLOBALS.CurrentUserUUID;
+    return this.authorUUID == GLOBALS.userData.uuid;
   }
 
   render() {
