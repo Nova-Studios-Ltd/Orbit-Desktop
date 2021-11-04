@@ -7,7 +7,7 @@ import TimeoutUntil from './timeout';
 
 const { request } = net;
 
-ipcMain.handle('beginAuth', async (event, creds: Credentials) => {
+ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
   let result = FormAuthStatusType.unknown;
   const re = request({
     method: 'POST',
@@ -16,12 +16,14 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) => {
   re.setHeader('Content-Type', 'application/json');
   re.on('response', (response) => {
     response.on('data', (json) => {
-      const cookie = {url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
+      console.log(url);
+      const cookie = {url: url, name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
       session.defaultSession.cookies.set(cookie).then(() =>
       {
         const json_obj = JSON.parse(json.toString());
         if (json_obj.token != null) {
           event.sender.send('endAuth', true);
+          console.log(json_obj);
           result = FormAuthStatusType.success;
         }
         event.sender.send('endAuth', false);

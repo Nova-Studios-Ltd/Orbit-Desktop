@@ -12,7 +12,13 @@ if (process.env.NODE_ENV === 'development') {
     return url.href;
   };
 } else {
-  resolveHtmlPath = (htmlFileName: string) => {
+  /*resolveHtmlPath = (htmlFileName: string) => {
     return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
+  };*/
+  const port = 1212;
+  resolveHtmlPath = (htmlFileName: string) => {
+    const url = new URL(`http://localhost:${port}`);
+    url.pathname = htmlFileName;
+    return url.href;
   };
 }

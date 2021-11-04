@@ -17,6 +17,9 @@ import log from 'electron-log';
 import { resolveHtmlPath } from './util';
 import './events';
 
+var stat = require('node-static');
+var file = new stat.Server(path.resolve(__dirname, '../renderer/'));
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -30,6 +33,12 @@ let mainWindow: BrowserWindow | null = null;
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
+
+  require('http').createServer(function (request: any, response: any) {
+    request.addListener('end', function () {
+      file.serve(request, response);
+    }).resume();
+  }).listen(1212);
 }
 
 const isDevelopment =
@@ -106,7 +115,7 @@ const createWindow = async () => {
     shell.openExternal(url);
   });
 
-
+  console.log(storage.getAll());
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

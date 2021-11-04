@@ -19,12 +19,17 @@ function getCookie(cname: string) {
 
 let socket : WebSocket;
 ipcRenderer.on('endAuth', (data: boolean) => {
+  console.log(data);
   if (data) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
+    console.log("Sent requestChannels event, getting token and uuid next...")
+    console.log(getCookie('userData'));
     const { token, uuid } = JSON.parse(getCookie('userData'));
+    console.log("Setting token and uuid")
     GLOBALS.Token = token;
     GLOBALS.CurrentUserUUID = uuid;
+    console.log(`${token} + ${uuid}`);
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {
       var event = JSON.parse(message.data);
@@ -45,13 +50,14 @@ ipcRenderer.on('endAuth', (data: boolean) => {
       }
     };
     socket.onerror = function (error) {
-      console.error(error);
+      console.error("Socket closed unexpectedly");
     };
     socket.onopen = function () {
       socket.send(token);
+      console.warn("Socket opened")
     };
     socket.onclose = function (event) {
-      console.log(event);
+      console.warn(event);
     }
     return true;
   }

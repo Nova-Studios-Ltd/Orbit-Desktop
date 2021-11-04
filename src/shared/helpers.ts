@@ -22,7 +22,7 @@ export function LoadMessageFeed(channelData: string) {
 }
 
 export async function Authenticate(data: Credentials) {
-  return await ipcRenderer.invoke('beginAuth', data);
+  return await ipcRenderer.invoke('beginAuth', data, window.location.origin);
 }
 
 export async function Register(data: Credentials) {
