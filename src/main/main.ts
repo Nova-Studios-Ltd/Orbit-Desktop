@@ -115,8 +115,6 @@ const createWindow = async () => {
     shell.openExternal(url);
   });
 
-  console.log(storage.getAll());
-
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();

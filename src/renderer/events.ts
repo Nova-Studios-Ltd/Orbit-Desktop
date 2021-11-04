@@ -33,20 +33,29 @@ ipcRenderer.on('endAuth', (data: boolean) => {
     socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
     socket.onmessage = function (message) {
       var event = JSON.parse(message.data);
-      if (event.EventType == -1) {
-        console.log('<Beat>')
-      }
-      else if (event.EventType == 0) {
-        ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
-      }
-      else if (event.EventType == 1) {
-        events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
-      }
-      else if (event.EventType == 2) {
-        ipcRenderer.send('requestMessage', event.Channel, event.Message);
-      }
-      else if (event.EventType == 3) {
-        events.send('receivedChannelCreatedEvent', event.Channel);
+      switch (event.EventType) {
+        case -1:
+          console.log('<Beat>');
+          break;
+        case 0:
+          ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
+          break;
+        case 1:
+          events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
+          break;
+        case 2:
+          ipcRenderer.send('requestMessage', event.Channel, event.Message);
+          break;
+        case 3:
+          events.send('receivedChannelCreatedEvent', event.Channel);
+          break;
+        case 4:
+          break;
+        case 5:
+          events.send('receivedAddedToChannelEvent', event.Channel);
+          break;
+        default:
+          break;
       }
     };
     socket.onerror = function (error) {
