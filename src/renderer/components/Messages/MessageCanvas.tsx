@@ -25,7 +25,8 @@ export default class MessageCanvas extends React.Component {
       else
         oldState.messages.unshift(message);
 
-      this.setState({messages: []});
+      if (!isUpdate)
+        this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
     else {

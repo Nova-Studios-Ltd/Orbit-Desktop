@@ -88,6 +88,7 @@ ipcMain.on('requestChannels', (event, channel_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         event.sender.send('receivedChannels', json.toString());
       });
     });
@@ -110,6 +111,7 @@ ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) =
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         console.log(json.toString());
         event.sender.send('receivedMessageEditEvent', message_id, JSON.parse(json.toString()));
       });
@@ -133,6 +135,7 @@ ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         event.sender.send('receivedChannelInfo', json.toString());
       });
     });
@@ -155,7 +158,7 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
-        console.log(json.toString());
+        if (response.statusCode != 200) return;
         event.sender.send('receivedChannelData', json.toString());
       });
     });
@@ -179,6 +182,7 @@ ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         console.log(json.toString());
         event.sender.send('receivedChannelMessagePreview', json.toString());
       });
@@ -225,6 +229,7 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         console.log('Got channel update');
         event.sender.send('receivedChannelUpdateEvent', json.toString());
       });
@@ -283,6 +288,7 @@ ipcMain.on('requestUserData', (event, user_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        if (response.statusCode != 200) return;
         event.sender.send('receivedUserData', json.toString());
       });
     });
