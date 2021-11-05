@@ -16,11 +16,16 @@ export default class MessageCanvas extends React.Component {
     messages: [] as Array<Message>
   }
 
-  append(message: Message) {
+  append(message: Message, isUpdate: boolean) {
     if (this.state.messages.length > 0)
     {
       let oldState = this.state;
-      oldState.messages.push(message);
+      if (isUpdate)
+        oldState.messages.push(message);
+      else
+        oldState.messages.unshift(message);
+
+      this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
     else {
@@ -56,6 +61,12 @@ export default class MessageCanvas extends React.Component {
 
   render() {
     const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />));
+    /*let messagesToRender = [];
+    for (let i = this.state.messages.length; i > 0; i--) {
+      const m = this.state.messages[i];
+      if (m == undefined) continue;
+      messagesToRender.push(<Message key={i} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />);
+    }*/
     return (
       <div className='MessageCanvas'>
         {messagesToRender}

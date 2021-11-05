@@ -155,6 +155,7 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
     re.setHeader('Authorization', token);
     re.on('response', (response) => {
       response.on('data', (json) => {
+        console.log(json.toString());
         event.sender.send('receivedChannelData', json.toString());
       });
     });
