@@ -35,7 +35,9 @@ export default class PopoutDialog extends React.Component {
     return(
       <div className='PopoutDialog_Container' hidden={!this.state.show}>
         <div className='PopoutDialog_Content_Container'>
-          <Header caption={this.caption} misc={<IconButton onClick={this.closeButtonClicked}><CloseIcon /></IconButton>} />
+          <Header caption={this.caption}>
+            <IconButton onClick={this.closeButtonClicked}><CloseIcon /></IconButton>
+          </Header>
           <div className='PopoutDialog_Content'>
             {this.children}
           </div>

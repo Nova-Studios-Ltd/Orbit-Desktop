@@ -205,11 +205,15 @@ export default class ChatPage extends React.Component {
         <Beforeunload onBeforeunload={this.UnsubscribeEvents} />
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
-            <Header caption='Channels' icon={<ListIcon />} misc={<IconButton onClick={this.createChannelButtonClicked}><PlusIcon /></IconButton>} />
+            <Header caption='Channels' icon={<ListIcon />}>
+              <IconButton onClick={this.createChannelButtonClicked}><PlusIcon /></IconButton>
+            </Header>
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
-            <Header caption='Chat' icon={<ChatIcon />} misc={<UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />} />
+            <Header caption='Chat' icon={<ChatIcon />}>
+              <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
+            </Header>
             <MessageCanvas init={this.initCanvas}/>
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>

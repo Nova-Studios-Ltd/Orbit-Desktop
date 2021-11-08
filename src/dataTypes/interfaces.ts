@@ -26,7 +26,7 @@ export interface IHeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
-  misc: any
+  children: ReactChildren
 }
 
 export interface IAuthFormProps {
