@@ -49,6 +49,10 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
   return result;
 });
 
+ipcMain.on('logout', (event) => {
+  session.defaultSession.cookies.remove('http://localhost', 'userData');
+});
+
 ipcMain.handle('register', async (event, creds: Credentials) => {
   let result = null;
   const re = request({method: 'POST', url: `https://api.novastudios.tk/Register`});

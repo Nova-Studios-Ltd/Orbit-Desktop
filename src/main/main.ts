@@ -83,11 +83,12 @@ const createWindow = async () => {
     height: 728,
     minWidth: 640,
     icon: getAssetPath('icon.png'),
-    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  mainWindow.removeMenu();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

@@ -1,4 +1,4 @@
-import { IUserData } from "dataTypes/interfaces";
+import { IUserData } from 'dataTypes/interfaces';
 
 export default class UserData {
   username: string;
@@ -7,7 +7,7 @@ export default class UserData {
   discriminator: string;
   avatarSrc: string;
 
-  constructor(props: IUserData) {
+  constructor(props?: IUserData) {
     if (props != null) {
       this.username = props.username || '';
       this.uuid = props.uuid || '';

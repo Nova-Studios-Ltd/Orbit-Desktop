@@ -3,7 +3,7 @@ import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem
 import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
 import GLOBALS from 'shared/globals';
 import UserData from 'dataTypes/UserData';
-import { copyToClipboard, ipcRenderer } from 'shared/helpers';
+import { copyToClipboard, ipcRenderer, Navigate } from 'shared/helpers';
 import AppNotification from '../Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'dataTypes/enums';
 
@@ -41,6 +41,7 @@ export default class UserDropdownMenu extends React.Component {
         });
         break;
       case 'settings':
+        Navigate('/settings', null);
         break;
       case 'logout':
         this.menuFunctions.logout();
@@ -72,7 +73,7 @@ export default class UserDropdownMenu extends React.Component {
         >
 
         <MenuItem id='userinfo' onClick={(event) => this.menuItemClicked(event)}>
-        <Typography variant="subtitle1">{this.userData.username}<Typography variant="caption">#{this.userData.discriminator}</Typography></Typography>
+        <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
         </MenuItem>
         <MenuItem id='settings' onClick={(event) => this.menuItemClicked(event)}>Settings</MenuItem>
         <MenuItem id='logout' onClick={(event) => this.menuItemClicked(event)}>Logout</MenuItem>

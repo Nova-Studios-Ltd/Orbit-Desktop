@@ -127,8 +127,10 @@ export interface IMessageDeleteRequestArgs {
   messageID: string
 }
 
-export interface IPopoutDialog {
-
+export interface IPopoutDialogProps {
+  children: ReactChildren,
+  caption: string,
+  show: boolean
 }
 
 export interface IUserData {
@@ -137,6 +139,16 @@ export interface IUserData {
   token: string,
   discriminator: string,
   avatarSrc: string
+}
+
+export interface IElectronRendererWindow {
+  ipcRenderer: {
+    send(channel: string, ...data: any[]): void,
+    on(channel: string, func: Function): void,
+    once(channel: string, func: Function): void,
+    removeAllListeners(channel: string): void,
+    invoke(channel: string, ...data: any[]): Promise<any>
+  }
 }
 
 // Custom Component Props

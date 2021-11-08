@@ -3,7 +3,7 @@ import { Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel } from 'shared/helpers';
+import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -12,10 +12,11 @@ import GLOBALS from 'shared/globals'
 import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import { Add as PlusIcon } from '@mui/icons-material';
 import { NotificationAudienceType } from 'dataTypes/enums';
 import { Beforeunload } from 'react-beforeunload';
+import PopoutDialog from 'renderer/components/PopoutDialog/PopoutDialog';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -28,14 +29,26 @@ export default class ChatPage extends React.Component {
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Logout = this.Logout.bind(this);
-    this.createChannel = this.createChannel.bind(this);
+    this.UnsubscribeEvents = this.UnsubscribeEvents.bind(this);
+    this.createChannelButtonClicked = this.createChannelButtonClicked.bind(this);
+
+    this.state = {
+      CanvasObject: null as unknown as MessageCanvas,
+      ChannelList: null as unknown as ChannelView,
+      CreateChannelDialog: {
+        visible: false
+      }
+    };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
   }
 
   state = {
     CanvasObject: null as unknown as MessageCanvas,
-    ChannelList: null as unknown as ChannelView
+    ChannelList: null as unknown as ChannelView,
+    CreateChannelDialog: {
+      visible: false
+    }
   }
 
   preloadChannel() {
@@ -162,17 +175,25 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  createChannel() {
-
+  createChannelButtonClicked() {
+    this.setState({CreateChannelDialog: {
+        visible: true
+      }
+    });
   }
 
   Logout() {
+    this.UnsubscribeEvents();
+    RemoveCachedCredentials();
+    Navigate('/login', null);
+  }
+
+  UnsubscribeEvents() {
     ipcRenderer.removeAllListeners('receivedChannelData');
     ipcRenderer.removeAllListeners('receivedChannelUpdateEvent');
     ipcRenderer.removeAllListeners('receivedMessageEditEvent');
     ipcRenderer.removeAllListeners('receivedChannels');
     ipcRenderer.removeAllListeners('receivedChannelInfo');
-    Navigate('/login', null);
   }
 
   render() {
@@ -181,10 +202,10 @@ export default class ChatPage extends React.Component {
         <Helmet>
           <title>Chat</title>
         </Helmet>
-        <Beforeunload onBeforeunload={this.Logout} />
+        <Beforeunload onBeforeunload={this.UnsubscribeEvents} />
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
-            <Header caption='Channels' icon={<ListIcon />} misc={<IconButton onClick={this.createChannel}><PlusIcon /></IconButton>} />
+            <Header caption='Channels' icon={<ListIcon />} misc={<IconButton onClick={this.createChannelButtonClicked}><PlusIcon /></IconButton>} />
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
@@ -193,6 +214,10 @@ export default class ChatPage extends React.Component {
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
         </div>
+
+        <PopoutDialog show={this.state.CreateChannelDialog.visible} caption='Create a channel'>
+          <Typography>Works</Typography>
+        </PopoutDialog>
       </div>
     );
   }

@@ -1,0 +1,25 @@
+.PopoutDialog_Container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+
+}
+
+.PopoutDialog_Content_Container {
+  position: fixed;
+  min-width: 200px;
+  min-height: 150px;
+  background-color: white;
+  left: 50%;
+  top: 50%;
+}
+
+.PopoutDialog_Content {
+  padding: 0.5rem;
+}
+
+.PopoutDialog_BackDrop {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}

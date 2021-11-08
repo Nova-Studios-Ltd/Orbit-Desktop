@@ -9,7 +9,7 @@ export default class SettingsPage extends React.Component {
   render() {
     return(
       <div>
-
+        <p>Settings</p>
       </div>
     );
   }
