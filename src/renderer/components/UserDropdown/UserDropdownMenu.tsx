@@ -32,7 +32,7 @@ export default class UserDropdownMenu extends React.Component {
   }
 
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    switch(event.target.id) {
+    switch(event.currentTarget.id) {
       case 'userinfo':
         await copyToClipboard(this.userData.uuid).then((result: Boolean) => {
           if (result) {
