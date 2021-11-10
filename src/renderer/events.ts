@@ -1,4 +1,4 @@
-import UserData from 'dataTypes/UserData';
+import UserData from 'structs/UserData';
 import GLOBALS from 'shared/globals';
 import { ConductLogin, getCookie, ipcRenderer, SetAuth } from 'shared/helpers';
 

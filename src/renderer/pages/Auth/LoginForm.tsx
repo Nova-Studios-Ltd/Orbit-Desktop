@@ -2,13 +2,13 @@ import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'shared/helpers';
-import Credentials from 'dataTypes/Credentials';
-import { ILoginFormProps } from 'dataTypes/interfaces';
+import Credentials from 'structs/Credentials';
+import { ILoginFormProps } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
-import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
-import { FormAuthStatusType } from 'dataTypes/enums';
-import { IAuthForm } from 'dataTypes/interfaces'
+import FormStatusTuple from 'structs/FormStatusTypes';
+import { FormAuthStatusType, FormStatusType } from 'types/enums';
+import { IAuthForm } from 'types/interfaces'
 
 class LoginForm extends React.Component implements IAuthForm {
   constructor(props: ILoginFormProps) {

@@ -1,4 +1,4 @@
-import { ICredentialsProps } from 'dataTypes/interfaces';
+import { ICredentialsProps } from 'types/interfaces';
 
 export default class Credentials {
   email?: string;

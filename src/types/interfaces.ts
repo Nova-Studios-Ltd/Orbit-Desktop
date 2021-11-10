@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { FormEventHandler, ReactChildren, Ref } from 'react'
-import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
-import { NotificationStatusType, NotificationAudienceType } from 'dataTypes/enums';
-import UserData from './UserData';
+import FormStatusTuple from 'structs/FormStatusTypes';
+import { FormStatusType } from 'types/enums';
+import { NotificationStatusType, NotificationAudienceType } from 'types/enums';
+import UserData from 'structs/UserData';
 
 // Page Props
 
@@ -127,10 +128,14 @@ export interface IMessageDeleteRequestArgs {
   messageID: string
 }
 
-export interface IPopoutDialogProps {
-  children: ReactChildren,
-  caption: string,
-  show: boolean
+export interface IGenericDialogProps {
+  title: string,
+  children: ReactChildren
+}
+
+export interface IYesNoDialogProps {
+  title: string,
+  body: string
 }
 
 export interface IUserData {

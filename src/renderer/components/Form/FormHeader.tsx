@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { IFormHeaderProps } from 'dataTypes/interfaces';
+import { IFormHeaderProps } from 'types/interfaces';
 
 export default class FormHeader extends React.Component {
   heading?: string;

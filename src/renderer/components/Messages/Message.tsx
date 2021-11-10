@@ -2,10 +2,10 @@ import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } fro
 import React, { DOMElement, Ref } from 'react';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import { IMessageProps, IMessageImageProps, IMessageContent } from 'dataTypes/interfaces';
+import { IMessageProps, IMessageImageProps, IMessageContent } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'dataTypes/enums';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -110,7 +110,7 @@ export default class Message extends React.Component {
   }
 
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    switch(event.target.id) {
+    switch(event.currentTarget.id) {
       case 'edit':
         new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.warning, notificationAudience: NotificationAudienceType.app }).show();
         break;

@@ -1,9 +1,9 @@
 import { createBrowserHistory } from 'history';
-import Credentials from 'dataTypes/Credentials';
+import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
-import UserData from 'dataTypes/UserData';
-import { IElectronRendererWindow } from 'dataTypes/interfaces';
+import UserData from 'structs/UserData';
+import { IElectronRendererWindow } from 'types/interfaces';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;

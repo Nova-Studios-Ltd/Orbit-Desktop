@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
-import { ISettingsPageProps } from 'dataTypes/interfaces';
+import { ISettingsPageProps } from 'types/interfaces';
 import Header from 'renderer/components/Header/Header';
 import { history } from 'shared/helpers';
 

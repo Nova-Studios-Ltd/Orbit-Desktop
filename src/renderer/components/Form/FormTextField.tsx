@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField } from '@mui/material';
-import { IFormTextFieldProps } from 'dataTypes/interfaces';
+import { IFormTextFieldProps } from 'types/interfaces';
 
 export default class FormTextField extends React.Component {
   id: string;

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { ILoginFormProps } from 'dataTypes/interfaces';
+import { ILoginFormProps } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
-import { IAuthForm } from 'dataTypes/interfaces'
+import { IAuthForm } from 'types/interfaces'
 import { Navigate, Register } from 'shared/helpers';
-import Credentials from 'dataTypes/Credentials';
-import FormStatusTuple, { FormStatusType } from 'dataTypes/FormStatusTypes';
+import Credentials from 'structs/Credentials';
+import FormStatusTuple from 'structs/FormStatusTypes';
+import { FormStatusType } from 'types/enums';
 
 class RegisterForm extends React.Component implements IAuthForm {
   constructor(props: ILoginFormProps) {

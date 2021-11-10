@@ -1,11 +1,11 @@
 import React, { ReactElement, Ref, RefObject } from 'react';
 import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
+import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'types/interfaces';
 import GLOBALS from 'shared/globals';
-import UserData from 'dataTypes/UserData';
+import UserData from 'structs/UserData';
 import { copyToClipboard, ipcRenderer, Navigate } from 'shared/helpers';
-import AppNotification from '../Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'dataTypes/enums';
+import AppNotification from 'renderer/components/Notification/Notification';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 export default class UserDropdownMenu extends React.Component {
   menuFunctions: IUserDropdownMenuFunctions;

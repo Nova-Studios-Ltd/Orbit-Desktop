@@ -8,6 +8,14 @@ export enum FormAuthStatusType {
   unknown
 }
 
+export enum FormStatusType {
+  default,
+  info,
+  success,
+  warn,
+  error
+}
+
 export enum NotificationStatusType {
   default,
   info,
