@@ -4,9 +4,10 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import { IAuthPageProps } from 'types/interfaces'
 import GLOBALS from 'shared/globals';
-import { ConductLogin, SetAuth } from 'shared/helpers';
+import { ConductLogin, SetAuth, GetHistoryState } from 'shared/helpers';
 
 function LoginInit(form: LoginForm) {
+  if (GetHistoryState() != null && GetHistoryState().failed) return;
   ConductLogin();
 }
 

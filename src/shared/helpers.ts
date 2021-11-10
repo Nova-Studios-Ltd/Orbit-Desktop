@@ -86,8 +86,10 @@ function HandleWebsocket() {
       case 420: // Because why not
         // Trigger fake socket disconnect
         reconnectAttempts = event.Attempts;
-        socket.close(1);
-        break;
+        if (socket.onclose != null)
+          socket.onclose(new CloseEvent("Force-Close"));
+          socket.close();
+          break;
       default:
         console.warn(`Unknown event code ${event.EventType}`);
         break;
