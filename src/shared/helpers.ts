@@ -19,6 +19,11 @@ export function Navigate(path: string, data: any)
   }
 }
 
+export function GetHistoryState()
+{
+  return history.location.state;
+}
+
 export function getCookie(cname: string) {
   let name = cname + '=';
   let decodedCookie = decodeURIComponent(document.cookie);
