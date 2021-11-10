@@ -1,8 +1,7 @@
-import { IMessageDeleteRequestArgs, INotificationProps } from 'dataTypes/interfaces';
-import { NotificationStatusType } from 'dataTypes/enums';
+import { IMessageDeleteRequestArgs, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
-import Credentials from '../dataTypes/Credentials';
-import { FormAuthStatusType } from '../dataTypes/enums';
+import Credentials from '../structs/Credentials';
+import { FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
 
 const { request } = net;

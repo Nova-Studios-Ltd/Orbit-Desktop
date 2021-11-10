@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
+import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -9,14 +9,12 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'dataTypes/interfaces';
+import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Button, IconButton, Typography } from '@mui/material';
-import { Add as PlusIcon } from '@mui/icons-material';
-import { NotificationAudienceType } from 'dataTypes/enums';
+import { Button, Dialog, DialogContent, IconButton, TextField, Typography } from '@mui/material';
+import { NotificationAudienceType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
-import PopoutDialog from 'renderer/components/PopoutDialog/PopoutDialog';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -34,10 +32,7 @@ export default class ChatPage extends React.Component {
 
     this.state = {
       CanvasObject: null as unknown as MessageCanvas,
-      ChannelList: null as unknown as ChannelView,
-      CreateChannelDialog: {
-        visible: false
-      }
+      ChannelList: null as unknown as ChannelView
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -46,9 +41,6 @@ export default class ChatPage extends React.Component {
   state = {
     CanvasObject: null as unknown as MessageCanvas,
     ChannelList: null as unknown as ChannelView,
-    CreateChannelDialog: {
-      visible: false
-    }
   }
 
   preloadChannel() {
@@ -176,10 +168,7 @@ export default class ChatPage extends React.Component {
   }
 
   createChannelButtonClicked() {
-    this.setState({CreateChannelDialog: {
-        visible: true
-      }
-    });
+
   }
 
   Logout() {
@@ -218,10 +207,6 @@ export default class ChatPage extends React.Component {
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
         </div>
-
-        <PopoutDialog show={this.state.CreateChannelDialog.visible} caption='Create a channel'>
-          <Typography>Works</Typography>
-        </PopoutDialog>
       </div>
     );
   }

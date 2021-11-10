@@ -1,6 +1,6 @@
 import React from 'react';
-import { NotificationAudienceType, NotificationStatusType } from '../../../dataTypes/enums';
-import { INotificationProps } from '../../../dataTypes/interfaces';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { INotificationProps } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';
@@ -14,46 +14,16 @@ export default class AppNotification {
   readonly notificationAudience?: NotificationAudienceType;
 
   constructor(props: INotificationProps) {
-    if (props.title != null) {
-      this.title = props.title;
-    }
-    else {
-      this.title = '';
-    }
-
-    if (props.body != null) {
-      this.body = props.body;
-    }
-    else {
-      this.body = '';
-    }
-
-    if (props.playSound != null) {
-      this.playSound = props.playSound;
-    }
-    else {
-      this.playSound = false;
-    }
-
-    if (props.notificationType != null) {
-      this.notificationType = props.notificationType;
-    }
-    else {
-      this.notificationType = NotificationStatusType.default;
-    }
-
-    if (props.notificationAudience != null) {
-      this.notificationAudience = props.notificationAudience;
-    }
-    else {
-      this.notificationAudience = NotificationAudienceType.app;
-    }
-    console.log(this);
+    this.title = props.title || '';
+    this.body = props.body || '';
+    this.playSound = props.playSound || false;
+    this.notificationType = props.notificationType || NotificationStatusType.default;
+    this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
   }
 
   private sendAppToast() {
     let toastElement = null;
-    if (this.title.length > 0) {
+    if (this.title != null && this.title.length > 0) {
       toastElement = () => {
         return(
           <div className='Notification_Container'>
@@ -62,7 +32,6 @@ export default class AppNotification {
           </div>
         );
       };
-      console.log(toastElement);
     }
     else {
       toastElement = this.body;

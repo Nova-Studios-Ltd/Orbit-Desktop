@@ -17,4 +17,7 @@
 
 .Header_Misc {
   margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  flex-flow: row-reverse;
 }

@@ -1,4 +1,4 @@
-import { IUserData } from 'dataTypes/interfaces';
+import { IUserData } from 'types/interfaces';
 
 export default class UserData {
   username: string;
