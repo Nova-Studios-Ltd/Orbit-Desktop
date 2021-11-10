@@ -37,56 +37,79 @@ export function getCookie(cname: string) {
 
 export function ConductLogin() {
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
-    let socket : WebSocket;
-
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
     console.log("Sent requestChannels event, getting token and uuid next...")
     console.log(getCookie('userData'));
-    const { token, uuid } = GLOBALS.userData;
+    
+    const { uuid } = GLOBALS.userData;
+
     ipcRenderer.send('requestUserData', uuid);
-    socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
-    socket.onmessage = function (message) {
-      var event = JSON.parse(message.data);
-      switch (event.EventType) {
-        case -1:
-          console.log('<Beat>');
-          break;
-        case 0:
-          ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
-          break;
-        case 1:
-          events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
-          break;
-        case 2:
-          ipcRenderer.send('requestMessage', event.Channel, event.Message);
-          break;
-        case 3:
-          events.send('receivedChannelCreatedEvent', event.Channel);
-          break;
-        case 4:
-          break;
-        case 5:
-          events.send('receivedAddedToChannelEvent', event.Channel);
-          break;
-        default:
-          break;
-      }
-    };
-    socket.onerror = function (error) {
-      console.error("Socket closed unexpectedly");
-    };
-    socket.onopen = function () {
-      socket.send(token);
-      console.warn("Socket opened")
-    };
-    socket.onclose = function (event) {
-      console.warn(event);
-    }
+    HandleWebsocket();
   }
   else {
     console.error('UUID and Token do not exist. Cannot conduct login.');
   }
+}
+let reconnectAttempts = 1;
+function HandleWebsocket() {
+  const { token, uuid } = GLOBALS.userData;
+  let socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
+  socket.onmessage = function (message) {
+    var event = JSON.parse(message.data);
+    switch (event.EventType) {
+      case -1:
+        console.log('<Beat>');
+        break;
+      case 0:
+        ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
+        break;
+      case 1:
+        events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
+        break;
+      case 2:
+        ipcRenderer.send('requestMessage', event.Channel, event.Message);
+        break;
+      case 3:
+        events.send('receivedChannelCreatedEvent', event.Channel);
+        break;
+      case 4:
+        break;
+      case 5:
+        events.send('receivedAddedToChannelEvent', event.Channel);
+        break;
+      case 420: // Because why not
+        // Trigger fake socket disconnect
+        reconnectAttempts = event.Attempts;
+        socket.close(1);
+        break;
+      default:
+        console.warn(`Unknown event code ${event.EventType}`);
+        break;
+    }
+  };
+  socket.onerror = function (error) {
+    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`);
+    if (reconnectAttempts > 4) {
+      Navigate('/Login', { failed: true });
+      return;
+    }
+    setTimeout(HandleWebsocket, 1000 * reconnectAttempts);
+    reconnectAttempts++;
+  };
+  socket.onopen = function () {
+    reconnectAttempts = 1;
+    socket.send(token);
+  };
+  socket.onclose = function (event) {
+    console.warn(`Socket closed. Attempting reconnect in ${reconnectAttempts}s`);
+    if (reconnectAttempts > 4) {
+      Navigate('/Login', { failed: true });
+      return;
+    }
+    setTimeout(HandleWebsocket, 1000 * reconnectAttempts);
+    reconnectAttempts++;
+  };
 }
 
 export function LoadMessageFeed(channelData: string) {
