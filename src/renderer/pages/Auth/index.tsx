@@ -23,10 +23,10 @@ function getRandomInt(min: number, max: number) {
 
 // Random Experiemnt stuff
 function GenerateRandomColor() {
-  var r = getRandomInt(0, 255);
-  var g = getRandomInt(0, 255);
-  var b = getRandomInt(0, 255);
-  return rgbToHex(r, g, b);
+  var h = getRandomInt(0, 360);
+  var s = getRandomInt(80, 100);
+  var l = 75;
+  return hslToHex(h, s, l);
 }
 
 function componentToHex(c: number) {
@@ -36,6 +36,17 @@ function componentToHex(c: number) {
 
 function rgbToHex(r: number, g: number, b: number) {
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hslToHex(h: number, s: number, l: number) {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 export default class AuthPage extends React.Component {
