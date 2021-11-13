@@ -66,10 +66,10 @@ export default class AuthPage extends React.Component {
     const title = this.formType == 1 ? 'Register' : 'Login';
     const form = this.formType == 1 ? <RegisterForm init={RegisterInit}/> : <LoginForm init={LoginInit}/>;
     const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
-    const AuthPageContainerClassNames = `Auth_Page_Container ${background}`
+    const AuthPageContainerClassNames = `Auth_Page_Container ${background}`;
 
     const st = {
-      backgroundImage: `linear-gradient(43deg, ${GenerateRandomColor()} 0%, ${GenerateRandomColor()} 46%, ${GenerateRandomColor()} 100%)`,
+      backgroundImage: `linear-gradient(${getRandomInt(43, 150)}deg, ${GenerateRandomColor()} 0%, ${GenerateRandomColor()} 46%, ${GenerateRandomColor()} 100%)`,
     };
 
     return (
