@@ -29,11 +29,6 @@ function GenerateRandomColor() {
   return hslToHex(h, s, l);
 }
 
-function componentToHex(c: number) {
-  var hex = c.toString(16);
-  return hex.length == 1 ? "0" + hex : hex;
-}
-
 function hslToHex(h: number, s: number, l: number) {
   l /= 100;
   const a = s * Math.min(l, 1 - l) / 100;
