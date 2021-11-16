@@ -62,6 +62,7 @@
       ]
     },
     "win": {
+      "artifactName": "${productName}-latest.exe",
       "target": [
         "nsis"
       ]
