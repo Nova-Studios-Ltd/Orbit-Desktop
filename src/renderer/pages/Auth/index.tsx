@@ -21,7 +21,6 @@ function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-// Random Experiemnt stuff
 function GenerateRandomColor() {
   var h = getRandomInt(0, 360);
   var s = getRandomInt(80, 100);
@@ -68,11 +67,8 @@ export default class AuthPage extends React.Component {
         <Helmet>
           <title>{title}</title>
         </Helmet>
-
         <div className='Auth_Page_Left' />
-
         {form}
-
       </div>
     );
   }
