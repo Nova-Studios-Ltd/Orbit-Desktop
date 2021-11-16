@@ -1,4 +1,4 @@
-import { FormStatusType } from "types/enums";
+import { FormStatusType } from 'types/enums';
 
 export default class FormStatusTuple {
   message: string;

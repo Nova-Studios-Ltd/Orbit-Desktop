@@ -44,9 +44,9 @@ export function ConductLogin() {
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');
-    console.log("Sent requestChannels event, getting token and uuid next...")
+    console.log('Sent requestChannels event, getting token and uuid next...')
     console.log(getCookie('userData'));
-    
+
     const { uuid } = GLOBALS.userData;
 
     ipcRenderer.send('requestUserData', uuid);
@@ -87,7 +87,7 @@ function HandleWebsocket() {
         // Trigger fake socket disconnect
         reconnectAttempts = event.Attempts;
         if (socket.onclose != null)
-          socket.onclose(new CloseEvent("Force-Close"));
+          socket.onclose(new CloseEvent('Force-Close'));
           socket.close();
           break;
       default:

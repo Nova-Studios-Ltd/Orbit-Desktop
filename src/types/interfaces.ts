@@ -130,12 +130,21 @@ export interface IMessageDeleteRequestArgs {
 
 export interface IGenericDialogProps {
   title: string,
-  children: ReactChildren
+  children: ReactChildren,
+  actions: ReactChildren
 }
 
 export interface IYesNoDialogProps {
   title: string,
-  body: string
+  body: string,
+  show: boolean,
+  YesButtonProps: IYesNoDialogButtonProps,
+  NoButtonProps: IYesNoDialogButtonProps
+}
+
+export interface IYesNoDialogButtonProps {
+  body: string,
+  clicked: Function
 }
 
 export interface IUserData {
