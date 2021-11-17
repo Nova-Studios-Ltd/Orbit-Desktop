@@ -3,6 +3,7 @@ import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
 import { FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
+import AppNotification from 'renderer/components/Notification/Notification';
 
 const { request } = net;
 
@@ -293,6 +294,32 @@ ipcMain.on('requestUserData', (event, user_uuid: string) => {
       response.on('data', (json) => {
         if (response.statusCode != 200) return;
         event.sender.send('receivedUserData', json.toString());
+      });
+    });
+    re.on('error', (error) => {
+      console.error(error);
+    });
+    re.end();
+    return true;
+  }).catch((error) => {console.error(error)});
+});
+
+ipcMain.on('createChannel', (event, data: any) => {
+  const name = data.channelName;
+  const users = data.recipients;
+
+  const re = request({
+    method: 'POST',
+    url: users.length == 1? `https://api.novastudios.tk/Channel/CreateChannel?recipient_uuid=${users[0]}` : 'https://api.novastudios.tk/Channel/CreateGroupChannel',
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (response) => {
+      response.on('data', (json) => {
+        if (response.statusCode != 200) return;
+        event.sender.send('channelCreationSucceded', json.toString());
       });
     });
     re.on('error', (error) => {

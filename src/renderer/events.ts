@@ -1,6 +1,9 @@
 import UserData from 'structs/UserData';
 import GLOBALS from 'shared/globals';
 import { ConductLogin, getCookie, ipcRenderer, SetAuth } from 'shared/helpers';
+import AppNotification from './components/Notification/Notification';
+
+
 
 ipcRenderer.on('endAuth', (data: boolean) => {
   console.log(data);
@@ -17,6 +20,10 @@ ipcRenderer.on('receivedUserData', (data: string) => {
     GLOBALS.userData.username = userData.username;
     GLOBALS.userData.discriminator = userData.discriminator;
   }
+});
+
+ipcRenderer.on('channelCreationSucceded', (data: string) => {
+  new AppNotification({title: 'Test', body}).show();
 });
 
 //ipcRenderer.on('receivedChannelData', (data: string) => LoadMessageFeed(data));
