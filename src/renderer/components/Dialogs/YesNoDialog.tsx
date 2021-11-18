@@ -5,15 +5,19 @@ import { IYesNoDialogProps, IYesNoDialogButtonProps } from 'types/interfaces';
 export default class YesNoDialog extends React.Component {
   title: string;
   body: string;
-  YesButtonProps: IYesNoDialogButtonProps;
-  NoButtonProps: IYesNoDialogButtonProps;
+  confirmButtonText: string;
+  denyButtonText: string;
+  onConfirm: MouseEvent<HTMLButtonElement, MouseEvent>;
+  onDeny: MouseEvent<HTMLButtonElement, MouseEvent>;
 
   constructor(props: IYesNoDialogProps) {
     super(props);
     this.title = props.title || 'Confirm Action';
     this.body = props.body || 'Information about action';
-    this.YesButtonProps = props.YesButtonProps || {body: 'OK', clicked: () => {console.log('Yes button clicked');}};
-    this.NoButtonProps = props.NoButtonProps || {body: 'Cancel', clicked: () => {console.log('No button clicked');}};
+    this.confirmButtonText = props.confirmButtonText || 'OK';
+    this.denyButtonText = props.denyButtonText || 'Cancel';
+    this.onConfirm = props.onConfirm;
+    this.onDeny = props.onDeny;
   }
 
   render() {
@@ -28,8 +32,8 @@ export default class YesNoDialog extends React.Component {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button id='noButton' onClick={this.NoButtonProps.clicked}>{this.NoButtonProps.body}</Button>
-          <Button id='yesButton' onClick={this.YesButtonProps.clicked}>{this.YesButtonProps.body}</Button>
+          <Button id='denyButton' onClick={this.props.onDeny}>{this.denyButtonText}</Button>
+          <Button id='confirmButton' onClick={this.props.onConfirm}>{this.confirmButtonText}</Button>
         </DialogActions>
       </Dialog>
     );

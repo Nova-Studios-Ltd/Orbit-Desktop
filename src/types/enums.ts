@@ -30,3 +30,17 @@ export enum NotificationAudienceType {
   both,
   none
 }
+
+export enum WebSocketMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+  PATCH = 'PATCH'
+}
+
+export enum ChannelType {
+  User = 0,
+  Group = 1,
+  Default = 0
+}

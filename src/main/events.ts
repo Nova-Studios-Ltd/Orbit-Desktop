@@ -3,7 +3,7 @@ import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
 import { FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import AppNotification from 'renderer/components/Notification/Notification';
+import { QueryWithAuthentication } from './NCAPI';
 
 const { request } = net;
 
@@ -82,96 +82,40 @@ ipcMain.handle('register', async (event, creds: Credentials) => {
 });
 
 ipcMain.on('requestChannels', (event, channel_uuid: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/User/Channels`,
-  });
+  function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
+    if (response.statusCode != 200) return;
+    event.sender.send('receivedChannels', json.toString());
+  }
 
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        event.sender.send('receivedChannels', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication('/User/Channels', onSuccess);
 });
 
 ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_id}`,
-  });
+  function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
+    if (response.statusCode != 200) return;
+    console.log(json.toString());
+    event.sender.send('receivedMessageEditEvent', message_id, JSON.parse(json.toString()));
+  }
 
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        console.log(json.toString());
-        event.sender.send('receivedMessageEditEvent', message_id, JSON.parse(json.toString()));
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`, onSuccess);
 })
 
 ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Channel/${channel_uuid}`,
-  });
+  function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
+    if (response.statusCode != 200) return;
+    event.sender.send('receivedChannelInfo', json.toString());
+  }
 
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        event.sender.send('receivedChannelInfo', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication(`/Channel/${channel_uuid}`, onSuccess);
 });
 
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`,
-  });
+  function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
+    if (response.statusCode != 200) return;
+    event.sender.send('receivedChannelData', json.toString());
+  }
 
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        event.sender.send('receivedChannelData', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication(`/Message/${channel_uuid}/Messages`, onSuccess);
 });
 
 ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {

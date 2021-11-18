@@ -9,14 +9,14 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import { IChatPageProps, ICreateChannelDialog, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
+import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
-import { NotificationAudienceType } from 'types/enums';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
+import { ChannelType, NotificationAudienceType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
-import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import FormTextField from 'renderer/components/Form/FormTextField';
+import FormDropdown from 'renderer/components/Form/FormDropdown';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -30,17 +30,20 @@ export default class ChatPage extends React.Component {
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Logout = this.Logout.bind(this);
     this.UnsubscribeEvents = this.UnsubscribeEvents.bind(this);
-    this.showCreateChannelDialogButtonClicked = this.showCreateChannelDialogButtonClicked.bind(this);
+    this.openCreateChannelDialog = this.openCreateChannelDialog.bind(this);
     this.createChannelButtonClicked = this.createChannelButtonClicked.bind(this);
     this.closeCreateChannelDialog = this.closeCreateChannelDialog.bind(this);
     this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleCreateChannelDialogChannelTypeChange = this.handleCreateChannelDialogChannelTypeChange.bind(this);
+    this.resetCreateChannelDialogState = this.resetCreateChannelDialogState.bind(this);
 
     this.state = {
       CanvasObject: null as unknown as MessageCanvas,
       ChannelList: null as unknown as ChannelView,
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: [],
-      CreateChannelDialogVisible: false
+      CreateChannelDialogVisible: false,
+      CreateChannelDialogChannelType: ChannelType.Default
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -51,7 +54,8 @@ export default class ChatPage extends React.Component {
     ChannelList: null as unknown as ChannelView,
     CreateChannelDialogChannelName: '',
     CreateChannelDialogRecipients: [],
-    CreateChannelDialogVisible: false
+    CreateChannelDialogVisible: false,
+    CreateChannelDialogChannelType: ChannelType.Default
   }
 
   preloadChannel() {
@@ -183,8 +187,12 @@ export default class ChatPage extends React.Component {
     this.setState({[name]: value});
   }
 
-  showCreateChannelDialogButtonClicked() {
+  openCreateChannelDialog() {
     this.setState({ CreateChannelDialogVisible: true });
+  }
+
+  closeCreateChannelDialog() {
+    this.setState({ CreateChannelDialogVisible: false });
   }
 
   createChannelButtonClicked() {
@@ -192,8 +200,17 @@ export default class ChatPage extends React.Component {
     this.closeCreateChannelDialog();
   }
 
-  closeCreateChannelDialog() {
-    this.setState({ CreateChannelDialogVisible: false });
+  resetCreateChannelDialogState() {
+    this.setState({
+      CreateChannelDialogChannelName: '',
+      CreateChannelDialogRecipients: [],
+      CreateChannelDialogVisible: false,
+      CreateChannelDialogChannelType: ChannelType.Default
+    });
+  }
+
+  handleCreateChannelDialogChannelTypeChange(e: SelectChangeEvent<any>) {
+    this.setState({ CreateChannelDialogChannelType: e.target.value });
   }
 
   Logout() {
@@ -211,6 +228,27 @@ export default class ChatPage extends React.Component {
   }
 
   render() {
+    let CreateChannelDialogItems = null;
+    switch (this.state.CreateChannelDialogChannelType) {
+      case ChannelType.Group:
+        CreateChannelDialogItems = (
+          <>
+            <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange}></FormTextField>
+            <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange}></FormTextField>
+          </>
+        );
+        break;
+      case ChannelType.Default:
+      case ChannelType.User:
+      default:
+        CreateChannelDialogItems = (
+          <>
+            <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
+          </>
+        );
+        break;
+    }
+
     return (
       <div className='Chat_Page_Container'>
         <Helmet>
@@ -220,7 +258,7 @@ export default class ChatPage extends React.Component {
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
             <Header caption='Channels' icon={<ListIcon />}>
-              <IconButton onClick={this.showCreateChannelDialogButtonClicked}><PlusIcon /></IconButton>
+              <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
             <ChannelView init={this.initChannelView} />
           </div>
@@ -235,13 +273,17 @@ export default class ChatPage extends React.Component {
         <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible}>
           <DialogTitle>Create a Channel</DialogTitle>
           <DialogContent>
-            <FormTextField id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange}></FormTextField>
+            <FormDropdown id='CreateChannelDialogType' value={this.state.CreateChannelDialogChannelType} onChange={this.handleCreateChannelDialogChannelTypeChange} label='Channel Type' description='Choose between a single user or group conversation.'>
+              <MenuItem value={ChannelType.Default}>User</MenuItem>
+              <MenuItem value={ChannelType.Group}>Group</MenuItem>
+            </FormDropdown>
+            {CreateChannelDialogItems}
           </DialogContent>
           <DialogActions>
             <Button id='cancelButton' onClick={this.closeCreateChannelDialog}>Cancel</Button>
             <Button id='createButton' onClick={this.createChannelButtonClicked}>Create</Button>
           </DialogActions>
-      </Dialog>
+        </Dialog>
       </div>
     );
   }
