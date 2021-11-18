@@ -237,7 +237,7 @@ export default class ChatPage extends React.Component {
         CreateChannelDialogItems = (
           <>
             <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange}></FormTextField>
-            <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the usernames and their discriminator of the people you are trying to add. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange}></FormTextField>
+            <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange}></FormTextField>
           </>
         );
         break;
@@ -246,7 +246,7 @@ export default class ChatPage extends React.Component {
       default:
         CreateChannelDialogItems = (
           <>
-            <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the user you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
+            <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
           </>
         );
         break;
