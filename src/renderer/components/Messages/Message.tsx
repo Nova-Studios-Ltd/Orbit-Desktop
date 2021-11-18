@@ -225,13 +225,13 @@ export default class Message extends React.Component {
 
   render() {
     let messageContentObject = [] as any;
-    let content = this.message.split(/(https:\/\/[\S]*)/g);
+    /*let content = this.message.split(/(https:\/\/[\S]*)/g);
     let links = this.message.match(/(https:\/\/[\S]*)/g);
     let containsText = false;
     content.forEach(word => {
 
       if (!this.validURL(word) && word != '') containsText = true;
-    });
+    });*/
 
     if (this.state.hasNonLinkText) {
       const mes = this.message.split(/(https:\/\/[\S]*)/g);

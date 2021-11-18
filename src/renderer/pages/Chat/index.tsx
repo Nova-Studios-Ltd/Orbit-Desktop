@@ -198,8 +198,7 @@ export default class ChatPage extends React.Component {
   }
 
   createChannelButtonClicked() {
-    ipcRenderer.send('createChannel', { channelName: this.state.CreateChannelDialogChannelName, recipientss: this.state.CreateChannelDialogRecipients });
-    console.log(this.state);
+    ipcRenderer.send('createChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: this.state.CreateChannelDialogRecipients });
     this.closeCreateChannelDialog();
   }
 

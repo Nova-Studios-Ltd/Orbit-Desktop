@@ -247,3 +247,52 @@ ipcMain.on('requestUserData', (event, user_uuid: string) => {
     return true;
   }).catch((error) => {console.error(error)});
 });
+
+ipcMain.on('createChannel', (event, data: any) => {
+  const name = data.channelName;
+  //const users = data.recipients;
+  const users = ["76899eefce82478d8269bb87de01aa76"];
+
+  const re = request({
+    method: 'POST',
+    url: users.length == 1? `https://api.novastudios.tk/Channel/CreateChannel?recipient_uuid=${users[0]}` : `https://api.novastudios.tk/Channel/CreateGroupChannel?group_name=${name}`,
+  });
+  if (users.length == 1) {
+    session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+      const { token } = JSON.parse(userData[0].value);
+      re.setHeader('Authorization', token);
+      re.on('response', (response) => {
+        if (response.statusCode != 200) {
+          event.sender.send('channelCreationSucceded', false);
+          return;
+        }
+        event.sender.send('channelCreationSucceded', true);
+      });
+      re.on('error', (error) => {
+        console.error(error);
+      });
+      re.end();
+      return true;
+    }).catch((error) => {console.error(error)});
+  }
+  else {
+    session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+      const { token } = JSON.parse(userData[0].value);
+      re.setHeader('Authorization', token);
+      re.setHeader('Content-Type', 'application/json');
+      re.on('error', (error) => {
+        console.error(error);
+      });
+      re.on('response', (response) => {
+        if (response.statusCode != 200) {
+          event.sender.send('channelCreationSucceded', false);
+          return;
+        }
+        event.sender.send('channelCreationSucceded', true);
+      })
+      re.write(JSON.stringify(users));
+      re.end();
+      return true;
+    }).catch((error) => {console.error(error)});
+  }
+});
