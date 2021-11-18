@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { FormEventHandler, ReactChildren, Ref } from 'react'
+import { FormEventHandler, MouseEvent, ReactChildren, Ref } from 'react'
+import { SelectChangeEvent } from '@mui/material';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 import { NotificationStatusType, NotificationAudienceType } from 'types/enums';
@@ -138,13 +139,18 @@ export interface IYesNoDialogProps {
   title: string,
   body: string,
   show: boolean,
-  YesButtonProps: IYesNoDialogButtonProps,
-  NoButtonProps: IYesNoDialogButtonProps
+  confirmButtonText?: string,
+  denyButtonText?: string,
+  onConfirm: MouseEvent<HTMLButtonElement, MouseEvent>,
+  onDeny: MouseEvent<HTMLButtonElement, MouseEvent>,
 }
 
-export interface IYesNoDialogButtonProps {
-  body: string,
-  clicked: Function
+export interface IFormDropdownProps {
+  id: string,
+  label: string,
+  description?: string,
+  value: any,
+  onChange: SelectChangeEvent<unknown>
 }
 
 export interface IUserData {
