@@ -306,8 +306,7 @@ ipcMain.on('requestUserData', (event, user_uuid: string) => {
 
 ipcMain.on('createChannel', (event, data: any) => {
   const name = data.channelName;
-  //const users = data.recipients;
-  const users = ["76899eefce82478d8269bb87de01aa76"];
+  const users = data.recipients;
 
   const re = request({
     method: 'POST',
