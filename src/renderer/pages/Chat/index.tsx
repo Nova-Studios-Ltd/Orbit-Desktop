@@ -41,7 +41,6 @@ export default class ChatPage extends React.Component {
       CanvasObject: null as unknown as MessageCanvas,
       ChannelList: null as unknown as ChannelView,
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogUser: '',
       CreateChannelDialogRecipients: [],
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default
@@ -54,7 +53,6 @@ export default class ChatPage extends React.Component {
     CanvasObject: null as unknown as MessageCanvas,
     ChannelList: null as unknown as ChannelView,
     CreateChannelDialogChannelName: '',
-    CreateChannelDialogUser: '',
     CreateChannelDialogRecipients: [],
     CreateChannelDialogVisible: false,
     CreateChannelDialogChannelType: ChannelType.Default
@@ -205,7 +203,6 @@ export default class ChatPage extends React.Component {
   resetCreateChannelDialogState() {
     this.setState({
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogUser: '',
       CreateChannelDialogRecipients: [],
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default
