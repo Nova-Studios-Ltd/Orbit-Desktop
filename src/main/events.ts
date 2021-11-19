@@ -109,9 +109,13 @@ ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
   QueryWithAuthentication(`/Channel/${channel_uuid}`, onSuccess);
 });
 
+let d = 0;
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
+  console.log('Requesting channel data...')
+  d = 0;
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
+    console.log(`Got channel data for the ${d} time`)
     event.sender.send('receivedChannelData', json.toString());
   }
 

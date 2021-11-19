@@ -16,7 +16,7 @@ export default class MessageCanvas extends React.Component {
     messages: [] as Array<Message>
   }
 
-  append(message: Message, isUpdate: boolean) {
+  append(message: Message, isUpdate: boolean, refreshList: boolean) {
     if (this.state.messages.length > 0)
     {
       let oldState = this.state;
@@ -25,7 +25,7 @@ export default class MessageCanvas extends React.Component {
       else
         oldState.messages.unshift(message);
 
-      if (!isUpdate)
+      if (refreshList)
         this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
