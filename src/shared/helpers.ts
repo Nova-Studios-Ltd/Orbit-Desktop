@@ -59,9 +59,9 @@ export function ConductLogin() {
 let reconnectAttempts = 1;
 function HandleWebsocket() {
   const { token, uuid } = GLOBALS.userData;
-  let socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
+  const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
   socket.onmessage = function (message) {
-    var event = JSON.parse(message.data);
+    const event = JSON.parse(message.data);
     switch (event.EventType) {
       case -1:
         console.log('<Beat>');

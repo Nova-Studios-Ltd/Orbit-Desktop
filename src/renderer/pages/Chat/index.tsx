@@ -71,8 +71,8 @@ export default class ChatPage extends React.Component {
     if (canvas != null) {
       this.setState({CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data), false));
-      ipcRenderer.on('receivedChannelUpdateEvent', (data: string) => this.onReceivedChannelData([JSON.parse(data)], true));
+      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data), "", false));
+      ipcRenderer.on('receivedChannelUpdateEvent', (data: string, channel_uuid: string) => this.onReceivedChannelData([JSON.parse(data)], channel_uuid, true));
 
       ipcRenderer.on('receivedMessageEditEvent', (id: string, data: any) => this.onReceivedMessageEdit(id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
@@ -138,13 +138,13 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: JSON[], isUpdate: boolean) {
+  onReceivedChannelData(messages: JSON[], channel_uuid: string, isUpdate: boolean) {
     if (!isUpdate)
       this.clearCanvas();
 
     for (let index = 0; index < messages.length; index++) {
-      let message = messages[index];
-      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.userData.uuid) {
+      const message = messages[index];
+      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.userData.uuid && GLOBALS.currentChannel != channel_uuid) {
         new AppNotification({title: message.author, body: message.content, notificationAudience: NotificationAudienceType.both, playSound: true}).show();
       }
       this.appendToCanvas(message, isUpdate, index == messages.length - 1);

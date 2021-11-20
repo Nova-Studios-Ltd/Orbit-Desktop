@@ -3,26 +3,27 @@ import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication } from './NCAPI';
 
 const { request } = net;
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
   let result = FormAuthStatusType.unknown;
 
-  PostWithAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
+  PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
     if (resp.statusCode == 403 || resp.statusCode == 404) {
       event.sender.send('endAuth', false);
       result = FormAuthStatusType.genericIncorrectUsernamePassword;
       return;
     }
     if (resp.statusCode == 500) {
+      console.log(500);
       event.sender.send('endAuth', false);
       result = FormAuthStatusType.serverError;
       return;
     }
     if (resp.statusCode == 200) {
-      session.defaultSession.cookies.set({url: url, name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => {
+      session.defaultSession.cookies.set({url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => {
         const json_obj = JSON.parse(json.toString());
         if (json_obj.token != null) {
           event.sender.send('endAuth', true);
@@ -32,12 +33,14 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
           event.sender.send('endAuth', false);
           result = FormAuthStatusType.genericIncorrectUsernamePassword;
         }
+        return true;
       }).catch((e) => {
         event.sender.send('endAuth', false);
         result = FormAuthStatusType.serverError;
       })
     }
   }, (e) => {
+    console.error(e.message);
     result = FormAuthStatusType.networkTimeout;
   });
 
@@ -53,8 +56,8 @@ ipcMain.on('logout', (event) => {
 ipcMain.handle('register', async (event, creds: Credentials) => {
   let result = null;
 
-  PostWithAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email}), (resp, json) => {
-    let j = JSON.parse(json.toString());
+  PostWithoutAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email}), (resp, json) => {
+    const j = JSON.parse(json.toString());
     if (resp.statusCode == 200 && j.status == undefined) {
       result = true;
     }
