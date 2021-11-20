@@ -131,7 +131,7 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
   QueryWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`, (resp, json) => {
     if (resp.statusCode != 200) return;
-    event.sender.send('receivedChannelUpdateEvent', json.toString());
+    event.sender.send('receivedChannelUpdateEvent', json.toString(), channel_uuid);
   });
 });
 

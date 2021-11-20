@@ -71,7 +71,7 @@ export default class ChatPage extends React.Component {
     if (canvas != null) {
       this.setState({CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (data: string) => this.onReceivedChannelData(LoadMessageFeed(data), "", false));
+      ipcRenderer.on('receivedChannelData', (data: string, channel_uuid: string) => this.onReceivedChannelData(LoadMessageFeed(data), "", false));
       ipcRenderer.on('receivedChannelUpdateEvent', (data: string, channel_uuid: string) => this.onReceivedChannelData([JSON.parse(data)], channel_uuid, true));
 
       ipcRenderer.on('receivedMessageEditEvent', (id: string, data: any) => this.onReceivedMessageEdit(id, data));
