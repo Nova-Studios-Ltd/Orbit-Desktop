@@ -24,7 +24,8 @@ export default class Channel extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
-  channelClicked() {
+  channelClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+    if (this.props.clickedCallback != null) this.props.clickedCallback(event, this.channelID);
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
     ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);

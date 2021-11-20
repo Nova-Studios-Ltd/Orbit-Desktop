@@ -4,7 +4,7 @@ import { IFormTextFieldProps } from 'types/interfaces';
 
 export default class FormTextField extends React.Component {
   id: string;
-  classNames?: string;
+  classNames: string;
   label: string;
   description?: string;
   required?: boolean;
@@ -20,17 +20,18 @@ export default class FormTextField extends React.Component {
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
     this.onChange = props.onChange || function(){};
+
+    console.log(`Text field class names: ${this.classNames}`);
   }
 
   render() {
     const fieldType = this.sensitive ? 'password' : 'text';
-    let finalClassNames = null;
-    if (this.classNames != null) {
-      finalClassNames = `Generic_Form_Item ${this.classNames}`;
+    let finalClassNames = 'Generic_Form_Item Form_Text_Field';
+    if (this.classNames.length > 0) {
+      finalClassNames = finalClassNames.concat(' ', this.classNames);
     }
-    else {
-      finalClassNames = 'Generic_Form_Item';
-    }
+
+    console.log(finalClassNames);
 
     return (
       <TextField className={finalClassNames} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />

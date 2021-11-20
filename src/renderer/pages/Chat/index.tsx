@@ -9,7 +9,7 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import { IChatPageProps, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
+import { IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
@@ -20,6 +20,7 @@ import FormDropdown from 'renderer/components/Form/FormDropdown';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
+  state: IChatPageState;
 
   constructor(props: IChatPageProps) {
     super(props);
@@ -47,15 +48,6 @@ export default class ChatPage extends React.Component {
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
-  }
-
-  state = {
-    CanvasObject: null as unknown as MessageCanvas,
-    ChannelList: null as unknown as ChannelView,
-    CreateChannelDialogChannelName: '',
-    CreateChannelDialogRecipients: '',
-    CreateChannelDialogVisible: false,
-    CreateChannelDialogChannelType: ChannelType.Default
   }
 
   preloadChannel() {
@@ -243,7 +235,7 @@ export default class ChatPage extends React.Component {
       default:
         CreateChannelDialogItems = (
           <>
-            <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
+            <FormTextField classNames='test test2' key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
           </>
         );
         break;

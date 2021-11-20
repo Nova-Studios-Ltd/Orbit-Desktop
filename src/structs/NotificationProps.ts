@@ -1,7 +1,7 @@
-import { NotificationAudienceType, NotificationStatusType } from "./enums";
-import { INotificationProps } from "./interfaces"
+import { NotificationAudienceType, NotificationStatusType } from "../types/enums";
+import { INotificationProps } from "../types/interfaces"
 
-export class NotificationProps implements INotificationProps {
+export class NotificationStruct implements INotificationProps {
   title?: string;
   body?: string;
   playSound?: Boolean;

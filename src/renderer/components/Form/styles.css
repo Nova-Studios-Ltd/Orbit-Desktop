@@ -32,6 +32,10 @@
   justify-self: flex-end !important;
 }
 
+.Form_Text_Field {
+  width: 100%;
+}
+
 @media screen and (min-width:800px) and (max-width: 900px) {
   .AuthForm_Container {
     width: 70%;

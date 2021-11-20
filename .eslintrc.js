@@ -4,6 +4,7 @@ module.exports = {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     'react/self-closing-comp': 'off',
+    'react/sort-comp': 'off',
     'react/prefer-stateless-function': 'off',
     'jsx-a11y/alt-text': 'warn',
     'react/button-has-type': 'off',
@@ -21,8 +22,11 @@ module.exports = {
     '@typescript-eslint/naming-convention': 'off',
     'import/no-cycle': 'warn',
     'prefer-destructuring': 'warn',
-    'no-empty': 'off'
+    'no-empty': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
+    'class-methods-use-this': 'off',
+    'react/state-in-constructor': 'off',
+    'default-case': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

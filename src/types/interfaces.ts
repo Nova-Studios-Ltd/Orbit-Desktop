@@ -3,9 +3,12 @@
 import { FormEventHandler, MouseEvent, ReactChildren, Ref } from 'react'
 import { SelectChangeEvent } from '@mui/material';
 import FormStatusTuple from 'structs/FormStatusTypes';
-import { FormStatusType } from 'types/enums';
+import { ChannelType, FormStatusType } from 'types/enums';
 import { NotificationStatusType, NotificationAudienceType } from 'types/enums';
 import UserData from 'structs/UserData';
+import ChannelView from 'renderer/components/Channels/ChannelView';
+import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
+import Channel from 'renderer/components/Channels/Channel';
 
 // Page Props
 
@@ -62,7 +65,8 @@ export interface IFormStatusFieldProps {
 export interface IChannelProps {
   channelName: string,
   channelID: string,
-  channelIcon?: string
+  clickedCallback: Function,
+  channelIcon?: string,
 }
 
 export interface IChannelViewProps {
@@ -179,6 +183,23 @@ export interface ILoginFormProps extends IAuthFormProps {
 
 export interface IRegisterFormProps {
 
+}
+
+// State
+
+export interface IChatPageState {
+  CanvasObject: MessageCanvas,
+  ChannelList: ChannelView,
+  CreateChannelDialogChannelName: string,
+  CreateChannelDialogRecipients: string,
+  CreateChannelDialogVisible: boolean,
+  CreateChannelDialogChannelType: ChannelType
+}
+
+export interface IChannelViewState {
+  channels: Channel[],
+  anchorEl: any,
+  open: boolean
 }
 
 // Implementation Prototypes
