@@ -12,6 +12,7 @@ export default class ChannelView extends React.Component {
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
+    this.closeContextMenu = this.closeContextMenu.bind(this);
     this.channelItemClicked = this.channelItemClicked.bind(this);
 
     this.state = {
@@ -31,10 +32,10 @@ export default class ChannelView extends React.Component {
         break;
     }
 
-    this.closeContextMenu(null);
+    this.closeContextMenu();
   }
 
-  closeContextMenu(event: any) {
+  closeContextMenu() {
     this.setState({ open: false, anchorEl: null });
   }
 
