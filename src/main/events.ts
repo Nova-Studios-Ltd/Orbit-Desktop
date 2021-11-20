@@ -1,48 +1,45 @@
 import { IMessageDeleteRequestArgs, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
-import { FormAuthStatusType } from '../types/enums';
+import { ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import { QueryWithAuthentication } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication } from './NCAPI';
 
 const { request } = net;
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
   let result = FormAuthStatusType.unknown;
-  const re = request({
-    method: 'POST',
-    url: `https://api.novastudios.tk/Login`
-  });
-  re.setHeader('Content-Type', 'application/json');
-  re.on('response', (response) => {
-    response.on('data', (json) => {
-      console.log(url);
-      const cookie = {url: url, name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 };
-      session.defaultSession.cookies.set(cookie).then(() =>
-      {
+
+  PostWithAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
+    if (resp.statusCode == 403 || resp.statusCode == 404) {
+      event.sender.send('endAuth', false);
+      result = FormAuthStatusType.genericIncorrectUsernamePassword;
+      return;
+    }
+    if (resp.statusCode == 500) {
+      event.sender.send('endAuth', false);
+      result = FormAuthStatusType.serverError;
+      return;
+    }
+    if (resp.statusCode == 200) {
+      session.defaultSession.cookies.set({url: url, name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => {
         const json_obj = JSON.parse(json.toString());
         if (json_obj.token != null) {
           event.sender.send('endAuth', true);
-          console.log(json_obj);
           result = FormAuthStatusType.success;
         }
-        event.sender.send('endAuth', false);
-        result = FormAuthStatusType.genericIncorrectUsernamePassword;
-      }).catch((e) =>
-      {
-        console.error(e);
+        else {
+          event.sender.send('endAuth', false);
+          result = FormAuthStatusType.genericIncorrectUsernamePassword;
+        }
+      }).catch((e) => {
         event.sender.send('endAuth', false);
         result = FormAuthStatusType.serverError;
-      });
-    });
-  });
-  re.on('error', (error) => {
-    console.log(error);
+      })
+    }
+  }, (e) => {
     result = FormAuthStatusType.networkTimeout;
   });
-  const data = JSON.stringify({password: creds.password, email: creds.email})
-  re.write(data);
-  re.end();
 
   await TimeoutUntil(result, 6, true);
 
@@ -55,27 +52,18 @@ ipcMain.on('logout', (event) => {
 
 ipcMain.handle('register', async (event, creds: Credentials) => {
   let result = null;
-  const re = request({method: 'POST', url: `https://api.novastudios.tk/Register`});
-  //const re = request({method: 'POST', url: `https://localhost:44365/Register`});
-  re.setHeader('Content-Type', 'application/json');
-  re.on('error', (error) => {
-    console.error(error);
+
+  PostWithAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email}), (resp, json) => {
+    let j = JSON.parse(json.toString());
+    if (resp.statusCode == 200 && j.status == undefined) {
+      result = true;
+    }
+    else {
+      result = false;
+    }
+  }, (e) => {
     result = false;
   });
-  re.on('response', (response) => {
-    response.on('data', (data) => {
-      let json = JSON.parse(data.toString());
-      if (response.statusCode == 200 && json.status == undefined) {
-        result = true;
-      }
-      else {
-        result = false;
-      }
-    })
-  });
-  const data = JSON.stringify({username: creds.username, password: creds.password, email: creds.email})
-  re.write(data);
-  re.end();
 
   await TimeoutUntil(result, null, true);
   return result;
@@ -124,93 +112,31 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
 
 ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
   console.log(`requestChannelMessagePreview called for channel ${channel_uuid}`);
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`,
-  });
 
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        console.log(json.toString());
-        event.sender.send('receivedChannelMessagePreview', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication(`Message/${channel_uuid}/Messages`, (resp, json) => {
+    if (resp.statusCode != 200) return;
+    event.sender.send('receivedChannelMessagePreview', json.toString());
+  });
 });
 
 ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
   console.log(channel_uuid);
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    const data = JSON.stringify({Content: contents})
-    const re = request({
-      method: 'POST',
-      url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages`
-    });
-    re.setHeader('Authorization', token);
-    re.setHeader('Content-Type', 'application/json');
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.on('response', (response) => {
-      console.log(response.statusCode);
-    })
-    re.write(data);
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+
+  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents}));
 });
 
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/Message/${channel_uuid}/Messages/${message_id}`,
+  QueryWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`, (resp, json) => {
+    if (resp.statusCode != 200) return;
+    event.sender.send('receivedChannelUpdateEvent', json.toString());
   });
-
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        console.log('Got channel update');
-        event.sender.send('receivedChannelUpdateEvent', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
 });
 
 ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequestArgs) => {
   let result = false;
 
-  const re = request({
-    method: 'DELETE',
-    url: `https://api.novastudios.tk/Message/${data.channelID}/Messages/${data.messageID}`,
-  });
-
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    result = true;
-  }).catch((error) => {console.error(error)});
+  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`);
+  result = true;
 
   await TimeoutUntil(result, true, false);
   return result;
@@ -230,26 +156,10 @@ ipcMain.on('toast', (_, notification: INotificationProps) => {
 });
 
 ipcMain.on('requestUserData', (event, user_uuid: string) => {
-  const re = request({
-    method: 'GET',
-    url: `https://api.novastudios.tk/User/${user_uuid}`,
-  });
-
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    re.setHeader('Authorization', token);
-    re.on('response', (response) => {
-      response.on('data', (json) => {
-        if (response.statusCode != 200) return;
-        event.sender.send('receivedUserData', json.toString());
-      });
-    });
-    re.on('error', (error) => {
-      console.error(error);
-    });
-    re.end();
-    return true;
-  }).catch((error) => {console.error(error)});
+  QueryWithAuthentication(`User/${user_uuid}`, (resp, json) => {
+    if (resp.statusCode != 200) return;
+    event.sender.send('receivedUserData', json.toString());
+  })
 });
 
 ipcMain.on('createChannel', (event, data: any) => {
