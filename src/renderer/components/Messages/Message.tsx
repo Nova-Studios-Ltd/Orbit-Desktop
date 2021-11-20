@@ -225,13 +225,6 @@ export default class Message extends React.Component {
 
   render() {
     let messageContentObject = [] as any;
-    /*let content = this.message.split(/(https:\/\/[\S]*)/g);
-    let links = this.message.match(/(https:\/\/[\S]*)/g);
-    let containsText = false;
-    content.forEach(word => {
-
-      if (!this.validURL(word) && word != '') containsText = true;
-    });*/
 
     if (this.state.hasNonLinkText) {
       const mes = this.message.split(/(https:\/\/[\S]*)/g);
@@ -244,12 +237,6 @@ export default class Message extends React.Component {
       messageContentObject.push(<Typography className='Message_Content'>{messageParts}</Typography>);
     }
 
-    /*if (links != null && links.length > 0) {
-      links.forEach(link => {
-        if (this.imageURL(link)) messageContentObject.push(<MessageImage key={link} message={link} src={link} />);
-        else if (this.videoURL(link)) messageContentObject.push(<MessageVideo key={link} message={link} src={link} />);
-      });
-    }*/
     this.state.links.forEach(link => {
       if (link.type == 'image')
         messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);

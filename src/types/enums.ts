@@ -39,6 +39,11 @@ export enum WebSocketMethod {
   PATCH = 'PATCH'
 }
 
+export enum ContentType {
+  EMPTY = '',
+  JSON = 'application/json'
+}
+
 export enum ChannelType {
   User = 0,
   Group = 1,

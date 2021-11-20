@@ -109,11 +109,11 @@ export default class ChatPage extends React.Component {
       this.addChannel({channelName: data.channelName, channelID: data.table_Id, channelIcon: data.channelIcon});
   }
 
-  appendToCanvas(message: any, isUpdate: boolean) {
+  appendToCanvas(message: any, isUpdate: boolean, refreshList: boolean) {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
       const msgObj = new Message({ message: message.content, author: message.author, authorUUID: message.author_UUID, messageUUID: message.message_Id, avatarSrc: message.avatar } as IMessageProps);
-      canvas.append(msgObj, isUpdate);
+      canvas.append(msgObj, isUpdate, refreshList);
     }
     else {
       console.error('(When Appending Message) Canvas is null');
@@ -146,9 +146,8 @@ export default class ChatPage extends React.Component {
       let message = messages[index];
       if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.userData.uuid) {
         new AppNotification({title: message.author, body: message.content, notificationAudience: NotificationAudienceType.both, playSound: true}).show();
-
       }
-      this.appendToCanvas(message, isUpdate);
+      this.appendToCanvas(message, isUpdate, index == messages.length - 1);
     }
   }
 
