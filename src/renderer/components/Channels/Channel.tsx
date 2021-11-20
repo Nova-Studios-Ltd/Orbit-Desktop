@@ -20,12 +20,16 @@ export default class Channel extends React.Component {
     this.rippleRef = React.createRef();
 
     this.channelClicked = this.channelClicked.bind(this);
+    this.channelRightClicked = this.channelRightClicked.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
-  channelClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+  channelRightClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     if (this.props.clickedCallback != null) this.props.clickedCallback(event, this.channelID);
+  }
+
+  channelClicked() {
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
     ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
@@ -45,7 +49,7 @@ export default class Channel extends React.Component {
 
   render() {
     return(
-      <Card className='Chat_Channel' onClick={this.channelClicked} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
+      <Card className='Chat_Channel' onClick={this.channelClicked} onContextMenu={this.channelRightClicked} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
         <TouchRipple ref={this.rippleRef}/>
         <div className='Channel_Left'>
           <Avatar className='Channel_Icon' src={this.channelIcon} />
