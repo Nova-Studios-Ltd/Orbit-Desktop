@@ -34,7 +34,8 @@ export function PostWithAuthentication(endpoint: string, content_type: ContentTy
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
     const { token } = JSON.parse(userData[0].value);
     re.setHeader('Authorization', token);
-    re.setHeader('Content-Type', content_type);
+    if (content_type != ContentType.EMPTY)
+      re.setHeader('Content-Type', content_type);
     re.on('error', (error) => {
       fail(error);
     });
@@ -43,7 +44,8 @@ export function PostWithAuthentication(endpoint: string, content_type: ContentTy
         success(response, json);
       });
     });
-    re.write(payload);
+    if (payload != undefined)
+      re.write(payload);
     re.end();
     return true;
   }).catch(fail);
@@ -54,8 +56,8 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
   });
-
-  re.setHeader('Content-Type', content_type);
+  if (content_type != ContentType.EMPTY)
+    re.setHeader('Content-Type', content_type);
   re.on('error', (error) => {
     fail(error);
   });
@@ -64,7 +66,8 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
       success(response, json);
     });
   });
-  re.write(payload);
+  if (payload != undefined)
+    re.write(payload);
   re.end();
 }
 

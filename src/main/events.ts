@@ -167,46 +167,16 @@ ipcMain.on('createChannel', (event, data: any) => {
   const users_raw: string = data.recipients;
   const users = users_raw.split(' ');
 
-  const re = request({
-    method: 'POST',
-    url: users.length == 1? `https://api.novastudios.tk/Channel/CreateChannel?recipient_uuid=${users[0]}` : `https://api.novastudios.tk/Channel/CreateGroupChannel?group_name=${name}`,
-  });
   if (users.length == 1) {
-    session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-      const { token } = JSON.parse(userData[0].value);
-      re.setHeader('Authorization', token);
-      re.on('response', (response) => {
-        if (response.statusCode != 200) {
-          event.sender.send('channelCreationSucceded', false);
-          return;
-        }
-        event.sender.send('channelCreationSucceded', true);
-      });
-      re.on('error', (error) => {
-        console.error(error);
-      });
-      re.end();
-      return true;
-    }).catch((error) => {console.error(error)});
+    PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${users[0]}`, ContentType.EMPTY, undefined, (resp, json) => {
+      if (resp.statusCode != 200) event.sender.send('channelCreationSucceded', false);
+      else event.sender.send('channelCreationSucceded', true);
+    });
   }
   else {
-    session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-      const { token } = JSON.parse(userData[0].value);
-      re.setHeader('Authorization', token);
-      re.setHeader('Content-Type', 'application/json');
-      re.on('error', (error) => {
-        console.error(error);
-      });
-      re.on('response', (response) => {
-        if (response.statusCode != 200) {
-          event.sender.send('channelCreationSucceded', false);
-          return;
-        }
-        event.sender.send('channelCreationSucceded', true);
-      })
-      re.write(JSON.stringify(users));
-      re.end();
-      return true;
-    }).catch((error) => {console.error(error)});
+    PostWithAuthentication(`Channel/CreateGroupChannel?group_name=${name}`, ContentType.JSON, JSON.stringify(users), (resp, json) => {
+      if (resp.statusCode != 200) event.sender.send('channelCreationSucceded', false);
+      else event.sender.send('channelCreationSucceded', true);
+    });
   }
 });

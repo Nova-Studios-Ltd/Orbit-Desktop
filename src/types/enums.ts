@@ -40,6 +40,7 @@ export enum WebSocketMethod {
 }
 
 export enum ContentType {
+  EMPTY = '',
   JSON = 'application/json'
 }
 
