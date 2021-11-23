@@ -201,6 +201,9 @@ export interface IChatPageState {
 
 export interface IChannelViewState {
   channels: Channel[],
+}
+
+export interface IChannelState {
   anchorEl: any,
   open: boolean
 }

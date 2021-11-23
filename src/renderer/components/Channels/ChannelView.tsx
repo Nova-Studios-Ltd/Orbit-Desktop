@@ -11,36 +11,10 @@ export default class ChannelView extends React.Component {
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
-    this.closeContextMenu = this.closeContextMenu.bind(this);
-    this.channelItemClicked = this.channelItemClicked.bind(this);
 
     this.state = {
       channels: [],
-      anchorEl: null,
-      open: false
     }
-  }
-
-  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    switch(event.currentTarget.id) {
-      case 'edit':
-        console.warn("EDIT");
-        break;
-      case 'delete':
-        console.warn("DELETE");
-        break;
-    }
-
-    this.closeContextMenu();
-  }
-
-  closeContextMenu() {
-    this.setState({ open: false, anchorEl: null });
-  }
-
-  channelItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>, channelID: string) {
-    console.log("CHANNEL FRICKING CLICKED")
-    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
   addChannel(channel: Channel) {
@@ -54,7 +28,7 @@ export default class ChannelView extends React.Component {
   }
 
   render() {
-    const channels = this.state.channels.map((c, key) => (<Channel key={key} clickedCallback={this.channelItemClicked} channelName={c.channelName} channelID={c.channelID} channelIcon={c.channelIcon} />));
+    const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
 
     return(
       <div className='Chat_ChannelView'>

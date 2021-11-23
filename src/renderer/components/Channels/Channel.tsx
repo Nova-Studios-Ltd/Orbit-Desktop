@@ -1,15 +1,14 @@
-import React, { DOMElement, RefObject } from 'react';
-import { Card, Typography, Avatar, CardMedia, Menu, MenuItem } from '@mui/material';
+import React, { DOMElement, ForwardedRef, RefObject } from 'react';
+import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
-import { IChannelProps } from 'types/interfaces';
-import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
+import { IChannelProps, IChannelState } from 'types/interfaces';
 
 export default class Channel extends React.Component {
+  state: IChannelState;
   channelName: string;
   channelID: string;
   channelIcon?: string;
-  rippleRef: RefObject<ReactDOM>;
 
   constructor(props: IChannelProps) {
     super(props);
@@ -17,46 +16,58 @@ export default class Channel extends React.Component {
     this.channelID = props.table_Id;
     this.channelIcon = props.channelIcon;
 
-    this.rippleRef = React.createRef();
-
     this.channelClicked = this.channelClicked.bind(this);
     this.channelRightClicked = this.channelRightClicked.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    this.menuItemClicked = this.menuItemClicked.bind(this);
+    this.closeContextMenu = this.closeContextMenu.bind(this);
+
+    this.state = {
+      anchorEl: null,
+      open: false
+    }
   }
 
   channelRightClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    if (this.props.clickedCallback != null) this.props.clickedCallback(event, this.channelID);
+    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
   channelClicked() {
+    console.warn("WORKS!");
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
     ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
   }
 
-  onMouseDown(event: React.MouseEvent<HTMLDivElement> ) {
-    if (this.rippleRef != null && this.rippleRef.current != null) {
-      this.rippleRef.current.start(event);
+  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+    switch(event.currentTarget.id) {
+      case 'edit':
+        console.warn("EDIT");
+        break;
+      case 'delete':
+        console.warn("DELETE");
+        break;
     }
+
+    this.closeContextMenu();
   }
 
-  onMouseUp(event: React.MouseEvent<HTMLDivElement> ) {
-    if (this.rippleRef != null && this.rippleRef.current != null) {
-      this.rippleRef.current.stop(event);
-    }
+  closeContextMenu() {
+    this.setState({ open: false, anchorEl: null });
   }
 
   render() {
     return(
-      <Card className='Chat_Channel' onClick={this.channelClicked} onContextMenu={this.channelRightClicked} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
-        <TouchRipple ref={this.rippleRef}/>
-        <div className='Channel_Left'>
-          <Avatar className='Channel_Icon' src={this.channelIcon} />
-        </div>
-        <div className='Channel_Right'>
-          <Typography className='Channel_Caption' variant='h6'>{this.channelName}</Typography>
-        </div>
+      <div className='Chat_Channel'>
+        <Card className='Chat_Channel_Inner'>
+          <ButtonBase className='Chat_Channel_Inner' onClick={this.channelClicked} onContextMenu={this.channelRightClicked}>
+            <div className='Channel_Left'>
+              <Avatar className='Channel_Icon' src={this.channelIcon} />
+            </div>
+            <div className='Channel_Right'>
+              <Typography className='Channel_Caption' variant='h6'>{this.channelName}</Typography>
+            </div>
+          </ButtonBase>
+        </Card>
         <Menu
           id='channel-dropdown-menu'
           anchorEl={this.state.anchorEl}
@@ -67,7 +78,7 @@ export default class Channel extends React.Component {
           <MenuItem id='edit' onClick={this.menuItemClicked}>Edit</MenuItem>
           <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
         </Menu>
-      </Card>
+      </div>
     );
   }
 }
