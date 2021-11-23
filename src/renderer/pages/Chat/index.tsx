@@ -9,7 +9,7 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import { IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
+import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
@@ -17,6 +17,7 @@ import { ChannelType, NotificationAudienceType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
+import { MessageProps } from 'types/props';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -71,8 +72,8 @@ export default class ChatPage extends React.Component {
     if (canvas != null) {
       this.setState({CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (data: string, channel_uuid: string) => this.onReceivedChannelData(LoadMessageFeed(data), "", false));
-      ipcRenderer.on('receivedChannelUpdateEvent', (data: string, channel_uuid: string) => this.onReceivedChannelData([JSON.parse(data)], channel_uuid, true));
+      ipcRenderer.on('receivedChannelData', (messages: IMessageProps[]) => this.onReceivedChannelData(messages, "", false));
+      ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
 
       ipcRenderer.on('receivedMessageEditEvent', (id: string, data: any) => this.onReceivedMessageEdit(id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
@@ -86,7 +87,7 @@ export default class ChatPage extends React.Component {
     if (channelList != null) {
       this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse('{\'channelName\':\'Main Channel\', \'channelID\':\'0\'}'))*/);
       ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
-      ipcRenderer.on('receivedChannelInfo', (data: string) => this.onReceivedChannelInfo(JSON.parse(data)));
+      ipcRenderer.on('receivedChannelInfo', (data: IChannelProps) => this.onReceivedChannelInfo(data));
       events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('receivedAddedToChannelEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
@@ -95,24 +96,25 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedChannels(data: any) {
+  onReceivedChannels(data: string[]) {
     for (let channel = 0; channel < data.length; channel++) {
       //this.addChannel({channelName: data[channel], channelID: data[channel]});
       ipcRenderer.send('requestChannelInfo', data[channel]);
     }
   }
 
-  onReceivedChannelInfo(data: any) {
-    if (data.isGroup)
-      this.addChannel({channelName: data.groupName, channelID: data.table_Id, channelIcon: data.channelIcon});
+  onReceivedChannelInfo(channel: IChannelProps) {
+    console.log(channel);
+    if (channel.isGroup)
+      this.addChannel(channel);
     else
-      this.addChannel({channelName: data.channelName, channelID: data.table_Id, channelIcon: data.channelIcon});
+      this.addChannel(channel);
   }
 
-  appendToCanvas(message: any, isUpdate: boolean, refreshList: boolean) {
+  appendToCanvas(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message({ message: message.content, author: message.author, authorUUID: message.author_UUID, messageUUID: message.message_Id, avatarSrc: message.avatar } as IMessageProps);
+      const msgObj = new Message(message);
       canvas.append(msgObj, isUpdate, refreshList);
     }
     else {
@@ -127,10 +129,10 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  addChannel(channel: any) {
+  addChannel(channel: IChannelProps) {
     const channelList = this.state.ChannelList;
     if (channelList != null) {
-      channelList.addChannel(new Channel({ channelName: channel.channelName, channelID: channel.channelID, channelIcon: channel.channelIcon}));
+      channelList.addChannel(new Channel(channel));
       this.preloadChannel();
     }
     else {
@@ -138,7 +140,7 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: JSON[], channel_uuid: string, isUpdate: boolean) {
+  onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     if (!isUpdate)
       this.clearCanvas();
 

@@ -71,24 +71,24 @@ class MessageContent extends React.Component {
 }
 
 export default class Message extends React.Component {
-  messageUUID: string;
-  authorUUID: string;
+  message_Id: string;
+  author_UUID: string;
   author: string;
-  message: string;
+  content: string;
   timestamp: string;
-  avatarSrc: string;
+  avatar: string;
   divRef: Ref<HTMLDivElement>;
 
   constructor(props: IMessageProps) {
     super(props);
-    this.messageUUID = props.messageUUID;
-    this.authorUUID = props.authorUUID;
+    this.message_Id = props.message_Id;
+    this.author_UUID = props.author_UUID;
     this.author = props.author || 'Unknown';
-    this.message = props.message || 'Message';
+    this.content = props.content || 'Message';
     this.timestamp = props.timestamp;
-    this.avatarSrc = props.avatarSrc;
+    this.avatar = props.avatar;
 
-    console.log(this.message);
+    console.log(this.content);
 
     this.state = { links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
 
@@ -113,7 +113,7 @@ export default class Message extends React.Component {
         new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.warning, notificationAudience: NotificationAudienceType.app }).show();
         break;
       case 'copy':
-        await copyToClipboard(this.message).then((result: Boolean) => {
+        await copyToClipboard(this.content).then((result: Boolean) => {
           if (result) {
             new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
           }
@@ -155,7 +155,7 @@ export default class Message extends React.Component {
       this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
 
     let hasNonLinkText = false;
-    let links = this.message.match(/(https:\/\/[\S]*)/g);
+    let links = this.content.match(/(https:\/\/[\S]*)/g);
     if (links == null) {
       this.setState({hasNonLinkText: true});
       return;
@@ -177,7 +177,7 @@ export default class Message extends React.Component {
   }
 
   validURL(str: string) {
-    var pattern = new RegExp('^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)');
+    const pattern = new RegExp('^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)');
     return !!pattern.test(str);
   }
 
@@ -208,7 +208,7 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('requestDeleteMessage', { channelID: GLOBALS.currentChannel, messageID: this.messageUUID} ).then((result: Boolean) => {
+    ipcRenderer.invoke('requestDeleteMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id} ).then((result: Boolean) => {
       if (result) {
         new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
@@ -218,14 +218,14 @@ export default class Message extends React.Component {
   }
 
   isOwnMessage() {
-    return this.authorUUID == GLOBALS.userData.uuid;
+    return this.author_UUID == GLOBALS.userData.uuid;
   }
 
   render() {
     let messageContentObject = [] as any;
 
     if (this.state.hasNonLinkText) {
-      const mes = this.message.split(/(https:\/\/[\S]*)/g);
+      const mes = this.content.split(/(https:\/\/[\S]*)/g);
       var messageParts = [] as any[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link target='_blank' href={word}>{word}</Link>);
@@ -245,7 +245,7 @@ export default class Message extends React.Component {
     return (
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>
-          <Avatar src={this.avatarSrc} />
+          <Avatar src={this.avatar} />
           <span>{this.timestamp}</span>
         </div>
         <div className='Message_Right'>

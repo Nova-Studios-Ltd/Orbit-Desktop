@@ -39,6 +39,7 @@ export default class ChannelView extends React.Component {
   }
 
   channelItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>, channelID: string) {
+    console.log("CHANNEL FRICKING CLICKED")
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 

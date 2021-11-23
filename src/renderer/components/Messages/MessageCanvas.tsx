@@ -1,7 +1,7 @@
 import React from 'react';
-import Message from './Message';
 import GLOBALS from 'shared/globals';
 import { IMessageCanvasProps } from 'types/interfaces';
+import Message from './Message';
 
 export default class MessageCanvas extends React.Component {
   constructor(props: IMessageCanvasProps) {
@@ -36,7 +36,7 @@ export default class MessageCanvas extends React.Component {
 
   remove(id: string) {
     let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.messageUUID === id);
+    let index = oldState.messages.findIndex(e => e.message_Id === id);
     if (index > -1) {
       oldState.messages.splice(index, 1);
       this.setState({messages: []});
@@ -46,11 +46,11 @@ export default class MessageCanvas extends React.Component {
 
   edit(id: string, newMessage: string) {
     let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.messageUUID == id);
+    let index = oldState.messages.findIndex(e => e.message_Id == id);
     console.log(index);
     if (index > -1) {
       let m = oldState.messages[index];
-      oldState.messages[index] = new Message({ message: newMessage, author: m.author, authorUUID: m.authorUUID, messageUUID: m.messageUUID, avatarSrc: m.avatarSrc } as IMessageProps);
+      oldState.messages[index] = new Message({ message: newMessage, author: m.author, authorUUID: m.author_UUID, messageUUID: m.message_Id, avatarSrc: m.avatar } as IMessageProps);
       this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
@@ -61,7 +61,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />));
+    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} content={m.content} author={m.author} avatar={m.avatar} author_UUID={m.author_UUID} message_Id={m.message_Id} />));
     /*let messagesToRender = [];
     for (let i = this.state.messages.length; i > 0; i--) {
       const m = this.state.messages[i];
