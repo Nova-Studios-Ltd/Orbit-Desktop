@@ -3,7 +3,7 @@ import { ContentType, WebSocketMethod } from '../types/enums';
 
 const { request } = net;
 
-export function QueryWithAuthentication(endpoint: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void), fail: ((error: Error) => void)=(e)=>{}) {
+export function QueryWithAuthentication(endpoint: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void), fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: WebSocketMethod.GET,
     url: `https://api.novastudios.tk/${endpoint}`
@@ -25,7 +25,7 @@ export function QueryWithAuthentication(endpoint: string, success: ((response: E
   }).catch(fail);
 }
 
-export function PostWithAuthentication(endpoint: string, content_type: ContentType, payload: any, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=(d, e)=>{}, fail: ((error: Error) => void)=(e)=>{}) {
+export function PostWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
@@ -44,14 +44,14 @@ export function PostWithAuthentication(endpoint: string, content_type: ContentTy
         success(response, json);
       });
     });
-    if (payload != undefined)
+    if (payload != '')
       re.write(payload);
     re.end();
     return true;
   }).catch(fail);
 }
 
-export function PostWithoutAuthentication(endpoint: string, content_type: ContentType, payload: any, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=(d, e)=>{}, fail: ((error: Error) => void)=(e)=>{}) {
+export function PostWithoutAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
@@ -66,12 +66,12 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
       success(response, json);
     });
   });
-  if (payload != undefined)
+  if (payload != '')
     re.write(payload);
   re.end();
 }
 
-export function DeleteWithAuthentication(endpoint: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=(e)=>{}) {
+export function DeleteWithAuthentication(endpoint: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: 'DELETE',
     url: `https://api.novastudios.tk/${endpoint}`,
@@ -87,5 +87,6 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
       fail(error);
     });
     re.end();
+    return true;
   }).catch(fail);
 }

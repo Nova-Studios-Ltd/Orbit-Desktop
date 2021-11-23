@@ -14,7 +14,7 @@ export default class Channel extends React.Component {
   constructor(props: IChannelProps) {
     super(props);
     this.channelName = props.channelName;
-    this.channelID = props.channelID;
+    this.channelID = props.table_Id;
     this.channelIcon = props.channelIcon;
 
     this.rippleRef = React.createRef();

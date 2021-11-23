@@ -27,6 +27,8 @@ module.exports = {
     'class-methods-use-this': 'off',
     'react/state-in-constructor': 'off',
     'default-case': 'off',
+    'eqeqeq': 'off',
+    'no-plusplus': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

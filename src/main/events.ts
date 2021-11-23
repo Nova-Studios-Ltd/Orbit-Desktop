@@ -1,4 +1,4 @@
-import { IMessageDeleteRequestArgs, INotificationProps } from 'types/interfaces';
+import { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
 import { ContentType, FormAuthStatusType } from '../types/enums';
@@ -84,7 +84,6 @@ ipcMain.on('requestChannels', (event, channel_uuid: string) => {
 ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    console.log(json.toString());
     event.sender.send('receivedMessageEditEvent', message_id, JSON.parse(json.toString()));
   }
 
@@ -94,20 +93,16 @@ ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) =
 ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    event.sender.send('receivedChannelInfo', json.toString());
+    event.sender.send('receivedChannelInfo', <IChannelProps>JSON.parse(json.toString()));
   }
 
   QueryWithAuthentication(`/Channel/${channel_uuid}`, onSuccess);
 });
 
-let d = 0;
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
-  console.log('Requesting channel data...')
-  d = 0;
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    console.log(`Got channel data for the ${d} time`)
-    event.sender.send('receivedChannelData', json.toString());
+    event.sender.send('receivedChannelData', <IMessageProps>JSON.parse(json.toString()));
   }
 
   QueryWithAuthentication(`/Message/${channel_uuid}/Messages`, onSuccess);
@@ -131,7 +126,7 @@ ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
   QueryWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`, (resp, json) => {
     if (resp.statusCode != 200) return;
-    event.sender.send('receivedChannelUpdateEvent', json.toString(), channel_uuid);
+    event.sender.send('receivedChannelUpdateEvent', <IMessageProps>JSON.parse(json.toString()), channel_uuid);
   });
 });
 
@@ -171,7 +166,7 @@ ipcMain.on('createChannel', (event, data: any) => {
   const users = users_raw.split(' ');
 
   if (users.length == 1) {
-    PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${users[0]}`, ContentType.EMPTY, undefined, (resp, json) => {
+    PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${users[0]}`, ContentType.EMPTY, '', (resp, json) => {
       if (resp.statusCode != 200) event.sender.send('channelCreationSucceded', false);
       else event.sender.send('channelCreationSucceded', true);
     });

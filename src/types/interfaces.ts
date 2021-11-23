@@ -63,10 +63,14 @@ export interface IFormStatusFieldProps {
 }
 
 export interface IChannelProps {
+  table_Id: string,
+  owner_UUID: string,
+  isGroup: boolean,
+  groupName: string,
   channelName: string,
-  channelID: string,
   clickedCallback: Function,
   channelIcon?: string,
+  members: string[]
 }
 
 export interface IChannelViewProps {
@@ -74,13 +78,12 @@ export interface IChannelViewProps {
 }
 
 export interface IMessageProps {
-  messageUUID: string,
-  authorUUID: string,
+  message_Id: string,
+  author_UUID: string,
   author: string,
-  message: string,
+  content: string,
   timestamp: string,
-  avatarSrc: string,
-  ref: Ref<any>
+  avatar: string
 }
 
 export interface IMessageImageProps {
@@ -123,7 +126,7 @@ export interface ICredentialsProps {
 export interface INotificationProps {
   title?: string,
   body?: string,
-  playSound?: Boolean,
+  playSound?: boolean,
   notificationType?: NotificationStatusType,
   notificationAudience?: NotificationAudienceType
 }
