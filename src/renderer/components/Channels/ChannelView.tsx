@@ -1,4 +1,3 @@
-import { Menu, MenuItem } from '@mui/material';
 import React from 'react';
 import { IChannelViewProps, IChannelViewState } from 'types/interfaces';
 import Channel from './Channel';
@@ -58,19 +57,7 @@ export default class ChannelView extends React.Component {
 
     return(
       <div className='Chat_ChannelView'>
-        <div>
-          {channels}
-        </div>
-          <Menu
-          id='channel-dropdown-menu'
-          anchorEl={this.state.anchorEl}
-          open={this.state.open}
-          onClose={this.closeContextMenu}
-          >
-
-          <MenuItem id='edit' onClick={this.menuItemClicked}>Edit</MenuItem>
-          <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
-        </Menu>
+        {channels}
       </div>
     );
   }

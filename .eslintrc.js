@@ -16,7 +16,7 @@ module.exports = {
     'react/no-unused-state': 'warn',
     'react/destructuring-assignment': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
-    'react/prop-types': 'warn',
+    'react/prop-types': 'off',
     'import/prefer-default-export': 'off',
     'spaced-comment': 'off',
     '@typescript-eslint/naming-convention': 'off',

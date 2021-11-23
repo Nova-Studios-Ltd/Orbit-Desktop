@@ -1,5 +1,5 @@
-import React, { RefObject } from 'react';
-import { Card, Typography, Avatar, CardMedia } from '@mui/material';
+import React, { DOMElement, RefObject } from 'react';
+import { Card, Typography, Avatar, CardMedia, Menu, MenuItem } from '@mui/material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
 import { IChannelProps } from 'types/interfaces';
@@ -9,7 +9,7 @@ export default class Channel extends React.Component {
   channelName: string;
   channelID: string;
   channelIcon?: string;
-  rippleRef: RefObject;
+  rippleRef: RefObject<ReactDOM>;
 
   constructor(props: IChannelProps) {
     super(props);
@@ -57,6 +57,16 @@ export default class Channel extends React.Component {
         <div className='Channel_Right'>
           <Typography className='Channel_Caption' variant='h6'>{this.channelName}</Typography>
         </div>
+        <Menu
+          id='channel-dropdown-menu'
+          anchorEl={this.state.anchorEl}
+          open={this.state.open}
+          onClose={this.closeContextMenu}
+          >
+
+          <MenuItem id='edit' onClick={this.menuItemClicked}>Edit</MenuItem>
+          <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
+        </Menu>
       </Card>
     );
   }

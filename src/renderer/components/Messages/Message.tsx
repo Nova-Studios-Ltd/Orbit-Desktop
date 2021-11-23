@@ -77,7 +77,6 @@ export default class Message extends React.Component {
   message: string;
   timestamp: string;
   avatarSrc: string;
-  ref: Ref<any>;
   divRef: Ref<HTMLDivElement>;
 
   constructor(props: IMessageProps) {
@@ -88,7 +87,6 @@ export default class Message extends React.Component {
     this.message = props.message || 'Message';
     this.timestamp = props.timestamp;
     this.avatarSrc = props.avatarSrc;
-    this.ref = props.ref;
 
     console.log(this.message);
 
