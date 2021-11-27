@@ -147,14 +147,16 @@ export default class ChatPage extends React.Component {
 
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];
-      if (isUpdate && (message.author_UUID != null && message.author_UUID != null) && message.author_UUID != GLOBALS.userData.uuid) {
-        const selected = GLOBALS.currentChannel != channel_uuid;
+      if (isUpdate && message.author_UUID != GLOBALS.userData.uuid) {
+        const selected = GLOBALS.currentChannel == channel_uuid;
+        console.log(GLOBALS.isFocused);
+        console.log(selected);
         if (selected && GLOBALS.isFocused) {}
-        else if (!selected && GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.app));
-        else if (selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.none));
-        else if (!selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.both));
+        else if (!selected && GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.app)).show();
+        else if (selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.none)).show();
+        else if (!selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.both)).show();
       }
-      this.appendToCanvas(message, isUpdate, index == messages.length - 1);
+      this.appendToCanvas(message, isUpdate, index == messages.length - 1 && !isUpdate);
     }
   }
 
