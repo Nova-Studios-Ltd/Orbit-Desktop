@@ -1,6 +1,6 @@
 import { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
-import GLOBALS from 'shared/globals';
+import GLOBALS from '../shared/globals';
 import Credentials from '../structs/Credentials';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';

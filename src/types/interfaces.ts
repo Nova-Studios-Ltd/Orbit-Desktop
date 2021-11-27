@@ -3,8 +3,7 @@
 import { FormEventHandler, MouseEvent, ReactChildren, Ref } from 'react'
 import { SelectChangeEvent } from '@mui/material';
 import FormStatusTuple from 'structs/FormStatusTypes';
-import { ChannelType, FormStatusType } from 'types/enums';
-import { NotificationStatusType, NotificationAudienceType } from 'types/enums';
+import { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
 import UserData from 'structs/UserData';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -49,7 +48,7 @@ export interface IFormHeaderProps {
 
 export interface IFormTextFieldProps {
   id: string,
-  ref: Ref<HTMLInputElement>,
+  innerRef: Ref<HTMLInputElement>,
   classNames?: string,
   label: string,
   description?: string,

@@ -30,7 +30,7 @@ export default class FormTextField extends React.Component {
     }
 
     return (
-      <TextField className={finalClassNames} ref={this.props.ref} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />
+      <TextField className={finalClassNames} ref={this.props.innerRef} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />
     );
   }
 }

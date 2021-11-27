@@ -1,4 +1,4 @@
-import UserData from 'structs/UserData';
+import UserData from '../structs/UserData';
 
 const GLOBALS = {
   userData: new UserData(null),
