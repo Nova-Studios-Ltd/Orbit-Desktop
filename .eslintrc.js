@@ -30,7 +30,8 @@ module.exports = {
     'eqeqeq': 'off',
     'no-plusplus': 'off',
     'promise/catch-or-return': 'off',
-    'promise/always-return': 'off'
+    'promise/always-return': 'off',
+    'no-new': 'off'
   },
   parserOptions: {
     ecmaVersion: 2020,

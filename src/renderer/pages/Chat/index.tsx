@@ -1,5 +1,5 @@
 import React from 'react';
-import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
+import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon, Sledding } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -13,11 +13,12 @@ import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDrop
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
-import { ChannelType, NotificationAudienceType } from 'types/enums';
+import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { MessageProps } from 'types/props';
+import { NotificationStruct } from 'structs/NotificationProps';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -146,8 +147,12 @@ export default class ChatPage extends React.Component {
 
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];
-      if (isUpdate && message != null && message.author_UUID != null && message.author_UUID != GLOBALS.userData.uuid && GLOBALS.currentChannel != channel_uuid) {
-        new AppNotification({title: message.author, body: message.content, notificationAudience: NotificationAudienceType.both, playSound: true}).show();
+      if (isUpdate && (message.author_UUID != null && message.author_UUID != null) && message.author_UUID != GLOBALS.userData.uuid) {
+        const selected = GLOBALS.currentChannel != channel_uuid;
+        if (selected && GLOBALS.isFocused) {}
+        else if (!selected && GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.app));
+        else if (selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.none));
+        else if (!selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.both));
       }
       this.appendToCanvas(message, isUpdate, index == messages.length - 1);
     }
@@ -161,7 +166,7 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedMessageDelete(channel_uuid: string, message_id: string) {
+  onReceivedMessageDelete(_channel_uuid: string, message_id: string) {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
       canvas.remove(message_id);

@@ -31,8 +31,10 @@ ipcRenderer.on('channelCreationSucceded', (data: boolean) => {
 
 ipcRenderer.on('clientFocused', (data: boolean) => {
   console.log('Client Focused');
+  GLOBALS.isFocused = data;
 });
 
 ipcRenderer.on('clientUnfocused', (data: boolean) => {
   console.log('Client Unfocused');
+  GLOBALS.isFocused = data;
 });
