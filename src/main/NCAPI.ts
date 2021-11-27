@@ -91,10 +91,24 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
   }).catch(fail);
 }
 
-export function PutWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
+export function PutWithAuthentication(endpoint: string, payload: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: WebSocketMethod.PUT,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
 
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (res) => {
+      if (res.statusCode == 200) success();
+    })
+    re.on('error', (error) => {
+      fail(error);
+    });
+    if (payload != '')
+      re.write(payload)
+    re.end();
+    return true;
+  }).catch(fail);
 }
