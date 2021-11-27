@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
-import { Send, Logout as LogoutIcon } from '@mui/icons-material';
+import { Send as SendIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { IMessageInputProps } from 'types/interfaces';
 
 export default class MessageInput extends React.Component {
@@ -54,7 +54,7 @@ export default class MessageInput extends React.Component {
     return (
       <div className='Chat_Page_Bottom'>
           <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-          <IconButton className='Chat_IconButton' onClick={this.handleClick}><Send/></IconButton>
+          <IconButton className='Chat_IconButton' onClick={this.handleClick}><SendIcon/></IconButton>
       </div>
     );
   }

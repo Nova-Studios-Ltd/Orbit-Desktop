@@ -49,6 +49,7 @@ export interface IFormHeaderProps {
 
 export interface IFormTextFieldProps {
   id: string,
+  ref: Ref<HTMLInputElement>,
   classNames?: string,
   label: string,
   description?: string,
