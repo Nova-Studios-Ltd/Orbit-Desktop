@@ -91,12 +91,14 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
   }).catch(fail);
 }
 
-export function PutWithAuthentication(endpoint: string, payload: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
+export function PutWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
     method: WebSocketMethod.PUT,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
 
+  if (content_type != ContentType.EMPTY)
+    re.setHeader('Content-Type', content_type);
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
     const { token } = JSON.parse(userData[0].value);
     re.setHeader('Authorization', token);
