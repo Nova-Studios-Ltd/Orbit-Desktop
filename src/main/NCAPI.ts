@@ -73,7 +73,7 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
 
 export function DeleteWithAuthentication(endpoint: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
-    method: 'DELETE',
+    method: WebSocketMethod.DELETE,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
 
@@ -86,6 +86,28 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
     re.on('error', (error) => {
       fail(error);
     });
+    re.end();
+    return true;
+  }).catch(fail);
+}
+
+export function PutWithAuthentication(endpoint: string, payload: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
+  const re = request({
+    method: WebSocketMethod.PUT,
+    url: `https://api.novastudios.tk/${endpoint}`,
+  });
+
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    re.setHeader('Authorization', token);
+    re.on('response', (res) => {
+      if (res.statusCode == 200) success();
+    })
+    re.on('error', (error) => {
+      fail(error);
+    });
+    if (payload != '')
+      re.write(payload)
     re.end();
     return true;
   }).catch(fail);
