@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';
 import GLOBALS from 'shared/globals';
+import { NotificationStruct } from 'structs/NotificationProps';
 
 export default class AppNotification {
   readonly title?: string;
@@ -13,7 +14,7 @@ export default class AppNotification {
   readonly notificationType?: NotificationStatusType;
   readonly notificationAudience?: NotificationAudienceType;
 
-  constructor(props: INotificationProps) {
+  constructor(props: NotificationStruct) {
     this.title = props.title || '';
     this.body = props.body || '';
     this.playSound = props.playSound || false;

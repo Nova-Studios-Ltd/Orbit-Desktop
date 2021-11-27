@@ -1,11 +1,13 @@
-import { Avatar, Card, CardMedia, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
-import React, { DOMElement, Ref } from 'react';
+import { Avatar, Card, CardMedia, IconButton, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
+import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
+import React, { DOMElement, FormEvent, Ref } from 'react';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 import { IMessageProps, IMessageImageProps, IMessageContent } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import FormTextField from '../Form/FormTextField';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -78,6 +80,7 @@ export default class Message extends React.Component {
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
+  editMessageInputRef: Ref<HTMLInputElement>;
 
   constructor(props: IMessageProps) {
     super(props);
@@ -90,7 +93,7 @@ export default class Message extends React.Component {
 
     console.log(this.content);
 
-    this.state = { links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
+    this.state = { editedMessage: '', isEditing: false, hasNonLinkText: false, links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
 
     this.openContextMenu = this.openContextMenu.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
@@ -99,8 +102,12 @@ export default class Message extends React.Component {
     this.menuItemClicked = this.menuItemClicked.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
     this.isOwnMessage = this.isOwnMessage.bind(this);
+    this.editMessageChanged = this.editMessageChanged.bind(this);
+    this.submitEditedMessage = this.submitEditedMessage.bind(this);
+    this.resetMessageEdit = this.resetMessageEdit.bind(this);
 
     this.divRef = React.createRef();
+    this.editMessageInputRef = React.createRef();
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
@@ -110,7 +117,7 @@ export default class Message extends React.Component {
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.currentTarget.id) {
       case 'edit':
-        new AppNotification({ body: 'Not Implemented', notificationType: NotificationStatusType.warning, notificationAudience: NotificationAudienceType.app }).show();
+        this.setState({ editedMessage: this.content, isEditing: true });
         break;
       case 'copy':
         await copyToClipboard(this.content).then((result: Boolean) => {
@@ -144,6 +151,8 @@ export default class Message extends React.Component {
   }
 
   state = {
+    editedMessage: '',
+    isEditing: false,
     hasNonLinkText: false,
     links: [] as Array<MessageContent>,
     anchorEl: null,
@@ -151,9 +160,6 @@ export default class Message extends React.Component {
   }
 
   async componentDidMount() {
-    if (this.divRef != null)
-      this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
-
     let hasNonLinkText = false;
     let links = this.content.match(/(https:\/\/[\S]*)/g);
     if (links == null) {
@@ -174,6 +180,11 @@ export default class Message extends React.Component {
       }
     }
     this.setState({links: messageLinks, hasNonLinkText: hasNonLinkText});
+  }
+
+  componentDidUpdate() {
+    if (this.divRef != null)
+      this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
   validURL(str: string) {
@@ -221,12 +232,28 @@ export default class Message extends React.Component {
     return this.author_UUID == GLOBALS.userData.uuid;
   }
 
+  editMessageChanged(event: React.FormEvent<HTMLFormElement>) {
+    this.setState({ editedMessage: event.target.value });
+  }
+
+  submitEditedMessage() {
+    console.log(this.state.editedMessage);
+    ipcRenderer.send('sendEditedMessage', { messageID: this.message_Id, message: this.state.editedMessage });
+    this.resetMessageEdit();
+  }
+
+  resetMessageEdit(){
+    if (this.editMessageInputRef != null) this.editMessageInputRef.current.value = '';
+    this.setState({ editedMessage: '', isEditing: false });
+  }
+
   render() {
-    let messageContentObject = [] as any;
+    const messageContentObject = [] as any;
+    const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit hidden';
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      var messageParts = [] as any[];
+      const messageParts = [] as any[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
@@ -242,6 +269,7 @@ export default class Message extends React.Component {
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
     });
 
+
     return (
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>
@@ -251,6 +279,11 @@ export default class Message extends React.Component {
         <div className='Message_Right'>
           <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
+          <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>
+            <FormTextField id={`${this.message_Id}_EditField`} ref={this.editMessageInputRef} label='Edit' onChange={this.editMessageChanged} />
+            <IconButton className='Chat_IconButton' onClick={this.resetMessageEdit}><CloseIcon/></IconButton>
+            <IconButton className='Chat_IconButton' onClick={this.submitEditedMessage}><SendIcon/></IconButton>
+          </form>
         </div>
         <Menu
           id='userdropdown-menu'

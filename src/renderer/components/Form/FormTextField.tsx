@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import { TextField } from '@mui/material';
 import { IFormTextFieldProps } from 'types/interfaces';
 
@@ -20,8 +20,6 @@ export default class FormTextField extends React.Component {
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
     this.onChange = props.onChange || function(){};
-
-    console.log(`Text field class names: ${this.classNames}`);
   }
 
   render() {
@@ -31,10 +29,8 @@ export default class FormTextField extends React.Component {
       finalClassNames = finalClassNames.concat(' ', this.classNames);
     }
 
-    console.log(finalClassNames);
-
     return (
-      <TextField className={finalClassNames} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />
+      <TextField className={finalClassNames} ref={this.props.ref} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />
     );
   }
 }

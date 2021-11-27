@@ -26,5 +26,5 @@ ipcRenderer.on('channelCreationSucceded', (data: boolean) => {
   if (data)
     new AppNotification(new NotificationStruct("Channel Created", "Channel has been created succesfully", false, NotificationStatusType.success, NotificationAudienceType.app)).show();
   else
-  new AppNotification(new NotificationStruct("Channel Not Create", "Failed to create channel", false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification(new NotificationStruct("Channel Not Create", "Failed to create channel", false, NotificationStatusType.success, NotificationAudienceType.app)).show();
 });

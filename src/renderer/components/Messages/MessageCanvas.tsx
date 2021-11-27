@@ -8,8 +8,6 @@ export default class MessageCanvas extends React.Component {
     super(props);
     props.init(this);
     this.append = this.append.bind(this);
-    this.remove = this.remove.bind(this);
-    this.edit = this.edit.bind(this);
   }
 
   state = {
@@ -31,28 +29,6 @@ export default class MessageCanvas extends React.Component {
     }
     else {
       this.setState({messages: [message]});
-    }
-  }
-
-  remove(id: string) {
-    let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.message_Id === id);
-    if (index > -1) {
-      oldState.messages.splice(index, 1);
-      this.setState({messages: []});
-      this.setState({messages: oldState.messages});
-    }
-  }
-
-  edit(id: string, newMessage: string) {
-    let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.message_Id == id);
-    console.log(index);
-    if (index > -1) {
-      let m = oldState.messages[index];
-      oldState.messages[index] = new Message({ message: newMessage, author: m.author, authorUUID: m.author_UUID, messageUUID: m.message_Id, avatarSrc: m.avatar } as IMessageProps);
-      this.setState({messages: []});
-      this.setState({messages: oldState.messages});
     }
   }
 

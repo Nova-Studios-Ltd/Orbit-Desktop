@@ -1,9 +1,10 @@
 import { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
+import GLOBALS from 'shared/globals';
 import Credentials from '../structs/Credentials';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication } from './NCAPI';
 
 const { request } = net;
 
@@ -177,4 +178,11 @@ ipcMain.on('createChannel', (event, data: any) => {
       else event.sender.send('channelCreationSucceded', true);
     });
   }
+});
+
+ipcMain.on('sendEditedMessage', (event, data: any) => {
+  const { messageID, message } = data;
+  const channelID = GLOBALS.currentChannel;
+
+  PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, message);
 });

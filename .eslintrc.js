@@ -29,6 +29,8 @@ module.exports = {
     'default-case': 'off',
     'eqeqeq': 'off',
     'no-plusplus': 'off',
+    'promise/catch-or-return': 'off',
+    'promise/always-return': 'off'
   },
   parserOptions: {
     ecmaVersion: 2020,

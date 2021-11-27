@@ -73,7 +73,7 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
 
 export function DeleteWithAuthentication(endpoint: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
   const re = request({
-    method: 'DELETE',
+    method: WebSocketMethod.DELETE,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
 
@@ -89,4 +89,12 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
     re.end();
     return true;
   }).catch(fail);
+}
+
+export function PutWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
+  const re = request({
+    method: WebSocketMethod.PUT,
+    url: `https://api.novastudios.tk/${endpoint}`,
+  });
+
 }
