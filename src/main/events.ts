@@ -1,6 +1,5 @@
 import { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
-import GLOBALS from '../shared/globals';
 import Credentials from '../structs/Credentials';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
@@ -181,8 +180,9 @@ ipcMain.on('createChannel', (event, data: any) => {
 });
 
 ipcMain.on('sendEditedMessage', (event, data: any) => {
-  const { messageID, message } = data;
-  const channelID = GLOBALS.currentChannel;
+  const { channelID, messageID, message } = data;
+
+  console.log(`${messageID} ${message} ${channelID}`)
 
   PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}));
 });

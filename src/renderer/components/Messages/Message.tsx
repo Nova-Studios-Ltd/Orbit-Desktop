@@ -238,7 +238,7 @@ export default class Message extends React.Component {
 
   submitEditedMessage() {
     console.log(this.state.editedMessage);
-    ipcRenderer.send('sendEditedMessage', { messageID: this.message_Id, message: this.state.editedMessage });
+    ipcRenderer.send('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage });
     this.resetMessageEdit();
   }
 
