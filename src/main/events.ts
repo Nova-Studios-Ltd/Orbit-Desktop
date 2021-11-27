@@ -184,5 +184,5 @@ ipcMain.on('sendEditedMessage', (event, data: any) => {
   const { messageID, message } = data;
   const channelID = GLOBALS.currentChannel;
 
-  PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, message);
+  PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}));
 });
