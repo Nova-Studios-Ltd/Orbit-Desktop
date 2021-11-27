@@ -149,8 +149,6 @@ export default class ChatPage extends React.Component {
       const message = messages[index];
       if (isUpdate && message.author_UUID != GLOBALS.userData.uuid) {
         const selected = GLOBALS.currentChannel == channel_uuid;
-        console.log(GLOBALS.isFocused);
-        console.log(selected);
         if (selected && GLOBALS.isFocused) {}
         else if (!selected && GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.app)).show();
         else if (selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.none)).show();

@@ -18,7 +18,7 @@ export default class MessageCanvas extends React.Component {
   append(message: Message, isUpdate: boolean, refreshList: boolean) {
     if (this.state.messages.length > 0)
     {
-      let oldState = this.state;
+      const oldState = this.state;
       if (isUpdate)
         oldState.messages.push(message);
       else
