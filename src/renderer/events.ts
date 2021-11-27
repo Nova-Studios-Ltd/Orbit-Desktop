@@ -28,3 +28,11 @@ ipcRenderer.on('channelCreationSucceded', (data: boolean) => {
   else
     new AppNotification(new NotificationStruct("Channel Not Create", "Failed to create channel", false, NotificationStatusType.success, NotificationAudienceType.app)).show();
 });
+
+ipcRenderer.on('clientFocused', (data: boolean) => {
+  console.log('Client Focused');
+});
+
+ipcRenderer.on('clientUnfocused', (data: boolean) => {
+  console.log('Client Unfocused');
+});

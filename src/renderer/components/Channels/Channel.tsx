@@ -3,6 +3,7 @@ import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from 
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
 import { IChannelProps, IChannelState } from 'types/interfaces';
+import AppNotification from 'renderer/components/Notification/Notification';
 
 export default class Channel extends React.Component {
   state: IChannelState;
@@ -41,10 +42,10 @@ export default class Channel extends React.Component {
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.currentTarget.id) {
       case 'edit':
-        console.warn("EDIT");
+        new AppNotification({title: 'Edit'}).show();
         break;
       case 'delete':
-        console.warn("DELETE");
+        new AppNotification({title: 'Delete'}).show();
         break;
     }
 

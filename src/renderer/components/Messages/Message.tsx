@@ -118,6 +118,7 @@ export default class Message extends React.Component {
     switch(event.currentTarget.id) {
       case 'edit':
         this.setState({ editedMessage: this.content, isEditing: true });
+        if (this.editMessageInputRef != null) this.editMessageInputRef.current.value = this.state.editedMessage;
         break;
       case 'copy':
         await copyToClipboard(this.content).then((result: Boolean) => {

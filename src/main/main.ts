@@ -110,6 +110,14 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
+  mainWindow.on('focus', () => {
+    mainWindow?.webContents.send('clientFocused', true);
+  });
+
+  mainWindow.on('blur', () => {
+    mainWindow?.webContents.send('clientUnfocused', true);
+  });
+
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
