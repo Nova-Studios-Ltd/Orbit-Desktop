@@ -166,10 +166,11 @@ ipcMain.on('requestUserData', (event, user_uuid: string) => {
 
 ipcMain.on('createChannel', (event, data: any) => {
   const name: string = data.channelName;
-  const users_raw: string = data.recipients;
-  const users = users_raw.split(' ');
+  const users_raw: {[username: string]: string} = data.recipients;
+  const users = Object.values(users_raw);
 
   if (users.length == 1) {
+    console.log(users[0]);
     PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${users[0]}`, ContentType.EMPTY, '', (resp, json) => {
       if (resp.statusCode != 200) event.sender.send('channelCreationSucceded', false);
       else event.sender.send('channelCreationSucceded', true);
@@ -201,4 +202,16 @@ ipcMain.on('removeSelfFromChannel', (event, data: any) => {
   const { channelID, userID } = data;
 
   DeleteWithAuthentication(`/User/Channels/Unregister?user_uuid=${userID}&channel_uuid=${channelID}`);
+});
+
+ipcMain.handle('getUserUUID', async (event, username: string, discriminator: string) => {
+  let result = '';
+
+  QueryWithAuthentication(`/User/${username}/${discriminator}/UUID`, (res, json) => {
+    if (res.statusCode != 200) result = 'UNKNOWN';
+    else result = json.toString();
+  });
+
+  await TimeoutUntil(result, '', true);
+  return result;
 });

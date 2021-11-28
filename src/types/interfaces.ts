@@ -195,10 +195,10 @@ export interface IChatPageState {
   CanvasObject: MessageCanvas,
   ChannelList: ChannelView,
   CreateChannelDialogChannelName: string,
-  CreateChannelDialogRecipients: string,
-  CreateChannelDialogRecipientUUID: string,
+  CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
-  CreateChannelDialogChannelType: ChannelType
+  CreateChannelDialogChannelType: ChannelType,
+  CreateChannelDialogRecipientUUID: string
 }
 
 export interface ILoginFormState {
