@@ -5,7 +5,7 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import { ISettingsPageProps } from 'types/interfaces';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import Header from 'renderer/components/Header/Header';
-import { copyToClipboard, Navigate } from 'shared/helpers';
+import { ConductLogin, copyToClipboard } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 
 export default class SettingsPage extends React.Component {
@@ -16,7 +16,7 @@ export default class SettingsPage extends React.Component {
   }
 
   exitSettings() {
-    Navigate('/chat', null);
+    ConductLogin();
   }
 
   render() {

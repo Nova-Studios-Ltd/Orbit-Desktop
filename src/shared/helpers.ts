@@ -41,6 +41,7 @@ export function getCookie(cname: string) {
 }
 
 export function ConductLogin() {
+  if (GetHistoryState() != null && GetHistoryState().failed) return;
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     Navigate('/chat', null);
     ipcRenderer.send('requestChannels');

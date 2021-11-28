@@ -11,6 +11,7 @@ export default class MessageCanvas extends React.Component {
     this.append = this.append.bind(this);
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
+    this.clear = this.clear.bind(this);
 
     this.state = {
       messages: []

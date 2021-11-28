@@ -91,8 +91,6 @@ export default class Message extends React.Component {
     this.timestamp = props.timestamp;
     this.avatar = props.avatar;
 
-    console.log(this.content);
-
     this.state = {
       editedMessage: '',
       isEditing: false,
@@ -234,7 +232,6 @@ export default class Message extends React.Component {
   }
 
   submitEditedMessage() {
-    console.log(this.state.editedMessage);
     ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
       if (result) {
         new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();

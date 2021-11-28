@@ -3,7 +3,7 @@ import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
+import { Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials, ConductLogin, GetHistoryState } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -19,7 +19,6 @@ import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
-import { stringify } from 'querystring';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -52,6 +51,7 @@ export default class ChatPage extends React.Component {
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
+
   }
 
   preloadChannel() {

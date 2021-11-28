@@ -3,10 +3,9 @@ import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import { IAuthPageProps } from 'types/interfaces'
-import { ConductLogin, SetAuth, GetHistoryState } from 'shared/helpers';
+import { ConductLogin, GetHistoryState } from 'shared/helpers';
 
 function LoginInit(form: LoginForm) {
-  if (GetHistoryState() != null && GetHistoryState().failed) return;
   ConductLogin();
 }
 
