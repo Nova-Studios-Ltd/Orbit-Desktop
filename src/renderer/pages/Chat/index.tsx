@@ -19,6 +19,7 @@ import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { MessageProps } from 'types/props';
 import { NotificationStruct } from 'structs/NotificationProps';
+import { stringify } from 'querystring';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -44,9 +45,9 @@ export default class ChatPage extends React.Component {
       CanvasObject: null as unknown as MessageCanvas,
       ChannelList: null as unknown as ChannelView,
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogRecipients: '',
+      CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
-      CreateChannelDialogChannelType: ChannelType.Default
+      CreateChannelDialogChannelType: ChannelType.Default,
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -182,7 +183,25 @@ export default class ChatPage extends React.Component {
 
   handleFormChange(event: React.FormEvent<HTMLFormElement>) {
     const { name, value } = event.target;
+    if (name == 'CreateChannelDialogRecipients') {
+      const usernames = value.split(' ');
+      usernames.forEach(async (username: string) => {
+        if (this.IsValidUsername(username)) {
+          const ud = username.split('#')
+          await ipcRenderer.invoke('getUserUUID', ud[0], ud[1]).then((result) => {
+            if (result == 'UNKNOWN') return;
+            this.state.CreateChannelDialogRecipients[username] = result;
+            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients});
+          });
+        }
+      });
+      return;
+    }
     this.setState({[name]: value});
+  }
+
+  IsValidUsername(username: string) {
+    return new RegExp(/^([\S]{1,})#([0-9]{4}$)/g).test(username);
   }
 
   openCreateChannelDialog() {
@@ -201,7 +220,7 @@ export default class ChatPage extends React.Component {
   resetCreateChannelDialogState() {
     this.setState({
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogRecipients: [],
+      CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default
     });
