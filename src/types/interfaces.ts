@@ -48,7 +48,7 @@ export interface IFormHeaderProps {
 
 export interface IFormTextFieldProps {
   id: string,
-  innerRef: Ref<HTMLInputElement>,
+  value: string,
   classNames?: string,
   label: string,
   description?: string,
@@ -208,6 +208,15 @@ export interface IChannelState {
   contextMenuAnchorEl: any,
   contextMenuOpen: boolean,
   confirmChannelDeletionDialogOpen: boolean
+}
+
+export interface IMessageState {
+  editedMessage: string,
+  isEditing: boolean,
+  hasNonLinkText: boolean,
+  links: Array<string>,
+  anchorEl: any,
+  open: boolean
 }
 
 // Implementation Prototypes
