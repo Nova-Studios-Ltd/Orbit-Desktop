@@ -1,18 +1,20 @@
 import React from 'react';
-import { IMessageCanvasProps } from 'types/interfaces';
+import { IMessageCanvasProps, IMessageCanvasState } from 'types/interfaces';
 import Message from './Message';
 
 export default class MessageCanvas extends React.Component {
+  state: IMessageCanvasState;
+
   constructor(props: IMessageCanvasProps) {
     super(props);
     props.init(this);
     this.append = this.append.bind(this);
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
-  }
 
-  state = {
-    messages: [] as Array<Message>
+    this.state = {
+      messages: []
+    }
   }
 
   append(message: Message, isUpdate: boolean, refreshList: boolean) {

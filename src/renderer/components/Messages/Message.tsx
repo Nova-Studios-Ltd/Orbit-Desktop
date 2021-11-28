@@ -3,7 +3,7 @@ import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import { IMessageProps, IMessageImageProps, IMessageContent } from 'types/interfaces';
+import { IMessageProps, IMessageImageProps, IMessageState, IMessageContent } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
@@ -73,6 +73,7 @@ class MessageContent extends React.Component {
 }
 
 export default class Message extends React.Component {
+  state: IMessageState;
   message_Id: string;
   author_UUID: string;
   author: string;
@@ -80,7 +81,6 @@ export default class Message extends React.Component {
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
-  editMessageInputRef: Ref<HTMLInputElement>;
 
   constructor(props: IMessageProps) {
     super(props);
@@ -93,7 +93,14 @@ export default class Message extends React.Component {
 
     console.log(this.content);
 
-    this.state = { editedMessage: '', isEditing: false, hasNonLinkText: false, links: [], anchorEl: null, open: Boolean(this.state.anchorEl) };
+    this.state = {
+      editedMessage: '',
+      isEditing: false,
+      hasNonLinkText: false,
+      links: [],
+      anchorEl: null,
+      open: false
+    }
 
     this.openContextMenu = this.openContextMenu.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
@@ -107,7 +114,6 @@ export default class Message extends React.Component {
     this.resetMessageEdit = this.resetMessageEdit.bind(this);
 
     this.divRef = React.createRef();
-    this.editMessageInputRef = React.createRef();
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
@@ -118,7 +124,6 @@ export default class Message extends React.Component {
     switch(event.currentTarget.id) {
       case 'edit':
         this.setState({ editedMessage: this.content, isEditing: true });
-        if (this.editMessageInputRef != null) this.editMessageInputRef.current.value = this.state.editedMessage;
         break;
       case 'copy':
         await copyToClipboard(this.content).then((result: Boolean) => {
@@ -149,15 +154,6 @@ export default class Message extends React.Component {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
       event.currentTarget.className = 'Message';
     }
-  }
-
-  state = {
-    editedMessage: '',
-    isEditing: false,
-    hasNonLinkText: false,
-    links: [] as Array<MessageContent>,
-    anchorEl: null,
-    open: false
   }
 
   async componentDidMount() {
@@ -239,12 +235,17 @@ export default class Message extends React.Component {
 
   submitEditedMessage() {
     console.log(this.state.editedMessage);
-    ipcRenderer.send('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage });
+    ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
+      if (result) {
+        new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+      } else {
+        new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+      }
+    });
     this.resetMessageEdit();
   }
 
   resetMessageEdit(){
-    if (this.editMessageInputRef != null) this.editMessageInputRef.current.value = '';
     this.setState({ editedMessage: '', isEditing: false });
   }
 
@@ -281,7 +282,7 @@ export default class Message extends React.Component {
           <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>
-            <FormTextField id={`${this.message_Id}_EditField`} innerRef={this.editMessageInputRef} label='Edit' onChange={this.editMessageChanged} />
+            <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label='Edited Message' onChange={this.editMessageChanged} />
             <IconButton className='Chat_IconButton' onClick={this.resetMessageEdit}><CloseIcon/></IconButton>
             <IconButton className='Chat_IconButton' onClick={this.submitEditedMessage}><SendIcon/></IconButton>
           </form>

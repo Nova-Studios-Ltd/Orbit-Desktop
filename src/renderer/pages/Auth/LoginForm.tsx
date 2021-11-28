@@ -3,14 +3,15 @@ import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
-import { ILoginFormProps } from 'types/interfaces';
+import { IAuthForm, ILoginFormProps, ILoginFormState } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormAuthStatusType, FormStatusType } from 'types/enums';
-import { IAuthForm } from 'types/interfaces'
 
 class LoginForm extends React.Component implements IAuthForm {
+  state: ILoginFormState;
+
   constructor(props: ILoginFormProps) {
     super(props);
     props.init(this);
@@ -19,13 +20,6 @@ class LoginForm extends React.Component implements IAuthForm {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  state = {
-    email: '' as string,
-    password: '' as string,
-    address: ''  as string,
-    status: new FormStatusTuple(undefined, undefined) as FormStatusTuple
   }
 
   handleChange(event: React.FormEvent<HTMLFormElement>) {

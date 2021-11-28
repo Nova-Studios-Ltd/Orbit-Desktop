@@ -8,6 +8,7 @@ import UserData from 'structs/UserData';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import Channel from 'renderer/components/Channels/Channel';
+import Message from 'renderer/components/Messages/Message';
 
 // Page Props
 
@@ -48,7 +49,7 @@ export interface IFormHeaderProps {
 
 export interface IFormTextFieldProps {
   id: string,
-  innerRef: Ref<HTMLInputElement>,
+  value: string,
   classNames?: string,
   label: string,
   description?: string,
@@ -184,8 +185,8 @@ export interface ILoginFormProps extends IAuthFormProps {
   init: Function
 }
 
-export interface IRegisterFormProps {
-
+export interface IRegisterFormProps extends IAuthFormProps {
+  init: Function
 }
 
 // State
@@ -199,11 +200,48 @@ export interface IChatPageState {
   CreateChannelDialogChannelType: ChannelType
 }
 
+export interface ILoginFormState {
+  email: string,
+  password: string,
+  address: string,
+  status: FormStatusTuple
+}
+
+export interface IRegisterFormState {
+  email: string,
+  password: string,
+  address: string,
+  status: FormStatusTuple
+}
+
 export interface IChannelViewState {
   channels: Channel[],
 }
 
 export interface IChannelState {
+  contextMenuAnchorEl: any,
+  contextMenuOpen: boolean,
+  confirmChannelDeletionDialogOpen: boolean
+}
+
+export interface IMessageState {
+  editedMessage: string,
+  isEditing: boolean,
+  hasNonLinkText: boolean,
+  links: Array<string>,
+  anchorEl: any,
+  open: boolean
+}
+
+export interface IMessageInputState {
+  message: string
+}
+
+export interface IMessageCanvasState {
+  messages: Array<Message>
+}
+
+export interface IUserDropdownMenuState {
   anchorEl: any,
   open: boolean
 }

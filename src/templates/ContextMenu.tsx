@@ -1,4 +1,6 @@
-state = { anchorEl: null, open: Boolean(this.state.anchorEl) };
+constructor(props) {
+  this.state = { anchorEl: null, open: Boolean(this.state.anchorEl) };
+}
 
 async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
   switch(event.currentTarget.id) {

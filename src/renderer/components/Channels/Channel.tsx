@@ -4,6 +4,7 @@ import GLOBALS from 'shared/globals'
 import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
 import { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
+import YesNoDialog from '../Dialogs/YesNoDialog';
 
 export default class Channel extends React.Component {
   state: IChannelState;
@@ -21,15 +22,18 @@ export default class Channel extends React.Component {
     this.channelRightClicked = this.channelRightClicked.bind(this);
     this.menuItemClicked = this.menuItemClicked.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
+    this.removeUserFromThisChannel = this.removeUserFromThisChannel.bind(this);
+    this.closeChannelDeletionDialog = this.closeChannelDeletionDialog.bind(this);
 
     this.state = {
-      anchorEl: null,
-      open: false
+      contextMenuAnchorEl: null,
+      contextMenuOpen: false,
+      confirmChannelDeletionDialogOpen: false
     }
   }
 
   channelRightClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+    this.setState({ contextMenuOpen: !this.state.contextMenuOpen, contextMenuAnchorEl: event.currentTarget });
   }
 
   channelClicked() {
@@ -45,7 +49,7 @@ export default class Channel extends React.Component {
         new AppNotification({title: 'Edit'}).show();
         break;
       case 'delete':
-        new AppNotification({title: 'Delete'}).show();
+        this.setState({ confirmChannelDeletionDialogOpen: true });
         break;
     }
 
@@ -53,7 +57,16 @@ export default class Channel extends React.Component {
   }
 
   closeContextMenu() {
-    this.setState({ open: false, anchorEl: null });
+    this.setState({ contextMenuOpen: false, contextMenuAnchorEl: null });
+  }
+
+  closeChannelDeletionDialog() {
+    this.setState({ confirmChannelDeletionDialogOpen: false });
+  }
+
+  removeUserFromThisChannel() {
+    ipcRenderer.send('removeSelfFromChannel', { channelID: this.channelID, userID: GLOBALS.userData.uuid });
+    this.closeChannelDeletionDialog();
   }
 
   render() {
@@ -71,14 +84,23 @@ export default class Channel extends React.Component {
         </Card>
         <Menu
           id='channel-dropdown-menu'
-          anchorEl={this.state.anchorEl}
-          open={this.state.open}
+          anchorEl={this.state.contextMenuAnchorEl}
+          open={this.state.contextMenuOpen}
           onClose={this.closeContextMenu}
           >
 
-          <MenuItem id='edit' onClick={this.menuItemClicked}>Edit</MenuItem>
+          <MenuItem id='edit' onClick={this.menuItemClicked} disabled>Edit</MenuItem>
+          <MenuItem id='hide' onClick={this.menuItemClicked} disabled>Hide</MenuItem>
           <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
         </Menu>
+        <YesNoDialog title='Confirm Leave Channel'
+          body='You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!'
+          confirmButtonText='Leave'
+          denyButtonText='Cancel'
+          onConfirm={this.removeUserFromThisChannel}
+          onDeny={this.closeChannelDeletionDialog}
+          show={this.state.confirmChannelDeletionDialogOpen}
+        ></YesNoDialog>
       </div>
     );
   }
