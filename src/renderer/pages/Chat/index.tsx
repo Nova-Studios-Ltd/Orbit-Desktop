@@ -47,6 +47,7 @@ export default class ChatPage extends React.Component {
       CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
+      CreateChannelDialogRecipientUUID: '',
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -190,7 +191,8 @@ export default class ChatPage extends React.Component {
           await ipcRenderer.invoke('getUserUUID', ud[0], ud[1]).then((result) => {
             if (result == 'UNKNOWN') return;
             this.state.CreateChannelDialogRecipients[username] = result;
-            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients});
+            // Change this later to support multiple users for the dialog
+            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients, CreateChannelDialogRecipientUUID: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`});
           });
         }
       });
@@ -221,7 +223,8 @@ export default class ChatPage extends React.Component {
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
-      CreateChannelDialogChannelType: ChannelType.Default
+      CreateChannelDialogChannelType: ChannelType.Default,
+      CreateChannelDialogRecipientUUID: ''
     });
   }
 
