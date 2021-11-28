@@ -185,7 +185,7 @@ export default class Message extends React.Component {
   }
 
   validURL(str: string) {
-    const pattern = new RegExp('^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)');
+    const pattern = new RegExp(/^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)/);
     return !!pattern.test(str);
   }
 
