@@ -235,7 +235,13 @@ export default class Message extends React.Component {
 
   submitEditedMessage() {
     console.log(this.state.editedMessage);
-    ipcRenderer.send('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage });
+    ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
+      if (result) {
+        new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+      } else {
+        new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+      }
+    });
     this.resetMessageEdit();
   }
 
@@ -276,7 +282,7 @@ export default class Message extends React.Component {
           <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>
-            <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label='Edit' onChange={this.editMessageChanged} />
+            <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label='Edited Message' onChange={this.editMessageChanged} />
             <IconButton className='Chat_IconButton' onClick={this.resetMessageEdit}><CloseIcon/></IconButton>
             <IconButton className='Chat_IconButton' onClick={this.submitEditedMessage}><SendIcon/></IconButton>
           </form>

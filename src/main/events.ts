@@ -183,9 +183,18 @@ ipcMain.on('createChannel', (event, data: any) => {
   }
 });
 
-ipcMain.on('sendEditedMessage', (event, data: any) => {
+ipcMain.handle('sendEditedMessage', async (event, data: any) => {
+  let result = false;
+
+  function onSuccess() {
+    result = true;
+  }
+
   const { channelID, messageID, message } = data;
-  PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}));
+  PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}), onSuccess);
+
+  await TimeoutUntil(result, true, false);
+  return result;
 });
 
 ipcMain.on('removeSelfFromChannel', (event, data: any) => {
