@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send as SendIcon, Logout as LogoutIcon } from '@mui/icons-material';
-import { IMessageInputProps } from 'types/interfaces';
+import { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 
 export default class MessageInput extends React.Component {
+  state: IMessageInputState;
   forwardMessageCallback: Function;
 
   constructor(props: IMessageInputProps) {
@@ -15,10 +16,8 @@ export default class MessageInput extends React.Component {
     this.forwardMessage = this.forwardMessage.bind(this);
 
     this.forwardMessageCallback = props.onMessagePush;
-  }
 
-  state = {
-    message: '' as string
+    this.state = { message: '' }
   }
 
   forwardMessage(message: string) {

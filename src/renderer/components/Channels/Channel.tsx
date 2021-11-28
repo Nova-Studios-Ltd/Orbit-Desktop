@@ -89,7 +89,8 @@ export default class Channel extends React.Component {
           onClose={this.closeContextMenu}
           >
 
-          <MenuItem id='edit' onClick={this.menuItemClicked}>Edit</MenuItem>
+          <MenuItem id='edit' onClick={this.menuItemClicked} disabled>Edit</MenuItem>
+          <MenuItem id='hide' onClick={this.menuItemClicked} disabled>Hide</MenuItem>
           <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
         </Menu>
         <YesNoDialog title='Confirm Leave Channel'

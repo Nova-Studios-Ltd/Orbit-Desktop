@@ -1,6 +1,6 @@
 import React, { ReactElement, Ref, RefObject } from 'react';
 import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import { IUserDropdownMenu, IUserDropdownMenuFunctions } from 'types/interfaces';
+import { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { copyToClipboard, ipcRenderer, Navigate } from 'shared/helpers';
@@ -8,6 +8,7 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 export default class UserDropdownMenu extends React.Component {
+  state: IUserDropdownMenuState;
   menuFunctions: IUserDropdownMenuFunctions;
   userData: UserData;
 
@@ -15,16 +16,14 @@ export default class UserDropdownMenu extends React.Component {
     super(props);
     this.menuFunctions = props.menuFunctions;
     this.userData = props.userData;
-    this.state = { anchorEl: null, open: Boolean(this.state.anchorEl) };
+    this.state = {
+      anchorEl: null,
+      open: false
+    }
 
     this.handleClose = this.handleClose.bind(this);
     this.buttonClicked = this.buttonClicked.bind(this);
     this.menuItemClicked = this.menuItemClicked.bind(this);
-  }
-
-  state = {
-    anchorEl: null,
-    open: false
   }
 
   buttonClicked(event) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { ILoginFormProps } from 'types/interfaces';
+import { IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import { IAuthForm } from 'types/interfaces';
@@ -11,7 +11,9 @@ import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 
 class RegisterForm extends React.Component implements IAuthForm {
-  constructor(props: ILoginFormProps) {
+  state: IRegisterFormState;
+
+  constructor(props: IRegisterFormProps) {
     super(props);
     props.init(this);
 
@@ -19,14 +21,6 @@ class RegisterForm extends React.Component implements IAuthForm {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  state = {
-    email: '' as string,
-    username: '' as string,
-    password: '' as string,
-    address: ''  as string,
-    status: new FormStatusTuple(undefined, undefined) as FormStatusTuple
   }
 
   handleChange(event: React.FormEvent<HTMLInputElement>) {
