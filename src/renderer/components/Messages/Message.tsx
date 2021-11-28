@@ -251,7 +251,7 @@ export default class Message extends React.Component {
 
   render() {
     const messageContentObject = [] as any;
-    const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit hidden';
+    const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);

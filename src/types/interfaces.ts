@@ -4,11 +4,11 @@ import { FormEventHandler, MouseEvent, ReactChildren, Ref } from 'react'
 import { SelectChangeEvent } from '@mui/material';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
-import UserData from 'structs/UserData';
-import ChannelView from 'renderer/components/Channels/ChannelView';
-import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import Channel from 'renderer/components/Channels/Channel';
-import Message from 'renderer/components/Messages/Message';
+import type UserData from 'structs/UserData';
+import type ChannelView from 'renderer/components/Channels/ChannelView';
+import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
+import type Channel from 'renderer/components/Channels/Channel';
+import type Message from 'renderer/components/Messages/Message';
 
 // Page Props
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { IYesNoDialogProps, IYesNoDialogButtonProps } from 'types/interfaces';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
+import { IYesNoDialogProps } from 'types/interfaces';
+import { GrowTransition } from 'types/transitions';
 
 export default class YesNoDialog extends React.Component {
   title: string;
@@ -22,7 +23,7 @@ export default class YesNoDialog extends React.Component {
 
   render() {
     return(
-      <Dialog open={this.props.show}>
+      <Dialog open={this.props.show} TransitionComponent={GrowTransition}>
         <DialogTitle>
           {this.title}
         </DialogTitle>

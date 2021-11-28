@@ -1,7 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { withStyles } from '@mui/styles';
-import { AppStyles } from 'renderer/AppTheme';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import { IAuthPageProps } from 'types/interfaces'
@@ -40,7 +38,7 @@ function hslToHex(h: number, s: number, l: number) {
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-class AuthPage extends React.Component {
+export default class AuthPage extends React.Component {
   formType: Number;
 
   constructor(props: IAuthPageProps) {
@@ -48,8 +46,7 @@ class AuthPage extends React.Component {
     this.formType = (() => {
       if (props.register)
         return 1;
-      else
-        return 0;
+      return 0;
     })();
   }
 
@@ -74,5 +71,3 @@ class AuthPage extends React.Component {
     );
   }
 }
-
-export default withStyles(AppStyles)(AuthPage);

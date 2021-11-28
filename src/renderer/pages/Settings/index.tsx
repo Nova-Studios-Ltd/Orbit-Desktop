@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, IconButton, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { ISettingsPageProps } from 'types/interfaces';
@@ -8,9 +7,8 @@ import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import Header from 'renderer/components/Header/Header';
 import { copyToClipboard, Navigate } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import { AppStyles } from 'renderer/AppTheme';
 
-class SettingsPage extends React.Component {
+export default class SettingsPage extends React.Component {
   constructor(props: ISettingsPageProps) {
     super(props);
 
@@ -40,5 +38,3 @@ class SettingsPage extends React.Component {
     );
   }
 }
-
-export default withStyles(AppStyles)(SettingsPage);

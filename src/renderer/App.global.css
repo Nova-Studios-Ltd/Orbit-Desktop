@@ -3,23 +3,3 @@
 @import 'pages/Settings/styles.css';
 @import 'components/styles.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-  margin: 0;
-}
-
-::-webkit-scrollbar {
-  background-color: rgba(0, 0, 0, 0.1);
-  width: 0.65rem;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgb(150, 150, 150);
-  border-radius: 30px;
-}
-
-.hidden {
-  display: none;
-}

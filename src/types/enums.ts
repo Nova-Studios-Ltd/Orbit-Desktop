@@ -49,3 +49,8 @@ export enum ChannelType {
   Group = 1,
   Default = 0
 }
+
+export enum Theme {
+  Light,
+  Dark
+}

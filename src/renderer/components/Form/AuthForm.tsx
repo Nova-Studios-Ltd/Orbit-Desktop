@@ -29,7 +29,7 @@ export default class AuthForm extends React.Component {
     const { message, type } = this.props.status != null ? this.props.status : new FormStatusTuple(undefined, undefined);
 
     return(
-      <form className='AuthForm_Container' onSubmit={this.handleSubmit}>
+      <form className='FormContainer AuthForm_Container' onSubmit={this.handleSubmit}>
         <FormHeader heading={this.headerHeading} body={this.headerBody} />
         <FormStatusField message={message} type={type} />
         {this.children}

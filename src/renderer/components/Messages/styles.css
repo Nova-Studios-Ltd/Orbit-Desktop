@@ -15,10 +15,6 @@
   transition: background-color 200ms ease;
 }
 
-.Message_Hover {
-  background-color: lightgray;
-}
-
 .Message_Left {
   margin: 0.5rem;
 }

@@ -13,15 +13,14 @@ import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDrop
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
-import { AppStyles } from 'renderer/AppTheme';
+import { GrowTransition } from 'types/transitions';
 
-class ChatPage extends React.Component {
+export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
   state: IChatPageState;
 
@@ -271,7 +270,7 @@ class ChatPage extends React.Component {
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
         </div>
-        <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible}>
+        <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
           <DialogTitle>Create a Channel</DialogTitle>
           <DialogContent>
             <FormDropdown id='CreateChannelDialogType' value={this.state.CreateChannelDialogChannelType} onChange={this.handleCreateChannelDialogChannelTypeChange} label='Channel Type' description='Choose between a single user or group conversation.'>
@@ -289,5 +288,3 @@ class ChatPage extends React.Component {
     );
   }
 }
-
-export default withStyles(AppStyles)(ChatPage);

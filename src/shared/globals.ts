@@ -1,11 +1,13 @@
-import UserData from '../structs/UserData';
+import UserData from 'structs/UserData';
+import { Theme } from 'types/enums'
 
 const GLOBALS = {
-  userData: new UserData(null),
+  userData: new UserData(undefined),
   currentChannel: '',
   HomePath: '/login',
   NotificationAssetPath: 'assets/sounds/bell.oga',
-  isFocused: true
+  isFocused: true,
+  theme: Theme.Dark
 }
 
 export default GLOBALS;

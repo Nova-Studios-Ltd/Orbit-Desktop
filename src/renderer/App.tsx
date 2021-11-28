@@ -6,10 +6,11 @@ import ChatPage from 'renderer/pages/Chat';
 import { history, Navigate, SetAuth } from 'shared/helpers';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
-import { AppTheme } from 'renderer/AppTheme';
+import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { ThemeProvider } from '@mui/material';
+import { withStyles } from '@mui/styles';
 
 Navigate(GLOBALS.HomePath, null);
 SetAuth();
@@ -42,4 +43,4 @@ function App() {
   );
 }
 
-export default App;
+export default withStyles(AppStyles)(App);
