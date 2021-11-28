@@ -1,9 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
+import { withStyles } from '@mui/styles';
+import { AppStyles } from 'renderer/AppTheme';
+import LoginForm from 'renderer/pages/Auth/LoginForm';
+import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import { IAuthPageProps } from 'types/interfaces'
-import GLOBALS from 'shared/globals';
 import { ConductLogin, SetAuth, GetHistoryState } from 'shared/helpers';
 
 function LoginInit(form: LoginForm) {
@@ -39,7 +40,7 @@ function hslToHex(h: number, s: number, l: number) {
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-export default class AuthPage extends React.Component {
+class AuthPage extends React.Component {
   formType: Number;
 
   constructor(props: IAuthPageProps) {
@@ -56,7 +57,7 @@ export default class AuthPage extends React.Component {
     const title = this.formType == 1 ? 'Register' : 'Login';
     const form = this.formType == 1 ? <RegisterForm init={RegisterInit}/> : <LoginForm init={LoginInit}/>;
     const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
-    const AuthPageContainerClassNames = `Auth_Page_Container ${background}`;
+    const AuthPageContainerClassNames = `Page Auth_Page_Container ${background}`;
 
     const st = {
       backgroundImage: `linear-gradient(${getRandomInt(43, 150)}deg, ${GenerateRandomColor()} 0%, ${GenerateRandomColor()} 46%, ${GenerateRandomColor()} 100%)`,
@@ -73,3 +74,5 @@ export default class AuthPage extends React.Component {
     );
   }
 }
+
+export default withStyles(AppStyles)(AuthPage);

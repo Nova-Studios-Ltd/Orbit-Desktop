@@ -6,25 +6,27 @@ import ChatPage from 'renderer/pages/Chat';
 import { history, Navigate, SetAuth } from 'shared/helpers';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
+import { AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
+import { ThemeProvider } from '@mui/material';
 
 Navigate(GLOBALS.HomePath, null);
 SetAuth();
 
 function App() {
   return (
-    <>
+    <ThemeProvider theme={AppTheme}>
       <ToastContainer position='bottom-left'
-        autoClose={5000}
-        limit={3}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        draggable
-        pauseOnHover={false}
-        pauseOnFocusLoss={false}
+          autoClose={5000}
+          limit={3}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          draggable
+          pauseOnHover={false}
+          pauseOnFocusLoss={false}
         />
       <Router history={history}>
         <Route path='/login'>
@@ -36,7 +38,7 @@ function App() {
         <Route path='/chat' component={ChatPage} />
         <Route path='/settings' component={SettingsPage} />
       </Router>
-    </>
+    </ThemeProvider>
   );
 }
 

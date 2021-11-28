@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, IconButton, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { ISettingsPageProps } from 'types/interfaces';
@@ -7,8 +8,9 @@ import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import Header from 'renderer/components/Header/Header';
 import { copyToClipboard, Navigate } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
+import { AppStyles } from 'renderer/AppTheme';
 
-export default class SettingsPage extends React.Component {
+class SettingsPage extends React.Component {
   constructor(props: ISettingsPageProps) {
     super(props);
 
@@ -21,7 +23,7 @@ export default class SettingsPage extends React.Component {
 
   render() {
     return(
-      <div className='Settings_Page_Container'>
+      <div className='Page Settings_Page_Container'>
         <Header caption='Settings' icon={<SettingsIcon />}>
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
         </Header>
@@ -38,3 +40,5 @@ export default class SettingsPage extends React.Component {
     );
   }
 }
+
+export default withStyles(AppStyles)(SettingsPage);

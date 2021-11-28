@@ -1,9 +1,9 @@
 import React from 'react';
-import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon, Sledding } from '@mui/icons-material';
+import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, LoadMessageFeed, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
+import { Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -13,13 +13,15 @@ import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDrop
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
+import { AppStyles } from 'renderer/AppTheme';
 
-export default class ChatPage extends React.Component {
+class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
   state: IChatPageState;
 
@@ -249,7 +251,7 @@ export default class ChatPage extends React.Component {
     }
 
     return (
-      <div className='Chat_Page_Container'>
+      <div className='Page Chat_Page_Container'>
         <Helmet>
           <title>Chat</title>
         </Helmet>
@@ -287,3 +289,5 @@ export default class ChatPage extends React.Component {
     );
   }
 }
+
+export default withStyles(AppStyles)(ChatPage);
