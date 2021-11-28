@@ -28,7 +28,7 @@ export default class Header extends React.Component {
     }
 
     return(
-      <div className='Header_Container'>
+      <div className='Header'>
           {IconObject}
           <Typography variant='h5'>{this.caption}</Typography>
           <div className='Header_Misc'>

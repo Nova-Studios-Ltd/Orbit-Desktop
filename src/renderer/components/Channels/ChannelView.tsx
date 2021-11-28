@@ -2,7 +2,6 @@ import React from 'react';
 import { IChannelViewProps, IChannelViewState } from 'types/interfaces';
 import Channel from './Channel';
 
-
 export default class ChannelView extends React.Component {
   state: IChannelViewState;
 
@@ -31,7 +30,7 @@ export default class ChannelView extends React.Component {
     const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
 
     return(
-      <div className='Chat_ChannelView'>
+      <div className='ChannelView'>
         {channels}
       </div>
     );

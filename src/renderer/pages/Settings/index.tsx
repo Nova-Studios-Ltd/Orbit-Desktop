@@ -21,7 +21,7 @@ export default class SettingsPage extends React.Component {
 
   render() {
     return(
-      <div className='Settings_Page_Container'>
+      <div className='Page Settings_Page_Container'>
         <Header caption='Settings' icon={<SettingsIcon />}>
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
         </Header>

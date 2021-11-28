@@ -31,7 +31,8 @@ module.exports = {
     'no-plusplus': 'off',
     'promise/catch-or-return': 'off',
     'promise/always-return': 'off',
-    'no-new': 'off'
+    'no-new': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

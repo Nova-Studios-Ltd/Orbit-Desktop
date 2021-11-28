@@ -71,14 +71,14 @@ export default class Channel extends React.Component {
 
   render() {
     return(
-      <div className='Chat_Channel'>
-        <Card className='Chat_Channel_Inner'>
-          <ButtonBase className='Chat_Channel_Inner' onClick={this.channelClicked} onContextMenu={this.channelRightClicked}>
-            <div className='Channel_Left'>
-              <Avatar className='Channel_Icon' src={this.channelIcon} />
+      <div className='Channel'>
+        <Card className='ChannelInner'>
+          <ButtonBase className='ChannelInner' onClick={this.channelClicked} onContextMenu={this.channelRightClicked}>
+            <div className='ChannelLeft'>
+              <Avatar className='ChannelIcon' src={this.channelIcon} />
             </div>
-            <div className='Channel_Right'>
-              <Typography className='Channel_Caption' variant='h6'>{this.channelName}</Typography>
+            <div className='ChannelRight'>
+              <Typography className='ChannelCaption' variant='h6'>{this.channelName}</Typography>
             </div>
           </ButtonBase>
         </Card>
