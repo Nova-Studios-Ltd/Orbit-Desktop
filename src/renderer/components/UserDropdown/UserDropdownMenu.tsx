@@ -34,7 +34,7 @@ export default class UserDropdownMenu extends React.Component {
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.currentTarget.id) {
       case 'userinfo':
-        await copyToClipboard(this.userData.uuid).then((result: Boolean) => {
+        await copyToClipboard(this.userData.uuid).then((result: boolean) => {
           if (result) {
             new AppNotification({ body: 'Copied UUID to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
           }

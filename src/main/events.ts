@@ -133,8 +133,12 @@ ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: str
 ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequestArgs) => {
   let result = false;
 
-  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`);
-  result = true;
+  function onSuccess() {
+    result = true;
+  }
+
+  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`, onSuccess);
+
 
   await TimeoutUntil(result, true, false);
   return result;
@@ -181,8 +185,11 @@ ipcMain.on('createChannel', (event, data: any) => {
 
 ipcMain.on('sendEditedMessage', (event, data: any) => {
   const { channelID, messageID, message } = data;
-
-  console.log(`${messageID} ${message} ${channelID}`)
-
   PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}));
+});
+
+ipcMain.on('removeSelfFromChannel', (event, data: any) => {
+  const { channelID, userID } = data;
+
+  DeleteWithAuthentication(`/User/Channels/Unregister?user_uuid=${userID}&channel_uuid=${channelID}`);
 });

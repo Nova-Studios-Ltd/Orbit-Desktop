@@ -195,6 +195,7 @@ export interface IChatPageState {
   ChannelList: ChannelView,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: string,
+  CreateChannelDialogRecipientUUID: string,
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType
 }
@@ -204,8 +205,9 @@ export interface IChannelViewState {
 }
 
 export interface IChannelState {
-  anchorEl: any,
-  open: boolean
+  contextMenuAnchorEl: any,
+  contextMenuOpen: boolean,
+  confirmChannelDeletionDialogOpen: boolean
 }
 
 // Implementation Prototypes

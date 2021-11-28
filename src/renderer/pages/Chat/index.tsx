@@ -12,12 +12,11 @@ import GLOBALS from 'shared/globals'
 import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
-import { MessageProps } from 'types/props';
 import { NotificationStruct } from 'structs/NotificationProps';
 
 export default class ChatPage extends React.Component {
@@ -45,6 +44,7 @@ export default class ChatPage extends React.Component {
       ChannelList: null as unknown as ChannelView,
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: '',
+      CreateChannelDialogRecipientUUID: '',
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default
     };
@@ -201,7 +201,7 @@ export default class ChatPage extends React.Component {
   resetCreateChannelDialogState() {
     this.setState({
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogRecipients: [],
+      CreateChannelDialogRecipients: '',
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default
     });
@@ -230,19 +230,20 @@ export default class ChatPage extends React.Component {
     switch (this.state.CreateChannelDialogChannelType) {
       case ChannelType.Group:
         CreateChannelDialogItems = (
-          <>
+          <div>
             <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange}></FormTextField>
             <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange}></FormTextField>
-          </>
+          </div>
         );
         break;
       case ChannelType.Default:
       case ChannelType.User:
       default:
         CreateChannelDialogItems = (
-          <>
-            <FormTextField classNames='test test2' key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
-          </>
+          <div className='CreateChannelDialog_User_Items'>
+            <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
+            <Avatar src={this.state.CreateChannelDialogRecipientUUID} className='CreateChannelDialog_User_Avatar'/>
+          </div>
         );
         break;
     }
