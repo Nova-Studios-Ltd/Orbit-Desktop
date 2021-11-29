@@ -1,5 +1,5 @@
 import React from 'react';
-import { IChannelViewProps, IChannelViewState } from 'types/interfaces';
+import type { IChannelViewProps, IChannelViewState } from 'types/interfaces';
 import Channel from './Channel';
 
 export default class ChannelView extends React.Component {
@@ -10,6 +10,7 @@ export default class ChannelView extends React.Component {
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
+    this.clearChannels = this.clearChannels.bind(this);
 
     this.state = {
       channels: [],
@@ -24,6 +25,10 @@ export default class ChannelView extends React.Component {
 
   removeChannel() {
 
+  }
+
+  clearChannels() {
+    this.setState({ channels: [] });
   }
 
   render() {

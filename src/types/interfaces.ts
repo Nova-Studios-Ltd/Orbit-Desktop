@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { FormEventHandler, MouseEvent, ReactChildren, Ref } from 'react'
-import { SelectChangeEvent } from '@mui/material';
-import FormStatusTuple from 'structs/FormStatusTypes';
-import { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
+import type { FormEventHandler, MouseEvent, ReactChildren } from 'react'
+import type { SelectChangeEvent } from '@mui/material';
+import type FormStatusTuple from 'structs/FormStatusTypes';
+import type { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
 import type UserData from 'structs/UserData';
 import type ChannelView from 'renderer/components/Channels/ChannelView';
 import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -159,6 +159,11 @@ export interface IFormDropdownProps {
   description?: string,
   value: any,
   onChange: SelectChangeEvent<unknown>
+}
+
+export interface ISettingsSectionProps {
+  title: string,
+  children: ReactChildren
 }
 
 export interface IUserData {

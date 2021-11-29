@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { IFormStatusFieldProps } from 'types/interfaces';
+import type { IFormStatusFieldProps } from 'types/interfaces';
 import { FormStatusType } from 'types/enums';
 
 export default class FormStatusField extends React.Component {

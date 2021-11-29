@@ -17,10 +17,10 @@ const DarkTheme = createTheme({
   palette: {
     mode: 'dark',
     background: {
-      default: '#121212',
+      default: '#212121',
       paper: '#292B2E'
     }
-  },
+  }
 });
 
 export const AppTheme = GLOBALS.theme == Theme.Dark ? DarkTheme : LightTheme;
@@ -72,6 +72,11 @@ export const AppStyles = makeStyles({
     },
     'Chat_Page_Bottom': {
       backgroundColor: AppTheme.palette.background.default,
-    }
+    },
+    '.Settings_Section': {
+      borderBottom: 10,
+      borderColor: AppTheme.palette.text.primary,
+      color: AppTheme.palette.text.primary,
+    },
   }
 });

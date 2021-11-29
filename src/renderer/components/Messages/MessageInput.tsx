@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, IconButton, TextField, Typography } from '@mui/material/';
 import { Send as SendIcon, Logout as LogoutIcon } from '@mui/icons-material';
-import { IMessageInputProps, IMessageInputState } from 'types/interfaces';
+import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;

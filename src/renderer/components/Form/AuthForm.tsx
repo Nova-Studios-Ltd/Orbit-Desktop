@@ -1,5 +1,5 @@
 import React, { FormEventHandler, ReactChildren } from 'react';
-import { IAuthFormProps } from 'types/interfaces';
+import type { IAuthFormProps } from 'types/interfaces';
 import FormStatusField from './FormStatusField';
 import FormHeader from './FormHeader';
 import FormStatusTuple from 'structs/FormStatusTypes';

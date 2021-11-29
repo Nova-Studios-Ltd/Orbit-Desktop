@@ -9,7 +9,7 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
+import type { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
@@ -102,7 +102,6 @@ export default class ChatPage extends React.Component {
 
   onReceivedChannels(data: string[]) {
     for (let channel = 0; channel < data.length; channel++) {
-      //this.addChannel({channelName: data[channel], channelID: data[channel]});
       ipcRenderer.send('requestChannelInfo', data[channel]);
     }
   }

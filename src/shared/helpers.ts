@@ -3,7 +3,7 @@ import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
-import { IElectronRendererWindow } from 'types/interfaces';
+import type { IElectronRendererWindow } from 'types/interfaces';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
@@ -52,7 +52,7 @@ export function ConductLogin() {
     HandleWebsocket();
   }
   else {
-    console.error('UUID and Token do not exist. Cannot conduct login.');
+    console.warn('UUID and Token not found, returning to login page.');
   }
 }
 let reconnectAttempts = 1;

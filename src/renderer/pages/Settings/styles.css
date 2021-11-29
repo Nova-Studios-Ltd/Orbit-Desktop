@@ -5,3 +5,7 @@
 .Settings_Page_InnerContainer {
   padding: 1rem;
 }
+
+.Settings_Section {
+  margin: 5px;
+}

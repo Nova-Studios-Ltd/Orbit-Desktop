@@ -1,6 +1,6 @@
 import React from 'react';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { INotificationProps } from 'types/interfaces';
+import type { INotificationProps } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';

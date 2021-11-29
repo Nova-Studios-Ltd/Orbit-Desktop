@@ -1,9 +1,8 @@
-import React, { ReactElement, Ref, RefObject } from 'react';
-import { Avatar, ExtendButtonBase, IconButtonTypeMap, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
-import GLOBALS from 'shared/globals';
+import React from 'react';
+import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import type { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
 import UserData from 'structs/UserData';
-import { copyToClipboard, ipcRenderer, Navigate } from 'shared/helpers';
+import { copyToClipboard, Navigate } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IMessageCanvasProps, IMessageCanvasState } from 'types/interfaces';
+import type { IMessageCanvasProps, IMessageCanvasState } from 'types/interfaces';
 import Message from './Message';
 
 export default class MessageCanvas extends React.Component {

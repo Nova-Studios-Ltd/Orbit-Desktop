@@ -1,10 +1,9 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
+import type { IAuthForm, IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
-import { IAuthForm } from 'types/interfaces';
 import { Navigate, Register } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';

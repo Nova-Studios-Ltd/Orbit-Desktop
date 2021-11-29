@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
-import { IYesNoDialogProps } from 'types/interfaces';
+import type { IYesNoDialogProps } from 'types/interfaces';
 import { GrowTransition } from 'types/transitions';
 
 export default class YesNoDialog extends React.Component {
