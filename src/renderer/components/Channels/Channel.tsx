@@ -1,7 +1,7 @@
 import React, { DOMElement, ForwardedRef, RefObject } from 'react';
 import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
-import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
+import { GetChannelRecipientsFromUUID, ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
 import { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import YesNoDialog from '../Dialogs/YesNoDialog';
@@ -36,9 +36,9 @@ export default class Channel extends React.Component {
     this.setState({ contextMenuOpen: !this.state.contextMenuOpen, contextMenuAnchorEl: event.currentTarget });
   }
 
-  channelClicked() {
-    console.warn("WORKS!");
+  async channelClicked() {
     GLOBALS.currentChannel = this.channelID;
+    GLOBALS.currentChannelName = await GetChannelRecipientsFromUUID(this.channelID);
     setDefaultChannel(this.channelID);
     ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
   }
@@ -91,7 +91,7 @@ export default class Channel extends React.Component {
 
           <MenuItem id='edit' onClick={this.menuItemClicked} disabled>Edit</MenuItem>
           <MenuItem id='hide' onClick={this.menuItemClicked} disabled>Hide</MenuItem>
-          <MenuItem id='delete' onClick={this.menuItemClicked}>Delete</MenuItem>
+          <MenuItem id='delete' onClick={this.menuItemClicked}>Leave</MenuItem>
         </Menu>
         <YesNoDialog title='Confirm Leave Channel'
           body='You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!'

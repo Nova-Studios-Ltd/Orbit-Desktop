@@ -201,7 +201,7 @@ ipcMain.handle('sendEditedMessage', async (event, data: any) => {
 ipcMain.on('removeSelfFromChannel', (event, data: any) => {
   const { channelID, userID } = data;
 
-  DeleteWithAuthentication(`/User/Channels/Unregister?user_uuid=${userID}&channel_uuid=${channelID}`);
+  DeleteWithAuthentication(`/Channel/${channelID}/Members?recipient=${userID}`);
 });
 
 ipcMain.handle('getUserUUID', async (event, username: string, discriminator: string) => {
@@ -212,6 +212,18 @@ ipcMain.handle('getUserUUID', async (event, username: string, discriminator: str
     else result = json.toString();
   });
 
+  await TimeoutUntil(result, '', true);
+  return result;
+});
+
+ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
+  let result = '';
+
+  QueryWithAuthentication(`/Channel/${uuid}`, (res, json) => {
+    if (res.statusCode == 200 && json != null) {
+      result = JSON.parse(json.toString()).channelName;
+    }
+  });
   await TimeoutUntil(result, '', true);
   return result;
 });

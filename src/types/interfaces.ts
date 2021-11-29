@@ -192,13 +192,13 @@ export interface IRegisterFormProps extends IAuthFormProps {
 // State
 
 export interface IChatPageState {
-  CanvasObject: MessageCanvas,
-  ChannelList: ChannelView,
+  CanvasObject?: MessageCanvas,
+  ChannelList?: ChannelView,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType,
-  CreateChannelDialogRecipientUUID: string
+  CreateChannelDialogRecipientAvatarSrc: string
 }
 
 export interface ILoginFormState {

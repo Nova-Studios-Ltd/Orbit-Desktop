@@ -3,7 +3,7 @@ import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons
 import { Helmet } from 'react-helmet';
 import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials, ConductLogin, GetHistoryState } from 'shared/helpers';
+import { GetChannelRecipientsFromUUID, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -41,20 +41,20 @@ export default class ChatPage extends React.Component {
     this.resetCreateChannelDialogState = this.resetCreateChannelDialogState.bind(this);
 
     this.state = {
-      CanvasObject: null as unknown as MessageCanvas,
-      ChannelList: null as unknown as ChannelView,
+      CanvasObject: undefined,
+      ChannelList: undefined,
       CreateChannelDialogChannelName: '',
-      CreateChannelDialogRecipients: {} as {[username: string]: string},
+      CreateChannelDialogRecipients: {},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
-      CreateChannelDialogRecipientUUID: '',
+      CreateChannelDialogRecipientAvatarSrc: '',
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
 
   }
 
-  preloadChannel() {
+  async preloadChannel() {
     if (GLOBALS.currentChannel.length < 1) {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
       if (lastOpenedChannel != null) {
@@ -69,6 +69,7 @@ export default class ChatPage extends React.Component {
     else {
       ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
     }
+    GLOBALS.currentChannelName = await GetChannelRecipientsFromUUID(GLOBALS.currentChannel);
   }
 
   initCanvas(canvas: MessageCanvas) {
@@ -107,7 +108,6 @@ export default class ChatPage extends React.Component {
   }
 
   onReceivedChannelInfo(channel: IChannelProps) {
-    console.log(channel);
     if (channel.isGroup)
       this.addChannel(channel);
     else
@@ -143,7 +143,7 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
+  async onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     if (!isUpdate)
       this.clearCanvas();
 
@@ -162,7 +162,6 @@ export default class ChatPage extends React.Component {
 
   onReceivedMessageEdit(id: string, data: any) {
     const canvas = this.state.CanvasObject;
-    console.log(id);
     if (canvas != null) {
       canvas.edit(id, data.content);
     }
@@ -225,7 +224,7 @@ export default class ChatPage extends React.Component {
       CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
-      CreateChannelDialogRecipientUUID: ''
+      CreateChannelDialogRecipientAvatarSrc: ''
     });
   }
 
@@ -264,7 +263,7 @@ export default class ChatPage extends React.Component {
         CreateChannelDialogItems = (
           <div className='CreateChannelDialog_User_Items'>
             <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
-            <Avatar src={this.state.CreateChannelDialogRecipientUUID} className='CreateChannelDialog_User_Avatar'/>
+            <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className='CreateChannelDialog_User_Avatar'/>
           </div>
         );
         break;
@@ -284,7 +283,7 @@ export default class ChatPage extends React.Component {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
-            <Header caption='Chat' icon={<ChatIcon />}>
+            <Header caption={GLOBALS.currentChannelName} icon={<ChatIcon />}>
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
             <MessageCanvas init={this.initCanvas}/>

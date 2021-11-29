@@ -6,7 +6,6 @@ import { NotificationStruct } from 'structs/NotificationProps';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 ipcRenderer.on('endAuth', (data: boolean) => {
-  console.log(data);
   if (data) {
     SetAuth();
     ConductLogin();
@@ -14,7 +13,6 @@ ipcRenderer.on('endAuth', (data: boolean) => {
 });
 
 ipcRenderer.on('receivedUserData', (data: string) => {
-  console.warn(data);
   if (data != null) {
     const userData = JSON.parse(data) as UserData;
     GLOBALS.userData.username = userData.username;
@@ -30,11 +28,9 @@ ipcRenderer.on('channelCreationSucceded', (data: boolean) => {
 });
 
 ipcRenderer.on('clientFocused', (data: boolean) => {
-  console.log('Client Focused');
   GLOBALS.isFocused = true;
 });
 
 ipcRenderer.on('clientUnfocused', (data: boolean) => {
-  console.log('Client Unfocused');
   GLOBALS.isFocused = false;
 });
