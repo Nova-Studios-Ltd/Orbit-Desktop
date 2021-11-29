@@ -14,7 +14,6 @@ import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu'
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { Beforeunload } from 'react-beforeunload';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
@@ -32,7 +31,7 @@ export default class ChatPage extends React.Component {
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Logout = this.Logout.bind(this);
-    this.UnsubscribeEvents = this.UnsubscribeEvents.bind(this);
+    this.Unload = this.Unload.bind(this);
     this.openCreateChannelDialog = this.openCreateChannelDialog.bind(this);
     this.createChannelButtonClicked = this.createChannelButtonClicked.bind(this);
     this.closeCreateChannelDialog = this.closeCreateChannelDialog.bind(this);
@@ -74,7 +73,7 @@ export default class ChatPage extends React.Component {
 
   initCanvas(canvas: MessageCanvas) {
     if (canvas != null) {
-      this.setState({CanvasObject: canvas });
+      this.setState({ CanvasObject: canvas });
 
       ipcRenderer.on('receivedChannelData', (messages: IMessageProps[]) => this.onReceivedChannelData(messages, "", false));
       ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
@@ -89,7 +88,7 @@ export default class ChatPage extends React.Component {
 
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
-      this.setState({ChannelList: channelList }/*, () => this.addChannel(JSON.parse('{\'channelName\':\'Main Channel\', \'channelID\':\'0\'}'))*/);
+      this.setState({ChannelList: channelList });
       ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
       ipcRenderer.on('receivedChannelInfo', (data: IChannelProps) => this.onReceivedChannelInfo(data));
       events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
@@ -107,17 +106,13 @@ export default class ChatPage extends React.Component {
   }
 
   onReceivedChannelInfo(channel: IChannelProps) {
-    if (channel.isGroup)
-      this.addChannel(channel);
-    else
-      this.addChannel(channel);
+    this.addChannel(channel);
   }
 
   appendToCanvas(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      const msgObj = new Message(message);
-      canvas.append(msgObj, isUpdate, refreshList);
+      canvas.append(message, isUpdate, refreshList);
     }
     else {
       console.error('(When Appending Message) Canvas is null');
@@ -142,7 +137,7 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  async onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
+  onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     if (!isUpdate)
       this.clearCanvas();
 
@@ -185,7 +180,7 @@ export default class ChatPage extends React.Component {
     if (name == 'CreateChannelDialogRecipients') {
       const usernames = value.split(' ');
       usernames.forEach(async (username: string) => {
-        if (this.IsValidUsername(username)) {
+        if (this.isValidUsername(username)) {
           const ud = username.split('#')
           await ipcRenderer.invoke('getUserUUID', ud[0], ud[1]).then((result) => {
             if (result == 'UNKNOWN') return;
@@ -200,7 +195,7 @@ export default class ChatPage extends React.Component {
     this.setState({[name]: value});
   }
 
-  IsValidUsername(username: string) {
+  isValidUsername(username: string) {
     return new RegExp(/^([\S]{1,})#([0-9]{4}$)/g).test(username);
   }
 
@@ -232,17 +227,22 @@ export default class ChatPage extends React.Component {
   }
 
   Logout() {
-    this.UnsubscribeEvents();
+    this.Unload();
     RemoveCachedCredentials();
     Navigate('/login', null);
   }
 
-  UnsubscribeEvents() {
+  Unload() {
+    this.setState({ ChannelList: undefined, CanvasObject: undefined });
     ipcRenderer.removeAllListeners('receivedChannelData');
     ipcRenderer.removeAllListeners('receivedChannelUpdateEvent');
     ipcRenderer.removeAllListeners('receivedMessageEditEvent');
     ipcRenderer.removeAllListeners('receivedChannels');
     ipcRenderer.removeAllListeners('receivedChannelInfo');
+  }
+
+  componentWillUnmount() {
+    this.Unload();
   }
 
   render() {
@@ -273,7 +273,6 @@ export default class ChatPage extends React.Component {
         <Helmet>
           <title>Chat</title>
         </Helmet>
-        <Beforeunload onBeforeunload={this.UnsubscribeEvents} />
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
             <Header caption='Channels' icon={<ListIcon />}>

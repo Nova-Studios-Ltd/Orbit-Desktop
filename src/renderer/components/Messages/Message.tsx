@@ -87,7 +87,7 @@ export default class Message extends React.Component {
     this.author_UUID = props.author_UUID;
     this.author = props.author || 'Unknown';
     this.content = props.content || 'Message';
-    this.timestamp = props.timestamp;
+    this.timestamp = props.timestamp.replace("T", " ");
     this.avatar = props.avatar;
 
     this.state = {
@@ -272,10 +272,12 @@ export default class Message extends React.Component {
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>
           <Avatar src={this.avatar} />
-          <span>{this.timestamp}</span>
         </div>
         <div className='Message_Right'>
-          <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
+          <div className='Message_Right_Header'>
+            <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
+            <Typography className='Message_Timestamp' variant='subtitle2'>{this.timestamp}</Typography>
+          </div>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>
             <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label='Edited Message' onChange={this.editMessageChanged} />

@@ -24,6 +24,12 @@
   align-self: center;
 }
 
+.Message_Right_Header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .Message_Edit {
   display: flex;
   flex-direction: row;
@@ -32,6 +38,10 @@
 
 .Message_Name {
 
+}
+
+.Message_Timestamp {
+  margin-left: 5px !important;
 }
 
 .Message_Content {

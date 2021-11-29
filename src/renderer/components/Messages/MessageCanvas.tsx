@@ -1,5 +1,5 @@
 import React from 'react';
-import type { IMessageCanvasProps, IMessageCanvasState } from 'types/interfaces';
+import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
 import Message from './Message';
 
 export default class MessageCanvas extends React.Component {
@@ -18,7 +18,7 @@ export default class MessageCanvas extends React.Component {
     }
   }
 
-  append(message: Message, isUpdate: boolean, refreshList: boolean) {
+  append(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
     if (this.state.messages.length > 0)
     {
       const oldState = this.state;
@@ -51,7 +51,8 @@ export default class MessageCanvas extends React.Component {
     let index = oldState.messages.findIndex(e => e.message_Id == id);
     if (index > -1) {
       let m = oldState.messages[index];
-      oldState.messages[index] = new Message({ message_Id: m.message_Id, author_UUID: m.author_UUID, author: m.author, content: newMessage, timestamp: m.timestamp, avatar: m.avatar } as IMessageProps);
+      m.content = newMessage;
+      oldState.messages[index] = m;
       this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
@@ -62,13 +63,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((m, key) => (<Message key={key} content={m.content} author={m.author} avatar={m.avatar} author_UUID={m.author_UUID} message_Id={m.message_Id} />));
-    /*let messagesToRender = [];
-    for (let i = this.state.messages.length; i > 0; i--) {
-      const m = this.state.messages[i];
-      if (m == undefined) continue;
-      messagesToRender.push(<Message key={i} message={m.message} author={m.author} avatarSrc={m.avatarSrc} authorUUID={m.authorUUID} messageUUID={m.messageUUID} />);
-    }*/
+    const messagesToRender = this.state.messages.map((m, key) => (<Message key={m.message_Id} {...m} />));
     return (
       <div className='MessageCanvas'>
         {messagesToRender}

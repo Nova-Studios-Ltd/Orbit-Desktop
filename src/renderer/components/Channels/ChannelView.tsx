@@ -18,7 +18,7 @@ export default class ChannelView extends React.Component {
   }
 
   addChannel(channel: Channel) {
-    let updatedChannels = this.state.channels;
+    const updatedChannels = this.state.channels;
     updatedChannels.push(channel);
     this.setState({channels: updatedChannels});
   }

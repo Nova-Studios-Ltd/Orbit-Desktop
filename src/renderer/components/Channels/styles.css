@@ -17,6 +17,7 @@
   background: rgb(200, 200, 200);
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   flex-direction: row;
 }
 
