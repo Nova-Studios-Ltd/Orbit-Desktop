@@ -1,7 +1,7 @@
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
-import { ContentType, FormAuthStatusType } from '../types/enums';
+import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication } from './NCAPI';
 
@@ -198,10 +198,16 @@ ipcMain.handle('sendEditedMessage', async (event, data: any) => {
   return result;
 });
 
-ipcMain.on('removeSelfFromChannel', (event, data: any) => {
-  const { channelID, userID } = data;
+ipcMain.on('removeUserFromChannel', (event, data: any) => {
+  const { channelID, userID, channelType } = data;
 
-  DeleteWithAuthentication(`/Channel/${channelID}/Members?recipient=${userID}`);
+  if (channelType == ChannelType.Group) {
+    DeleteWithAuthentication(`/Channel/${channelID}/Members?recipient=${userID}`);
+  }
+  else
+  {
+    DeleteWithAuthentication(`/Channel/${channelID}`);
+  }
 });
 
 ipcMain.handle('getUserUUID', async (event, username: string, discriminator: string) => {

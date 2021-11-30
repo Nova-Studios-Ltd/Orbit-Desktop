@@ -48,14 +48,15 @@
 
 }
 
-.Message_Image {
-  height: 50%;
-  width: 50%;
+.Message_Embed {
+  height: 18rem;
+  width: 30rem;
 }
 
-.Message_Embed {
-  max-width: 100%;
-  max-height: 100%;
+.Message_Embed_Content {
+  height: 100%;
+  width: 100%;
+  object-fit: fill !important;
 }
 
 .MessageInput {

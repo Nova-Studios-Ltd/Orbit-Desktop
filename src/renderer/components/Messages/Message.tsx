@@ -22,8 +22,9 @@ export class MessageImage extends React.Component {
     return (
       <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className='Message_Image'>
+          <Card className='Message_Embed'>
             <CardMedia
+            className='Message_Embed_Content'
             component='img'
             src={this.imageSrc}
           />
@@ -47,13 +48,13 @@ export class MessageVideo extends React.Component {
     return (
       <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Image'>
+          <Card className='Message_Embed'>
             <CardMedia
+            className='Message_Embed_Content'
             component='video'
             src={this.videoSrc}
             controls
             />
-
           </Card>
       </div>
     );
@@ -75,7 +76,7 @@ export class MessageEmbed extends React.Component {
       <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
           <Card className='Message_Embed'>
-            <iframe src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
+            <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
           </Card>
       </div>
     );

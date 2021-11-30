@@ -4,17 +4,20 @@ import GLOBALS from 'shared/globals'
 import { GetChannelRecipientsFromUUID, ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
 import type { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
+import { ChannelType } from 'types/enums';
 import YesNoDialog from '../Dialogs/YesNoDialog';
 
 export default class Channel extends React.Component {
   state: IChannelState;
   channelName: string;
+  channelType: ChannelType;
   channelID: string;
   channelIcon?: string;
 
   constructor(props: IChannelProps) {
     super(props);
     this.channelName = props.channelName;
+    this.channelType = props.isGroup ? ChannelType.Group : ChannelType.User;
     this.channelID = props.table_Id;
     this.channelIcon = props.channelIcon;
 
@@ -68,11 +71,16 @@ export default class Channel extends React.Component {
   }
 
   removeUserFromThisChannel() {
-    ipcRenderer.send('removeSelfFromChannel', { channelID: this.channelID, userID: GLOBALS.userData.uuid });
+    ipcRenderer.send('removeUserFromChannel', { channelID: this.channelID, userID: GLOBALS.userData.uuid, channelType: this.channelType });
     this.closeChannelDeletionDialog();
   }
 
   render() {
+    const LeaveChannelPromptTextGroup = 'You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!';
+    const LeaveChannelPromptTextUser = 'This will delete the channel for both you and the recipient. All message history will be lost. This cannot be undone.';
+    const LeaveChannelButtonText = this.channelType == ChannelType.Group ? 'Leave' : 'Delete';
+    const LeaveChannelPromptText = this.channelType == ChannelType.Group ? LeaveChannelPromptTextGroup : LeaveChannelPromptTextUser;
+
     return(
       <div className='Channel'>
         <Card className='ChannelInner'>
@@ -94,11 +102,11 @@ export default class Channel extends React.Component {
 
           <MenuItem id='edit' onClick={this.menuItemClicked} disabled>Edit</MenuItem>
           <MenuItem id='hide' onClick={this.menuItemClicked} disabled>Hide</MenuItem>
-          <MenuItem id='delete' onClick={this.menuItemClicked}>Leave</MenuItem>
+          <MenuItem id='delete' onClick={this.menuItemClicked}>{LeaveChannelButtonText}</MenuItem>
         </Menu>
-        <YesNoDialog title='Confirm Leave Channel'
-          body='You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!'
-          confirmButtonText='Leave'
+        <YesNoDialog title={`Confirm ${LeaveChannelButtonText} Channel`}
+          body={LeaveChannelPromptText}
+          confirmButtonText={LeaveChannelButtonText}
           denyButtonText='Cancel'
           onConfirm={this.removeUserFromThisChannel}
           onDeny={this.closeChannelDeletionDialog}

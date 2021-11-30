@@ -33,7 +33,6 @@ export default class ChannelView extends React.Component {
     const index = oldState.channels.findIndex(e => e.channelID === channel_uuid);
     if (index > -1) {
       oldState.channels.splice(index, 1);
-      this.setState({channels: []});
       this.setState({channels: oldState.channels});
     }
   }
