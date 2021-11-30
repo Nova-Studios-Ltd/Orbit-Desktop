@@ -103,7 +103,7 @@ function HandleWebsocket() {
       Navigate('/Login', { failed: true });
       return;
     }
-    setTimeout(HandleWebsocket, 1000 * reconnectAttempts);
+    setTimeout(HandleWebsocket, (1000 * reconnectAttempts) * (1000 * reconnectAttempts));
     reconnectAttempts++;
   };
   socket.onopen = function () {
@@ -111,7 +111,7 @@ function HandleWebsocket() {
     socket.send(token);
   };
   socket.onclose = function (event) {
-    console.warn(`Socket closed. Attempting reconnect in ${reconnectAttempts}s`);
+    console.warn(`Socket closed. Attempting reconnect in ${((1000 * reconnectAttempts) * (1000 * reconnectAttempts)) / 1000}s`);
     if (reconnectAttempts > 4) {
       Navigate('/Login', { failed: true });
       return;

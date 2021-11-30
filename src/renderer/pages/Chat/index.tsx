@@ -76,7 +76,7 @@ export default class ChatPage extends React.Component {
     if (canvas != null) {
       this.setState({ CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (messages: IMessageProps[]) => this.onReceivedChannelData(messages, "", false));
+      ipcRenderer.on('receivedChannelData', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
       ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
 
       ipcRenderer.on('receivedMessageEditEvent', (channel_uuid: string, message_id: string, data: any) => this.onReceivedMessageEdit(channel_uuid, message_id, data));
@@ -190,7 +190,7 @@ export default class ChatPage extends React.Component {
             if (result == 'UNKNOWN') return;
             this.state.CreateChannelDialogRecipients[username] = result;
             // Change this later to support multiple users for the dialog
-            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients, CreateChannelDialogRecipientUUID: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`});
+            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients, CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`});
           });
         }
       });

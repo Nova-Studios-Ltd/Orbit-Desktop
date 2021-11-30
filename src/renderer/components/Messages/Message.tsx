@@ -288,11 +288,11 @@ export default class Message extends React.Component {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
       const messageParts = [] as any[];
       mes.forEach(word => {
-        if (this.validURL(word)) messageParts.push(<Link target='_blank' href={word}>{word}</Link>);
+        if (this.validURL(word)) messageParts.push(<Link key={word} target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
       });
 
-      messageContentObject.push(<Typography className='Message_Content'>{messageParts}</Typography>);
+      messageContentObject.push(<Typography key={"MainMessage"} className='Message_Content'>{messageParts}</Typography>);
     }
 
     this.state.links.forEach(link => {

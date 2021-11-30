@@ -102,7 +102,7 @@ ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    event.sender.send('receivedChannelData', <IMessageProps>JSON.parse(json.toString()));
+    event.sender.send('receivedChannelData', <IMessageProps>JSON.parse(json.toString()), channel_uuid);
   }
 
   QueryWithAuthentication(`/Message/${channel_uuid}/Messages`, onSuccess);
