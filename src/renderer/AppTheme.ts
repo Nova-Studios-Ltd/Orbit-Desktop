@@ -78,5 +78,8 @@ export const AppStyles = makeStyles({
       borderColor: AppTheme.palette.text.primary,
       color: AppTheme.palette.text.primary,
     },
+    '.AdaptiveText': {
+      color: AppTheme.palette.text.primary,
+    }
   }
 });

@@ -7,6 +7,7 @@ export default class FormTextField extends React.Component {
   classNames: string;
   label: string;
   description?: string;
+  autoFocus?: boolean;
   required?: boolean;
   sensitive?: boolean;
   onChange?: Function;
@@ -17,6 +18,7 @@ export default class FormTextField extends React.Component {
     this.classNames = props.classNames || '';
     this.label = props.label || '';
     this.description = props.description || '';
+    this.autoFocus = props.autoFocus || false;
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
     this.onChange = props.onChange || function(){};
@@ -30,7 +32,7 @@ export default class FormTextField extends React.Component {
     }
 
     return (
-      <TextField className={finalClassNames} value={this.props.value} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' onChange={this.onChange} />
+      <TextField className={finalClassNames} value={this.props.value} name={this.id} label={this.label} helperText={this.description} type={fieldType} required={this.required} variant='outlined' autoFocus={this.autoFocus} onChange={this.onChange} />
     );
   }
 }
