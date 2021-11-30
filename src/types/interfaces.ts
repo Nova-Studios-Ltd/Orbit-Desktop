@@ -216,6 +216,7 @@ export interface ILoginFormState {
 
 export interface IRegisterFormState {
   email: string,
+  username: string,
   password: string,
   address: string,
   status: FormStatusTuple

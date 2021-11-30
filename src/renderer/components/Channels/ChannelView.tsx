@@ -47,7 +47,7 @@ export default class ChannelView extends React.Component {
   }
 
   render() {
-    const channels = this.state.channels.map((channelProps, key) => (<Channel key={key} {...channelProps} />));
+    const channels = this.state.channels.map((c, key) => (<Channel key={key} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
     const channelEmptyPromptClassNames = this.isChannelListEmpty() ? 'AdaptiveText ChannelEmptyPrompt' : 'AdaptiveText ChannelEmptyPrompt Hidden';
 
     return(

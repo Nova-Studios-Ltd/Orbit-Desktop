@@ -7,6 +7,7 @@ import Header from 'renderer/components/Header/Header';
 import { ConductLogin, copyToClipboard } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 export default class SettingsPage extends React.Component {
   constructor(props: ISettingsPageProps) {
