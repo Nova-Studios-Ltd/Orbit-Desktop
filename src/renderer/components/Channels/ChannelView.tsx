@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import type { IChannelViewProps, IChannelViewState } from 'types/interfaces';
+import {events}from 'shared/helpers';
 import Channel from './Channel';
 
 export default class ChannelView extends React.Component {
@@ -14,6 +15,8 @@ export default class ChannelView extends React.Component {
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
 
+    events.on('receivedChannelDeletedEvent', this.removeChannel)
+
     this.state = {
       channels: [],
     }
@@ -25,8 +28,14 @@ export default class ChannelView extends React.Component {
     this.setState({channels: updatedChannels});
   }
 
-  removeChannel() {
-
+  removeChannel(channel_uuid: string) {
+    const oldState = this.state;
+    const index = oldState.channels.findIndex(e => e.channelID === channel_uuid);
+    if (index > -1) {
+      oldState.channels.splice(index, 1);
+      this.setState({channels: []});
+      this.setState({channels: oldState.channels});
+    }
   }
 
   clearChannels() {

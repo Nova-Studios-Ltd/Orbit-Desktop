@@ -78,7 +78,7 @@ export default class ChatPage extends React.Component {
       ipcRenderer.on('receivedChannelData', (messages: IMessageProps[]) => this.onReceivedChannelData(messages, "", false));
       ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
 
-      ipcRenderer.on('receivedMessageEditEvent', (id: string, data: any) => this.onReceivedMessageEdit(id, data));
+      ipcRenderer.on('receivedMessageEditEvent', (channel_uuid: string, message_id: string, data: any) => this.onReceivedMessageEdit(channel_uuid, message_id, data));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
@@ -138,6 +138,7 @@ export default class ChatPage extends React.Component {
   }
 
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
+    if (GLOBALS.currentChannel != channel_uuid) return;
     if (!isUpdate)
       this.clearCanvas();
 
@@ -154,14 +155,16 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedMessageEdit(id: string, data: any) {
+  onReceivedMessageEdit(channel_uuid: string, id: string, data: any) {
+    if (GLOBALS.currentChannel != channel_uuid) return;
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
       canvas.edit(id, data.content);
     }
   }
 
-  onReceivedMessageDelete(_channel_uuid: string, message_id: string) {
+  onReceivedMessageDelete(channel_uuid: string, message_id: string) {
+    if (GLOBALS.currentChannel != channel_uuid) return;
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
       canvas.remove(message_id);

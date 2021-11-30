@@ -78,8 +78,11 @@ function HandleWebsocket() {
         events.send('receivedChannelCreatedEvent', event.Channel);
         break;
       case 4:
+        events.send('receivedChannelDeletedEvent', event.channel);
         break;
       case 5:
+        break;
+      case 6:
         events.send('receivedAddedToChannelEvent', event.Channel);
         break;
       case 420: // Because why not
