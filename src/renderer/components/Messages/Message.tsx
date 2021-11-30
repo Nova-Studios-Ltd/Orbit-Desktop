@@ -60,6 +60,28 @@ export class MessageVideo extends React.Component {
   }
 }
 
+export class MessageEmbed extends React.Component {
+  message: string;
+  videoSrc: string;
+
+  constructor(props: IMessageImageProps) {
+    super(props);
+    this.message = props.message;
+    this.videoSrc = props.src;
+  }
+
+  render() {
+    return (
+      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
+        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
+          <Card className='Message_Embed'>
+            <iframe src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
+          </Card>
+      </div>
+    );
+  }
+}
+
 class MessageContent extends React.Component {
   type: string;
   url: string;
@@ -169,6 +191,9 @@ export default class Message extends React.Component {
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
         messageLinks.push(new MessageContent({type: 'video', url: link}));
       }
+      else if (this.youtubeURL(link)) {
+        messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
+      }
       else {
         hasNonLinkText = true;
       }
@@ -181,11 +206,6 @@ export default class Message extends React.Component {
       this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
-  validURL(str: string) {
-    const pattern = new RegExp(/^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)/);
-    return !!pattern.test(str);
-  }
-
   async checkImageHeader(url: string) {
     try {
       const res = await fetch(url, {method: 'HEAD'});
@@ -193,6 +213,12 @@ export default class Message extends React.Component {
       return buff.type.startsWith('image/');
     }
     catch {return false;}
+  }
+
+  getYoutubeVideoId(url: string) {
+    const m = url.match(/(?<=v=)(.*(?=&)|.*(?=$))|(?<=e\/).*(?=$)/g);
+    if (m == null) return '';
+    return m[0];
   }
 
   async checkVideoHeader(url: string) {
@@ -210,6 +236,15 @@ export default class Message extends React.Component {
 
   videoURL(url: string) {
     return(url.match(/\.(mp4|webm)$/) != null);
+  }
+
+  validURL(url: string) {
+    const pattern = new RegExp(/^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)/);
+    return !!pattern.test(url);
+  }
+
+  youtubeURL(url: string) {
+    return new RegExp(/^(https:\/\/www\.youtube\.com\/[a-zA-z?0-9=&]*)|^(https:\/\/youtu\.be\/[a-zA-z?0-9=&]*)/g).test(url);
   }
 
   deleteMessage() {
@@ -265,6 +300,8 @@ export default class Message extends React.Component {
         messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'youtube')
+        messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
     });
 
     return (
