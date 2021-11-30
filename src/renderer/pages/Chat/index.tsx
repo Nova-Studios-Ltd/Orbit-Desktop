@@ -54,12 +54,13 @@ export default class ChatPage extends React.Component {
   }
 
   async preloadChannel() {
-    if (GLOBALS.currentChannel.length < 1) {
+    if (GLOBALS.currentChannel != null && GLOBALS.currentChannel.length < 1) {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
-      if (lastOpenedChannel != null) {
+      if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
         GLOBALS.currentChannel = lastOpenedChannel;
         ipcRenderer.send('requestChannelData', lastOpenedChannel);
-      } else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null) {
+      }
+      else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
         ipcRenderer.send('requestChannelData', this.state.ChannelList.state.channels[0].channelID);
         GLOBALS.currentChannel = this.state.ChannelList.state.channels[0].channelID;
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
