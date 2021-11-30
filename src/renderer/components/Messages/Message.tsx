@@ -304,7 +304,6 @@ export default class Message extends React.Component {
         messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
     });
 
-
     return (
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>

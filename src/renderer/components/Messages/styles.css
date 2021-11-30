@@ -66,3 +66,7 @@
   flex: 1;
   box-sizing: border-box;
 }
+
+.MessagesEmptyPrompt {
+  text-align: center;
+}

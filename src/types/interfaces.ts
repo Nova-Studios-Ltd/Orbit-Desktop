@@ -53,6 +53,7 @@ export interface IFormTextFieldProps {
   classNames?: string,
   label: string,
   description?: string,
+  autoFocus?: boolean,
   required?: boolean,
   sensitive?: boolean,
   onChange?: Function

@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import React from 'react';
 import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
 import Message from './Message';
@@ -12,6 +13,7 @@ export default class MessageCanvas extends React.Component {
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
     this.clear = this.clear.bind(this);
+    this.isMessagesListEmpty = this.isMessagesListEmpty.bind(this);
 
     this.state = {
       messages: []
@@ -62,11 +64,18 @@ export default class MessageCanvas extends React.Component {
     this.setState({messages: []});
   }
 
+  isMessagesListEmpty() {
+    return this.state.messages.length < 1;
+  }
+
   render() {
-    const messagesToRender = this.state.messages.map((m, key) => (<Message key={m.message_Id} {...m} />));
+    const messagesToRender = this.state.messages.map((messageProps, key) => (<Message key={messageProps.message_Id} {...messageProps} />));
+    const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
+
     return (
       <div className='MessageCanvas'>
         {messagesToRender}
+        <Typography className={messagesEmptyPromptClassNames} variant='subtitle1'>No Messages Yet</Typography>
       </div>
     );
   }

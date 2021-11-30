@@ -58,7 +58,7 @@ class LoginForm extends React.Component implements IAuthForm {
 
     return (
       <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Welcome! Please log in to continue.' status={this.state.status}>
-        <FormTextField id='email' label='Email' required onChange={this.handleChange} />
+        <FormTextField id='email' label='Email' autoFocus required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' required sensitive onChange={this.handleChange} />
         <br />
         <Accordion disabled className={AdvancedOptionsAccordionStyles}>
