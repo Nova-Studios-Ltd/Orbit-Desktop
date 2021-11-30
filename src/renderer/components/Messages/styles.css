@@ -53,6 +53,11 @@
   width: 50%;
 }
 
+.Message_Embed {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .MessageInput {
   position: relative;
   width: 100%;

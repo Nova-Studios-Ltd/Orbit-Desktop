@@ -48,6 +48,9 @@ export default class Channel extends React.Component {
       case 'edit':
         new AppNotification({title: 'Edit'}).show();
         break;
+      case 'hide':
+
+        break;
       case 'delete':
         this.setState({ confirmChannelDeletionDialogOpen: true });
         break;
