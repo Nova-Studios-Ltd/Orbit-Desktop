@@ -166,6 +166,10 @@ export interface IHybridListItem {
   onClick: Function
 }
 
+export interface IFileUploadDialog {
+
+}
+
 export interface IFormDropdownProps {
   id: string,
   label: string,

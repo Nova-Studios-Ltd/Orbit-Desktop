@@ -1,5 +1,5 @@
+import { clipboard, dialog, ipcMain, net, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
-import { clipboard, ipcMain, net, session, Notification } from 'electron';
 import Credentials from '../structs/Credentials';
 import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
@@ -230,4 +230,10 @@ ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
   });
   await TimeoutUntil(result, '', true);
   return result;
+});
+
+ipcMain.on('uploadFile', () => {
+  dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'] }).then((result) => {
+    console.log(result.filePaths[0]);
+  }).catch((e) => console.error(e));
 });

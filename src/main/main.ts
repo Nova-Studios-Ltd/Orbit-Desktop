@@ -17,8 +17,8 @@ import log from 'electron-log';
 import { resolveHtmlPath } from './util';
 import './events';
 
-var stat = require('node-static');
-var file = new stat.Server(path.resolve(__dirname, '../renderer/'));
+const stat = require('node-static');
+const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let allowCompleteExit = false;

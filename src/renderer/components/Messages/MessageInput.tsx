@@ -5,6 +5,7 @@ import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationStatusType } from 'types/enums';
 import GLOBALS from 'shared/globals';
+import { ipcRenderer } from 'electron';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
@@ -50,7 +51,7 @@ export default class MessageInput extends React.Component {
   }
 
   handleUploadButtonClick(event: any) {
-    new AppNotification({title: 'Not Implemented', body: 'Upload Button Clicked', notificationType: NotificationStatusType.warning}).show();
+    ipcRenderer.send('uploadFile');
   }
 
   setMessageTo(text: string) {
