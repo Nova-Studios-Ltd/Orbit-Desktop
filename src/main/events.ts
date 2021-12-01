@@ -9,8 +9,7 @@ const { request } = net;
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
   let result = FormAuthStatusType.unknown;
-
-  PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
+    PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
     if (resp.statusCode == 403 || resp.statusCode == 404) {
       event.sender.send('endAuth', false);
       result = FormAuthStatusType.genericIncorrectUsernamePassword;
@@ -77,7 +76,6 @@ ipcMain.on('requestChannels', (event, channel_uuid: string) => {
     if (response.statusCode != 200) return;
     event.sender.send('receivedChannels', json.toString());
   }
-
   QueryWithAuthentication('/User/Channels', onSuccess);
 });
 
@@ -120,7 +118,7 @@ ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
 ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
   console.log(channel_uuid);
 
-  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: {}}));
+  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: []}));
 });
 
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {

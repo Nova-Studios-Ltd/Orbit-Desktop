@@ -41,7 +41,9 @@ export enum WebSocketMethod {
 
 export enum ContentType {
   EMPTY = '',
-  JSON = 'application/json'
+  JSON = 'application/json',
+  PNG = 'image/png',
+  FORMDATA = 'multipart/form-data'
 }
 
 export enum ChannelType {
