@@ -120,7 +120,7 @@ ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
 ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
   console.log(channel_uuid);
 
-  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents}));
+  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: {}}));
 });
 
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
