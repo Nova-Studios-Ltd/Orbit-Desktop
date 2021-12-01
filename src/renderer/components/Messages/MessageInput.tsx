@@ -5,7 +5,7 @@ import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationStatusType } from 'types/enums';
 import GLOBALS from 'shared/globals';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer } from 'shared/helpers';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
