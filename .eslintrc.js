@@ -33,6 +33,8 @@ module.exports = {
     'promise/always-return': 'off',
     'no-new': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-useless-constructor': 'warn',
+    '@typescript-eslint/no-empty-interface': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

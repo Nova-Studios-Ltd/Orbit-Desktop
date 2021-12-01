@@ -41,7 +41,7 @@ export const AppStyles = makeStyles({
       borderRadius: '30px',
     },
     '.Hidden': {
-      display: 'none',
+      display: 'none !important',
     },
     '.Page': {
       width: '100%',

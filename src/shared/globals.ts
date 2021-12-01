@@ -7,6 +7,7 @@ const GLOBALS = {
   currentChannelName: '',
   HomePath: '/login',
   NotificationAssetPath: 'assets/sounds/bell.oga',
+  MessageCharacterLimit: 4000,
   isFocused: true,
   theme: Theme.Dark
 }

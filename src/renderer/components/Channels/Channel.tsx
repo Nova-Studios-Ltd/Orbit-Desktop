@@ -77,7 +77,7 @@ export default class Channel extends React.Component {
 
   render() {
     const LeaveChannelPromptTextGroup = 'You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!';
-    const LeaveChannelPromptTextUser = 'This will delete the channel for both you and the recipient. All message history will be lost. This cannot be undone.';
+    const LeaveChannelPromptTextUser = 'This will only delete your copy of the conversation and remove you from the channel. You will have to re-add the recipient to chat with them again.';
     const LeaveChannelButtonText = this.channelType == ChannelType.Group ? 'Leave' : 'Delete';
     const LeaveChannelPromptText = this.channelType == ChannelType.Group ? LeaveChannelPromptTextGroup : LeaveChannelPromptTextUser;
 
