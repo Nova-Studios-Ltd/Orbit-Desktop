@@ -51,7 +51,7 @@ export default class MessageInput extends React.Component {
   }
 
   handleUploadButtonClick(event: any) {
-    ipcRenderer.send('uploadFile');
+    ipcRenderer.send('uploadFile', GLOBALS.currentChannel);
   }
 
   setMessageTo(text: string) {

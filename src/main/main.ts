@@ -21,7 +21,7 @@ const stat = require('node-static');
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
-let allowCompleteExit = false;
+let allowCompleteExit = true;
 
 export default class AppUpdater {
   constructor() {

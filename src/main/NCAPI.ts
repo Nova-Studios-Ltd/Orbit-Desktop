@@ -1,4 +1,10 @@
 import { net, session } from 'electron';
+
+import { createReadStream } from 'fs';
+import Axios from 'axios';
+import FormData from 'form-data';
+
+
 import { ContentType, WebSocketMethod } from '../types/enums';
 
 const { request } = net;
@@ -114,4 +120,22 @@ export function PutWithAuthentication(endpoint: string, content_type: ContentTyp
     re.end();
     return true;
   }).catch(fail);
+}
+
+export function PostFile(file: string, endpoint: string) {
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
+    const { token } = JSON.parse(userData[0].value);
+    const formData = new FormData();
+      formData.append('file', createReadStream(file))
+      Axios.post(`https://api.novastudios.tk/${endpoint}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': token
+        }
+      }).then((resp) => {
+        console.log(resp.data);
+      }).catch((reas) => {
+        console.log(reas);
+      })
+  });
 }

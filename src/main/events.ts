@@ -1,9 +1,12 @@
 import { clipboard, dialog, ipcMain, net, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
+
 import Credentials from '../structs/Credentials';
 import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFile } from './NCAPI';
+import { constants } from 'os';
+
 
 const { request } = net;
 
@@ -232,8 +235,8 @@ ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
   return result;
 });
 
-ipcMain.on('uploadFile', () => {
+ipcMain.on('uploadFile', (event, channel_uuid: string) => {
   dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'] }).then((result) => {
-    console.log(result.filePaths[0]);
+    if (!result.canceled) PostFile(result.filePaths[0], `Media/Channel/${channel_uuid}`);
   }).catch((e) => console.error(e));
 });
