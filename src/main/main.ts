@@ -10,8 +10,8 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import path, { resolve } from 'path';
+import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { resolveHtmlPath } from './util';
@@ -19,6 +19,9 @@ import './events';
 
 var stat = require('node-static');
 var file = new stat.Server(path.resolve(__dirname, '../renderer/'));
+let mainWindow: BrowserWindow | null = null;
+let tray: Tray | null = null;
+let allowCompleteExit = false;
 
 export default class AppUpdater {
   constructor() {
@@ -27,8 +30,6 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
-
-let mainWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -136,15 +137,47 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
+  /*if (process.platform !== 'darwin') {
     app.quit();
-  }
+  }*/
 });
 
-app.whenReady().then(createWindow).catch(console.log);
+app.whenReady().then(() => {
+  function resume() {
+    if (mainWindow != null) {
+      mainWindow?.show();
+      mainWindow?.webContents.send('trayResumeClient');
+    }
+    else {
+      createWindow();
+    }
+  }
+
+  function quit() {
+    allowCompleteExit = true;
+    app.quit();
+  }
+
+  tray = new Tray('assets/icon.png');
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Open', click: () => resume() },
+    { type: 'separator' },
+    { label: 'Exit', click: () => quit() }
+  ]);
+  tray.on('click', () => {
+    resume();
+  });
+  tray.setToolTip('Nova Chat 3');
+  tray.setContextMenu(contextMenu);
+  createWindow();
+}).catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+app.on('before-quit', () => {
+  return allowCompleteExit;
 });

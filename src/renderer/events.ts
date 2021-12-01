@@ -4,6 +4,7 @@ import { ConductLogin, getCookie, ipcRenderer, SetAuth } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationStruct } from 'structs/NotificationProps';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { app } from 'electron';
 
 ipcRenderer.on('endAuth', (data: boolean) => {
   if (data) {
