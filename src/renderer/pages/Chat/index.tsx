@@ -1,7 +1,6 @@
 import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
-import Message from 'renderer/components/Messages/Message';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import { GetChannelRecipientsFromUUID, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
@@ -12,12 +11,13 @@ import GLOBALS from 'shared/globals'
 import type { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
+import HybridListItem from 'renderer/components/List/HybridListItem';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -38,6 +38,8 @@ export default class ChatPage extends React.Component {
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleCreateChannelDialogChannelTypeChange = this.handleCreateChannelDialogChannelTypeChange.bind(this);
     this.resetCreateChannelDialogState = this.resetCreateChannelDialogState.bind(this);
+    this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
+    this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
 
     this.state = {
       CanvasObject: undefined,
@@ -47,6 +49,7 @@ export default class ChatPage extends React.Component {
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
       CreateChannelDialogRecipientAvatarSrc: '',
+      NavigationDrawerOpen: false
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -230,6 +233,24 @@ export default class ChatPage extends React.Component {
     this.setState({ CreateChannelDialogChannelType: e.target.value });
   }
 
+  toggleNavigationDrawer(open?: boolean) {
+    if (open != null) {
+      this.setState({ NavigationDrawerOpen: open });
+    }
+    else
+    {
+      this.setState({ NavigationDrawerOpen: !this.state.NavigationDrawerOpen });
+    }
+  }
+
+  navigationDrawerItemClicked(event: any) {
+    switch (event.target.name) {
+      case 'chat':
+        console.log("WORKS");
+        break;
+    }
+  }
+
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
@@ -279,7 +300,7 @@ export default class ChatPage extends React.Component {
         </Helmet>
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
-            <Header caption='Channels' icon={<ListIcon />}>
+            <Header caption='Channels' onClick={() => this.toggleNavigationDrawer(true)} icon={<ListIcon />}>
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
             <ChannelView init={this.initChannelView} />
@@ -292,6 +313,11 @@ export default class ChatPage extends React.Component {
             <MessageInput onMessagePush={this.sendMessage}/>
           </div>
         </div>
+        <Drawer className='NavigationDrawer' anchor='left' open={this.state.NavigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
+          <List className='NavigationDrawerList'>
+            <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
+          </List>
+        </Drawer>
         <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
           <DialogTitle>Create a Channel</DialogTitle>
           <DialogContent>

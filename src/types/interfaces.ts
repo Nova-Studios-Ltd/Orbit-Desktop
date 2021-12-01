@@ -154,6 +154,18 @@ export interface IYesNoDialogProps {
   onDeny: MouseEvent<HTMLButtonElement, MouseEvent>,
 }
 
+export interface IImageViewerProps {
+
+}
+
+export interface IHybridListItem {
+  className: string,
+  id: string,
+  text: string,
+  icon: any,
+  onClick: Function
+}
+
 export interface IFormDropdownProps {
   id: string,
   label: string,
@@ -204,7 +216,8 @@ export interface IChatPageState {
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType,
-  CreateChannelDialogRecipientAvatarSrc: string
+  CreateChannelDialogRecipientAvatarSrc: string,
+  NavigationDrawerOpen: boolean
 }
 
 export interface ILoginFormState {
