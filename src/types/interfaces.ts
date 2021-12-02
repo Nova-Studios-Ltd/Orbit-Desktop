@@ -282,6 +282,10 @@ export interface IUserDropdownMenuState {
   open: boolean
 }
 
+export interface ISettingsPageState {
+  confirmUserAccountDeletionDialogOpen: boolean
+}
+
 // Implementation Prototypes
 
 export interface IAuthForm {

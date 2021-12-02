@@ -5,3 +5,7 @@
 .Settings_Section_Title {
   margin-bottom: 5px !important;
 }
+
+.Settings_Section_Item {
+  margin-right: 1rem !important;
+}

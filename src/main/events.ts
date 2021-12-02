@@ -1,4 +1,4 @@
-import { clipboard, dialog, ipcMain, net, session, Notification } from 'electron';
+import { clipboard, dialog, ipcMain, net, session, Notification, remote } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 
 import Credentials from '../structs/Credentials';
@@ -245,6 +245,14 @@ ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) =
     result = '';
     console.error(e);
   });
-  await TimeoutUntil(result, null, true);
+  await TimeoutUntil(result, null, true, 60);
   return result;
+});
+
+ipcMain.on('deleteAccount', (event, userID: string) => {
+  DeleteWithAuthentication(`/User/${userID}`, () => {
+    event.sender.send('userAccountDeleted', true);
+  }, () => {
+    event.sender.send('userAccountDeleted', false);
+  });
 });
