@@ -267,13 +267,16 @@ export default class Message extends React.Component {
   }
 
   submitEditedMessage() {
-    ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
-      if (result) {
-        new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
-      } else {
-        new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
-      }
-    });
+    if (this.state.editedMessage.length > 0) {
+      ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
+        if (result) {
+          new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+        } else {
+          new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+        }
+      });
+    }
+
     this.resetMessageEdit();
   }
 

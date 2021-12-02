@@ -21,6 +21,7 @@ const stat = require('node-static');
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+const closeToTray = false;
 let allowCompleteExit = true;
 
 export default class AppUpdater {
@@ -179,5 +180,5 @@ app.on('activate', () => {
 });
 
 app.on('before-quit', () => {
-  return allowCompleteExit;
+  return (!closeToTray && allowCompleteExit);
 });
