@@ -181,9 +181,7 @@ export default class ChatPage extends React.Component {
       const attachmentIds = [] as string[];
       new Promise((resolve, reject) => {
           attachments.forEach(async (file, index, array) => {
-          console.log(file);
           const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, file);
-          console.log(id);
           if (id.length > 0) attachmentIds.push(id);
           if (index === array.length -1) resolve(true);
         });
@@ -260,7 +258,7 @@ export default class ChatPage extends React.Component {
   navigationDrawerItemClicked(event: any) {
     switch (event.target.name) {
       case 'chat':
-        console.log("WORKS");
+        console.log('Chat');
         break;
     }
   }
