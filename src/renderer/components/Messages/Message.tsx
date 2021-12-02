@@ -3,7 +3,7 @@ import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent } from 'types/interfaces';
+import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent, IAttachmentProps } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from '../Form/FormTextField';
@@ -100,6 +100,7 @@ export default class Message extends React.Component {
   author_UUID: string;
   author: string;
   content: string;
+  attachments: IAttachmentProps[];
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
@@ -110,6 +111,7 @@ export default class Message extends React.Component {
     this.author_UUID = props.author_UUID;
     this.author = props.author || 'Unknown';
     this.content = props.content || 'Message';
+    this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.avatar = props.avatar;
 
@@ -177,13 +179,18 @@ export default class Message extends React.Component {
   }
 
   async componentDidMount() {
-    let hasNonLinkText = false;
+    let containsNonLinkText = false;
     let links = this.content.match(/(https:\/\/[\S]*)/g);
+    if (links == null) links = [] as Array<string>;
+    for (let a = 0; a < this.attachments.length; a++) {
+      links.push(this.attachments[a].contentUrl);
+    }
+
     if (links == null) {
       this.setState({hasNonLinkText: true});
       return;
     }
-    let messageLinks = [] as Array<MessageContent>;
+    const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
       if (this.imageURL(link) || await this.checkImageHeader(link)) {
@@ -196,10 +203,10 @@ export default class Message extends React.Component {
         messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
       }
       else {
-        hasNonLinkText = true;
+        containsNonLinkText = true;
       }
     }
-    this.setState({links: messageLinks, hasNonLinkText: hasNonLinkText});
+    this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText});
   }
 
   componentDidUpdate() {
