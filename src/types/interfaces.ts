@@ -85,7 +85,8 @@ export interface IMessageProps {
   author: string,
   content: string,
   timestamp: string,
-  avatar: string
+  avatar: string,
+  attachments: string[]
 }
 
 export interface IMessageImageProps {
@@ -259,7 +260,8 @@ export interface IMessageState {
 }
 
 export interface IMessageInputState {
-  message: string
+  message: string,
+  attachments: string[]
 }
 
 export interface IMessageCanvasState {

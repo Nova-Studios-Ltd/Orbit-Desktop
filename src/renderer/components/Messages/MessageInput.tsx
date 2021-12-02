@@ -19,15 +19,24 @@ export default class MessageInput extends React.Component {
     this.handleSendButtonClick = this.handleSendButtonClick.bind(this);
     this.handleUploadButtonClick = this.handleUploadButtonClick.bind(this);
     this.forwardMessage = this.forwardMessage.bind(this);
+    this.addedAttachment = this.addedAttachment.bind(this);
 
     this.forwardMessageCallback = props.onMessagePush;
 
-    this.state = { message: '' }
+    ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
+
+    this.state = { message: '', attachments: []}
   }
 
-  forwardMessage(message: string) {
+  addedAttachment(files: string[]) {
+    files.forEach((file) => this.state.attachments.push(file));
+    console.log(this.state.attachments);
+    this.setState({attachments: this.state.attachments});
+  }
+
+  forwardMessage(message: string, attachments: string[]) {
     if (this.forwardMessageCallback != null) {
-      this.forwardMessageCallback(message);
+      this.forwardMessageCallback(message, attachments);
     }
     else {
       console.error('forwardMessageCallback is null');
@@ -40,18 +49,18 @@ export default class MessageInput extends React.Component {
 
   handleKeyDown(event: any) {
     if (event.keyCode === 13) {
-      this.forwardMessage(this.state.message);
+      this.forwardMessage(this.state.message, this.state.attachments);
       this.setMessageTo('');
     }
   }
 
   handleSendButtonClick(event: any) {
-    this.forwardMessage(this.state.message);
+    this.forwardMessage(this.state.message, this.state.attachments);
     this.setMessageTo('');
   }
 
   handleUploadButtonClick(event: any) {
-    ipcRenderer.send('uploadFile', GLOBALS.currentChannel);
+    ipcRenderer.send('pickUploadFiles');
   }
 
   setMessageTo(text: string) {

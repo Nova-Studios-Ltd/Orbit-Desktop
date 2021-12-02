@@ -4,7 +4,7 @@ import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotifica
 import Credentials from '../structs/Credentials';
 import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
 import TimeoutUntil from './timeout';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFile } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication } from './NCAPI';
 import { constants } from 'os';
 
 
@@ -118,10 +118,10 @@ ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
   });
 });
 
-ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string) => {
+ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string, attachments: string[]) => {
   console.log(channel_uuid);
-
-  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: []}));
+  console.log(attachments);
+  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: attachments}));
 });
 
 ipcMain.on('requestChannelUpdate', (event, channel_uuid: string, message_id: string) => {
@@ -235,8 +235,23 @@ ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
   return result;
 });
 
-ipcMain.on('uploadFile', (event, channel_uuid: string) => {
-  dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'] }).then((result) => {
-    if (!result.canceled) PostFile(result.filePaths[0], `Media/Channel/${channel_uuid}`);
-  }).catch((e) => console.error(e));
+ipcMain.on('pickUploadFiles', (event) => {
+  dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'] }).then((r) => {
+    if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);
+  }).catch((e) => console.log(e));
+});
+
+ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) => {
+  let result = null;
+  PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) => 
+  {
+    result = id; 
+    console.log(id);
+  }, (e) => 
+  {
+    result = '';
+    console.error(e); 
+  });
+  await TimeoutUntil(result, null, true, 99999999999999);
+  return result;
 });
