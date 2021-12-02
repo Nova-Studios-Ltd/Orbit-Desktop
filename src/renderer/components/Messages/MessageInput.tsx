@@ -50,21 +50,24 @@ export default class MessageInput extends React.Component {
   handleKeyDown(event: any) {
     if (event.keyCode === 13) {
       this.forwardMessage(this.state.message, this.state.attachments);
-      this.setMessageTo('');
+      this.setMessageTo('', []);
     }
   }
 
   handleSendButtonClick(event: any) {
     this.forwardMessage(this.state.message, this.state.attachments);
-    this.setMessageTo('');
+    this.setMessageTo('', []);
   }
 
   handleUploadButtonClick(event: any) {
     ipcRenderer.send('pickUploadFiles');
   }
 
-  setMessageTo(text: string) {
-    this.setState({message: text});
+  setMessageTo(text: string, attachment?: string[]) {
+    if (attachment == undefined)
+      this.setState({message: text});
+    else
+      this.setState({message: text, attachments: attachment});
   }
 
   render() {

@@ -243,10 +243,9 @@ ipcMain.on('pickUploadFiles', (event) => {
 
 ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) => {
   let result = null;
-  PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) => 
-  {
-    result = id; 
-    console.log(id);
+  PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (resp) => {
+    result = resp; 
+    console.log(result);
   }, (e) => 
   {
     result = '';
