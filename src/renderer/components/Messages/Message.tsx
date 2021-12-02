@@ -120,6 +120,7 @@ export default class Message extends React.Component {
       isEditing: false,
       hasNonLinkText: false,
       links: [],
+      attachments: [], 
       anchorEl: null,
       open: false
     }
@@ -180,19 +181,29 @@ export default class Message extends React.Component {
 
   async componentDidMount() {
     let containsNonLinkText = false;
-    let links = this.content.match(/(https:\/\/[\S]*)/g);
-    if (links == null && this.attachments.length > 0) { 
+    const links = this.content.match(/(https:\/\/[\S]*)/g);
+    /*if (links == null && this.attachments.length > 0) { 
       links = [] as Array<string>;
+    }*/
+    const attachmentContent = [];
+    for (let a = 0; a < this.attachments.length; a++) {
+      const attachment = this.attachments[a].contentUrl;
+      if (await this.checkImageHeader(attachment)) {
+        attachmentContent.push(new MessageContent({type: 'image', url: attachment}));
+      }
+      else if(await this.checkVideoHeader(attachment)) {
+        attachmentContent.push(new MessageContent({type: 'video', url: attachment}));
+      }
     }
 
     if (links == null) {
-      this.setState({hasNonLinkText: true});
+      this.setState({hasNonLinkText: true, attachments: attachmentContent});
       return;
     }
 
-    for (let a = 0; a < this.attachments.length; a++) {
+    /*for (let a = 0; a < this.attachments.length; a++) {
       links.push(this.attachments[a].contentUrl);
-    }
+    }*/
 
     const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
@@ -317,6 +328,13 @@ export default class Message extends React.Component {
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
         messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+    });
+
+    this.state.attachments.forEach(link => {
+      if (link.type == 'image')
+        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'video')
+        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
     });
 
     return (

@@ -92,7 +92,9 @@ export interface IMessageProps {
 export interface IAttachmentProps {
   contentUrl: string,
   filename: string,
-  size: number
+  size: number,
+  contentWidth: number,
+  contentHeight: number
 }
 
 export interface IMessageImageProps {
@@ -261,6 +263,7 @@ export interface IMessageState {
   isEditing: boolean,
   hasNonLinkText: boolean,
   links: Array<string>,
+  attachments: string[],
   anchorEl: any,
   open: boolean
 }
