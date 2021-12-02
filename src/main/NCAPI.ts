@@ -1,7 +1,7 @@
 import { net, session } from 'electron';
 
 import { createReadStream } from 'fs';
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import FormData from 'form-data';
 import https from 'https';
 
@@ -124,17 +124,19 @@ export function PutWithAuthentication(endpoint: string, content_type: ContentTyp
 }
 
 export function PostFileWithAuthentication(endpoint: string, file: string, success: ((response: string) => void)=()=>{}, fail: ((reason: any)=>void)=()=>{}) {
-  session.defaultSession.cookies.get({name: 'userData'}).then(async (userData) => {
+  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
     const { token } = JSON.parse(userData[0].value);
     const formData = new FormData();
       formData.append('file', createReadStream(file))
-      const t = await Axios.post(`https://api.novastudios.tk/${endpoint}`, formData, {
+      Axios.post(`https://api.novastudios.tk/${endpoint}`, formData, {
         headers: {
           ...formData.getHeaders(),
           'Authorization': token
         }
+      }).then((resp) => {
+        success(resp.data);
+      }).catch((reas) => {
+        fail(reas);
       });
-      if (t.status == 200) success(t.data);
-      fail('');
   });
 }

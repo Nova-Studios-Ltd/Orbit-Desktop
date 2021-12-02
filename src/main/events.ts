@@ -237,7 +237,7 @@ ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
 });
 
 ipcMain.on('pickUploadFiles', (event) => {
-  dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'] }).then((r) => {
+  dialog.showOpenDialog({ properties: ['openFile', 'multiSelections', 'showHiddenFiles'] }).then((r) => {
     if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);
   }).catch((e) => console.log(e));
 });
