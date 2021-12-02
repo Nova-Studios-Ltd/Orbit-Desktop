@@ -181,15 +181,19 @@ export default class Message extends React.Component {
   async componentDidMount() {
     let containsNonLinkText = false;
     let links = this.content.match(/(https:\/\/[\S]*)/g);
-    if (links == null) links = [] as Array<string>;
-    for (let a = 0; a < this.attachments.length; a++) {
-      links.push(this.attachments[a].contentUrl);
+    if (links == null && this.attachments.length > 0) { 
+      links = [] as Array<string>;
     }
 
     if (links == null) {
       this.setState({hasNonLinkText: true});
       return;
     }
+
+    for (let a = 0; a < this.attachments.length; a++) {
+      links.push(this.attachments[a].contentUrl);
+    }
+
     const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
