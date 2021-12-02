@@ -30,7 +30,6 @@ export default class MessageInput extends React.Component {
 
   addedAttachment(files: string[]) {
     files.forEach((file) => this.state.attachments.push(file));
-    console.log(this.state.attachments);
     this.setState({attachments: this.state.attachments});
   }
 
