@@ -132,8 +132,14 @@ export function PostFileWithAuthentication(endpoint: string, file: string, succe
         headers: {
           ...formData.getHeaders(),
           'Authorization': token
-        }
+        },
+        maxBodyLength: 20971520,
+        maxContentLength: 20971520
       }).then((resp) => {
+        if (resp.status != 200) { 
+          console.error(resp.status);
+          return;
+        }
         success(resp.data);
       }).catch((reas) => {
         fail(reas);
