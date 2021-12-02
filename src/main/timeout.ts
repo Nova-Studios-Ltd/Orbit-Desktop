@@ -10,7 +10,6 @@ export default async function TimeoutUntil(target: any, condition: any, evalType
 
   if (evalType) {
     while (target == condition && i < timeout) {
-      console.log(`HERE: ${target}`);
       await new Promise(resolve => setTimeout(resolve, 100));
       i++;
     }
