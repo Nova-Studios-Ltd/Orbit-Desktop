@@ -176,7 +176,7 @@ export default class ChatPage extends React.Component {
   }
 
   async sendMessage(message: string, attachments: string[]) {
-    if (message.length > 0 && attachments.length > 0)
+    if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
       const attachmentIds = [] as string[];
       new Promise((resolve, reject) => {
@@ -191,7 +191,7 @@ export default class ChatPage extends React.Component {
         ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, attachmentIds);
       });
     }
-    else if (message.length > 0) {
+    else {
       ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, []);
     }
   }
