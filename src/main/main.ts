@@ -21,8 +21,8 @@ const stat = require('node-static');
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
-const closeToTray = false;
-let allowCompleteExit = true;
+const closeToTray = true;
+let allowCompleteExit = false;
 
 export default class AppUpdater {
   constructor() {
@@ -110,6 +110,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    app.quit();
   });
 
   mainWindow.on('focus', () => {
