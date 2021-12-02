@@ -192,7 +192,7 @@ export default class ChatPage extends React.Component {
       });
     }
     else if (message.length > 0) {
-      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, '');
+      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, []);
     }
   }
 
