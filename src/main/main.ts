@@ -15,13 +15,13 @@ import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { resolveHtmlPath } from './util';
+import GLOBALS from '../shared/globals';
 import './events';
 
 const stat = require('node-static');
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
-const closeToTray = true;
 let allowCompleteExit = false;
 
 export default class AppUpdater {
@@ -110,7 +110,9 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    app.quit();
+    if (!GLOBALS.closeToTray) {
+      app.quit();
+    }
   });
 
   mainWindow.on('focus', () => {
@@ -181,5 +183,5 @@ app.on('activate', () => {
 });
 
 app.on('before-quit', () => {
-  return (!closeToTray && allowCompleteExit);
+  return (!GLOBALS.closeToTray && allowCompleteExit);
 });
