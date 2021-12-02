@@ -4,7 +4,7 @@ import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-materia
 import AppNotification from 'renderer/components/Notification/Notification';
 import type { ISettingsPageProps } from 'types/interfaces';
 import Header from 'renderer/components/Header/Header';
-import { ConductLogin, copyToClipboard } from 'shared/helpers';
+import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
@@ -39,13 +39,16 @@ export default class SettingsPage extends React.Component {
 
           </SettingsSection>
           <SettingsSection title='Advanced'>
-            <Button variant='outlined' onClick={async () => {
+            <Button className='Settings_Section_Item' variant='outlined' onClick={async () => {
               await copyToClipboard(GLOBALS.userData.token).then((result: boolean) => {
                 if (result) {
                   new AppNotification({ body: 'Copied token to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
                 }
               });
             }}>Copy Token to Clipboard</Button>
+            <Button className='Settings_Section_Item' variant='outlined' color='error' onClick={() => {
+              ipcRenderer.send('deleteAccount', GLOBALS.userData.uuid);
+            }}>Delete Account</Button>
           </SettingsSection>
         </div>
       </div>
