@@ -133,7 +133,7 @@ ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequest
     result = true;
   }
 
-  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`, onSuccess);
+  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`, onSuccess, (e) => console.log(e));
 
 
   await TimeoutUntil(result, true, false);
@@ -240,10 +240,11 @@ ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) =
   PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) =>
   {
     result = id;
+    console.log(id);
   }, (e) =>
   {
     result = '';
-    console.error(e);
+    console.log(e);
   });
   await TimeoutUntil(result, null, true, 60);
   return result;

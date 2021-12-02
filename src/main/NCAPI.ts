@@ -89,6 +89,9 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
     const { token } = JSON.parse(userData[0].value);
     re.setHeader('Authorization', token);
     re.on('response', (res) => {
+      res.on('data', (json) => {
+        console.log(json.toString());
+      });
       if (res.statusCode == 200) success();
     })
     re.on('error', (error) => {
@@ -138,6 +141,7 @@ export function PostFileWithAuthentication(endpoint: string, file: string, succe
       }).then((resp) => {
         if (resp.status != 200) { 
           console.error(resp.status);
+          fail(resp.status);
           return;
         }
         success(resp.data);
