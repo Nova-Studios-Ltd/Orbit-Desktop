@@ -19,7 +19,6 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
       return;
     }
     if (resp.statusCode == 500) {
-      console.log(500);
       event.sender.send('endAuth', false);
       result = FormAuthStatusType.serverError;
       return;
@@ -102,7 +101,6 @@ ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
 
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
-    console.log(json.toString());
     if (response.statusCode != 200) return;
     event.sender.send('receivedChannelData', <IMessageProps>JSON.parse(json.toString()), channel_uuid);
   }
@@ -111,8 +109,6 @@ ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
 });
 
 ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
-  console.log(`requestChannelMessagePreview called for channel ${channel_uuid}`);
-
   QueryWithAuthentication(`Message/${channel_uuid}/Messages`, (resp, json) => {
     if (resp.statusCode != 200) return;
     event.sender.send('receivedChannelMessagePreview', json.toString());
@@ -170,7 +166,6 @@ ipcMain.on('createChannel', (event, data: any) => {
   const users = Object.values(users_raw);
 
   if (users.length == 1) {
-    console.log(users[0]);
     PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${users[0]}`, ContentType.EMPTY, '', (resp, json) => {
       if (resp.statusCode != 200) event.sender.send('channelCreationSucceded', false);
       else event.sender.send('channelCreationSucceded', true);
@@ -245,7 +240,6 @@ ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) =
   PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) =>
   {
     result = id;
-    console.log(id);
   }, (e) =>
   {
     result = '';

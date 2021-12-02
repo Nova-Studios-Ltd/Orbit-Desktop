@@ -258,7 +258,7 @@ export default class ChatPage extends React.Component {
   navigationDrawerItemClicked(event: any) {
     switch (event.target.name) {
       case 'chat':
-        console.log('Chat');
+        new AppNotification(new NotificationStruct('Navigation', 'Navigating to Chat page', false, NotificationStatusType.info, NotificationAudienceType.app)).show();
         break;
     }
   }
