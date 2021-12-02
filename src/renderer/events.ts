@@ -37,7 +37,7 @@ ipcRenderer.on('clientUnfocused', (data: boolean) => {
 
 ipcRenderer.on('userAccountDeleted', (success: boolean) => {
   if (success) {
-    new AppNotification(new NotificationStruct('Account Management', 'Successfully deleted your account.', false, NotificationStatusType.error, NotificationAudienceType.app)).show();
+    new AppNotification(new NotificationStruct('Account Management', 'Successfully deleted your account.', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
     RemoveCachedCredentials();
     Navigate('/login', null);
   }

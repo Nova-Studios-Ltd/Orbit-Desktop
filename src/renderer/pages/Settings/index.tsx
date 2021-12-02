@@ -2,18 +2,44 @@ import React from 'react';
 import { Button, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import AppNotification from 'renderer/components/Notification/Notification';
-import type { ISettingsPageProps } from 'types/interfaces';
+import type { ISettingsPageProps, ISettingsPageState } from 'types/interfaces';
 import Header from 'renderer/components/Header/Header';
 import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 
 export default class SettingsPage extends React.Component {
+  state: ISettingsPageState;
+
   constructor(props: ISettingsPageProps) {
     super(props);
-
+    this.handleClick = this.handleClick.bind(this);
+    this.deleteAccount = this.deleteAccount.bind(this);
+    this.closeUserAccountDeletionDialog = this.closeUserAccountDeletionDialog.bind(this);
     this.exitSettings = this.exitSettings.bind(this);
+
+    this.state = {
+      confirmUserAccountDeletionDialogOpen: false
+    }
+  }
+
+  handleClick(event: any) {
+    switch (event.currentTarget.id) {
+      case 'deleteAccount':
+        this.setState({ confirmUserAccountDeletionDialogOpen: true });
+        break;
+    }
+  }
+
+  deleteAccount() {
+    ipcRenderer.send('deleteAccount', GLOBALS.userData.uuid);
+    this.closeUserAccountDeletionDialog();
+  }
+
+  closeUserAccountDeletionDialog() {
+    this.setState({ confirmUserAccountDeletionDialogOpen: false });
   }
 
   exitSettings() {
@@ -46,10 +72,16 @@ export default class SettingsPage extends React.Component {
                 }
               });
             }}>Copy Token to Clipboard</Button>
-            <Button className='Settings_Section_Item' variant='outlined' color='error' onClick={() => {
-              ipcRenderer.send('deleteAccount', GLOBALS.userData.uuid);
-            }}>Delete Account</Button>
+            <Button id='deleteAccount' className='Settings_Section_Item' variant='outlined' color='error' onClick={this.handleClick}>Delete Account</Button>
           </SettingsSection>
+          <YesNoDialog
+          title='Delete Account'
+          body='Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat.'
+          confirmButtonText='Delete'
+          denyButtonText='Cancel'
+          onDeny={this.closeUserAccountDeletionDialog}
+          onConfirm={this.deleteAccount}
+          show={this.state.confirmUserAccountDeletionDialogOpen} />
         </div>
       </div>
     );
