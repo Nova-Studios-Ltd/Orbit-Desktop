@@ -176,7 +176,7 @@ export default class ChatPage extends React.Component {
   }
 
   async sendMessage(message: string, attachments: string[]) {
-    if (message.length > 0 || attachments.length > 0)
+    if (message.length > 0 && attachments.length > 0)
     {
       const attachmentIds = [] as string[];
       new Promise((resolve, reject) => {
@@ -185,11 +185,14 @@ export default class ChatPage extends React.Component {
           const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, file);
           console.log(id);
           if (id.length > 0) attachmentIds.push(id);
-          if (index === array.length -1) resolve();
+          if (index === array.length -1) resolve(true);
         });
       }).then(() => {
         ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, attachmentIds);
       });
+    }
+    else if (message.length > 0) {
+      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, '');
     }
   }
 
