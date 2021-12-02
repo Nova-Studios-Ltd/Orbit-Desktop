@@ -243,15 +243,15 @@ ipcMain.on('pickUploadFiles', (event) => {
 
 ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) => {
   let result = null;
-  PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) => 
+  PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) =>
   {
-    result = id; 
+    result = id;
     console.log(id);
-  }, (e) => 
+  }, (e) =>
   {
     result = '';
-    console.error(e); 
+    console.error(e);
   });
-  await TimeoutUntil(result, null, true, 99999999999999);
+  await TimeoutUntil(result, null, true);
   return result;
 });
