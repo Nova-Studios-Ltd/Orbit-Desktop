@@ -1,5 +1,5 @@
-import UserData from 'structs/UserData';
-import { Theme } from 'types/enums'
+import UserData from '../structs/UserData';
+import { Theme } from '../types/enums'
 
 const GLOBALS = {
   userData: new UserData(undefined),
@@ -9,7 +9,8 @@ const GLOBALS = {
   NotificationAssetPath: 'assets/sounds/bell.oga',
   MessageCharacterLimit: 4000,
   isFocused: true,
-  theme: Theme.Dark
+  theme: Theme.Dark,
+  closeToTray: true
 }
 
 export default GLOBALS;
