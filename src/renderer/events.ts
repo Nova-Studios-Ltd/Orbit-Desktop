@@ -12,9 +12,10 @@ ipcRenderer.on('endAuth', (data: boolean) => {
   }
 });
 
-ipcRenderer.on('receivedUserData', (data: string) => {
+ipcRenderer.on('receivedUserData', (data: unknown) => {
   if (data != null) {
-    const userData = JSON.parse(data) as UserData;
+    const userData = data as UserData;
+    console.log(userData);
     GLOBALS.userData.username = userData.username;
     GLOBALS.userData.discriminator = userData.discriminator;
   }

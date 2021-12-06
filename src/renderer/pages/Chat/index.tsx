@@ -93,7 +93,7 @@ export default class ChatPage extends React.Component {
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
       this.setState({ChannelList: channelList });
-      ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
+      ipcRenderer.on('receivedChannels', (data: string[]) => this.onReceivedChannels(data));
       ipcRenderer.on('receivedChannelInfo', (data: IChannelProps) => this.onReceivedChannelInfo(data));
       events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('receivedAddedToChannelEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
