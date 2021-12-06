@@ -1,49 +1,10 @@
-import { clipboard, dialog, ipcMain, net, session, Notification } from 'electron';
+import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
-
 import Credentials from '../structs/Credentials';
 import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
-import TimeoutUntil from './timeout';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie } from './NCAPI';
 
-
-const { request } = net;
-
-ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) : Promise<FormAuthStatusType> => {
-  /*let result = FormAuthStatusType.unknown;
-    PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}), (resp, json) => {
-    if (resp.statusCode == 403 || resp.statusCode == 404) {
-      event.sender.send('endAuth', false);
-      result = FormAuthStatusType.genericIncorrectUsernamePassword;
-      return;
-    }
-    if (resp.statusCode == 500) {
-      event.sender.send('endAuth', false);
-      result = FormAuthStatusType.serverError;
-      return;
-    }
-    if (resp.statusCode == 200) {
-      session.defaultSession.cookies.set({url: 'http://localhost', name: 'userData', value: json.toString(), expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => {
-        const json_obj = JSON.parse(json.toString());
-        if (json_obj.token != null) {
-          event.sender.send('endAuth', true);
-          result = FormAuthStatusType.success;
-        }
-        else {
-          event.sender.send('endAuth', false);
-          result = FormAuthStatusType.genericIncorrectUsernamePassword;
-        }
-        return true;
-      }).catch((e) => {
-        event.sender.send('endAuth', false);
-        result = FormAuthStatusType.serverError;
-      })
-    }
-  }, (e) => {
-    console.error(e.message);
-    result = FormAuthStatusType.networkTimeout;
-  });*/
-
+ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
   if (resp.status == 403 || resp.status == 404) return FormAuthStatusType.genericIncorrectUsernamePassword;
   if (resp.status == 500) return FormAuthStatusType.serverError;
@@ -54,29 +15,17 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) : Pro
   return FormAuthStatusType.serverError;
 });
 
-ipcMain.on('logout', (event) => {
+ipcMain.on('logout', () => {
   session.defaultSession.cookies.remove('http://localhost', 'userData');
 });
 
-ipcMain.handle('register', async (event, creds: Credentials) : Promise<boolean> => {
-  /*PostWithoutAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email}), (resp, json) => {
-    const j = JSON.parse(json.toString());
-    if (resp.statusCode == 200 && j.status == undefined) {
-      result = true;
-    }
-    else {
-      result = false;
-    }
-  }, (e) => {
-    result = false;
-  });*/
-
+ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean> => {
   const resp = await PostWithoutAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email}));
   if (resp.status == 200) return true;
   return false;
 });
 
-ipcMain.on('requestChannels', async (event, channel_uuid: string) => {
+ipcMain.on('requestChannels', async (event) => {
   const resp = await QueryWithAuthentication('/User/Channels');
   console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannels', <string[]>resp.payload);
@@ -105,7 +54,7 @@ ipcMain.on('requestChannelMessagePreview', async (event, channel_uuid: string) =
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelMessagePreview', resp.payload);
 });
 
-ipcMain.on('sendMessageToServer', (event, channel_uuid: string, contents: string, attachments: string[]) => {
+ipcMain.on('sendMessageToServer', (_event, channel_uuid: string, contents: string, attachments: string[]) => {
   PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: attachments}));
 });
 
@@ -115,7 +64,7 @@ ipcMain.on('requestChannelUpdate', async (event, channel_uuid: string, message_i
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelUpdateEvent', <IMessageProps>resp.payload, channel_uuid);
 });
 
-ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequestArgs) => {
+ipcMain.handle('requestDeleteMessage', async (_event, data: IMessageDeleteRequestArgs) => {
   const resp = await DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`);
   if (resp.status == 200) return true;
   return false;
@@ -157,14 +106,14 @@ ipcMain.on('createChannel', async (event, data: any) => {
   }
 });
 
-ipcMain.handle('sendEditedMessage', async (event, data: any) => {
+ipcMain.handle('sendEditedMessage', async (_event, data: any) => {
   const { channelID, messageID, message } = data;
   const resp = await PutWithAuthentication(`Message/${channelID}/Messages/${messageID}`, ContentType.JSON, JSON.stringify({content: message}));
   if (resp.status == 200) return true;
   return false;
 });
 
-ipcMain.on('removeUserFromChannel', async (event, data: any) => {
+ipcMain.on('removeUserFromChannel', async (_event, data: any) => {
   const { channelID, userID, channelType } = data;
 
   if (channelType == ChannelType.Group) {
@@ -176,14 +125,14 @@ ipcMain.on('removeUserFromChannel', async (event, data: any) => {
   }
 });
 
-ipcMain.handle('getUserUUID', async (event, username: string, discriminator: string) => {
+ipcMain.handle('getUserUUID', async (_event, username: string, discriminator: string) => {
   const resp = await QueryWithAuthentication(`/User/${username}/${discriminator}/UUID`);
   console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
   return 'UNKNOWN';
 });
 
-ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
+ipcMain.handle('retrieveChannelName', async (_event, uuid: string) => {
   const resp = await QueryWithAuthentication(`/Channel/${uuid}`);
   console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return (<IChannelProps>resp.payload).channelName;
@@ -196,7 +145,7 @@ ipcMain.on('pickUploadFiles', (event) => {
   }).catch((e) => console.log(e));
 });
 
-ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) => {
+ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: string) => {
   return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file);
 });
 
