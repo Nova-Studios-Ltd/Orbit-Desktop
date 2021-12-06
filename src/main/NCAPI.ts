@@ -29,7 +29,6 @@ export function PostWithAuthentication(endpoint: string, content_type: ContentTy
   const re = request({
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
-    //url: `https://localhost:5555/${endpoint}`
   });
 
   session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
