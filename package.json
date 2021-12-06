@@ -62,12 +62,13 @@
       ]
     },
     "win": {
-      "artifactName": "${productName}-latest.exe",
+      "artifactName": "${productName}-Win-Latest.exe",
       "target": [
         "nsis"
       ]
     },
     "linux": {
+      "artifactName": "${productName}-Linux-Latest.AppImage",
       "target": [
         "AppImage"
       ],
