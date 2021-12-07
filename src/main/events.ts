@@ -2,10 +2,10 @@ import { clipboard, dialog, ipcMain, net, session, Notification, remote } from '
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 
 import Credentials from '../structs/Credentials';
-import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
+import { ChannelType, ContentType, FormAuthStatusType, LogContext } from '../types/enums';
 import TimeoutUntil from './timeout';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication } from './NCAPI';
-import { constants } from 'os';
+import { DebugMain } from '../shared/DebugLogger';
 
 
 const { request } = net;
@@ -41,7 +41,7 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials, url: string) => {
       })
     }
   }, (e) => {
-    console.error(e.message);
+    DebugMain.Error(e.message, LogContext.Main, 'when authenticating user');
     result = FormAuthStatusType.networkTimeout;
   });
 
@@ -84,7 +84,13 @@ ipcMain.on('requestChannels', (event, channel_uuid: string) => {
 ipcMain.on('requestMessage', (event, channel_uuid: string, message_id: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    event.sender.send('receivedMessageEditEvent', channel_uuid, message_id, JSON.parse(json.toString()));
+    try {
+      const message = JSON.parse(json.toString());
+      event.sender.send('receivedMessageEditEvent', channel_uuid, message_id, message);
+    }
+    catch {
+      DebugMain.Error(`Unable to parse message ${message_id}`, LogContext.Main, 'when requesting message from server');
+    }
   }
 
   QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`, onSuccess);
@@ -102,10 +108,17 @@ ipcMain.on('requestChannelInfo', (event, channel_uuid: string) => {
 ipcMain.on('requestChannelData', (event, channel_uuid: string) => {
   function onSuccess(response: Electron.IncomingMessage, json: Buffer) {
     if (response.statusCode != 200) return;
-    event.sender.send('receivedChannelData', <IMessageProps>JSON.parse(json.toString()), channel_uuid);
+    try {
+      const channelData = <IMessageProps>JSON.parse(json.toString())
+      event.sender.send('receivedChannelData', channelData, channel_uuid);
+    }
+    catch {
+      DebugMain.Error(`Unable to parse channel data ${channel_uuid}`, LogContext.Main, 'when requesting channel data from server');
+    }
+
   }
 
-  QueryWithAuthentication(`/Message/${channel_uuid}/Messages`, onSuccess, (e) => console.log(e));
+  QueryWithAuthentication(`/Message/${channel_uuid}/Messages`, onSuccess, (e) => DebugMain.Error(e.message, LogContext.Main));
 });
 
 ipcMain.on('requestChannelMessagePreview', (event, channel_uuid: string) => {
@@ -133,7 +146,7 @@ ipcMain.handle('requestDeleteMessage', async (event, data: IMessageDeleteRequest
     result = true;
   }
 
-  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`, onSuccess, (e) => console.log(e));
+  DeleteWithAuthentication(`Message/${data.channelID}/Messages/${data.messageID}`, onSuccess, (e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to delete message'));
 
 
   await TimeoutUntil(result, true, false);
@@ -232,7 +245,7 @@ ipcMain.handle('retrieveChannelName', async (event, uuid: string) => {
 ipcMain.on('pickUploadFiles', (event) => {
   dialog.showOpenDialog({ properties: ['openFile', 'multiSelections', 'showHiddenFiles'] }).then((r) => {
     if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);
-  }).catch((e) => console.log(e));
+  }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
 ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) => {
@@ -240,11 +253,11 @@ ipcMain.handle('uploadFile', async (event, channel_uuid: string, file: string) =
   PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file, (id) =>
   {
     result = id;
-    console.log(id);
+    DebugMain.Log(id, LogContext.Main, 'file ID received from server');
   }, (e) =>
   {
     result = '';
-    console.log(e);
+    DebugMain.Error('Server returned blank file ID', LogContext.Main, 'when retrieving file ID from server');
   });
   await TimeoutUntil(result, null, true, 60);
   return result;

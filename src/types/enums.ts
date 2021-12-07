@@ -56,3 +56,16 @@ export enum Theme {
   Light,
   Dark
 }
+
+export enum LogContext {
+  Main = 'MAIN',
+  Renderer = 'RENDERER',
+  Default = 'UNKNOWN'
+}
+
+export enum LogType {
+  Success = 'Success',
+  Warn = 'Warning',
+  Error = 'Error',
+  Info = 'Info'
+}

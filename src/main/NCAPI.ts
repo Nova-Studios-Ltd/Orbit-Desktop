@@ -6,7 +6,8 @@ import FormData from 'form-data';
 import https from 'https';
 
 
-import { ContentType, WebSocketMethod } from '../types/enums';
+import { ContentType, LogContext, WebSocketMethod } from '../types/enums';
+import { DebugMain } from '../shared/DebugLogger';
 
 const { request } = net;
 
@@ -90,7 +91,7 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
     re.setHeader('Authorization', token);
     re.on('response', (res) => {
       res.on('data', (json) => {
-        console.log(json.toString());
+        DebugMain.Log(json.toString(), LogContext.Main);
       });
       if (res.statusCode == 200) success();
     })
@@ -139,8 +140,8 @@ export function PostFileWithAuthentication(endpoint: string, file: string, succe
         maxBodyLength: 20971520,
         maxContentLength: 20971520
       }).then((resp) => {
-        if (resp.status != 200) { 
-          console.error(resp.status);
+        if (resp.status != 200) {
+          DebugMain.Error(resp.status.toString(), LogContext.Main, 'response code from PostFileWithAuthentication');
           fail(resp.status);
           return;
         }

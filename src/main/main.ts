@@ -16,7 +16,10 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { resolveHtmlPath } from './util';
 import GLOBALS from '../shared/globals';
+import { DebugMain } from '../shared/DebugLogger';
 import './events';
+import './debugEvents';
+import { LogContext, LogType } from '../types/enums';
 
 const stat = require('node-static');
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
@@ -60,7 +63,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(console.log);
+    .catch((e) => DebugMain.Error(e, LogContext.Main, 'when initializing extensions'));
 };
 
 const createWindow = async () => {
@@ -98,6 +101,7 @@ const createWindow = async () => {
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
+      DebugMain.Error('mainWindow is not defined', LogContext.Main, '(when creating the window)');
       throw new Error('"mainWindow" is not defined');
     }
     if (process.env.START_MINIMIZED) {
@@ -106,6 +110,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    DebugMain.Success('Main Window Loaded', LogContext.Main);
   });
 
   mainWindow.on('closed', () => {
@@ -162,19 +167,27 @@ app.whenReady().then(() => {
     app.quit();
   }
 
-  tray = new Tray('assets/icon.png');
-  const contextMenu = Menu.buildFromTemplate([
-    { label: 'Open', click: () => resume() },
-    { type: 'separator' },
-    { label: 'Exit', click: () => quit() }
-  ]);
-  tray.on('click', () => {
-    resume();
-  });
-  tray.setToolTip('Nova Chat 3');
-  tray.setContextMenu(contextMenu);
+  try {
+    tray = new Tray('assets/icon.png');
+    const contextMenu = Menu.buildFromTemplate([
+      { label: 'Open', click: () => resume() },
+      { type: 'separator' },
+      { label: 'Exit', click: () => quit() }
+    ]);
+    tray.on('click', () => {
+      resume();
+    });
+    tray.setToolTip('Nova Chat 3');
+    tray.setContextMenu(contextMenu);
+  }
+  catch {
+    DebugMain.Error('Unable to load tray icon', LogContext.Main);
+    allowCompleteExit = true;
+  }
+
+  DebugMain.Success('App Loaded', LogContext.Main);
   createWindow();
-}).catch(console.log);
+}).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'on app initialization'));
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

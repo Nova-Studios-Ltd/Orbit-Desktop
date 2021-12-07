@@ -3,9 +3,9 @@ import { Button, IconButton, InputAdornment, TextField, Typography } from '@mui/
 import { Send as SendIcon, Logout as LogoutIcon, Upload as UploadIcon } from '@mui/icons-material';
 import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationStatusType } from 'types/enums';
+import { LogContext, NotificationStatusType } from 'types/enums';
 import GLOBALS from 'shared/globals';
-import { ipcRenderer } from 'shared/helpers';
+import { Debug, ipcRenderer } from 'shared/helpers';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
@@ -38,7 +38,7 @@ export default class MessageInput extends React.Component {
       this.forwardMessageCallback(message, attachments);
     }
     else {
-      console.error('forwardMessageCallback is null');
+      Debug.Error('forwardMessageCallback is null', LogContext.Renderer, 'when forwarding message to ChatPage from Messageinput');
     }
   }
 

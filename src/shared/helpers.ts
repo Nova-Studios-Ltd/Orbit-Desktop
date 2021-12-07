@@ -4,10 +4,13 @@ import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import type { IElectronRendererWindow } from 'types/interfaces';
+import { LogContext } from 'types/enums';
+import { DebugRendererHandler } from 'shared/DebugLogger';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
+export const Debug = new DebugRendererHandler(ipcRenderer);
 
 export function Navigate(path: string, data: any)
 {
@@ -15,7 +18,7 @@ export function Navigate(path: string, data: any)
     history.push(path, data);
   }
   catch (error) {
-    console.error(error);
+    Debug.Error(error, LogContext.Renderer, 'when pushing state to Router history (navigating)');
   }
 }
 
@@ -25,9 +28,9 @@ export function GetHistoryState()
 }
 
 export function getCookie(cname: string) {
-  let name = cname + '=';
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
   for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
@@ -63,7 +66,7 @@ function HandleWebsocket() {
     const event = JSON.parse(message.data);
     switch (event.EventType) {
       case -1:
-        console.log('<Beat>');
+        Debug.Log('<Beat>', LogContext.Renderer);
         break;
       case 0:
         ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
@@ -98,7 +101,7 @@ function HandleWebsocket() {
     }
   };
   socket.onerror = function (error) {
-    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`);
+    Debug.Warn(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`, LogContext.Renderer);
     if (reconnectAttempts > 4) {
       Navigate('/Login', { failed: true });
       return;
