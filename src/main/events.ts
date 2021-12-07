@@ -27,7 +27,6 @@ ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean>
 
 ipcMain.on('requestChannels', async (event) => {
   const resp = await QueryWithAuthentication('/User/Channels');
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannels', <string[]>resp.payload);
 });
 
@@ -43,7 +42,6 @@ ipcMain.on('requestChannelInfo', async (event, channel_uuid: string) => {
 
 ipcMain.on('requestChannelData', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelData', <IMessageProps[]>resp.payload, channel_uuid);
 });
 
@@ -58,7 +56,6 @@ ipcMain.on('sendMessageToServer', (_event, channel_uuid: string, contents: strin
 
 ipcMain.on('requestChannelUpdate', async (event, channel_uuid: string, message_id: string) => {
   const resp = await QueryWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelUpdateEvent', <IMessageProps>resp.payload, channel_uuid);
 });
 
