@@ -3,8 +3,9 @@ import { Button, IconButton, InputAdornment, TextField, Typography } from '@mui/
 import { Send as SendIcon, Logout as LogoutIcon, Upload as UploadIcon } from '@mui/icons-material';
 import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationStatusType } from 'types/enums';
+import { LogContext, NotificationStatusType } from 'types/enums';
 import GLOBALS from 'shared/globals';
+import { Debug, ipcRenderer } from 'shared/helpers';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
@@ -18,18 +19,26 @@ export default class MessageInput extends React.Component {
     this.handleSendButtonClick = this.handleSendButtonClick.bind(this);
     this.handleUploadButtonClick = this.handleUploadButtonClick.bind(this);
     this.forwardMessage = this.forwardMessage.bind(this);
+    this.addedAttachment = this.addedAttachment.bind(this);
 
     this.forwardMessageCallback = props.onMessagePush;
 
-    this.state = { message: '' }
+    ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
+
+    this.state = { message: '', attachments: []}
   }
 
-  forwardMessage(message: string) {
+  addedAttachment(files: string[]) {
+    files.forEach((file) => this.state.attachments.push(file));
+    this.setState({attachments: this.state.attachments});
+  }
+
+  forwardMessage(message: string, attachments: string[]) {
     if (this.forwardMessageCallback != null) {
-      this.forwardMessageCallback(message);
+      this.forwardMessageCallback(message, attachments);
     }
     else {
-      console.error('forwardMessageCallback is null');
+      Debug.Error('forwardMessageCallback is null', LogContext.Renderer, 'when forwarding message to ChatPage from Messageinput');
     }
   }
 
@@ -39,22 +48,25 @@ export default class MessageInput extends React.Component {
 
   handleKeyDown(event: any) {
     if (event.keyCode === 13) {
-      this.forwardMessage(this.state.message);
-      this.setMessageTo('');
+      this.forwardMessage(this.state.message, this.state.attachments);
+      this.setMessageTo('', []);
     }
   }
 
   handleSendButtonClick(event: any) {
-    this.forwardMessage(this.state.message);
-    this.setMessageTo('');
+    this.forwardMessage(this.state.message, this.state.attachments);
+    this.setMessageTo('', []);
   }
 
   handleUploadButtonClick(event: any) {
-    new AppNotification({title: 'Not Implemented', body: 'Upload Button Clicked', notificationType: NotificationStatusType.warning}).show();
+    ipcRenderer.send('pickUploadFiles');
   }
 
-  setMessageTo(text: string) {
-    this.setState({message: text});
+  setMessageTo(text: string, attachment?: string[]) {
+    if (attachment == undefined)
+      this.setState({message: text});
+    else
+      this.setState({message: text, attachments: attachment});
   }
 
   render() {

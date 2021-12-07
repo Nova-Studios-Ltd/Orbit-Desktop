@@ -35,6 +35,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-useless-constructor': 'warn',
     '@typescript-eslint/no-empty-interface': 'warn',
+    'promise/no-nesting': 'off',
+    'no-await-in-loop': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

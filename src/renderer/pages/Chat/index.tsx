@@ -2,7 +2,7 @@ import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { GetChannelRecipientsFromUUID, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
+import { Debug, GetChannelRecipientsFromUUID, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -12,7 +12,7 @@ import type { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUse
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
-import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
@@ -53,7 +53,6 @@ export default class ChatPage extends React.Component {
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
-
   }
 
   async preloadChannel() {
@@ -86,20 +85,20 @@ export default class ChatPage extends React.Component {
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
-      console.error('Message canvas initialization error.')
+      Debug.Error('Failed to initialize MessageCanvas', LogContext.Renderer, 'from ChatPage initialization callback');
     }
   }
 
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
       this.setState({ChannelList: channelList });
-      ipcRenderer.on('receivedChannels', (data: string) => this.onReceivedChannels(JSON.parse(data)));
+      ipcRenderer.on('receivedChannels', (data: string[]) => this.onReceivedChannels(data));
       ipcRenderer.on('receivedChannelInfo', (data: IChannelProps) => this.onReceivedChannelInfo(data));
       events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('receivedAddedToChannelEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
-      console.error('Channel list initialization error.')
+      Debug.Error('Failed to initialize ChannelView', LogContext.Renderer, 'from ChatPage initialization callback');
     }
   }
 
@@ -119,7 +118,7 @@ export default class ChatPage extends React.Component {
       canvas.append(message, isUpdate, refreshList);
     }
     else {
-      console.error('(When Appending Message) Canvas is null');
+      Debug.Error('MessageCanvas is null', LogContext.Renderer, 'when appending message from ChatPage');
     }
   }
 
@@ -137,7 +136,7 @@ export default class ChatPage extends React.Component {
       this.preloadChannel();
     }
     else {
-      console.error('(When Adding Channel) ChannelList is null');
+      Debug.Error('ChannelView is null', LogContext.Renderer, 'when appending channel from ChatPage');
     }
   }
 
@@ -175,10 +174,24 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  sendMessage(message: string) {
-    if (message.length > 0)
+  async sendMessage(message: string, attachments: string[]) {
+    if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
-      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message);
+      const attachmentIds = [] as string[];
+      new Promise((resolve, reject) => {
+        attachments.forEach(async (file, index, array) => {
+          Debug.Log(file, LogContext.Renderer);
+          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, file);
+          Debug.Log(id, LogContext.Renderer);
+          if (id.length > 0) attachmentIds.push(id);
+          if (index === array.length -1) resolve(true);
+        });
+      }).then(() => {
+        ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, attachmentIds);
+      });
+    }
+    else if (message.length > 0) {
+      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, []);
     }
   }
 
@@ -246,7 +259,7 @@ export default class ChatPage extends React.Component {
   navigationDrawerItemClicked(event: any) {
     switch (event.target.name) {
       case 'chat':
-        console.log("WORKS");
+        new AppNotification(new NotificationStruct('Navigation', 'Navigating to Chat page', false, NotificationStatusType.info, NotificationAudienceType.app)).show();
         break;
     }
   }

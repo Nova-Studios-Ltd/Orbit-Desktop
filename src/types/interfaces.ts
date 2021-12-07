@@ -85,7 +85,16 @@ export interface IMessageProps {
   author: string,
   content: string,
   timestamp: string,
-  avatar: string
+  avatar: string,
+  attachments: IAttachmentProps[]
+}
+
+export interface IAttachmentProps {
+  contentUrl: string,
+  filename: string,
+  size: number,
+  contentWidth: number,
+  contentHeight: number
 }
 
 export interface IMessageImageProps {
@@ -164,6 +173,10 @@ export interface IHybridListItem {
   text: string,
   icon: any,
   onClick: Function
+}
+
+export interface IFileUploadDialog {
+
 }
 
 export interface IFormDropdownProps {
@@ -250,12 +263,14 @@ export interface IMessageState {
   isEditing: boolean,
   hasNonLinkText: boolean,
   links: Array<string>,
+  attachments: string[],
   anchorEl: any,
   open: boolean
 }
 
 export interface IMessageInputState {
-  message: string
+  message: string,
+  attachments: string[]
 }
 
 export interface IMessageCanvasState {
@@ -265,6 +280,10 @@ export interface IMessageCanvasState {
 export interface IUserDropdownMenuState {
   anchorEl: any,
   open: boolean
+}
+
+export interface ISettingsPageState {
+  confirmUserAccountDeletionDialogOpen: boolean
 }
 
 // Implementation Prototypes

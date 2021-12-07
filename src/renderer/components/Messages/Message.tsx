@@ -3,7 +3,7 @@ import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent } from 'types/interfaces';
+import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent, IAttachmentProps } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from '../Form/FormTextField';
@@ -100,6 +100,7 @@ export default class Message extends React.Component {
   author_UUID: string;
   author: string;
   content: string;
+  attachments: IAttachmentProps[];
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
@@ -110,6 +111,7 @@ export default class Message extends React.Component {
     this.author_UUID = props.author_UUID;
     this.author = props.author || 'Unknown';
     this.content = props.content || 'Message';
+    this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.avatar = props.avatar;
 
@@ -118,6 +120,7 @@ export default class Message extends React.Component {
       isEditing: false,
       hasNonLinkText: false,
       links: [],
+      attachments: [], 
       anchorEl: null,
       open: false
     }
@@ -177,13 +180,32 @@ export default class Message extends React.Component {
   }
 
   async componentDidMount() {
-    let hasNonLinkText = false;
-    let links = this.content.match(/(https:\/\/[\S]*)/g);
+    let containsNonLinkText = false;
+    const links = this.content.match(/(https:\/\/[\S]*)/g);
+    /*if (links == null && this.attachments.length > 0) { 
+      links = [] as Array<string>;
+    }*/
+    const attachmentContent = [];
+    for (let a = 0; a < this.attachments.length; a++) {
+      const attachment = this.attachments[a].contentUrl;
+      if (await this.checkImageHeader(attachment)) {
+        attachmentContent.push(new MessageContent({type: 'image', url: attachment}));
+      }
+      else if(await this.checkVideoHeader(attachment)) {
+        attachmentContent.push(new MessageContent({type: 'video', url: attachment}));
+      }
+    }
+
     if (links == null) {
-      this.setState({hasNonLinkText: true});
+      this.setState({hasNonLinkText: true, attachments: attachmentContent});
       return;
     }
-    let messageLinks = [] as Array<MessageContent>;
+
+    /*for (let a = 0; a < this.attachments.length; a++) {
+      links.push(this.attachments[a].contentUrl);
+    }*/
+
+    const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
       if (this.imageURL(link) || await this.checkImageHeader(link)) {
@@ -196,10 +218,10 @@ export default class Message extends React.Component {
         messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
       }
       else {
-        hasNonLinkText = true;
+        containsNonLinkText = true;
       }
     }
-    this.setState({links: messageLinks, hasNonLinkText: hasNonLinkText});
+    this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText});
   }
 
   componentDidUpdate() {
@@ -267,13 +289,16 @@ export default class Message extends React.Component {
   }
 
   submitEditedMessage() {
-    ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
-      if (result) {
-        new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
-      } else {
-        new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
-      }
-    });
+    if (this.state.editedMessage.length > 0) {
+      ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
+        if (result) {
+          new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+        } else {
+          new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+        }
+      });
+    }
+
     this.resetMessageEdit();
   }
 
@@ -303,6 +328,13 @@ export default class Message extends React.Component {
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
         messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+    });
+
+    this.state.attachments.forEach(link => {
+      if (link.type == 'image')
+        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'video')
+        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
     });
 
     return (
