@@ -127,7 +127,6 @@ ipcMain.handle('getUserUUID', async (_event, username: string, discriminator: st
 
 ipcMain.handle('retrieveChannelName', async (_event, uuid: string) => {
   const resp = await QueryWithAuthentication(`/Channel/${uuid}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return (<IChannelProps>resp.payload).channelName;
   return 'Failed to get channel name'
 });
