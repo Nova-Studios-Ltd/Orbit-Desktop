@@ -1,7 +1,8 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import Credentials from '../structs/Credentials';
-import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
+import { DebugMain } from '../shared/DebugLogger';
+import { ChannelType, ContentType, FormAuthStatusType, LogType, LogContext } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie } from './NCAPI';
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
