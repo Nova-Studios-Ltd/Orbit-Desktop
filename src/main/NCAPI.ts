@@ -1,18 +1,38 @@
-import { net, session } from 'electron';
-
+import { session } from 'electron';
 import { createReadStream } from 'fs';
 import Axios from 'axios';
 import FormData from 'form-data';
-import https from 'https';
+import { ContentType } from '../types/enums';
 
 
-import { ContentType, LogContext, WebSocketMethod } from '../types/enums';
-import { DebugMain } from '../shared/DebugLogger';
+export class NCAPIResponse {
+  status: number | undefined;
+  statusText: string | undefined;
+  error: unknown | undefined;
+  payload: unknown | undefined;
 
-const { request } = net;
+  constructor(status?: number | undefined, statusText?: string | undefined, payload?: unknown | undefined, error?: unknown | undefined) {
+    this.status = status || -1;
+    this.statusText = statusText || '';
+    this.error = error;
+    this.payload = payload;
+  }
+}
 
-export function QueryWithAuthentication(endpoint: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void), fail: ((error: Error) => void)=()=>{}) {
-  const re = request({
+async function RetreiveToken() : Promise<string> {
+  const cookie = (await session.defaultSession.cookies.get({name: 'userData'}))[0].value;
+  const { token } = JSON.parse(cookie);
+  return token;
+}
+
+export async function SetCookie(cookieName: string, cookieData: string) : Promise<boolean> {
+  return new Promise((resolve) => {
+    session.defaultSession.cookies.set({url: 'http://localhost', name: cookieName, value: cookieData, expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => resolve(true)).catch(() => resolve(false))
+  });
+}
+
+export async function QueryWithAuthentication(endpoint: string) : Promise<NCAPIResponse> {
+  /*const re = request({
     method: WebSocketMethod.GET,
     url: `https://api.novastudios.tk/${endpoint}`
   });
@@ -30,11 +50,24 @@ export function QueryWithAuthentication(endpoint: string, success: ((response: E
     });
     re.end();
     return true;
-  }).catch(fail);
+  }).catch(fail);*/
+
+  try {
+    const token = await RetreiveToken();
+    const resp = await Axios.get(`https://api.novastudios.tk/${endpoint}`, {
+      headers: {
+        'Authorization': token
+      }
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
 }
 
-export function PostWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
-  const re = request({
+export async function PostWithAuthentication(endpoint: string, content_type: ContentType, payload: string) : Promise<NCAPIResponse> {
+  /*const re = request({
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
     //url: `https://localhost:5555/${endpoint}`
@@ -57,11 +90,25 @@ export function PostWithAuthentication(endpoint: string, content_type: ContentTy
       re.write(payload);
     re.end();
     return true;
-  }).catch(fail);
+  }).catch(fail);*/
+
+  try {
+    const token = await RetreiveToken();
+    const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        'Authorization': token,
+        'Content-Type': content_type
+      }
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
 }
 
-export function PostWithoutAuthentication(endpoint: string, content_type: ContentType, payload: string, success: ((response: Electron.IncomingMessage, json: Buffer) => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
-  const re = request({
+export async function PostWithoutAuthentication(endpoint: string, content_type: ContentType, payload: string) : Promise<NCAPIResponse> {
+  /*const re = request({
     method: WebSocketMethod.POST,
     url: `https://api.novastudios.tk/${endpoint}`
   });
@@ -77,11 +124,22 @@ export function PostWithoutAuthentication(endpoint: string, content_type: Conten
   });
   if (payload != '')
     re.write(payload);
-  re.end();
+  re.end();*/
+  try {
+    const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        'Content-Type': content_type
+      }
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
 }
 
-export function DeleteWithAuthentication(endpoint: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
-  const re = request({
+export async function DeleteWithAuthentication(endpoint: string) : Promise<NCAPIResponse> {
+  /*const re = request({
     method: WebSocketMethod.DELETE,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
@@ -100,11 +158,23 @@ export function DeleteWithAuthentication(endpoint: string, success: (() => void)
     });
     re.end();
     return true;
-  }).catch(fail);
+  }).catch(fail);*/
+  try {
+    const token = await RetreiveToken();
+    const resp = await Axios.delete(`https://api.novastudios.tk/${endpoint}`, {
+      headers: {
+        'Authorization': token
+      }
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
 }
 
-export function PutWithAuthentication(endpoint: string, content_type: ContentType, payload: string, success: (() => void)=()=>{}, fail: ((error: Error) => void)=()=>{}) {
-  const re = request({
+export async function PutWithAuthentication(endpoint: string, content_type: ContentType, payload: string) : Promise<NCAPIResponse> {
+  /*const re = request({
     method: WebSocketMethod.PUT,
     url: `https://api.novastudios.tk/${endpoint}`,
   });
@@ -121,33 +191,45 @@ export function PutWithAuthentication(endpoint: string, content_type: ContentTyp
       fail(error);
     });
     if (payload != '')
-      re.write(payload)
+      re.write(payload);
     re.end();
     return true;
-  }).catch(fail);
+  }).catch(fail);*/
+
+
+  try {
+    const token = await RetreiveToken();
+    const resp = await Axios.put(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        'Authorization': token,
+        'Content-Type': content_type
+      }
+    });
+    if (resp.status == 200) return resp.data;
+    return resp.statusText;
+  }
+  catch (e) {
+    return e;
+  }
 }
 
-export function PostFileWithAuthentication(endpoint: string, file: string, success: ((response: string) => void)=()=>{}, fail: ((reason: any)=>void)=()=>{}) {
-  session.defaultSession.cookies.get({name: 'userData'}).then((userData) => {
-    const { token } = JSON.parse(userData[0].value);
-    const formData = new FormData();
-      formData.append('file', createReadStream(file))
-      Axios.post(`https://api.novastudios.tk/${endpoint}`, formData, {
-        headers: {
-          ...formData.getHeaders(),
-          'Authorization': token
-        },
-        maxBodyLength: 20971520,
-        maxContentLength: 20971520
-      }).then((resp) => {
-        if (resp.status != 200) {
-          DebugMain.Error(resp.status.toString(), LogContext.Main, 'response code from PostFileWithAuthentication');
-          fail(resp.status);
-          return;
-        }
-        success(resp.data);
-      }).catch((reas) => {
-        fail(reas);
-      });
-  });
+export async function PostFileWithAuthentication(endpoint: string, file: string) {
+  try {
+    const payload = new FormData();
+    payload.append('file', createReadStream(file));
+    const token = await RetreiveToken();
+    const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        ...payload.getHeaders(),
+        'Authorization': token
+      },
+      maxBodyLength: 20971520,
+      maxContentLength: 20971520
+    });
+    if (resp.status == 200) return resp.data;
+    return resp.statusText;
+  }
+  catch (e) {
+    return e;
+  }
 }
