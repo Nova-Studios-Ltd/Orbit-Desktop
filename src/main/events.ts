@@ -50,7 +50,6 @@ ipcMain.on('requestChannelData', async (event, channel_uuid: string) => {
 
 ipcMain.on('requestChannelMessagePreview', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`Message/${channel_uuid}/Messages`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelMessagePreview', resp.payload);
 });
 
