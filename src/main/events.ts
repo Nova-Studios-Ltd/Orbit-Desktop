@@ -80,7 +80,6 @@ ipcMain.on('toast', (_, notification: INotificationProps) => {
 
 ipcMain.on('requestUserData', async (event, user_uuid: string) => {
   const resp = await QueryWithAuthentication(`User/${user_uuid}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedUserData', resp.payload);
 });
 
