@@ -121,7 +121,6 @@ ipcMain.on('removeUserFromChannel', async (_event, data: any) => {
 
 ipcMain.handle('getUserUUID', async (_event, username: string, discriminator: string) => {
   const resp = await QueryWithAuthentication(`/User/${username}/${discriminator}/UUID`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
   return 'UNKNOWN';
 });
