@@ -178,7 +178,7 @@ export default class ChatPage extends React.Component {
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
       const attachmentIds = [] as string[];
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         attachments.forEach(async (file, index, array) => {
           const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, file);
           if (id.length > 0) attachmentIds.push(id);
