@@ -18,6 +18,7 @@ import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
+import MessageAttachment from 'structs/MessageAttachment';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -174,14 +175,14 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  async sendMessage(message: string, attachments: string[]) {
+  async sendMessage(message: string, attachments: MessageAttachment[]) {
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
       const attachmentIds = [] as string[];
       new Promise((resolve) => {
-        attachments.forEach(async (file, index, array) => {
-          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, file);
-          if (id.length > 0) attachmentIds.push(id);
+        attachments.forEach(async (attachment, index, array) => {
+          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, attachment);
+          if (id.length > 0 && id != undefined) attachmentIds.push(id);
           if (index === array.length -1) resolve(true);
         });
       }).then(() => {

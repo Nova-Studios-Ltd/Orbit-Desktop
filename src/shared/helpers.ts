@@ -17,8 +17,9 @@ export function Navigate(path: string, data: any)
   try {
     history.push(path, data);
   }
-  catch (error) {
-    Debug.Error(error, LogContext.Renderer, 'when pushing state to Router history (navigating)');
+  catch (error: unknown) {
+    if (error instanceof Error)
+      Debug.Error(error.message, LogContext.Renderer, 'when pushing state to Router history (navigating)');
   }
 }
 
@@ -43,21 +44,6 @@ export function getCookie(cname: string) {
   return '';
 }
 
-export function ConductLogin() {
-  if (GetHistoryState() != null && GetHistoryState().failed) return;
-  if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
-    Navigate('/chat', null);
-    ipcRenderer.send('requestChannels');
-
-    const { uuid } = GLOBALS.userData;
-
-    ipcRenderer.send('requestUserData', uuid);
-    HandleWebsocket();
-  }
-  else {
-    console.warn('UUID and Token not found, returning to login page.');
-  }
-}
 let reconnectAttempts = 1;
 function HandleWebsocket() {
   const { token, uuid } = GLOBALS.userData;
@@ -124,13 +110,29 @@ function HandleWebsocket() {
   };
 }
 
+export function ConductLogin() {
+  if (GetHistoryState() != null && GetHistoryState().failed) return;
+  if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
+    Navigate('/chat', null);
+    ipcRenderer.send('requestChannels');
+
+    const { uuid } = GLOBALS.userData;
+
+    ipcRenderer.send('requestUserData', uuid);
+    HandleWebsocket();
+  }
+  else {
+    console.warn('UUID and Token not found, returning to login page.');
+  }
+}
+
 export function LoadMessageFeed(channelData: string) {
   const messages = JSON.parse(channelData);
   return messages;
 }
 
 export async function Authenticate(data: Credentials) {
-  return await ipcRenderer.invoke('beginAuth', data, window.location.origin);
+  return ipcRenderer.invoke('beginAuth', data, window.location.origin);
 }
 
 export function SetAuth() {
@@ -149,11 +151,11 @@ export function SetAuth() {
 
 export function RemoveCachedCredentials() {
   ipcRenderer.send('logout');
-  GLOBALS.userData = new UserData(null);
+  GLOBALS.userData = new UserData(undefined);
 }
 
 export async function Register(data: Credentials) {
-  return await ipcRenderer.invoke('register', data);
+  return ipcRenderer.invoke('register', data);
 }
 
 export function setDefaultChannel(channelID: string) {
@@ -161,9 +163,9 @@ export function setDefaultChannel(channelID: string) {
 }
 
 export async function copyToClipboard(text: string) {
-  return await ipcRenderer.invoke('copyToClipboard', text);
+  return ipcRenderer.invoke('copyToClipboard', text);
 }
 
 export async function GetChannelRecipientsFromUUID(uuid: string) {
-  return await ipcRenderer.invoke('retrieveChannelName', uuid);
+  return ipcRenderer.invoke('retrieveChannelName', uuid);
 }

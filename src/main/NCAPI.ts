@@ -2,8 +2,11 @@ import { session } from 'electron';
 import { createReadStream } from 'fs';
 import Axios from 'axios';
 import FormData from 'form-data';
+import { FormData as FormDataNode } from 'formdata-node'
+import {FormDataEncoder} from "form-data-encoder"
+import { Readable } from 'stream';
+import https from 'https';
 import { ContentType } from '../types/enums';
-
 
 export class NCAPIResponse {
   status: number | undefined;
@@ -123,6 +126,61 @@ export async function PostFileWithAuthentication(endpoint: string, file: string)
     return new NCAPIResponse(resp.status, resp.statusText, resp.data);
   }
   catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
+}
+
+class BlobFromStream {
+  #stream: Readable;
+  size: number;
+
+  constructor(stream: Readable, size: number) {
+    this.#stream = stream;
+    this.size = size;
+  }
+
+  stream() {
+    return this.stream;
+  }
+
+  get[Symbol.toStringTag]() {
+    return "Blob";
+  }
+}
+
+export async function PostBufferWithAuthentication(endpoint: string, buffer: Buffer) : Promise<NCAPIResponse> {
+  try {
+    const payload = new FormData();
+
+    console.log(buffer.length);
+    const stream = new Readable({
+      read() {
+        this.push(buffer);
+        this.push(null);
+      }
+    });
+
+
+    /*const payload = new FormDataNode();
+    const encoder = new FormDataEncoder(payload);*/
+
+
+    payload.append('file', buffer.toString('binary'), { filename: 'unknown.png', contentType: 'image/png', knownLength: buffer.toString().length });
+    //payload.append('file', stream, { filename: 'unknown.png', contentType: 'image/png', knownLength: buffer.toString().length });
+    const token = await RetreiveToken();
+    const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        ...payload.getHeaders(),
+        'Authorization': token
+      },
+      maxBodyLength: 20971520,
+      maxContentLength: 20971520
+    });
+    console.log(resp.status);
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    console.log(e);
     return new NCAPIResponse(undefined, undefined, undefined, e);
   }
 }

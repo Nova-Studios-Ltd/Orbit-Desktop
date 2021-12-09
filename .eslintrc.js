@@ -37,6 +37,7 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 'warn',
     'promise/no-nesting': 'off',
     'no-await-in-loop': 'off',
+    'react/no-access-state-in-setstate': 'warn'
   },
   parserOptions: {
     ecmaVersion: 2020,

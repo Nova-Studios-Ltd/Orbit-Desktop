@@ -1,9 +1,10 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
+import MessageAttachment from 'structs/MessageAttachment';
 import Credentials from '../structs/Credentials';
 import { DebugMain } from '../shared/DebugLogger';
 import { ChannelType, ContentType, FormAuthStatusType, LogType, LogContext } from '../types/enums';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication } from './NCAPI';
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
@@ -75,6 +76,15 @@ ipcMain.handle('copyToClipboard', async (_, data: string) => {
   }
 });
 
+ipcMain.handle('copyImageFromClipboard', async () => {
+  try {
+    return clipboard.readImage().toPNG().toString('binary');
+  }
+  catch{
+    return null;
+  }
+});
+
 ipcMain.on('toast', (_, notification: INotificationProps) => {
   new Notification({ title: notification.title, body: notification.body }).show();
 });
@@ -138,8 +148,10 @@ ipcMain.on('pickUploadFiles', (event) => {
   }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
-ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: string) => {
-  return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file);
+ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: MessageAttachment) => {
+  if (!file.isBuffer)
+    return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file.contents);
+  return PostBufferWithAuthentication(`Media/Channel/${channel_uuid}`, Buffer.from(file.contents));
 });
 
 ipcMain.on('deleteAccount', async (event, userID: string) => {
