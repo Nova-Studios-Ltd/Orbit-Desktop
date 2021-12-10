@@ -10,6 +10,7 @@ import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import type Channel from 'renderer/components/Channels/Channel';
 import type Message from 'renderer/components/Messages/Message';
 import MessageAttachment from 'structs/MessageAttachment';
+import MessageContent from 'structs/MessageContent';
 
 // Page Props
 
@@ -263,8 +264,8 @@ export interface IMessageState {
   editedMessage: string,
   isEditing: boolean,
   hasNonLinkText: boolean,
-  links: Array<string>,
-  attachments: string[],
+  links: MessageContent[],
+  attachments: MessageContent[],
   anchorEl: any,
   open: boolean
 }

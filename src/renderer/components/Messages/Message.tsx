@@ -7,6 +7,7 @@ import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent,
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from '../Form/FormTextField';
+import MessageContent from 'structs/MessageContent';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -80,17 +81,6 @@ export class MessageEmbed extends React.Component {
           </Card>
       </div>
     );
-  }
-}
-
-class MessageContent extends React.Component {
-  type: string;
-  url: string;
-
-  constructor(props: IMessageContent) {
-    super(props);
-    this.type = props.type;
-    this.url = props.url;
   }
 }
 
@@ -218,10 +208,10 @@ export default class Message extends React.Component {
         messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
       }
       else if (this.spotifyTrackURL(link)) {
-        messageLinks.push(new MessageContent({type: 'youtube', url: `https://open.spotify.com/embed/track/${this.getSpotifyTrackId(link)}`}));
+        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/track/${this.getSpotifyTrackId(link)}`}));
       }
       else if (this.spotifyPlaylistURL(link)) {
-        messageLinks.push(new MessageContent({type: 'youtube', url: `https://open.spotify.com/embed/playlist/${this.getSpotifyPlaylistId(link)}`}));
+        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/playlist/${this.getSpotifyPlaylistId(link)}`}));
       }
       else {
         containsNonLinkText = true;
@@ -353,6 +343,8 @@ export default class Message extends React.Component {
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
+        messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'spotify')
         messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
     });
 
