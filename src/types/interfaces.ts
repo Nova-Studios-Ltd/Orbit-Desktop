@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import type { FormEventHandler, MouseEvent, ReactChildren } from 'react'
-import type { SelectChangeEvent } from '@mui/material';
+import type { SelectChangeEvent, Theme } from '@mui/material';
+import type { ClassNameMap, Styles } from '@mui/styles';
 import type FormStatusTuple from 'structs/FormStatusTypes';
 import type { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
 import type UserData from 'structs/UserData';
@@ -9,6 +10,7 @@ import type ChannelView from 'renderer/components/Channels/ChannelView';
 import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import type Channel from 'renderer/components/Channels/Channel';
 import type Message from 'renderer/components/Messages/Message';
+import { DefaultTheme } from '@mui/system';
 
 // Page Props
 
@@ -222,6 +224,11 @@ export interface IRegisterFormProps extends IAuthFormProps {
 
 // State
 
+export interface IAppState {
+  theme: Theme,
+  styles: Styles<DefaultTheme, ClassNameMap<"@global">>
+}
+
 export interface IChatPageState {
   CanvasObject?: MessageCanvas,
   ChannelList?: ChannelView,
@@ -283,7 +290,8 @@ export interface IUserDropdownMenuState {
 }
 
 export interface ISettingsPageState {
-  confirmUserAccountDeletionDialogOpen: boolean
+  confirmUserAccountDeletionDialogOpen: boolean,
+  darkThemeEnabled: boolean
 }
 
 // Implementation Prototypes
