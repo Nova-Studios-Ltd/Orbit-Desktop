@@ -266,6 +266,7 @@ export default class ChatPage extends React.Component {
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
+    GLOBALS.loggedOut = true;
     Navigate('/login', null);
   }
 
