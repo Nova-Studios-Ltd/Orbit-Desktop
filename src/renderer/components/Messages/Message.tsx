@@ -94,6 +94,7 @@ export default class Message extends React.Component {
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
+  onUpdateCallback: void;
 
   constructor(props: IMessageProps) {
     super(props);
@@ -104,6 +105,7 @@ export default class Message extends React.Component {
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.avatar = props.avatar;
+    this.onUpdateCallback = props.onUpdate;
 
     this.state = {
       editedMessage: '',
@@ -218,6 +220,7 @@ export default class Message extends React.Component {
       }
     }
     this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText});
+    this.onUpdateCallback();
   }
 
   async checkImageHeader(url: string) {

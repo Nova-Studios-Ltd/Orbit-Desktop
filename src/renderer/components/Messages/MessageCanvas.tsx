@@ -16,6 +16,8 @@ export default class MessageCanvas extends React.Component {
     this.edit = this.edit.bind(this);
     this.clear = this.clear.bind(this);
     this.isMessagesListEmpty = this.isMessagesListEmpty.bind(this);
+    this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.messageUpdated = this.messageUpdated.bind(this);
 
     this.bottomDivRef = React.createRef();
 
@@ -72,12 +74,20 @@ export default class MessageCanvas extends React.Component {
     return this.state.messages.length < 1;
   }
 
-  componentDidUpdate() {
+  scrollToBottom() {
     this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  messageUpdated() {
+    this.scrollToBottom();
+  }
+
   render() {
-    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.message_Id} {...messageProps} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.message_Id} onUpdate={this.messageUpdated} {...messageProps} />));
     const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
 
     return (

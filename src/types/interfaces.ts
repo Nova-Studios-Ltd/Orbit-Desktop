@@ -88,7 +88,8 @@ export interface IMessageProps {
   content: string,
   timestamp: string,
   avatar: string,
-  attachments: IAttachmentProps[]
+  attachments: IAttachmentProps[],
+  onUpdate: void
 }
 
 export interface IAttachmentProps {
