@@ -7,6 +7,10 @@
   overflow-y: auto;
 }
 
+.MessageCanvas_Bottom {
+  height: 0.1rem;
+}
+
 .Message {
   padding: 0.5rem;
   display: flex;

@@ -1,3 +1,4 @@
+import { throwStatement } from '@babel/types';
 import { Typography } from '@mui/material';
 import React from 'react';
 import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
@@ -5,6 +6,7 @@ import Message from './Message';
 
 export default class MessageCanvas extends React.Component {
   state: IMessageCanvasState;
+  bottomDivRef: Ref<HTMLDivElement>;
 
   constructor(props: IMessageCanvasProps) {
     super(props);
@@ -14,6 +16,8 @@ export default class MessageCanvas extends React.Component {
     this.edit = this.edit.bind(this);
     this.clear = this.clear.bind(this);
     this.isMessagesListEmpty = this.isMessagesListEmpty.bind(this);
+
+    this.bottomDivRef = React.createRef();
 
     this.state = {
       messages: []
@@ -68,13 +72,20 @@ export default class MessageCanvas extends React.Component {
     return this.state.messages.length < 1;
   }
 
+  componentDidUpdate() {
+    this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+  }
+
   render() {
     const messagesToRender = this.state.messages.map((messageProps, key) => (<Message key={messageProps.message_Id} {...messageProps} />));
     const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
 
     return (
       <div className='MessageCanvas'>
-        {messagesToRender}
+        <div>
+          {messagesToRender}
+        </div>
+        <div className='MessageCanvas_Bottom' ref={this.bottomDivRef}/>
         <Typography className={messagesEmptyPromptClassNames} variant='subtitle1'>No Messages Yet</Typography>
       </div>
     );

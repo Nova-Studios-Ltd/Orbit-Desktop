@@ -120,7 +120,7 @@ export default class Message extends React.Component {
       isEditing: false,
       hasNonLinkText: false,
       links: [],
-      attachments: [], 
+      attachments: [],
       anchorEl: null,
       open: false
     }
@@ -182,7 +182,7 @@ export default class Message extends React.Component {
   async componentDidMount() {
     let containsNonLinkText = false;
     const links = this.content.match(/(https:\/\/[\S]*)/g);
-    /*if (links == null && this.attachments.length > 0) { 
+    /*if (links == null && this.attachments.length > 0) {
       links = [] as Array<string>;
     }*/
     const attachmentContent = [];
@@ -222,11 +222,6 @@ export default class Message extends React.Component {
       }
     }
     this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText});
-  }
-
-  componentDidUpdate() {
-    if (this.divRef != null)
-      this.divRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
   async checkImageHeader(url: string) {
