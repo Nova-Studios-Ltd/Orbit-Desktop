@@ -9,6 +9,8 @@ import type ChannelView from 'renderer/components/Channels/ChannelView';
 import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import type Channel from 'renderer/components/Channels/Channel';
 import type Message from 'renderer/components/Messages/Message';
+import MessageAttachment from 'structs/MessageAttachment';
+import MessageContent from 'structs/MessageContent';
 
 // Page Props
 
@@ -56,7 +58,7 @@ export interface IFormTextFieldProps {
   autoFocus?: boolean,
   required?: boolean,
   sensitive?: boolean,
-  onChange?: Function
+  onChange?: () => void
 }
 
 export interface IFormStatusFieldProps {
@@ -108,7 +110,7 @@ export interface IMessageCanvasProps {
 
 export interface IMessageInputProps {
   init: Function,
-  onMessagePush: Function
+  onMessagePush: (message: string, attachments: MessageAttachment[]) => void
 }
 
 export interface IMessageContent {
@@ -262,15 +264,15 @@ export interface IMessageState {
   editedMessage: string,
   isEditing: boolean,
   hasNonLinkText: boolean,
-  links: Array<string>,
-  attachments: string[],
+  links: MessageContent[],
+  attachments: MessageContent[],
   anchorEl: any,
   open: boolean
 }
 
 export interface IMessageInputState {
   message: string,
-  attachments: string[]
+  attachments: MessageAttachment[]
 }
 
 export interface IMessageCanvasState {

@@ -4,13 +4,10 @@ import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import type { IElectronRendererWindow } from 'types/interfaces';
-import { LogContext } from 'types/enums';
-import { DebugRendererHandler } from 'shared/DebugLogger';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
-export const Debug = new DebugRendererHandler(ipcRenderer);
 
 export function Navigate(path: string, data: any)
 {
@@ -18,7 +15,7 @@ export function Navigate(path: string, data: any)
     history.push(path, data);
   }
   catch (error) {
-    Debug.Error(error, LogContext.Renderer, 'when pushing state to Router history (navigating)');
+    console.error(error);
   }
 }
 
@@ -28,9 +25,9 @@ export function GetHistoryState()
 }
 
 export function getCookie(cname: string) {
-  const name = `${cname}=`;
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const ca = decodedCookie.split(';');
+  let name = cname + '=';
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
   for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
@@ -43,22 +40,8 @@ export function getCookie(cname: string) {
   return '';
 }
 
-export function ConductLogin() {
-  if (GetHistoryState() != null && GetHistoryState().failed) return;
-  if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
-    Navigate('/chat', null);
-    ipcRenderer.send('requestChannels');
-
-    const { uuid } = GLOBALS.userData;
-
-    ipcRenderer.send('requestUserData', uuid);
-    HandleWebsocket();
-  }
-  else {
-    console.warn('UUID and Token not found, returning to login page.');
-  }
-}
 let reconnectAttempts = 1;
+const timestepStates = [1000, 4000, 8000, 12000]
 function HandleWebsocket() {
   const { token, uuid } = GLOBALS.userData;
   const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
@@ -66,7 +49,7 @@ function HandleWebsocket() {
     const event = JSON.parse(message.data);
     switch (event.EventType) {
       case -1:
-        Debug.Log('<Beat>', LogContext.Renderer);
+        console.log('<Beat>');
         break;
       case 0:
         ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
@@ -101,27 +84,44 @@ function HandleWebsocket() {
     }
   };
   socket.onerror = function (error) {
-    Debug.Warn(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`, LogContext.Renderer);
-    if (reconnectAttempts > 4) {
+    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`);
+    if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       Navigate('/Login', { failed: true });
       return;
     }
-    setTimeout(HandleWebsocket, (1000 * reconnectAttempts) * (1000 * reconnectAttempts));
+    setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
     reconnectAttempts++;
   };
-  socket.onopen = function () {
+  socket.onopen = () => {
     reconnectAttempts = 1;
     socket.send(token);
   };
-  socket.onclose = function (event) {
-    console.warn(`Socket closed. Attempting reconnect in ${((1000 * reconnectAttempts) * (1000 * reconnectAttempts)) / 1000}s`);
-    if (reconnectAttempts > 4) {
+  socket.onclose = (event) => {
+    console.warn(`Socket closed. Attempting reconnect in ${reconnectAttempts}s`);
+    if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       Navigate('/Login', { failed: true });
       return;
     }
-    setTimeout(HandleWebsocket, 1000 * reconnectAttempts);
+    setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
     reconnectAttempts++;
   };
+}
+
+export function ConductLogin() {
+  if (GetHistoryState() != null && GetHistoryState().failed) return;
+  if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
+    Navigate('/chat', null);
+    ipcRenderer.send('requestChannels');
+
+    const { uuid } = GLOBALS.userData;
+
+    ipcRenderer.send('requestUserData', uuid);
+    GLOBALS.loggedOut = false;
+    HandleWebsocket();
+  }
+  else {
+    console.warn('UUID and Token not found, returning to login page.');
+  }
 }
 
 export function LoadMessageFeed(channelData: string) {

@@ -7,6 +7,7 @@ import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent,
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from '../Form/FormTextField';
+import MessageContent from 'structs/MessageContent';
 
 export class MessageImage extends React.Component {
   message: string;
@@ -83,17 +84,6 @@ export class MessageEmbed extends React.Component {
   }
 }
 
-class MessageContent extends React.Component {
-  type: string;
-  url: string;
-
-  constructor(props: IMessageContent) {
-    super(props);
-    this.type = props.type;
-    this.url = props.url;
-  }
-}
-
 export default class Message extends React.Component {
   state: IMessageState;
   message_Id: string;
@@ -149,7 +139,7 @@ export default class Message extends React.Component {
         this.setState({ editedMessage: this.content, isEditing: true });
         break;
       case 'copy':
-        await copyToClipboard(this.content).then((result: Boolean) => {
+        await copyToClipboard(this.content).then((result: boolean) => {
           if (result) {
             new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
           }
@@ -217,6 +207,12 @@ export default class Message extends React.Component {
       else if (this.youtubeURL(link)) {
         messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
       }
+      else if (this.spotifyTrackURL(link)) {
+        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/track/${this.getSpotifyTrackId(link)}`}));
+      }
+      else if (this.spotifyPlaylistURL(link)) {
+        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/playlist/${this.getSpotifyPlaylistId(link)}`}));
+      }
       else {
         containsNonLinkText = true;
       }
@@ -234,7 +230,19 @@ export default class Message extends React.Component {
   }
 
   getYoutubeVideoId(url: string) {
-    const m = url.match(/(?<=v=)(.*(?=&)|.*(?=$))|(?<=e\/).*(?=$)/g);
+    const m = url.match(/(?<=v=)(.*(?=&)|.*(?=$)*)|(?<=e\/).*(?=$)/g);
+    if (m == null) return '';
+    return m[0];
+  }
+
+  getSpotifyPlaylistId(url: string) {
+    const m = url.match(/(?<=t\/)(.*(?=\?)|.*(?=$)*)/g);
+    if (m == null) return '';
+    return m[0];
+  }
+
+  getSpotifyTrackId(url: string) {
+    const m = url.match(/(?<=k\/)(.*(?=\?)|.*(?=$)*)/g);
     if (m == null) return '';
     return m[0];
   }
@@ -262,7 +270,15 @@ export default class Message extends React.Component {
   }
 
   youtubeURL(url: string) {
-    return new RegExp(/^(https:\/\/www\.youtube\.com\/[a-zA-z?0-9=&]*)|^(https:\/\/youtu\.be\/[a-zA-z?0-9=&]*)/g).test(url);
+    return new RegExp(/^(https:\/\/www\.youtube\.com\/[a-zA-Z?0-9=&]*)|^(https:\/\/youtu\.be\/[a-zA-z?0-9=&]*)/g).test(url);
+  }
+
+  spotifyTrackURL(url: string) {
+    return new RegExp(/^https:\/\/open\.spotify\.com\/track\/[a-zA-Z?0-9=&/]*/g).test(url);
+  }
+
+  spotifyPlaylistURL(url: string) {
+    return new RegExp(/^https:\/\/open\.spotify\.com\/playlist\/[a-zA-Z?0-9=&/]*/g).test(url);
   }
 
   deleteMessage() {
@@ -322,6 +338,8 @@ export default class Message extends React.Component {
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
+        messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+      else if (link.type == 'spotify')
         messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
     });
 

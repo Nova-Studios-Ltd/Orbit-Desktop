@@ -10,7 +10,8 @@ const GLOBALS = {
   MessageCharacterLimit: 4000,
   isFocused: true,
   theme: Theme.Dark,
-  closeToTray: true
+  closeToTray: true,
+  loggedOut: false
 }
 
 export default GLOBALS;

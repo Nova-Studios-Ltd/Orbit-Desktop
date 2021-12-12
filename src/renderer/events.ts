@@ -1,6 +1,6 @@
 import UserData from 'structs/UserData';
 import GLOBALS from 'shared/globals';
-import { ConductLogin, getCookie, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials } from 'shared/helpers';
+import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationStruct } from 'structs/NotificationProps';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';

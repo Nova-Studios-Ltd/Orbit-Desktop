@@ -1,8 +1,10 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
+import MessageAttachment from 'structs/MessageAttachment';
 import Credentials from '../structs/Credentials';
-import { ChannelType, ContentType, FormAuthStatusType } from '../types/enums';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie } from './NCAPI';
+import { DebugMain } from '../shared/DebugLogger';
+import { ChannelType, ContentType, FormAuthStatusType, LogType, LogContext } from '../types/enums';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication } from './NCAPI';
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
@@ -27,7 +29,6 @@ ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean>
 
 ipcMain.on('requestChannels', async (event) => {
   const resp = await QueryWithAuthentication('/User/Channels');
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannels', <string[]>resp.payload);
 });
 
@@ -38,19 +39,16 @@ ipcMain.on('requestMessage', async (event, channel_uuid: string, message_id: str
 
 ipcMain.on('requestChannelInfo', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`/Channel/${channel_uuid}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelInfo', <IChannelProps>resp.payload);
 });
 
 ipcMain.on('requestChannelData', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelData', <IMessageProps[]>resp.payload, channel_uuid);
 });
 
 ipcMain.on('requestChannelMessagePreview', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`Message/${channel_uuid}/Messages`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelMessagePreview', resp.payload);
 });
 
@@ -60,7 +58,6 @@ ipcMain.on('sendMessageToServer', (_event, channel_uuid: string, contents: strin
 
 ipcMain.on('requestChannelUpdate', async (event, channel_uuid: string, message_id: string) => {
   const resp = await QueryWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelUpdateEvent', <IMessageProps>resp.payload, channel_uuid);
 });
 
@@ -79,13 +76,21 @@ ipcMain.handle('copyToClipboard', async (_, data: string) => {
   }
 });
 
+ipcMain.handle('copyImageFromClipboard', async () => {
+  try {
+    return clipboard.readImage().toPNG().toString('binary');
+  }
+  catch{
+    return null;
+  }
+});
+
 ipcMain.on('toast', (_, notification: INotificationProps) => {
   new Notification({ title: notification.title, body: notification.body }).show();
 });
 
 ipcMain.on('requestUserData', async (event, user_uuid: string) => {
   const resp = await QueryWithAuthentication(`User/${user_uuid}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedUserData', resp.payload);
 });
 
@@ -127,14 +132,12 @@ ipcMain.on('removeUserFromChannel', async (_event, data: any) => {
 
 ipcMain.handle('getUserUUID', async (_event, username: string, discriminator: string) => {
   const resp = await QueryWithAuthentication(`/User/${username}/${discriminator}/UUID`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
   return 'UNKNOWN';
 });
 
 ipcMain.handle('retrieveChannelName', async (_event, uuid: string) => {
   const resp = await QueryWithAuthentication(`/Channel/${uuid}`);
-  console.log(resp.payload);
   if (resp.status == 200 && resp.payload != undefined) return (<IChannelProps>resp.payload).channelName;
   return 'Failed to get channel name'
 });
@@ -145,8 +148,10 @@ ipcMain.on('pickUploadFiles', (event) => {
   }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
-ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: string) => {
-  return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file);
+ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: MessageAttachment) => {
+  if (!file.isBuffer)
+    return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file.contents);
+  return PostBufferWithAuthentication(`Media/Channel/${channel_uuid}`, Buffer.from(file.contents));
 });
 
 ipcMain.on('deleteAccount', async (event, userID: string) => {

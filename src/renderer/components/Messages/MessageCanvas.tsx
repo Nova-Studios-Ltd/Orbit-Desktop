@@ -1,6 +1,6 @@
 import { throwStatement } from '@babel/types';
 import { Typography } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
 import Message from './Message';
 
@@ -29,9 +29,9 @@ export default class MessageCanvas extends React.Component {
     {
       const oldState = this.state;
       if (isUpdate)
-        oldState.messages.push(message);
+        oldState.messages.push(new Message(message));
       else
-        oldState.messages.unshift(message);
+        oldState.messages.unshift(new Message(message));
 
       if (refreshList)
         this.setState({messages: []});
@@ -43,23 +43,23 @@ export default class MessageCanvas extends React.Component {
   }
 
   remove(id: string) {
-    let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.message_Id === id);
+    const oldState = this.state;
+    const index = oldState.messages.findIndex(e => e.message_Id === id);
     if (index > -1) {
       oldState.messages.splice(index, 1);
-      this.setState({messages: []});
+      //this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
   }
 
   edit(id: string, newMessage: string) {
-    let oldState = this.state;
-    let index = oldState.messages.findIndex(e => e.message_Id == id);
+    const oldState = this.state;
+    const index = oldState.messages.findIndex(e => e.message_Id == id);
     if (index > -1) {
-      let m = oldState.messages[index];
+      const m = oldState.messages[index];
       m.content = newMessage;
       oldState.messages[index] = m;
-      this.setState({messages: []});
+      //this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
   }
@@ -77,7 +77,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((messageProps, key) => (<Message key={messageProps.message_Id} {...messageProps} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.message_Id} {...messageProps} />));
     const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
 
     return (

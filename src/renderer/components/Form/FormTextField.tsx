@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React from 'react';
 import { TextField } from '@mui/material';
 import type { IFormTextFieldProps } from 'types/interfaces';
 
@@ -10,7 +10,7 @@ export default class FormTextField extends React.Component {
   autoFocus?: boolean;
   required?: boolean;
   sensitive?: boolean;
-  onChange?: Function;
+  onChange?: () => void;
 
   constructor(props: IFormTextFieldProps) {
     super(props);
@@ -21,7 +21,7 @@ export default class FormTextField extends React.Component {
     this.autoFocus = props.autoFocus || false;
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
-    this.onChange = props.onChange || function(){};
+    this.onChange = props.onChange || undefined;
   }
 
   render() {
