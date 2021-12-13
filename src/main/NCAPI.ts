@@ -130,47 +130,19 @@ export async function PostFileWithAuthentication(endpoint: string, file: string)
   }
 }
 
-class BlobFromStream {
-  #stream: Readable;
-  size: number;
-
-  constructor(stream: Readable, size: number) {
-    this.#stream = stream;
-    this.size = size;
-  }
-
-  stream() {
-    return this.stream;
-  }
-
-  get[Symbol.toStringTag]() {
-    return "Blob";
-  }
-}
 
 export async function PostBufferWithAuthentication(endpoint: string, buffer: Buffer) : Promise<NCAPIResponse> {
   try {
     const payload = new FormData();
 
-    console.log(buffer.length);
-    const stream = new Readable({
-      read() {
-        this.push(buffer);
-        this.push(null);
-      }
-    });
 
 
-    /*const payload = new FormDataNode();
-    const encoder = new FormDataEncoder(payload);*/
-
-
-    payload.append('file', buffer.toString('binary'), { filename: 'unknown.png', contentType: 'image/png', knownLength: buffer.toString().length });
+    payload.append('file', buffer, { filename: 'unknown.png'});
     //payload.append('file', stream, { filename: 'unknown.png', contentType: 'image/png', knownLength: buffer.toString().length });
     const token = await RetreiveToken();
     const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
       headers: {
-        ...payload.getHeaders(),
+        'Content-Type': `multipart/form-data; boundary=${payload.getBoundary()}`,
         'Authorization': token
       },
       maxBodyLength: 20971520,

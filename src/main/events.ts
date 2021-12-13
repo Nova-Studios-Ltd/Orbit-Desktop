@@ -52,8 +52,9 @@ ipcMain.on('requestChannelMessagePreview', async (event, channel_uuid: string) =
   if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedChannelMessagePreview', resp.payload);
 });
 
-ipcMain.on('sendMessageToServer', (_event, channel_uuid: string, contents: string, attachments: string[]) => {
-  PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: attachments}));
+ipcMain.on('sendMessageToServer', async (_event, channel_uuid: string, contents: string, attachments: string[]) => {
+  console.log(JSON.stringify({Content: contents, Attachments: attachments}));
+  console.log(await PostWithAuthentication(`Message/${channel_uuid}/Messages`, ContentType.JSON, JSON.stringify({Content: contents, Attachments: attachments})));
 });
 
 ipcMain.on('requestChannelUpdate', async (event, channel_uuid: string, message_id: string) => {
@@ -148,7 +149,9 @@ ipcMain.on('pickUploadFiles', (event) => {
   }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
-ipcMain.handle('uploadFile', async (_event, channel_uuid: string, file: MessageAttachment) => {
+ipcMain.handle('uploadFile', async (_event, channel_uuid: string, attachments: string) => {
+  const file = <MessageAttachment>JSON.parse(attachments);
+  console.log(file);
   if (!file.isBuffer)
     return PostFileWithAuthentication(`Media/Channel/${channel_uuid}`, file.contents);
   return PostBufferWithAuthentication(`Media/Channel/${channel_uuid}`, Buffer.from(file.contents));

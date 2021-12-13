@@ -184,9 +184,9 @@ export default class ChatPage extends React.Component {
       const attachmentIds = [] as string[];
       new Promise((resolve) => {
         attachments.forEach(async (attachment, index, array) => {
-          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, attachment);
-          if (id.length > 0 && id != undefined) attachmentIds.push(id);
-          if (index === array.length -1) resolve(true);
+          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment));
+          if (id.payload.length > 0) attachmentIds.push(id.payload);
+          if (index === array.length - 1) resolve(true);
         });
       }).then(() => {
         ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, attachmentIds);
