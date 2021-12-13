@@ -4,7 +4,7 @@ import MessageAttachment from 'structs/MessageAttachment';
 import Credentials from '../structs/Credentials';
 import { DebugMain } from '../shared/DebugLogger';
 import { ChannelType, ContentType, FormAuthStatusType, LogType, LogContext } from '../types/enums';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication } from './NCAPI';
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication, NCAPIResponse } from './NCAPI';
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
@@ -33,8 +33,9 @@ ipcMain.on('requestChannels', async (event) => {
 });
 
 ipcMain.on('requestMessage', async (event, channel_uuid: string, message_id: string) => {
-  const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`);
-  if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedMessageEditEvent', channel_uuid, message_id, resp.payload);
+  QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`).then((resp: NCAPIResponse) => {
+    if (resp.status == 200 && resp.payload != undefined) event.sender.send('receivedMessageEditEvent', channel_uuid, message_id, resp);
+  });
 })
 
 ipcMain.on('requestChannelInfo', async (event, channel_uuid: string) => {

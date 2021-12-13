@@ -3,12 +3,7 @@ import { Icon, IconButton, Typography } from '@mui/material';
 import type { IHeaderProps } from 'types/interfaces';
 
 export default class Header extends React.Component {
-  children: ReactChildren;
   props: IHeaderProps;
-
-  constructor(props: IHeaderProps) {
-    super(props);
-  }
 
   render() {
     let IconObject = null;
@@ -26,7 +21,7 @@ export default class Header extends React.Component {
           {IconObject}
           <Typography variant='h5'>{this.props.caption}</Typography>
           <div className='Header_Misc'>
-            {this.children}
+            {this.props.children}
           </div>
       </div>
     );

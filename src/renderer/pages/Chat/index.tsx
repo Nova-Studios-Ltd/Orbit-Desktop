@@ -19,6 +19,7 @@ import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
+import { NCAPIResponse } from 'main/NCAPI';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
@@ -82,7 +83,7 @@ export default class ChatPage extends React.Component {
       ipcRenderer.on('receivedChannelData', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
       ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
 
-      ipcRenderer.on('receivedMessageEditEvent', (channel_uuid: string, message_id: string, data: any) => this.onReceivedMessageEdit(channel_uuid, message_id, data));
+      ipcRenderer.on('receivedMessageEditEvent', (channel_uuid: string, message_id: string, resp: NCAPIResponse) => this.onReceivedMessageEdit(channel_uuid, message_id, resp));
       events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
@@ -162,19 +163,17 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedMessageEdit(channel_uuid: string, id: string, data: any) {
+  onReceivedMessageEdit(channel_uuid: string, id: string, resp: NCAPIResponse) {
     if (GLOBALS.currentChannel != channel_uuid) return;
-    const canvas = this.state.CanvasObject;
-    if (canvas != null) {
-      canvas.edit(id, data.content);
+    if (this.state.CanvasObject != null) {
+      this.state.CanvasObject.edit(id, resp.payload.content);
     }
   }
 
   onReceivedMessageDelete(channel_uuid: string, message_id: string) {
     if (GLOBALS.currentChannel != channel_uuid) return;
-    const canvas = this.state.CanvasObject;
-    if (canvas != null) {
-      canvas.remove(message_id);
+    if (this.state.CanvasObject != null) {
+      this.state.CanvasObject.remove(message_id);
     }
   }
 

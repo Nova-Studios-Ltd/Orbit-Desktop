@@ -33,7 +33,7 @@ export interface IHeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
-  children: ReactChildren
+  children: Element[]
 }
 
 export interface IAuthFormProps {
@@ -100,9 +100,10 @@ export interface IAttachmentProps {
   contentHeight: number
 }
 
-export interface IMessageImageProps {
+export interface IMessageMediaProps {
   message: string,
-  src: string
+  src: string,
+  dimensions?: Dimensions
 }
 
 export interface IMessageCanvasProps {
@@ -116,7 +117,8 @@ export interface IMessageInputProps {
 
 export interface IMessageContent {
   type: string,
-  url: string
+  url: string,
+  dimensions?: Dimensions
 }
 
 export interface IUserDropdownMenu {
@@ -295,4 +297,9 @@ export interface ISettingsPageState {
 export interface IAuthForm {
   handleChange: Function,
   handleSubmit: Function
+}
+
+export type Dimensions = {
+  width: number | string,
+  height: number | string
 }

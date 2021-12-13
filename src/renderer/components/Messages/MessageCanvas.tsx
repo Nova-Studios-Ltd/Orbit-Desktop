@@ -1,6 +1,7 @@
-import { throwStatement } from '@babel/types';
 import { Typography } from '@mui/material';
 import React, { memo } from 'react';
+import { Debug } from 'shared/helpers';
+import { LogContext } from 'types/enums';
 import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
 import Message from './Message';
 
@@ -55,15 +56,17 @@ export default class MessageCanvas extends React.Component {
   }
 
   edit(id: string, newMessage: string) {
-    const oldState = this.state;
-    const index = oldState.messages.findIndex(e => e.message_Id == id);
-    if (index > -1) {
-      const m = oldState.messages[index];
-      m.content = newMessage;
-      oldState.messages[index] = m;
-      //this.setState({messages: []});
-      this.setState({messages: oldState.messages});
-    }
+    this.setState((prevState: IMessageCanvasState) => {
+      const index = prevState.messages.findIndex(e => e.message_Id == id);
+      if (index > -1) {
+        const m = prevState.messages[index];
+        m.content = newMessage;
+        prevState.messages[index] = m;
+      }
+      return ({
+        messages: prevState.messages
+      });
+    });
   }
 
   clear() {
@@ -87,7 +90,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.message_Id} onUpdate={this.messageUpdated} {...messageProps} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={`${messageProps.message_Id}_${messageProps.timestamp}`} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} onUpdate={this.messageUpdated} />));
     const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
 
     return (

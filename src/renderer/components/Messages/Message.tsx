@@ -3,27 +3,34 @@ import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
 import { copyToClipboard, Debug, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent, IAttachmentProps } from 'types/interfaces';
+import type { IMessageProps, IMessageMediaProps, IMessageState, IMessageContent, IAttachmentProps, Dimensions } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import FormTextField from '../Form/FormTextField';
+import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
 
 export class MessageImage extends React.Component {
   message: string;
   imageSrc: string;
+  dimensions: Dimensions;
 
-  constructor(props: IMessageImageProps) {
+  constructor(props: IMessageMediaProps) {
     super(props);
     this.message = props.message;
     this.imageSrc = props.src;
+    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
   }
 
   render() {
+    const styles = {
+      width: (this.dimensions.width),
+      height: (this.dimensions.height)
+    }
+
     return (
       <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className='Message_Embed'>
+          <Card className='Message_Embed' style={styles}>
             <CardMedia
             className='Message_Embed_Content'
             component='img'
@@ -38,19 +45,27 @@ export class MessageImage extends React.Component {
 export class MessageVideo extends React.Component {
   message: string;
   videoSrc: string;
+  dimensions: Dimensions;
 
-  constructor(props: IMessageImageProps) {
+  constructor(props: IMessageMediaProps) {
     super(props);
     this.message = props.message;
     this.videoSrc = props.src;
+    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
   }
 
   render() {
+    const styles = {
+      width: (this.dimensions.width),
+      height: (this.dimensions.height),
+      marginBottom: '0.8rem'
+    }
+
     return (
-      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
+      <div className='Message_Content' style={styles}>
         {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Embed'>
-            <CardMedia
+          <Card className='Message_Embed' style={styles}>
+            <CardMedia style={styles}
             className='Message_Embed_Content'
             component='video'
             src={this.videoSrc}
@@ -65,18 +80,26 @@ export class MessageVideo extends React.Component {
 export class MessageEmbed extends React.Component {
   message: string;
   videoSrc: string;
+  dimensions: Dimensions;
 
-  constructor(props: IMessageImageProps) {
+  constructor(props: IMessageMediaProps) {
     super(props);
     this.message = props.message;
     this.videoSrc = props.src;
+    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
   }
 
   render() {
+    const styles = {
+      width: (this.dimensions.width),
+      height: (this.dimensions.height),
+      marginBottom: '0.8rem'
+    }
+
     return (
-      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
+      <div className='Message_Content' style={styles}>
         {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Embed'>
+          <Card className='Message_Embed' style={styles}>
             <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
           </Card>
       </div>
@@ -179,12 +202,12 @@ export default class Message extends React.Component {
     }*/
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
-      const attachment = this.attachments[a].contentUrl;
+      const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment)) {
-        attachmentContent.push(new MessageContent({type: 'image', url: attachment}));
+        attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment)) {
-        attachmentContent.push(new MessageContent({type: 'video', url: attachment}));
+        attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
     }
 
@@ -219,8 +242,7 @@ export default class Message extends React.Component {
         containsNonLinkText = true;
       }
     }
-    this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText});
-    this.onUpdateCallback();
+    this.setState({links: messageLinks, hasNonLinkText: containsNonLinkText}, () => this.onUpdateCallback());
   }
 
   async checkImageHeader(url: string) {
@@ -348,9 +370,9 @@ export default class Message extends React.Component {
 
     this.state.attachments.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} dimensions={link.dimensions} />);
       else if (link.type == 'video')
-        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} dimensions={link.dimensions} />);
     });
 
     return (
