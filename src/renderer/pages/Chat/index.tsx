@@ -143,6 +143,7 @@ export default class ChatPage extends React.Component {
   }
 
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
+    console.log(messages);
     if (GLOBALS.currentChannel != channel_uuid) return;
     GetChannelRecipientsFromUUID(channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });

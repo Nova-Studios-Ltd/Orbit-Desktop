@@ -203,10 +203,10 @@ export default class Message extends React.Component {
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
-      if (await this.checkImageHeader(attachment)) {
+      if (await this.checkImageHeader(attachment.contentUrl)) {
         attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
-      else if(await this.checkVideoHeader(attachment)) {
+      else if(await this.checkVideoHeader(attachment.contentUrl)) {
         attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
     }
