@@ -45,6 +45,7 @@ export default class ChatPage extends React.Component {
     this.state = {
       CanvasObject: undefined,
       ChannelList: undefined,
+      ChannelName: '',
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: {},
       CreateChannelDialogVisible: false,
@@ -72,7 +73,6 @@ export default class ChatPage extends React.Component {
     else {
       ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
     }
-    GLOBALS.currentChannelName = await GetChannelRecipientsFromUUID(GLOBALS.currentChannel);
   }
 
   initCanvas(canvas: MessageCanvas) {
@@ -143,6 +143,9 @@ export default class ChatPage extends React.Component {
 
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     if (GLOBALS.currentChannel != channel_uuid) return;
+    GetChannelRecipientsFromUUID(channel_uuid).then((channelName) => {
+      this.setState({ ChannelName: channelName });
+    });
     if (!isUpdate)
       this.clearCanvas();
 
@@ -319,7 +322,7 @@ export default class ChatPage extends React.Component {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
-            <Header caption={GLOBALS.currentChannelName} icon={<ChatIcon />}>
+            <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
             <MessageCanvas init={this.initCanvas}/>

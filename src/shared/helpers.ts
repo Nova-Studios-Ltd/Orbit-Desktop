@@ -4,10 +4,12 @@ import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import type { IElectronRendererWindow } from 'types/interfaces';
+import { DebugRendererHandler } from './DebugLogger';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
+export const Debug = new DebugRendererHandler(ipcRenderer);
 
 export function Navigate(path: string, data: any)
 {

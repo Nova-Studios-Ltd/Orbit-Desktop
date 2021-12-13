@@ -89,7 +89,7 @@ export interface IMessageProps {
   timestamp: string,
   avatar: string,
   attachments: IAttachmentProps[],
-  onUpdate: void
+  onUpdate: Function
 }
 
 export interface IAttachmentProps {
@@ -228,6 +228,7 @@ export interface IRegisterFormProps extends IAuthFormProps {
 export interface IChatPageState {
   CanvasObject?: MessageCanvas,
   ChannelList?: ChannelView,
+  ChannelName: string,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,

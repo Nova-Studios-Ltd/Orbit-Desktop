@@ -41,7 +41,6 @@ export default class Channel extends React.Component {
 
   async channelClicked() {
     GLOBALS.currentChannel = this.channelID;
-    GLOBALS.currentChannelName = await GetChannelRecipientsFromUUID(this.channelID);
     setDefaultChannel(this.channelID);
     ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
   }

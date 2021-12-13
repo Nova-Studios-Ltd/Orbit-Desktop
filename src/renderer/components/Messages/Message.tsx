@@ -1,11 +1,11 @@
 import { Avatar, Card, CardMedia, IconButton, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
-import { copyToClipboard, ipcRenderer } from 'shared/helpers';
+import { copyToClipboard, Debug, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 import type { IMessageProps, IMessageImageProps, IMessageState, IMessageContent, IAttachmentProps } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from '../Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
 
@@ -94,7 +94,7 @@ export default class Message extends React.Component {
   timestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
-  onUpdateCallback: void;
+  onUpdateCallback: Function;
 
   constructor(props: IMessageProps) {
     super(props);
