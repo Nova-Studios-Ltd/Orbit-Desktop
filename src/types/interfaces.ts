@@ -300,6 +300,6 @@ export interface IAuthForm {
 }
 
 export type Dimensions = {
-  width: number | string,
-  height: number | string
+  width: number,
+  height: number
 }

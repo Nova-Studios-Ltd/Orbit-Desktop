@@ -13,18 +13,33 @@ export class MessageImage extends React.Component {
   message: string;
   imageSrc: string;
   dimensions: Dimensions;
+  desiredDimensions: Dimensions;
+  finalDimensions: Dimensions;
 
   constructor(props: IMessageMediaProps) {
     super(props);
     this.message = props.message;
     this.imageSrc = props.src;
-    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
+    this.dimensions = props.dimensions || {width: 0, height: 0};
+    this.desiredDimensions = {
+      width: 600,
+      height: 400
+    };
+    this.finalDimensions = {
+      width: 0,
+      height: 0
+    };
   }
 
   render() {
+    if (this.dimensions.width > 0 && this.dimensions.height > 0) {
+      this.finalDimensions.height = Math.floor((this.desiredDimensions.width * this.dimensions.height) / this.dimensions.width);
+      this.finalDimensions.width = Math.floor((this.desiredDimensions.height * this.dimensions.width) / this.dimensions.height);
+    }
+
     const styles = {
-      width: (this.dimensions.width),
-      height: (this.dimensions.height)
+      width: this.finalDimensions.width > 0 ? this.finalDimensions.width : '18rem',
+      height: this.finalDimensions.height > 0 ? this.finalDimensions.height : '30rem',
     }
 
     return (
@@ -51,13 +66,13 @@ export class MessageVideo extends React.Component {
     super(props);
     this.message = props.message;
     this.videoSrc = props.src;
-    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
+    this.dimensions = props.dimensions || {width: 600, height: 400};
   }
 
   render() {
     const styles = {
-      width: (this.dimensions.width),
-      height: (this.dimensions.height),
+      //width: (this.dimensions.width),
+      //height: (this.dimensions.height),
       marginBottom: '0.8rem'
     }
 
@@ -86,13 +101,13 @@ export class MessageEmbed extends React.Component {
     super(props);
     this.message = props.message;
     this.videoSrc = props.src;
-    this.dimensions = props.dimensions || {width: '100%', height: '100%'};
+    this.dimensions = props.dimensions || {width: 600, height: 400};
   }
 
   render() {
     const styles = {
-      width: (this.dimensions.width),
-      height: (this.dimensions.height),
+      //width: (this.dimensions.width),
+      //height: (this.dimensions.height),
       marginBottom: '0.8rem'
     }
 
@@ -203,10 +218,10 @@ export default class Message extends React.Component {
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
-      if (await this.checkImageHeader(attachment)) {
+      if (await this.checkImageHeader(attachment.contentUrl)) {
         attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
-      else if(await this.checkVideoHeader(attachment)) {
+      else if(await this.checkVideoHeader(attachment.contentUrl)) {
         attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
     }
