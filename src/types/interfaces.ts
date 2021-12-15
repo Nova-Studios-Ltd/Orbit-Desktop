@@ -9,8 +9,8 @@ import type ChannelView from 'renderer/components/Channels/ChannelView';
 import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
 import type Channel from 'renderer/components/Channels/Channel';
 import type Message from 'renderer/components/Messages/Message';
-import MessageAttachment from 'structs/MessageAttachment';
-import MessageContent from 'structs/MessageContent';
+import type MessageAttachment from 'structs/MessageAttachment';
+import type MessageContent from 'structs/MessageContent';
 
 // Page Props
 
@@ -174,6 +174,10 @@ export interface IImageViewerProps {
 
 }
 
+export interface IFileUploadSummaryProps {
+
+}
+
 export interface IHybridListItem {
   className: string,
   id: string,
@@ -292,6 +296,10 @@ export interface IUserDropdownMenuState {
 
 export interface ISettingsPageState {
   confirmUserAccountDeletionDialogOpen: boolean
+}
+
+export interface IFileUploadSummaryState {
+  files: Array<MessageAttachment>
 }
 
 // Implementation Prototypes

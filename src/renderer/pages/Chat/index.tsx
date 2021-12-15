@@ -288,6 +288,7 @@ export default class ChatPage extends React.Component {
 
   render() {
     let CreateChannelDialogItems = null;
+    let titleString = null;
     switch (this.state.CreateChannelDialogChannelType) {
       case ChannelType.Group:
         CreateChannelDialogItems = (
@@ -309,10 +310,17 @@ export default class ChatPage extends React.Component {
         break;
     }
 
+    if (this.state.ChannelName.length > 0) {
+      titleString = `${GLOBALS.appName} ${GLOBALS.appVersion} - ${this.state.ChannelName}`;
+    }
+    else {
+      titleString = `${GLOBALS.appName} ${GLOBALS.appVersion}`;
+    }
+
     return (
       <div className='Page Chat_Page_Container'>
         <Helmet>
-          <title>Chat</title>
+          <title>{titleString}</title>
         </Helmet>
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>

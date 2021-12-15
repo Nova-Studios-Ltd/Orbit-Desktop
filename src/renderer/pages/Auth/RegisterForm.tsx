@@ -4,6 +4,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import type { IAuthForm, IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
+import GLOBALS from 'shared/globals';
 import { Navigate, Register } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
@@ -58,7 +59,7 @@ class RegisterForm extends React.Component implements IAuthForm {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Register for a NovaChat account.' status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${GLOBALS.appName} ${GLOBALS.appVersion}`} headerBody='Register for a NovaChat account.' status={this.state.status}>
         <FormTextField id='email' label='Email' description='Your email address. This will be used when signing in, and for account-related operations.' autoFocus required onChange={this.handleChange} />
         <FormTextField id='username' label='Username' description='Your new username.' required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' description='Your new password.' required sensitive onChange={this.handleChange} />

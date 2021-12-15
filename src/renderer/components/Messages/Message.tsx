@@ -23,8 +23,8 @@ export class MessageImage extends React.Component {
     this.imageSrc = props.src;
     this.dimensions = props.dimensions || {width: 0, height: 0};
     this.desiredDimensions = {
-      width: 400,
-      height: 300
+      width: 800,
+      height: 400
     };
     this.finalDimensions = {
       width: 0,
@@ -52,7 +52,7 @@ export class MessageImage extends React.Component {
         width: nnx,
         height: nny,
       }
-      
+
       return (
         <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
           {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}

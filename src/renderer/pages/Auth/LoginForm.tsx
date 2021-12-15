@@ -4,6 +4,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import type { IAuthForm, ILoginFormProps, ILoginFormState } from 'types/interfaces';
+import GLOBALS from 'shared/globals';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
@@ -57,7 +58,7 @@ class LoginForm extends React.Component implements IAuthForm {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading='Nova Chat 3.0' headerBody='Welcome! Please log in to continue.' status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${GLOBALS.appName} ${GLOBALS.appVersion}`} headerBody='Welcome! Please log in to continue.' status={this.state.status}>
         <FormTextField id='email' label='Email' autoFocus required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' required sensitive onChange={this.handleChange} />
         <br />
