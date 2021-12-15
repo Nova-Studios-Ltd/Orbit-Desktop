@@ -23,8 +23,8 @@ export class MessageImage extends React.Component {
     this.imageSrc = props.src;
     this.dimensions = props.dimensions || {width: 0, height: 0};
     this.desiredDimensions = {
-      width: 600,
-      height: 400
+      width: 400,
+      height: 300
     };
     this.finalDimensions = {
       width: 0,
@@ -34,15 +34,42 @@ export class MessageImage extends React.Component {
 
   render() {
     if (this.dimensions.width > 0 && this.dimensions.height > 0) {
-      this.finalDimensions.height = Math.floor((this.desiredDimensions.width * this.dimensions.height) / this.dimensions.width);
-      this.finalDimensions.width = Math.floor((this.desiredDimensions.height * this.dimensions.width) / this.dimensions.height);
-    }
+      //this.finalDimensions.height = Math.floor((this.desiredDimensions.width * this.dimensions.height) / this.dimensions.width);
+      //this.finalDimensions.width = Math.floor((this.desiredDimensions.height * this.dimensions.width) / this.dimensions.height);
 
+      const xRatio = this.dimensions.width / this.desiredDimensions.width;
+      const yRatio = this.dimensions.height / this.desiredDimensions.height;
+      const ratio = Math.max(xRatio, yRatio);
+      let nnx = Math.floor(this.dimensions.width / ratio);
+      let nny = Math.floor(this.dimensions.height / ratio);
+
+      if (this.dimensions.width < this.desiredDimensions.width && this.dimensions.height < this.desiredDimensions.height) {
+        nnx = this.dimensions.width;
+        nny = this.dimensions.height;
+      }
+
+      const styles = {
+        width: nnx,
+        height: nny,
+      }
+      
+      return (
+        <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
+          {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
+            <Card className='Message_Embed' style={styles}>
+              <CardMedia
+              className='Message_Embed_Content'
+              component='img'
+              src={this.imageSrc}
+            />
+            </Card>
+        </div>
+      );
+    }
     const styles = {
-      width: this.finalDimensions.width > 0 ? this.finalDimensions.width : '18rem',
-      height: this.finalDimensions.height > 0 ? this.finalDimensions.height : '30rem',
+      width: '18rem',
+      height: '30rem',
     }
-
     return (
       <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
