@@ -158,7 +158,7 @@ export default class Message extends React.Component {
   content: string;
   attachments: IAttachmentProps[];
   timestamp: string;
-  isEdited: boolean;
+  edited: boolean;
   editedTimestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
@@ -173,11 +173,11 @@ export default class Message extends React.Component {
     this.content = props.content || 'Message';
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
-    this.isEdited = props.isEdited;
+    this.edited = props.edited;
     this.editedTimestamp = props.editedTimestamp.replace("T", " ");
     this.avatar = props.avatar;
     this.onUpdateCallback = props.onUpdate;
-    this.hashedKey = this.calculateHash(false);
+    this.hashedKey = `${this.message_Id}_${this.timestamp}_${this.editedTimestamp}}`;
 
     this.state = {
       editedMessage: '',
@@ -189,7 +189,6 @@ export default class Message extends React.Component {
       open: false
     }
 
-    this.calculateHash = this.calculateHash.bind(this);
     this.openContextMenu = this.openContextMenu.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
     this.mouseEnter = this.mouseEnter.bind(this);
@@ -204,23 +203,17 @@ export default class Message extends React.Component {
     this.divRef = React.createRef();
   }
 
-  calculateHash(write: boolean) {
-    const hashedKey = MD5(`${this.message_Id}-${this.timestamp}-${this.editedTimestamp}`).toString();
-    if (write) this.hashedKey = hashedKey;
-    return hashedKey;
-  }
-
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
-  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+  menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
     switch(event.currentTarget.id) {
       case 'edit':
         this.setState({ editedMessage: this.content, isEditing: true });
         break;
       case 'copy':
-        await copyToClipboard(this.content).then((result: boolean) => {
+        copyToClipboard(this.content).then((result: boolean) => {
           if (result) {
             new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
           }
@@ -440,6 +433,7 @@ export default class Message extends React.Component {
           <div className='Message_Right_Header'>
             <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
             <Typography className='Message_Timestamp' variant='subtitle2'>{this.timestamp}</Typography>
+            {this.edited ? <Typography className='Message_Timestamp_Edited' variant='subtitle2'>(Edited at {this.editedTimestamp})</Typography> : null }
           </div>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>

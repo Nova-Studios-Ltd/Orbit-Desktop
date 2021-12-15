@@ -61,9 +61,9 @@ export default class MessageCanvas extends React.Component {
       if (index > -1) {
         const m = prevState.messages[index];
         m.content = newMessage.content;
-        m.isEdited = true;
+        m.edited = true;
         m.editedTimestamp = newMessage.editedTimestamp;
-        m.calculateHash(true);
+        m.hashedKey = `${m.message_Id}_${m.timestamp}_${m.editedTimestamp}}`;
         prevState.messages[index] = m;
       }
       return ({
@@ -93,7 +93,7 @@ export default class MessageCanvas extends React.Component {
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} isEdited={messageProps.isEdited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} />));
     const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
 
     return (

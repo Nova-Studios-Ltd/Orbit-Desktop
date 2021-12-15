@@ -28,7 +28,8 @@ interface ISettingsKeys {
   'NotificationAssetPath': string,
   'MessageCharacterLimit': number,
   'isFocused': boolean,
-  'closeToTray': boolean
+  'closeToTray': boolean,
+  'Theme': Theme
 }
 
 class SettingsManager {
@@ -43,7 +44,8 @@ class SettingsManager {
       'NotificationAssetPath': 'assets/sounds/bell.oga',
       'MessageCharacterLimit': 4000,
       'isFocused': true,
-      'closeToTray': true
+      'closeToTray': true,
+      'Theme': Theme.Dark
     } // Initialize defaults
 
     this.Init = this.Init.bind(this);

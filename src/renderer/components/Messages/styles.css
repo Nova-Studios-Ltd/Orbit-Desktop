@@ -44,7 +44,7 @@
 
 }
 
-.Message_Timestamp {
+.Message_Timestamp, .Message_Timestamp_Edited {
   margin-left: 5px !important;
 }
 

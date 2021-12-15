@@ -90,7 +90,7 @@ export interface IMessageProps {
   content: string,
   timestamp: string,
   editedTimestamp: string,
-  isEdited: boolean,
+  edited: boolean,
   avatar: string,
   attachments: IAttachmentProps[],
   onUpdate: Function
