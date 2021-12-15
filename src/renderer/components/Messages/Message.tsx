@@ -170,7 +170,7 @@ export default class Message extends React.Component {
     this.message_Id = props.message_Id;
     this.author_UUID = props.author_UUID;
     this.author = props.author || 'Unknown';
-    this.content = props.content || 'Message';
+    this.content = props.content;
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.edited = props.edited;
