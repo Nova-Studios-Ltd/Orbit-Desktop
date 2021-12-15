@@ -1,6 +1,7 @@
 import { Avatar, Card, CardMedia, IconButton, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
 import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { DOMElement, FormEvent, Ref } from 'react';
+import { MD5 } from 'crypto-js';
 import { copyToClipboard, Debug, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 import type { IMessageProps, IMessageMediaProps, IMessageState, IMessageContent, IAttachmentProps, Dimensions } from 'types/interfaces';
@@ -130,8 +131,11 @@ export default class Message extends React.Component {
   content: string;
   attachments: IAttachmentProps[];
   timestamp: string;
+  isEdited: boolean;
+  editedTimestamp: string;
   avatar: string;
   divRef: Ref<HTMLDivElement>;
+  hashedKey: string;
   onUpdateCallback: Function;
 
   constructor(props: IMessageProps) {
@@ -142,8 +146,11 @@ export default class Message extends React.Component {
     this.content = props.content || 'Message';
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
+    this.isEdited = props.isEdited;
+    this.editedTimestamp = props.editedTimestamp.replace("T", " ");
     this.avatar = props.avatar;
     this.onUpdateCallback = props.onUpdate;
+    this.hashedKey = this.calculateHash(false);
 
     this.state = {
       editedMessage: '',
@@ -155,6 +162,7 @@ export default class Message extends React.Component {
       open: false
     }
 
+    this.calculateHash = this.calculateHash.bind(this);
     this.openContextMenu = this.openContextMenu.bind(this);
     this.closeContextMenu = this.closeContextMenu.bind(this);
     this.mouseEnter = this.mouseEnter.bind(this);
@@ -167,6 +175,12 @@ export default class Message extends React.Component {
     this.resetMessageEdit = this.resetMessageEdit.bind(this);
 
     this.divRef = React.createRef();
+  }
+
+  calculateHash(write: boolean) {
+    const hashedKey = MD5(`${this.timestamp}-${this.editedTimestamp}`).toString();
+    if (write) this.hashedKey = hashedKey;
+    return hashedKey;
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {

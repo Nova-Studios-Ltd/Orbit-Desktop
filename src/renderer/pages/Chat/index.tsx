@@ -167,7 +167,7 @@ export default class ChatPage extends React.Component {
   onReceivedMessageEdit(channel_uuid: string, id: string, resp: NCAPIResponse) {
     if (GLOBALS.currentChannel != channel_uuid) return;
     if (this.state.CanvasObject != null) {
-      this.state.CanvasObject.edit(id, resp.payload.content);
+      this.state.CanvasObject.edit(id, resp.payload);
     }
   }
 
