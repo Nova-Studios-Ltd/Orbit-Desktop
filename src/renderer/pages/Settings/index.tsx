@@ -7,8 +7,10 @@ import Header from 'renderer/components/Header/Header';
 import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
+import { Settings } from 'shared/SettingsManager';
+
 
 export default class SettingsPage extends React.Component {
   state: ISettingsPageState;
@@ -16,12 +18,14 @@ export default class SettingsPage extends React.Component {
   constructor(props: ISettingsPageProps) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
     this.deleteAccount = this.deleteAccount.bind(this);
     this.closeUserAccountDeletionDialog = this.closeUserAccountDeletionDialog.bind(this);
     this.exitSettings = this.exitSettings.bind(this);
 
     this.state = {
-      confirmUserAccountDeletionDialogOpen: false
+      confirmUserAccountDeletionDialogOpen: false,
+      darkThemeEnabled: Boolean(Settings.Settings.Theme)
     }
   }
 
@@ -29,6 +33,16 @@ export default class SettingsPage extends React.Component {
     switch (event.currentTarget.id) {
       case 'deleteAccount':
         this.setState({ confirmUserAccountDeletionDialogOpen: true });
+        break;
+    }
+  }
+
+  handleToggle(event: any) {
+    switch (event.currentTarget.id) {
+      case 'darkTheme':
+        this.setState({ darkThemeEnabled: !this.state.darkThemeEnabled }, () => {
+          Settings.SetTheme(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+        });
         break;
     }
   }
@@ -55,7 +69,7 @@ export default class SettingsPage extends React.Component {
         <div className='Settings_Page_InnerContainer'>
           <SettingsSection title='Appearance'>
             <FormGroup>
-              <FormControlLabel label='Dark Theme' control={<Switch title='Dark Theme' checked />} />
+              <FormControlLabel label='Dark Theme' control={<Switch id='darkTheme' title='Dark Theme' onChange={this.handleToggle} checked={this.state.darkThemeEnabled} />} />
             </FormGroup>
           </SettingsSection>
           <SettingsSection title='Notifications'>

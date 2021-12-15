@@ -1,4 +1,5 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
+import fs from 'fs';
 import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
 import MessageAttachment from 'structs/MessageAttachment';
 import Credentials from '../structs/Credentials';
@@ -162,4 +163,12 @@ ipcMain.on('deleteAccount', async (event, userID: string) => {
   const resp = await DeleteWithAuthentication(`/User/${userID}`);
   if (resp.status == 200) event.sender.send('userAccountDeleted', true);
   else event.sender.send('userAccountDeleted', false);
+});
+
+ipcMain.handle('saveSetting', (key: string, value: string | boolean | number) => {
+  //fs.writeFile('settings.json', );
+});
+
+ipcMain.on('retrieveSetting', (key: string) => {
+
 });

@@ -53,8 +53,9 @@ export enum ChannelType {
 }
 
 export enum Theme {
-  Light,
-  Dark
+  Light = 0,
+  Dark = 1,
+  Default = 1
 }
 
 export enum LogContext {
