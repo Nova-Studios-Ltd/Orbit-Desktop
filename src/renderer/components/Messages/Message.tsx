@@ -178,7 +178,7 @@ export default class Message extends React.Component {
   }
 
   calculateHash(write: boolean) {
-    const hashedKey = MD5(`${this.timestamp}-${this.editedTimestamp}`).toString();
+    const hashedKey = MD5(`${this.message_Id}-${this.timestamp}-${this.editedTimestamp}`).toString();
     if (write) this.hashedKey = hashedKey;
     return hashedKey;
   }
