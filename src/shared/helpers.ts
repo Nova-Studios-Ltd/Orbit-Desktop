@@ -47,31 +47,36 @@ const timestepStates = [1000, 4000, 8000, 12000]
 function HandleWebsocket() {
   const { token, uuid } = GLOBALS.userData;
   const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
-  socket.onmessage = function (message) {
-    const event = JSON.parse(message.data);
+  socket.onmessage = async (data) => {
+    const event = JSON.parse(data.data);
     switch (event.EventType) {
       case -1:
         console.log('<Beat>');
         break;
-      case 0:
-        ipcRenderer.send('requestChannelUpdate', event.Channel, event.Message);
+      case 0: {
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        if (message == undefined) break;
+        events.send('OnNewMessage', message, event.Channel);
         break;
+      }
       case 1:
-        events.send('receivedMessageDeleteEvent', event.Channel, event.Message);
+        events.send('OnMessageDelete', event.Channel, event.Message);
         break;
-      case 2:
-        ipcRenderer.send('requestMessage', event.Channel, event.Message);
+      case 2: {
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        events.send('OnMessageEdit', message, event.Channel, event.Message);
         break;
+      }
       case 3:
-        events.send('receivedChannelCreatedEvent', event.Channel);
+        events.send('OnChannelCreated', event.Channel);
         break;
       case 4:
-        events.send('receivedChannelDeletedEvent', event.channel);
+        events.send('OnChannelDeleted', event.channel);
         break;
       case 5:
         break;
       case 6:
-        events.send('receivedAddedToChannelEvent', event.Channel);
+        events.send('OnChannelNewMember', event.Channel);
         break;
       case 420: // Because why not
         // Trigger fake socket disconnect
@@ -109,15 +114,20 @@ function HandleWebsocket() {
   };
 }
 
-export function ConductLogin() {
+export async function ConductLogin() {
   if (GetHistoryState() != null && GetHistoryState().failed) return;
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     Navigate('/chat', null);
-    ipcRenderer.send('requestChannels');
+    ipcRenderer.send('GETUserChannels');
 
     const { uuid } = GLOBALS.userData;
 
-    ipcRenderer.send('requestUserData', uuid);
+    const userData = await ipcRenderer.invoke('GETUser', uuid);
+    if (userData != undefined) {
+      GLOBALS.userData.username = userData.username;
+      GLOBALS.userData.discriminator = userData.discriminator;
+    }
+
     GLOBALS.loggedOut = false;
     HandleWebsocket();
   }

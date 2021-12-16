@@ -110,6 +110,22 @@ export async function PutWithAuthentication(endpoint: string, content_type: Cont
   }
 }
 
+export async function PatchWithAuthentication(endpoint: string, content_type: ContentType, payload: string) : Promise<NCAPIResponse> {
+  try {
+    let header = {};
+    const token = await RetreiveToken();
+    if (content_type == ContentType.EMPTY) header = {'Authorization': token};
+    else header = { 'Authorization': token, 'Content-Type': content_type };
+    const resp = await Axios.patch(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: header
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
+}
+
 export async function PostFileWithAuthentication(endpoint: string, file: string) : Promise<NCAPIResponse> {
   try {
     const payload = new FormData();

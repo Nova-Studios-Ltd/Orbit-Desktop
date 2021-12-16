@@ -63,16 +63,16 @@ export default class ChatPage extends React.Component {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
       if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
         GLOBALS.currentChannel = lastOpenedChannel;
-        ipcRenderer.send('requestChannelData', lastOpenedChannel);
+        ipcRenderer.send('GETMessages', lastOpenedChannel);
       }
       else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
-        ipcRenderer.send('requestChannelData', this.state.ChannelList.state.channels[0].channelID);
+        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID);
         GLOBALS.currentChannel = this.state.ChannelList.state.channels[0].channelID;
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
       }
     }
     else {
-      ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
+      ipcRenderer.send('GETMessages', GLOBALS.currentChannel);
     }
   }
 
@@ -80,11 +80,11 @@ export default class ChatPage extends React.Component {
     if (canvas != null) {
       this.setState({ CanvasObject: canvas });
 
-      ipcRenderer.on('receivedChannelData', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
-      ipcRenderer.on('receivedChannelUpdateEvent', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
+      ipcRenderer.on('GotMessages', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
 
-      ipcRenderer.on('receivedMessageEditEvent', (channel_uuid: string, message_id: string, resp: NCAPIResponse) => this.onReceivedMessageEdit(channel_uuid, message_id, resp));
-      events.on('receivedMessageDeleteEvent', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
+      events.on('OnNewMessage', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
+      events.on('OnMessageEdit', (message: IMessageProps, channel_uuid: string, message_id: string) => this.onReceivedMessageEdit(channel_uuid, message_id, message));
+      events.on('OnMessageDelete', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
       Debug.Error('Failed to initialize MessageCanvas', LogContext.Renderer, 'from ChatPage initialization callback');
@@ -94,19 +94,20 @@ export default class ChatPage extends React.Component {
   initChannelView(channelList: ChannelView) {
     if (channelList != null) {
       this.setState({ChannelList: channelList });
-      ipcRenderer.on('receivedChannels', (data: string[]) => this.onReceivedChannels(data));
-      ipcRenderer.on('receivedChannelInfo', (data: IChannelProps) => this.onReceivedChannelInfo(data));
-      events.on('receivedChannelCreatedEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
-      events.on('receivedAddedToChannelEvent', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+      ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
+
+      events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+      events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
       Debug.Error('Failed to initialize ChannelView', LogContext.Renderer, 'from ChatPage initialization callback');
     }
   }
 
-  onReceivedChannels(data: string[]) {
+  async onReceivedChannels(data: string[]) {
     for (let channel = 0; channel < data.length; channel++) {
-      ipcRenderer.send('requestChannelInfo', data[channel]);
+      const c = await ipcRenderer.invoke('GETChannel', data[channel]);
+      if (c != undefined) this.addChannel(c);
     }
   }
 
@@ -164,10 +165,10 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  onReceivedMessageEdit(channel_uuid: string, id: string, resp: NCAPIResponse) {
+  onReceivedMessageEdit(channel_uuid: string, id: string, message: IMessageProps) {
     if (GLOBALS.currentChannel != channel_uuid) return;
     if (this.state.CanvasObject != null) {
-      this.state.CanvasObject.edit(id, resp.payload);
+      this.state.CanvasObject.edit(id, message);
     }
   }
 
@@ -189,11 +190,11 @@ export default class ChatPage extends React.Component {
           if (index === array.length - 1) resolve(true);
         });
       }).then(() => {
-        ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, attachmentIds);
+        ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachmentIds);
       });
     }
     else if (message.length > 0) {
-      ipcRenderer.send('sendMessageToServer', GLOBALS.currentChannel, message, []);
+      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, []);
     }
   }
 
@@ -204,7 +205,7 @@ export default class ChatPage extends React.Component {
       usernames.forEach(async (username: string) => {
         if (this.isValidUsername(username)) {
           const ud = username.split('#')
-          await ipcRenderer.invoke('getUserUUID', ud[0], ud[1]).then((result) => {
+          await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result) => {
             if (result == 'UNKNOWN') return;
             this.state.CreateChannelDialogRecipients[username] = result;
             // Change this later to support multiple users for the dialog
@@ -230,7 +231,11 @@ export default class ChatPage extends React.Component {
   }
 
   createChannelButtonClicked() {
-    ipcRenderer.send('createChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: this.state.CreateChannelDialogRecipients });
+    const users = Object.values(this.state.CreateChannelDialogRecipients);
+    if (users.length == 1)
+      ipcRenderer.send('CREATEChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: users[0] });
+    else
+      ipcRenderer.send('CREATEGroupChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: users });
     this.closeCreateChannelDialog();
   }
 
@@ -275,11 +280,8 @@ export default class ChatPage extends React.Component {
 
   Unload() {
     this.setState({ ChannelList: undefined, CanvasObject: undefined });
-    ipcRenderer.removeAllListeners('receivedChannelData');
-    ipcRenderer.removeAllListeners('receivedChannelUpdateEvent');
-    ipcRenderer.removeAllListeners('receivedMessageEditEvent');
-    ipcRenderer.removeAllListeners('receivedChannels');
-    ipcRenderer.removeAllListeners('receivedChannelInfo');
+    ipcRenderer.removeAllListeners('GotMessages');
+    ipcRenderer.removeAllListeners('GotUserChannels');
   }
 
   componentWillUnmount() {

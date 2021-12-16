@@ -15,7 +15,7 @@ export default class ChannelView extends React.Component {
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
 
-    events.on('receivedChannelDeletedEvent', this.removeChannel)
+    events.on('OnChannelDeleted', this.removeChannel)
 
     this.state = {
       channels: [],

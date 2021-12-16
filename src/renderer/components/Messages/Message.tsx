@@ -356,7 +356,7 @@ export default class Message extends React.Component {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('requestDeleteMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id} ).then((result: Boolean) => {
+    ipcRenderer.invoke('DELETEMessage', GLOBALS.currentChannel, this.message_Id).then((result: boolean) => {
       if (result) {
         new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
@@ -375,7 +375,7 @@ export default class Message extends React.Component {
 
   submitEditedMessage() {
     if (this.state.editedMessage.length > 0) {
-      ipcRenderer.invoke('sendEditedMessage', { channelID: GLOBALS.currentChannel, messageID: this.message_Id, message: this.state.editedMessage }).then((result: Boolean) => {
+      ipcRenderer.invoke('EDITMessage', GLOBALS.currentChannel, this.message_Id, this.state.editedMessage).then((result: boolean) => {
         if (result) {
           new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {

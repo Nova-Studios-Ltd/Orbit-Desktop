@@ -18,6 +18,7 @@ import { resolveHtmlPath } from './util';
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
 import './events';
+import './apiEvents';
 import './debugEvents';
 import { LogContext, LogType } from '../types/enums';
 

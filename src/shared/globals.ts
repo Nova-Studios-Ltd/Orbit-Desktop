@@ -10,7 +10,8 @@ const GLOBALS = {
   NotificationAssetPath: 'assets/sounds/bell.oga',
   MessageCharacterLimit: 4000,
   isFocused: true,
-  closeToTray: false
+  closeToTray: false,
+  loggedOut: false
 }
 
 export default GLOBALS;

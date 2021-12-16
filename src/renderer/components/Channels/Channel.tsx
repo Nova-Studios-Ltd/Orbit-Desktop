@@ -42,7 +42,7 @@ export default class Channel extends React.Component {
   async channelClicked() {
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
-    ipcRenderer.send('requestChannelData', GLOBALS.currentChannel);
+    ipcRenderer.send('GETMessages', GLOBALS.currentChannel);
   }
 
   async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
@@ -70,7 +70,9 @@ export default class Channel extends React.Component {
   }
 
   removeUserFromThisChannel() {
-    ipcRenderer.send('removeUserFromChannel', { channelID: this.channelID, userID: GLOBALS.userData.uuid, channelType: this.channelType });
+    if (this.channelType == ChannelType.Group)
+      ipcRenderer.send('REMOVEChannelMember', this.channelID, GLOBALS.userData.uuid)
+    else ipcRenderer.send('DELETEChannel', this.channelID)
     this.closeChannelDeletionDialog();
   }
 
