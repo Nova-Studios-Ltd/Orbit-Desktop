@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import type { ISettingsPageProps, ISettingsPageState } from 'types/interfaces';
 import Header from 'renderer/components/Header/Header';
@@ -63,6 +64,9 @@ export default class SettingsPage extends React.Component {
   render() {
     return(
       <div className='Page Settings_Page_Container'>
+        <Helmet>
+          <title>{`${GLOBALS.appName} ${GLOBALS.appVersion} - Settings`}</title>
+        </Helmet>
         <Header caption='Settings' icon={<SettingsIcon />}>
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
         </Header>

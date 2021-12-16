@@ -1,8 +1,8 @@
 import { makeStyles } from '@mui/styles';
 import { createTheme } from '@mui/material/styles';
 import { Settings } from 'shared/SettingsManager';
-import { Theme } from 'types/enums';
-import { events } from 'shared/helpers';
+import { LogContext, Theme } from 'types/enums';
+import { Debug, events } from 'shared/helpers';
 
 const LightTheme = createTheme({
   palette: {

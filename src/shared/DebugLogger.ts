@@ -4,12 +4,10 @@ import { LogContext, LogType } from "../types/enums";
 
 class DebugLogger {
   private logBuffer: Array<string>;
-  private date: Date;
   events: EventEmitter;
 
   constructor() {
     this.logBuffer = [];
-    this.date = new Date();
     this.events = new EventEmitter();
     this.appendToLog = this.appendToLog.bind(this);
     this.Error = this.Error.bind(this);
@@ -24,7 +22,7 @@ class DebugLogger {
     let finalMessage = `[${contextType}] ${logType}: ${message}`;
     if (context != null && context?.length > 0) finalMessage = finalMessage.concat(' ', `(${context})`);
 
-    finalMessage = `${this.date.toISOString()} ${finalMessage}`
+    finalMessage = `${new Date().toISOString()} ${finalMessage}`
 
     this.logBuffer.push(finalMessage);
     this.events.emit('logEntryAdded', finalMessage, logType);

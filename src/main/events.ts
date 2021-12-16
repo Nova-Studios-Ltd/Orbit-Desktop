@@ -165,10 +165,11 @@ ipcMain.on('deleteAccount', async (event, userID: string) => {
   else event.sender.send('userAccountDeleted', false);
 });
 
-ipcMain.handle('saveSetting', (key: string, value: string | boolean | number) => {
+ipcMain.handle('saveSetting', (event, key: string, value: string | boolean | number) => {
   //fs.writeFile('settings.json', );
+  DebugMain.Success(`Saved setting '${key}' with value '${value.toString()}'`, LogContext.Main);
 });
 
-ipcMain.on('retrieveSetting', (key: string) => {
-
+ipcMain.handle('retrieveSetting', (key: string) => {
+  return 'Not Implemented';
 });

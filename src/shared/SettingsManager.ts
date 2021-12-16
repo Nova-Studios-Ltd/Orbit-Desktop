@@ -20,14 +20,13 @@ import UserData from 'structs/UserData';
 
 */
 
-interface ISettingsKeys {
-  'userData': UserData,
-  'currentChannel': string,
-  'currentChannelName': string,
-  'HomePath': string,
+interface ISettingsKeySignature {
+  [key: string]: string | boolean | number | Theme | UserData
+}
+
+interface ISettingsKeys extends ISettingsKeySignature {
   'NotificationAssetPath': string,
   'MessageCharacterLimit': number,
-  'isFocused': boolean,
   'closeToTray': boolean,
   'Theme': Theme
 }
@@ -37,13 +36,8 @@ class SettingsManager {
 
   constructor() {
     this.Settings = {
-      'userData': new UserData(undefined),
-      'currentChannel': '',
-      'currentChannelName': '',
-      'HomePath': '/login',
       'NotificationAssetPath': 'assets/sounds/bell.oga',
       'MessageCharacterLimit': 4000,
-      'isFocused': true,
       'closeToTray': true,
       'Theme': Theme.Dark
     } // Initialize defaults
@@ -51,6 +45,7 @@ class SettingsManager {
     this.Init = this.Init.bind(this);
     this.SaveSetting = this.SaveSetting.bind(this);
     this.LoadSetting = this.LoadSetting.bind(this);
+    this.SetSetting = this.SetSetting.bind(this);
     this.SetTheme = this.SetTheme.bind(this);
   }
 
@@ -59,16 +54,24 @@ class SettingsManager {
   }
 
   SaveSetting(key: string, value: string | boolean | number) {
+    this.SetSetting(key, value);
     return ipcRenderer.invoke('saveSetting', key, value).then(() => { return true }, () => { return false });
   }
 
   LoadSetting(key: string) {
-    const setting = ipcRenderer.invoke('retrieveSetting', key).then((value: string | boolean | number) => {
+    ipcRenderer.invoke('retrieveSetting', key).then((value: string | boolean | number) => {
       if (value != null) {
         this.Settings[key] = value;
-        Debug.Log(String(this.Settings), LogContext.Renderer);
+        Debug.Log(`Loaded setting ${key} with value ${String(this.Settings)}`, LogContext.Renderer);
+      }
+      else {
+        this.SaveSetting(key, this.Settings[key])
       }
     });
+  }
+
+  SetSetting(key: string, value: string | boolean | number) {
+    this.Settings[key] = value;
   }
 
   SetTheme(theme: Theme) {
@@ -78,4 +81,4 @@ class SettingsManager {
   }
 }
 
-export const Settings = new SettingsManager();
+export const Settings =  new SettingsManager();

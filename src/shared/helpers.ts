@@ -5,6 +5,7 @@ import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import type { IElectronRendererWindow } from 'types/interfaces';
 import { DebugRendererHandler } from './DebugLogger';
+import { Settings } from './SettingsManager';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
