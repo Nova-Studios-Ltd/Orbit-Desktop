@@ -23,7 +23,7 @@ export class MessageImage extends React.Component {
     this.imageSrc = props.src;
     this.dimensions = props.dimensions || {width: 0, height: 0};
     this.desiredDimensions = {
-      width: 800,
+      width: 575,
       height: 400
     };
     this.finalDimensions = {
@@ -169,8 +169,8 @@ export default class Message extends React.Component {
     super(props);
     this.message_Id = props.message_Id;
     this.author_UUID = props.author_UUID;
-    this.author = props.author || 'Unknown';
-    this.content = props.content || 'Message';
+    this.author = props.author || 'Unable to retreive author';
+    this.content = props.content;
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.edited = props.edited;

@@ -167,8 +167,120 @@ ipcMain.on('deleteAccount', async (event, userID: string) => {
 
 ipcMain.handle('saveSetting', (key: string, value: string | boolean | number) => {
   //fs.writeFile('settings.json', );
+  // Store settings in an object andy, and serialize that to disk when you need to save, unless were gonna store like a gb of settings
+  // You will have to rewrite the entire file anyways to update a single setting, unless you spend the time update just that location in the file
+  // Perhaps make yourself a SettingsManager class that handles are the control logic
+  // And these events, help keep this file cleaner maybe?
 });
 
 ipcMain.on('retrieveSetting', (key: string) => {
+
+});
+
+
+// User
+
+// TODO Move begin auth event
+
+ipcMain.handle('GETUser', async (_event, user_uuid: string) => {
+  const resp = await QueryWithAuthentication(`User/${user_uuid}`);
+  return resp.payload;
+});
+
+ipcMain.on('GETUserChannels', async (event) => {
+  const resp = await QueryWithAuthentication('/User/Channels');
+  if (resp.status == 200 && resp.payload != undefined) event.sender.send('');
+});
+
+ipcMain.handle('GETUserUUID', async (event, username: string, discriminator: string) => {
+  const resp = await QueryWithAuthentication(`/User/${username}/${discriminator}/UUID`);
+  if (resp.status == 200 && resp.payload != undefined) return resp.payload;
+  return 'UNKNOWN';
+});
+
+// TODO Add type for 'data'
+ipcMain.on('EDITUser', (event, user_uuid: string, data: any) => {
+  
+});
+
+ipcMain.on('DELETEUser', async (event, user_uuid: string) => {
+  const resp = await DeleteWithAuthentication(`/User/${user_uuid}`);
+  if (resp.status == 200) event.sender.send('UserDeleted', true);
+  else event.sender.send('UserDeleted', false);
+});
+
+
+// Messages
+ipcMain.handle('GETMessage', async (_event, channel_uuid: string, message_id: string) => {
+  const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`);
+  if (resp.status == 200 && resp.payload != undefined) return resp.payload;
+  return undefined;
+});
+
+ipcMain.on('GETMessages', async (event, channel_uuid: string) => {
+  const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages`);
+  if (resp.payload == 200 && resp.payload != undefined) event.sender.send('GotMessages', <IMessageProps[]>resp.payload, channel_uuid);
+});
+
+ipcMain.on('SENDMessage', (event, channel_uuid: string) => {
+
+});
+
+// TODO Change 'data' to have a proper type
+ipcMain.on('EDITMessage', (event, channel_uuid: string, message_id: string, data: any) => {
+
+});
+
+ipcMain.on('DELETEMessage', (event, channel_uuid: string, message_id: string) => {
+
+});
+
+// Channels
+ipcMain.handle('GETChannel', (event, channel_uuid: string) => {
+
+});
+
+ipcMain.on('CREATEChannel', (event, recipient_uuid: string) => {
+
+});
+
+ipcMain.on('CREATEGroupChannel', (event, groupName: string, receipients: string[]) => {
+
+});
+
+ipcMain.on('UPDATEChannelName', (event, newName: string) => {
+
+});
+
+ipcMain.on('ADDChannelMember', (event, recipient_uuid: string) => {
+
+});
+
+ipcMain.on('ARCHIVEChannel', (event, channel_uuid: string) => {
+
+});
+
+ipcMain.on('UNARCHIVEChannel', (event, channel_uuid: string) => {
+
+});
+
+ipcMain.on('DELETEChannel', (event, channel_uuid: string) => {
+
+});
+
+ipcMain.on('REMOVEChannelMember', (event, channel_uuid: string, recipient: string) => {
+
+});
+
+// Media
+ipcMain.on('SETAvatar', (event, user_uuid: string, file: string) => {
+
+});
+
+ipcMain.on('SETChannelIcon', (event, channel_uuid: string, file: string) => {
+
+});
+
+ipcMain.handle('POSTChannelContent', (event, channel_uuid: string, file: string) => {
 
 });
