@@ -25,18 +25,20 @@ export default class UserDropdownMenu extends React.Component {
     this.menuItemClicked = this.menuItemClicked.bind(this);
   }
 
-  buttonClicked(event) {
+  buttonClicked(event: MouseEvent<HTMLButtonElement, MouseEvent>) {
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
-  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+  async menuItemClicked(event: MouseEvent<HTMLLIElement, MouseEvent>, ...args) {
     switch(event.currentTarget.id) {
       case 'userinfo':
-        await copyToClipboard(this.userData.uuid).then((result: boolean) => {
-          if (result) {
-            new AppNotification({ body: 'Copied UUID to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
-          }
-        });
+          const clipboardContent = args[0] == 0 ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
+          const resultMessage = args[0] == 0 ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
+          await copyToClipboard(clipboardContent).then((result: boolean) => {
+            if (result) {
+              new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+            }
+          });
         break;
       case 'settings':
         Navigate('/settings', null);
@@ -70,8 +72,8 @@ export default class UserDropdownMenu extends React.Component {
           }}
         >
 
-        <MenuItem id='userinfo' onClick={(event) => this.menuItemClicked(event)}>
-        <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
+        <MenuItem id='userinfo' onClick={(event) => this.menuItemClicked(event, 0)} onContextMenu={(event) => this.menuItemClicked(event, 1)}>
+          <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
         </MenuItem>
         <MenuItem id='settings' onClick={(event) => this.menuItemClicked(event)}>Settings</MenuItem>
         <MenuItem id='logout' onClick={(event) => this.menuItemClicked(event)}>Logout</MenuItem>
