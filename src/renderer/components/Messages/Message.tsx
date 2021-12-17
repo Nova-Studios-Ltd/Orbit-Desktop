@@ -399,7 +399,7 @@ export default class Message extends React.Component {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
       const messageParts = [] as any[];
       mes.forEach(word => {
-        if (this.validURL(word)) messageParts.push(<Link key={word} target='_blank' href={word}>{word}</Link>);
+        if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
       });
 
@@ -408,20 +408,20 @@ export default class Message extends React.Component {
 
     this.state.links.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
       else if (link.type == 'video')
-        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
-        messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
       else if (link.type == 'spotify')
-        messageContentObject.push(<MessageEmbed key={link.url} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
     });
 
     this.state.attachments.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={link.url} message={link.url} src={link.url} dimensions={link.dimensions} />);
+        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
       else if (link.type == 'video')
-        messageContentObject.push(<MessageVideo key={link.url} message={link.url} src={link.url} dimensions={link.dimensions} />);
+        messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
     });
 
     return (
