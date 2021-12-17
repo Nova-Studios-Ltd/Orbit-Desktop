@@ -2,7 +2,7 @@ import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Debug, GetChannelRecipientsFromUUID, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
+import { Debug, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -146,7 +146,7 @@ export default class ChatPage extends React.Component {
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     console.log(messages);
     if (GLOBALS.currentChannel != channel_uuid) return;
-    GetChannelRecipientsFromUUID(channel_uuid).then((channelName) => {
+    ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
     });
     if (!isUpdate)

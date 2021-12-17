@@ -50,12 +50,6 @@ ipcMain.on('toast', (_, notification: INotificationProps) => {
   new Notification({ title: notification.title, body: notification.body }).show();
 });
 
-ipcMain.handle('retrieveChannelName', async (_event, uuid: string) => {
-  const resp = await QueryWithAuthentication(`/Channel/${uuid}`);
-  if (resp.status == 200 && resp.payload != undefined) return (<IChannelProps>resp.payload).channelName;
-  return 'Failed to get channel name'
-});
-
 ipcMain.on('pickUploadFiles', (event) => {
   dialog.showOpenDialog({ properties: ['openFile', 'multiSelections', 'showHiddenFiles'] }).then((r) => {
     if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);

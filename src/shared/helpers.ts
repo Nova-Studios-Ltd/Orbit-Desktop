@@ -175,7 +175,3 @@ export function setDefaultChannel(channelID: string) {
 export async function copyToClipboard(text: string) {
   return await ipcRenderer.invoke('copyToClipboard', text);
 }
-
-export async function GetChannelRecipientsFromUUID(uuid: string) {
-  return await ipcRenderer.invoke('retrieveChannelName', uuid);
-}

@@ -130,6 +130,12 @@ ipcMain.on('SETChannelIcon', async (event, channel_uuid: string, file: string) =
   event.sender.send('ChannelIconSet', false);
 });
 
+ipcMain.handle('GETChannelName', async (_event, uuid: string) => {
+  const resp = await QueryWithAuthentication(`/Channel/${uuid}`);
+  if (resp.status == 200 && resp.payload != undefined) return (<IChannelProps>resp.payload).channelName;
+  return 'Failed to get channel name';
+});
+
 ipcMain.handle('POSTChannelContent', async (_event, channel_uuid: string, file: string) => {
   const resp = await PostFileWithAuthentication(`/Media/Channel/${channel_uuid}`, file);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
