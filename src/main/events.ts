@@ -72,6 +72,6 @@ ipcMain.handle('saveSetting', (key: string, value: string | boolean | number) =>
   // And these events, help keep this file cleaner maybe?
 });
 
-ipcMain.on('retrieveSetting', (key: string) => {
-
+ipcMain.handle('retrieveSetting', (key: string) => {
+  return 'Not Implemented';
 });

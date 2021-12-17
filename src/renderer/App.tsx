@@ -4,6 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import { Debug, events, history, Navigate, SetAuth } from 'shared/helpers';
+import { Settings } from 'shared/SettingsManager';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
@@ -19,6 +20,7 @@ class App extends React.Component {
 
   constructor(props: undefined) {
     super(props);
+    Settings.Init();
     Navigate(GLOBALS.HomePath, null);
     SetAuth();
 

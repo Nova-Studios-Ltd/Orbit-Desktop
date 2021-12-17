@@ -7,6 +7,7 @@ import { LogContext, NotificationStatusType } from 'types/enums';
 import GLOBALS from 'shared/globals';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
+import { Settings } from 'shared/SettingsManager';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
@@ -74,7 +75,7 @@ export default class MessageInput extends React.Component {
       console.log(this.ctrlPressed);
     }
   }
-  
+
   handleSendButtonClick(event: any) {
     this.forwardMessage(this.state.message, this.state.attachments);
     this.setMessageTo('', []);
@@ -92,14 +93,14 @@ export default class MessageInput extends React.Component {
   }
 
   render() {
-    const availableCharacterRemainder = GLOBALS.MessageCharacterLimit - this.state.message.length;
-    const showMaxLength = availableCharacterRemainder > GLOBALS.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
+    const availableCharacterRemainder = Settings.Settings.MessageCharacterLimit - this.state.message.length;
+    const showMaxLength = availableCharacterRemainder > Settings.Settings.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
 
     return (
       <div className='Chat_Page_Bottom'>
         <IconButton className='Chat_IconButton' onClick={this.handleUploadButtonClick}><UploadIcon /></IconButton>
         <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} autoFocus onChange={this.handleChange} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} inputProps={{
-          maxLength: GLOBALS.MessageCharacterLimit,
+          maxLength: Settings.Settings.MessageCharacterLimit,
         }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
