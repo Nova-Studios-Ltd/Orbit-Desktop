@@ -1,7 +1,7 @@
 import React, { DOMElement, ForwardedRef, RefObject } from 'react';
 import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
-import { ipcRenderer, LoadMessageFeed, setDefaultChannel } from 'shared/helpers';
+import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
 import type { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { ChannelType } from 'types/enums';
