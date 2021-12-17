@@ -20,6 +20,7 @@ import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
 import { NCAPIResponse } from 'main/NCAPI';
+import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 
 export default class ChatPage extends React.Component {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;

@@ -27,10 +27,10 @@ export function GetHistoryState()
 }
 
 export function getCookie(cname: string) {
-  let name = cname + '=';
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
       c = c.substring(1);
@@ -64,6 +64,7 @@ function HandleWebsocket() {
         break;
       case 2: {
         const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        if (message == undefined) break;
         events.send('OnMessageEdit', message, event.Channel, event.Message);
         break;
       }
@@ -90,7 +91,7 @@ function HandleWebsocket() {
         break;
     }
   };
-  socket.onerror = function (error) {
+  socket.onerror = () => {
     console.error(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       Navigate('/Login', { failed: true });
@@ -103,7 +104,7 @@ function HandleWebsocket() {
     reconnectAttempts = 1;
     socket.send(token);
   };
-  socket.onclose = (event) => {
+  socket.onclose = () => {
     console.warn(`Socket closed. Attempting reconnect in ${reconnectAttempts}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       Navigate('/Login', { failed: true });
@@ -115,7 +116,7 @@ function HandleWebsocket() {
 }
 
 export async function ConductLogin() {
-  if (GetHistoryState() != null && GetHistoryState().failed) return;
+  if (GetHistoryState() != null && (<any>GetHistoryState()).failed) return;
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     Navigate('/chat', null);
     ipcRenderer.send('GETUserChannels');
@@ -136,13 +137,8 @@ export async function ConductLogin() {
   }
 }
 
-export function LoadMessageFeed(channelData: string) {
-  const messages = JSON.parse(channelData);
-  return messages;
-}
-
-export async function Authenticate(data: Credentials) {
-  return await ipcRenderer.invoke('beginAuth', data, window.location.origin);
+export function Authenticate(data: Credentials) {
+  return ipcRenderer.invoke('beginAuth', data, window.location.origin);
 }
 
 export function SetAuth() {
@@ -161,21 +157,21 @@ export function SetAuth() {
 
 export function RemoveCachedCredentials() {
   ipcRenderer.send('logout');
-  GLOBALS.userData = new UserData(null);
+  GLOBALS.userData = new UserData(undefined);
 }
 
-export async function Register(data: Credentials) {
-  return await ipcRenderer.invoke('register', data);
+export function Register(data: Credentials) {
+  return ipcRenderer.invoke('register', data);
 }
 
 export function setDefaultChannel(channelID: string) {
   localStorage.setItem('lastOpenedChannel', channelID);
 }
 
-export async function copyToClipboard(text: string) {
-  return await ipcRenderer.invoke('copyToClipboard', text);
+export function copyToClipboard(text: string) {
+  return ipcRenderer.invoke('copyToClipboard', text);
 }
 
 export async function GetChannelRecipientsFromUUID(uuid: string) {
-  return await ipcRenderer.invoke('retrieveChannelName', uuid);
+  return ipcRenderer.invoke('retrieveChannelName', uuid);
 }
