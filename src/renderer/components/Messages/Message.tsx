@@ -207,7 +207,7 @@ export default class Message extends React.Component {
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
-  menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+  menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
     switch(event.currentTarget.id) {
       case 'edit':
         this.setState({ editedMessage: this.content, isEditing: true });

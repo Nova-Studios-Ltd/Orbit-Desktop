@@ -1,10 +1,8 @@
 import React from 'react';
-import { Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material/';
-import { Send as SendIcon, Logout as LogoutIcon, Upload as UploadIcon } from '@mui/icons-material';
+import { IconButton, InputAdornment, TextField } from '@mui/material/';
+import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
-import AppNotification from 'renderer/components/Notification/Notification';
-import { LogContext, NotificationStatusType } from 'types/enums';
-import GLOBALS from 'shared/globals';
+import { LogContext } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { Settings } from 'shared/SettingsManager';
