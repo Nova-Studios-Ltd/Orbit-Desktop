@@ -132,6 +132,10 @@ export class MessageEmbed extends React.Component {
     this.dimensions = props.dimensions || {width: 600, height: 400};
   }
 
+  spotifyTrackURL(url: string) {
+    return new RegExp(/^https:\/\/open\.spotify\.com\/track\/[a-zA-Z?0-9=&/]*/g).test(url);
+  }
+
   render() {
     const styles = {
       //width: (this.dimensions.width),
@@ -141,7 +145,7 @@ export class MessageEmbed extends React.Component {
 
     return (
       <div className='Message_Content' style={styles}>
-        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
+        {!this.videoSrc.includes('youtube') ? null : <><Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
           <Card className='Message_Embed' style={styles}>
             <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
           </Card>

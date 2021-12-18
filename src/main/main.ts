@@ -67,6 +67,18 @@ const installExtensions = async () => {
     .catch((e) => DebugMain.Error(e, LogContext.Main, 'when initializing extensions'));
 };
 
+function getSpotifyTrackId(url: string) {
+  const m = url.match(/(?<=k\/)(.*(?=\?)|.*(?=$)*)/g);
+  if (m == null) return '';
+  return m[0];
+}
+
+function getSpotifyPlaylistId(url: string) {
+  const m = url.match(/(?<=t\/)(.*(?=\?)|.*(?=$)*)/g);
+  if (m == null) return '';
+  return m[0];
+}
+
 const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -132,7 +144,15 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openExternal(url);
+    if (url.includes('track')) { 
+      shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
+    }
+    else if (url.includes('playlist')) {
+      shell.openExternal(`spotify://track/${getSpotifyPlaylistId(url)}`);
+    }
+    else {
+      shell.openExternal(url);
+    }
   });
 
   // Remove this if your app does not use auto updates
