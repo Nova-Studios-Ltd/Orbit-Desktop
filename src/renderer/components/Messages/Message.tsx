@@ -132,10 +132,6 @@ export class MessageEmbed extends React.Component {
     this.dimensions = props.dimensions || {width: 600, height: 400};
   }
 
-  spotifyTrackURL(url: string) {
-    return new RegExp(/^https:\/\/open\.spotify\.com\/track\/[a-zA-Z?0-9=&/]*/g).test(url);
-  }
-
   render() {
     const styles = {
       //width: (this.dimensions.width),
@@ -145,10 +141,9 @@ export class MessageEmbed extends React.Component {
 
     return (
       <div className='Message_Content' style={styles}>
-        {!this.videoSrc.includes('youtube') ? null : <><Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Embed' style={styles}>
-            <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
-          </Card>
+        <Card className='Message_Embed' style={styles}>
+          <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
+        </Card>
       </div>
     );
   }
@@ -250,9 +245,6 @@ export default class Message extends React.Component {
   async componentDidMount() {
     let containsNonLinkText = false;
     const links = this.content.match(/(https:\/\/[\S]*)/g);
-    /*if (links == null && this.attachments.length > 0) {
-      links = [] as Array<string>;
-    }*/
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
@@ -269,15 +261,13 @@ export default class Message extends React.Component {
       return;
     }
 
-    /*for (let a = 0; a < this.attachments.length; a++) {
-      links.push(this.attachments[a].contentUrl);
-    }*/
-
     const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
       if (this.imageURL(link) || await this.checkImageHeader(link)) {
-        messageLinks.push(new MessageContent({type: 'image', url: link}));
+        const dims = await this.getImageSize(link);
+        console.log(dims);
+        messageLinks.push(new MessageContent({type: 'image', url: link, dimensions: {width: dims.width, height: dims.height}}));
       }
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
         messageLinks.push(new MessageContent({type: 'video', url: link}));
@@ -305,6 +295,15 @@ export default class Message extends React.Component {
       return buff.type.startsWith('image/');
     }
     catch {return false;}
+  }
+
+  getImageSize(url: string) {
+    return new Promise<Dimensions>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve({width: img.width, height: img.height});
+      img.onerror = () => reject();
+      img.src = url;
+    });
   }
 
   getYoutubeVideoId(url: string) {
@@ -343,8 +342,7 @@ export default class Message extends React.Component {
   }
 
   validURL(url: string) {
-    const pattern = new RegExp(/^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)/);
-    return !!pattern.test(url);
+    return new RegExp(/^(https:\/\/)+([a-zA-Z]*\.)?([a-zA-Z]*\.)([a-zA-Z]*)/).test(url);
   }
 
   youtubeURL(url: string) {
@@ -401,7 +399,7 @@ export default class Message extends React.Component {
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      const messageParts = [] as any[];
+      const messageParts = [] as JSX.Element[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);
@@ -412,7 +410,7 @@ export default class Message extends React.Component {
 
     this.state.links.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions}/>);
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
