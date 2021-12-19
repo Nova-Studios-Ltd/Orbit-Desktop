@@ -23,10 +23,15 @@ import './debugEvents';
 import { LogContext, LogType } from '../types/enums';
 
 const stat = require('node-static');
+const checkCommand = require('command-exists').sync;
+
 const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let allowCompleteExit = false;
+
+// Check if spotify is installed
+const spotifyInstalled = checkCommand('spotify');
 
 export default class AppUpdater {
   constructor() {
@@ -144,11 +149,11 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    if (url.includes('track')) { 
+    if (url.includes('track') && spotifyInstalled) { 
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
-    else if (url.includes('playlist')) {
-      shell.openExternal(`spotify://track/${getSpotifyPlaylistId(url)}`);
+    else if (url.includes('playlist') && spotifyInstalled) {
+      shell.openExternal(`spotify://playlist/${getSpotifyPlaylistId(url)}`);
     }
     else {
       shell.openExternal(url);
