@@ -43,11 +43,14 @@ export default class ChatPage extends React.Component {
     this.resetCreateChannelDialogState = this.resetCreateChannelDialogState.bind(this);
     this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
+    this.addAttachment = this.addAttachment.bind(this);
+    this.removeAttachment = this.removeAttachment.bind(this);
 
     this.state = {
       CanvasObject: undefined,
       ChannelList: undefined,
       ChannelName: '',
+      AttachmentList: [],
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: {},
       CreateChannelDialogVisible: false,
@@ -180,7 +183,8 @@ export default class ChatPage extends React.Component {
     }
   }
 
-  async sendMessage(message: string, attachments: MessageAttachment[]) {
+  async sendMessage(message: string) {
+    const attachments = this.state.AttachmentList;
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
       const attachmentIds = [] as string[];
@@ -197,6 +201,7 @@ export default class ChatPage extends React.Component {
     else if (message.length > 0) {
       ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, []);
     }
+    this.setState({ AttachmentList: [] });
   }
 
   handleFormChange(event: React.FormEvent<HTMLFormElement>) {
@@ -272,6 +277,30 @@ export default class ChatPage extends React.Component {
     }
   }
 
+  addAttachment(attachment: MessageAttachment) {
+    this.setState((prevState: IChatPageState) => {
+      const newAttachmentList = prevState.AttachmentList;
+      newAttachmentList.push(attachment);
+      return { AttachmentList: newAttachmentList };
+    });
+  }
+
+  removeAttachment(id: string) {
+    this.setState((prevState: IChatPageState) => {
+      const index = prevState.AttachmentList.findIndex((attachment) => {
+        return attachment.id == id;
+      });
+
+      if (index > -1) {
+        return { AttachmentList: prevState.AttachmentList.splice(index, 1) };
+      }
+
+      Debug.Warn(`Unable to remove attachment ${id}`, LogContext.Renderer, 'ID not found in attachment list');
+
+      return null;
+    });
+  }
+
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
@@ -337,7 +366,8 @@ export default class ChatPage extends React.Component {
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
             <MessageCanvas init={this.initCanvas}/>
-            <MessageInput onMessagePush={this.sendMessage}/>
+            <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>
+            <MessageInput onAddAttachment={this.addAttachment} onMessagePush={this.sendMessage}/>
           </div>
         </div>
         <Drawer className='NavigationDrawer' anchor='left' open={this.state.NavigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>

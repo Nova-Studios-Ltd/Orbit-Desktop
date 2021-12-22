@@ -26,6 +26,8 @@
 .Message_Right {
   margin-left: 1rem;
   align-self: center;
+  overflow-wrap: anywhere;
+  width: 100%;
 }
 
 .Message_Right_Header {
@@ -74,4 +76,11 @@
 
 .MessagesEmptyPrompt {
   text-align: center;
+}
+
+.FileUploadSummary {
+  height: 30px;
+  padding: 10px;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
