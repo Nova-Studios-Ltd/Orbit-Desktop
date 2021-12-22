@@ -4,6 +4,7 @@ import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import type { IAuthPageProps } from 'types/interfaces'
 import { ConductLogin, GetHistoryState } from 'shared/helpers';
+import GLOBALS from 'shared/globals';
 
 function LoginInit(form: LoginForm) {
   ConductLogin();
@@ -62,7 +63,7 @@ export default class AuthPage extends React.Component {
     return (
       <div className={AuthPageContainerClassNames} style={st}>
         <Helmet>
-          <title>{title}</title>
+          <title>{`${GLOBALS.appName} ${GLOBALS.appVersion} - ${title}`}</title>
         </Helmet>
         <div className='Auth_Page_Left' />
         {form}

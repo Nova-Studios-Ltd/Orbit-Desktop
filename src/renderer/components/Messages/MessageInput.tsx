@@ -9,6 +9,7 @@ import { Settings } from 'shared/SettingsManager';
 
 export default class MessageInput extends React.Component {
   state: IMessageInputState;
+  props: IMessageInputProps;
   forwardMessageCallback: (message: string, attachments: MessageAttachment[]) => void;
   ctrlPressed: boolean;
 
@@ -28,12 +29,12 @@ export default class MessageInput extends React.Component {
 
     ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
 
-    this.state = { message: '', attachments: []}
+    this.state = { message: ''}
   }
 
   addedAttachment(files: string[]) {
-    files.forEach((file) => this.state.attachments.push(new MessageAttachment(file, false)));
-    this.setState({attachments: this.state.attachments});
+    if (this.props != null && this.props.onAddAttachment != null)
+      files.forEach((file) => this.props.onAddAttachment(new MessageAttachment(file, false)));
   }
 
   forwardMessage(message: string, attachments: MessageAttachment[]) {

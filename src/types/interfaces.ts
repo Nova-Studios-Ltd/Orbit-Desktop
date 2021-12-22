@@ -115,7 +115,7 @@ export interface IMessageCanvasProps {
 }
 
 export interface IMessageInputProps {
-  init: Function,
+  onAddAttachment: (attachment: MessageAttachment) => void,
   onMessagePush: (message: string, attachments: MessageAttachment[]) => void
 }
 
@@ -177,7 +177,8 @@ export interface IImageViewerProps {
 }
 
 export interface IFileUploadSummaryProps {
-
+  files: Array<MessageAttachment>,
+  onRemoveAttachment(id: string): void
 }
 
 export interface IHybridListItem {
@@ -244,6 +245,7 @@ export interface IChatPageState {
   CanvasObject?: MessageCanvas,
   ChannelList?: ChannelView,
   ChannelName: string,
+  AttachmentList: Array<MessageAttachment>,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
@@ -288,8 +290,7 @@ export interface IMessageState {
 }
 
 export interface IMessageInputState {
-  message: string,
-  attachments: MessageAttachment[]
+  message: string
 }
 
 export interface IMessageCanvasState {
@@ -304,10 +305,6 @@ export interface IUserDropdownMenuState {
 export interface ISettingsPageState {
   confirmUserAccountDeletionDialogOpen: boolean,
   darkThemeEnabled: boolean
-}
-
-export interface IFileUploadSummaryState {
-  files: Array<MessageAttachment>
 }
 
 // Implementation Prototypes
