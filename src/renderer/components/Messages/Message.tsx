@@ -1,12 +1,12 @@
-import { Avatar, Card, CardMedia, IconButton, Link, Typography, Button, Menu, MenuItem } from '@mui/material';
+import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem } from '@mui/material';
 import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
-import React, { DOMElement, FormEvent, Ref } from 'react';
+import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
-import { copyToClipboard, Debug, ipcRenderer } from 'shared/helpers';
+import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import type { IMessageProps, IMessageMediaProps, IMessageState, IMessageContent, IAttachmentProps, Dimensions } from 'types/interfaces';
+import type { IMessageProps, IMessageMediaProps, IMessageState, IAttachmentProps, Dimensions } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
 
@@ -34,9 +34,6 @@ export class MessageImage extends React.Component {
 
   render() {
     if (this.dimensions.width > 0 && this.dimensions.height > 0) {
-      //this.finalDimensions.height = Math.floor((this.desiredDimensions.width * this.dimensions.height) / this.dimensions.width);
-      //this.finalDimensions.width = Math.floor((this.desiredDimensions.height * this.dimensions.width) / this.dimensions.height);
-
       const xRatio = this.dimensions.width / this.desiredDimensions.width;
       const yRatio = this.dimensions.height / this.desiredDimensions.height;
       const ratio = Math.max(xRatio, yRatio);
@@ -99,8 +96,6 @@ export class MessageVideo extends React.Component {
 
   render() {
     const styles = {
-      //width: (this.dimensions.width),
-      //height: (this.dimensions.height),
       marginBottom: '0.8rem'
     }
 
@@ -134,11 +129,8 @@ export class MessageEmbed extends React.Component {
 
   render() {
     const styles = {
-      //width: (this.dimensions.width),
-      //height: (this.dimensions.height),
       marginBottom: '0.8rem'
     }
-
     return (
       <div className='Message_Content' style={styles}>
         <Card className='Message_Embed' style={styles}>
@@ -394,12 +386,12 @@ export default class Message extends React.Component {
   }
 
   render() {
-    const messageContentObject = [] as any;
+    const messageContentObject = [] as JSX.Element[];
     const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      const messageParts = [] as JSX.Element[];
+      const messageParts = [] as any[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
         else messageParts.push(word);

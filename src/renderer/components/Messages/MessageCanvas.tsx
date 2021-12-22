@@ -50,7 +50,6 @@ export default class MessageCanvas extends React.Component {
     const index = oldState.messages.findIndex(e => e.message_Id === id);
     if (index > -1) {
       oldState.messages.splice(index, 1);
-      //this.setState({messages: []});
       this.setState({messages: oldState.messages});
     }
   }

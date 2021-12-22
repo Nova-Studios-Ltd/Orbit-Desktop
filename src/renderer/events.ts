@@ -1,4 +1,3 @@
-import UserData from 'structs/UserData';
 import GLOBALS from 'shared/globals';
 import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
