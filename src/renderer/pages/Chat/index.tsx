@@ -292,7 +292,8 @@ export default class ChatPage extends React.Component {
       });
 
       if (index > -1) {
-        return { AttachmentList: prevState.AttachmentList.splice(index, 1) };
+        prevState.AttachmentList.splice(index, 1);
+        return { AttachmentList: prevState.AttachmentList};
       }
 
       Debug.Warn(`Unable to remove attachment ${id}`, LogContext.Renderer, 'ID not found in attachment list');
