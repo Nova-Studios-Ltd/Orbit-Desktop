@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
+import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
@@ -23,6 +23,7 @@ export default class SettingsPage extends React.Component {
     this.deleteAccount = this.deleteAccount.bind(this);
     this.closeUserAccountDeletionDialog = this.closeUserAccountDeletionDialog.bind(this);
     this.exitSettings = this.exitSettings.bind(this);
+    this.updateUserAvatar = this.updateUserAvatar.bind(this);
 
     this.state = {
       confirmUserAccountDeletionDialogOpen: false,
@@ -49,7 +50,7 @@ export default class SettingsPage extends React.Component {
   }
 
   deleteAccount() {
-    ipcRenderer.send('deleteAccount', GLOBALS.userData.uuid);
+    ipcRenderer.send('DELETEUser', GLOBALS.userData.uuid);
     this.closeUserAccountDeletionDialog();
   }
 
@@ -59,6 +60,11 @@ export default class SettingsPage extends React.Component {
 
   exitSettings() {
     ConductLogin();
+  }
+
+  async updateUserAvatar() {
+    const image = await ipcRenderer.invoke("OpenFile");
+    if (image != undefined) ipcRenderer.send("SETAvatar", GLOBALS.userData.uuid, image);
   }
 
   render() {
@@ -71,6 +77,11 @@ export default class SettingsPage extends React.Component {
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
         </Header>
         <div className='Settings_Page_InnerContainer'>
+          <SettingsSection title='User'>
+            <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=512`} />
+            <br/>
+            <Button variant='outlined' onClick={this.updateUserAvatar}>Update Avatar</Button>
+          </SettingsSection>
           <SettingsSection title='Appearance'>
             <FormGroup>
               <FormControlLabel label='Dark Theme' control={<Switch id='darkTheme' title='Dark Theme' onChange={this.handleToggle} checked={this.state.darkThemeEnabled} />} />

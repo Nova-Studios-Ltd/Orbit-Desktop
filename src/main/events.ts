@@ -56,6 +56,15 @@ ipcMain.on('pickUploadFiles', (event) => {
   }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
+ipcMain.handle('OpenFile', async (_event) => {
+  const result = await dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'], filters: [
+    { name: 'All Files', extensions: ['*'] },
+    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+  ] });
+  if (!result.canceled) return result.filePaths[0];
+  return undefined;
+})
+
 ipcMain.handle('uploadFile', async (_event, channel_uuid: string, attachments: string) => {
   const file = <MessageAttachment>JSON.parse(attachments);
   console.log(file);
