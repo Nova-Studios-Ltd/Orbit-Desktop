@@ -1,0 +1,161 @@
+yarn run v1.22.17
+$ cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/NCAPI.ts
+  5:22  warning  'FormDataNode' is defined but never used     @typescript-eslint/no-unused-vars
+  6:9   warning  'FormDataEncoder' is defined but never used  @typescript-eslint/no-unused-vars
+  7:10  warning  'Readable' is defined but never used         @typescript-eslint/no-unused-vars
+  8:8   warning  'https' is defined but never used            @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/apiEvents.ts
+  26:25  warning  '_event' is defined but never used        @typescript-eslint/no-unused-vars
+  26:33  warning  'user_uuid' is defined but never used     @typescript-eslint/no-unused-vars
+  26:52  warning  'data' is defined but never used          @typescript-eslint/no-unused-vars
+  26:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/events.ts
+   2:8    warning  'fs' is defined but never used                         @typescript-eslint/no-unused-vars
+   3:15   warning  'IChannelProps' is defined but never used              @typescript-eslint/no-unused-vars
+   3:30   warning  'IMessageDeleteRequestArgs' is defined but never used  @typescript-eslint/no-unused-vars
+   3:57   warning  'IMessageProps' is defined but never used              @typescript-eslint/no-unused-vars
+   7:10   warning  'ChannelType' is defined but never used                @typescript-eslint/no-unused-vars
+   7:56   warning  'LogType' is defined but never used                    @typescript-eslint/no-unused-vars
+   8:10   warning  'DeleteWithAuthentication' is defined but never used   @typescript-eslint/no-unused-vars
+   8:36   warning  'PostWithAuthentication' is defined but never used     @typescript-eslint/no-unused-vars
+   8:60   warning  'QueryWithAuthentication' is defined but never used    @typescript-eslint/no-unused-vars
+   8:112  warning  'PutWithAuthentication' is defined but never used      @typescript-eslint/no-unused-vars
+   8:204  warning  'NCAPIResponse' is defined but never used              @typescript-eslint/no-unused-vars
+  59:35   warning  '_event' is defined but never used                     @typescript-eslint/no-unused-vars
+  76:32   warning  'key' is defined but never used                        @typescript-eslint/no-unused-vars
+  76:45   warning  'value' is defined but never used                      @typescript-eslint/no-unused-vars
+  84:36   warning  'key' is defined but never used                        @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/main.ts
+  13:16  warning  'resolve' is defined but never used       @typescript-eslint/no-unused-vars
+  23:22  warning  'LogType' is defined but never used       @typescript-eslint/no-unused-vars
+  48:32  warning  Unexpected unnamed function               func-names
+  48:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:32  warning  Unexpected unnamed function               func-names
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/preload.js
+  18:14  error  Returning an awaited promise is not allowed in this context  @typescript-eslint/return-await
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/timeout.ts
+  1:52  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  1:68  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  3:5   error    Assignment can be replaced with operator assignment  operator-assignment
+  3:5   error    Assignment to function parameter 'timeout'           no-param-reassign
+  6:5   error    Assignment to function parameter 'timeout'           no-param-reassign
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/main/util.ts
+  3:8  warning  'path' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/App.tsx
+   6:10  warning  'Debug' is defined but never used       @typescript-eslint/no-unused-vars
+  14:10  warning  'LogContext' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/UIEvents.ts
+  2:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Channels/ChannelView.tsx
+  7:9  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Dialogs/ImageViewer.tsx
+  4:11  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Dialogs/YesNoDialog.tsx
+  2:88  warning  'Grow' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Form/FormDropdown.tsx
+  8:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Header/Header.tsx
+  6:9   warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  7:12  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/List/HybridListItem.tsx
+  8:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Messages/Message.tsx
+  32:13  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  50:11  warning  'IMessageContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Messages/MessageAttachment.tsx
+  3:18  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+  8:3   warning  Useless constructor                       @typescript-eslint/no-useless-constructor
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/Messages/MessageCanvas.tsx
+   2:17  warning  'Ref' is defined but never used          @typescript-eslint/no-unused-vars
+  36:53  warning  'refreshList' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/components/UserDropdown/UserDropdownMenu.tsx
+  10:13  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+  16:11  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/events.ts
+  27:34  warning  'data' is defined but never used  @typescript-eslint/no-unused-vars
+  31:36  warning  'data' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/pages/Chat/index.tsx
+   24:11  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+  279:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/renderer/pages/Settings/index.tsx
+  14:11  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/shared/DebugLogger.ts
+  21:30  error    Assignment to function parameter 'contextType'  no-param-reassign
+  47:11  warning  'path' is defined but never used                @typescript-eslint/no-unused-vars
+  85:11  warning  'path' is defined but never used                @typescript-eslint/no-unused-vars
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/shared/SettingsManager.ts
+  5:1  warning  Dependency cycle detected  import/no-cycle
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/shared/helpers.ts
+    8:1   warning  Dependency cycle detected                 import/no-cycle
+    8:10  warning  'Settings' is defined but never used      @typescript-eslint/no-unused-vars
+   15:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/templates/ContextMenu.tsx
+  1:19  error  Parsing error: ';' expected
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/templates/ReactComponentClass.tsx
+  3:18  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+  7:18  warning  An empty interface is equivalent to `{}`  @typescript-eslint/no-empty-interface
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/types/interfaces.ts
+  16:36  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  17:31  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+  18:33  warning  Don't use `Function` as a type. The `Function` type accepts any function-like value.
+It provides no type safety when calling the function, which can be a common source of bugs.
+It also accepts things like class declarations, which will throw at runtime as they will not be called with `new`.
+If you are expecting the function to accept certain arguments, you should explicitly define the function shape  @typescript-eslint/ban-types
+  20:38  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  20:54  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+
+/home/andy/source/Nova Studios Projects/NovaChat3/NovaChatUI3/src/types/transitions.tsx
+  5:26  error  Prop spreading is forbidden  react/jsx-props-no-spreading
+  9:42  error  Prop spreading is forbidden  react/jsx-props-no-spreading
+
+✖ 80 problems (8 errors, 72 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
