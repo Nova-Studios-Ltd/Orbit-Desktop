@@ -10,7 +10,7 @@ interface IHybridListItem {
 }
 
 export default class HybridListItem extends React.Component<IHybridListItem> {
-  className: string;
+  className?: string;
   id: string;
   text: string;
   icon: JSX.Element;
