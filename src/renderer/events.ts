@@ -1,7 +1,6 @@
 import GLOBALS from 'shared/globals';
 import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationStruct } from 'structs/NotificationProps';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 ipcRenderer.on('endAuth', (data: boolean) => {
@@ -13,16 +12,16 @@ ipcRenderer.on('endAuth', (data: boolean) => {
 
 ipcRenderer.on('ChannelCreated', (data: boolean) => {
   if (data)
-    new AppNotification(new NotificationStruct('Channel Created', 'Channel has been created succesfully', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification(new NotificationStruct('Channel Not Create', 'Failed to create channel', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('CREATEGroupChannel', (data: boolean) => {
   if (data)
-    new AppNotification(new NotificationStruct('Group Channel Created', 'Channel has been created succesfully', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Group Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification(new NotificationStruct('Group Channel Not Create', 'Failed to create channel', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Group Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('clientFocused', (data: boolean) => {
@@ -35,11 +34,11 @@ ipcRenderer.on('clientUnfocused', (data: boolean) => {
 
 ipcRenderer.on('UserDeleted', (success: boolean) => {
   if (success) {
-    new AppNotification(new NotificationStruct('Account Management', 'Successfully deleted your account.', false, NotificationStatusType.success, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Account Management', body: 'Successfully deleted your account.', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
     RemoveCachedCredentials();
     Navigate('/login', null);
   }
   else {
-    new AppNotification(new NotificationStruct('Account Management', 'Failed to delete your user account.', false, NotificationStatusType.error, NotificationAudienceType.app)).show();
+    new AppNotification({ title: 'Account Management', body: 'Failed to delete your user account.', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
   }
 })

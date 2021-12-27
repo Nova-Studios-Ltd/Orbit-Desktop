@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import type { IAuthForm, IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import GLOBALS from 'shared/globals';
@@ -10,9 +9,20 @@ import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 
-class RegisterForm extends React.Component<IRegisterFormProps> implements IAuthForm {
+interface IRegisterFormProps {
+  init(form: RegisterForm): void
+}
+
+interface IRegisterFormState {
+  email: string,
+  username: string,
+  password: string,
+  address: string,
+  status: FormStatusTuple
+}
+
+class RegisterForm extends React.Component<IRegisterFormProps> {
   state: IRegisterFormState;
-  props: IRegisterFormProps;
 
   constructor(props: IRegisterFormProps) {
     super(props);

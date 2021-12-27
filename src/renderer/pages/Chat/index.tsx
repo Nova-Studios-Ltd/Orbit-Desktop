@@ -8,20 +8,36 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import type { IChannelProps, IChatPageProps, IChatPageState, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
+import type { IChannelProps, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
 import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
-import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 
-export default class ChatPage extends React.Component {
+interface IChatPageProps {
+
+}
+
+interface IChatPageState {
+  CanvasObject?: MessageCanvas,
+  ChannelList?: ChannelView,
+  ChannelName: string,
+  AttachmentList: Array<MessageAttachment>,
+  CreateChannelDialogChannelName: string,
+  CreateChannelDialogRecipients: {[username: string]: string},
+  CreateChannelDialogVisible: boolean,
+  CreateChannelDialogChannelType: ChannelType,
+  CreateChannelDialogRecipientAvatarSrc: string,
+  NavigationDrawerOpen: boolean
+}
+
+export default class ChatPage extends React.Component<IChatPageProps> {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
   state: IChatPageState;
 
@@ -160,9 +176,9 @@ export default class ChatPage extends React.Component {
       if (isUpdate && message.author_UUID != GLOBALS.userData.uuid) {
         const selected = GLOBALS.currentChannel == channel_uuid;
         if (selected && GLOBALS.isFocused) {}
-        else if (!selected && GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.app)).show();
-        else if (selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.none)).show();
-        else if (!selected && !GLOBALS.isFocused) new AppNotification(new NotificationStruct(message.author, message.content, true, NotificationStatusType.info, NotificationAudienceType.both)).show();
+        else if (!selected && GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
+        else if (selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
+        else if (!selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
       }
       this.appendToCanvas(message, isUpdate, index == messages.length - 1 && !isUpdate);
     }
@@ -280,7 +296,7 @@ export default class ChatPage extends React.Component {
   navigationDrawerItemClicked(event: MouseEvent<HTMLLIElement>) {
     switch (event.currentTarget.id) {
       case 'chat':
-        new AppNotification(new NotificationStruct('Navigation', 'Navigating to Chat page', false, NotificationStatusType.info, NotificationAudienceType.app)).show();
+        new AppNotification({ title: 'Navigation', body: 'Navigating to Chat page', playSound: false, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
         break;
     }
   }

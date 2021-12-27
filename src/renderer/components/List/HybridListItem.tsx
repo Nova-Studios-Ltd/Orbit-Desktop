@@ -1,6 +1,13 @@
 import React from 'react';
-import { ListItem, ListItemIcon, ListItemText} from '@mui/material';
-import type { IHybridListItem } from 'types/interfaces';
+import { ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+
+interface IHybridListItem {
+  className?: string,
+  id: string,
+  text: string,
+  icon: any,
+  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
+}
 
 export default class HybridListItem extends React.Component<IHybridListItem> {
   className: string;
@@ -10,7 +17,7 @@ export default class HybridListItem extends React.Component<IHybridListItem> {
 
   constructor(props: IHybridListItem) {
     super(props);
-    this.className = props.className;
+    this.className = props.className || '';
     this.id = props.id;
     this.text = props.text;
     this.icon = props.icon;
@@ -18,12 +25,12 @@ export default class HybridListItem extends React.Component<IHybridListItem> {
 
   render() {
     return(
-      <ListItem id={this.id} className={this.className} button onClick={this.props.onClick}>
+      <ListItemButton id={this.id} className={this.className} onClick={this.props.onClick}>
         <ListItemIcon>
           {this.icon}
         </ListItemIcon>
         <ListItemText primary={this.text} />
-      </ListItem>
+      </ListItemButton>
     );
   }
 }

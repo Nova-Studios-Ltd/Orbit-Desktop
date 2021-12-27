@@ -1,6 +1,11 @@
 import React from 'react';
 import { Chip, Stack } from '@mui/material';
-import { IFileUploadSummaryProps } from 'types/interfaces';
+import type MessageAttachment from 'renderer/components/Messages/MessageAttachment'
+
+interface IFileUploadSummaryProps {
+  files: Array<MessageAttachment>,
+  onRemoveAttachment(id: string): void
+}
 
 export default class FileUploadSummary extends React.Component<IFileUploadSummaryProps> {
   render() {

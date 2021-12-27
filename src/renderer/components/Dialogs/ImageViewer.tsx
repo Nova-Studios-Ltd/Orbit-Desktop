@@ -1,6 +1,9 @@
 import React from 'react';
 import { Card } from '@mui/material';
-import type { IImageViewerProps } from 'types/interfaces';
+
+interface IImageViewerProps {
+
+}
 
 export default class ImageViewerProps extends React.Component<IImageViewerProps> {
 

@@ -8,14 +8,14 @@ interface IAuthFormProps {
   headerBody?: string,
   status?: FormStatusTuple,
   onSubmit?: FormEventHandler<HTMLFormElement>,
-  children?: JSX.Element|JSX.Element[]
+  children?: Element | Element[]
 }
 
 export default class AuthForm extends React.Component<IAuthFormProps> {
   headerHeading?: string;
   headerBody?: string;
   handleSubmit?: FormEventHandler<HTMLFormElement>;
-  children?: JSX.Element|JSX.Element[];
+  children?: Element | Element[];
 
   constructor(props: IAuthFormProps) {
     super(props);

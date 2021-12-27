@@ -10,10 +10,15 @@ import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
-import { ThemeProvider } from '@mui/material';
+import { ClassNameMap, ThemeProvider } from '@mui/material';
 import { LogContext, Theme } from 'types/enums';
-import type { IAppState } from 'types/interfaces';
 import { GlobalStyles } from '@mui/styled-engine';
+import { DefaultTheme, Styles } from '@mui/styles';
+
+interface IAppState {
+  theme: Theme,
+  styles: Styles<DefaultTheme, ClassNameMap<"@global">>
+}
 
 class App extends React.Component<undefined> {
   state: IAppState;

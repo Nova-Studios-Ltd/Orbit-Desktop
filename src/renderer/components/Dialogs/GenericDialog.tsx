@@ -3,8 +3,8 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } 
 
 interface IGenericDialogProps {
   title: string,
-  children: Element[],
-  actions: Element[]
+  children: Element | Element[],
+  actions: Element | Element[]
 }
 
 export default class GenericDialog extends React.Component<IGenericDialogProps> {

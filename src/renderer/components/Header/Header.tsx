@@ -5,7 +5,7 @@ interface IHeaderProps {
   caption: string,
   icon: any,
   onClick: Function,
-  children: Element[]
+  children: Element | Element[]
 }
 
 export default class Header extends React.Component<IHeaderProps> {

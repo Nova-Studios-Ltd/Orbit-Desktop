@@ -3,16 +3,25 @@ import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
-import type { IAuthForm, ILoginFormProps, ILoginFormState } from 'types/interfaces';
 import GLOBALS from 'shared/globals';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormAuthStatusType, FormStatusType } from 'types/enums';
 
+interface ILoginFormProps {
+  init(form: LoginForm): void
+}
+
+interface ILoginFormState {
+  email: string,
+  password: string,
+  address: string,
+  status: FormStatusTuple
+}
+
 class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
   state: ILoginFormState;
-  props: ILoginFormProps;
 
   constructor(props: ILoginFormProps) {
     super(props);
@@ -32,7 +41,7 @@ class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { email, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
-    Authenticate(new Credentials({email, password, address})).then((result) => {
+    Authenticate(new Credentials({email, password, address})).then((result: FormAuthStatusType) => {
       switch (result) {
         case FormAuthStatusType.success:
           this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);

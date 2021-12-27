@@ -8,9 +8,9 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
-import { Dimensions, IMessageState } from 'types/interfaces';
+import { Dimensions } from 'types/types';
 
-interface IMessageProps {
+export interface IMessageProps {
   message_Id: string,
   author_UUID: string,
   author: string,
@@ -21,6 +21,16 @@ interface IMessageProps {
   avatar: string,
   attachments: IAttachmentProps[],
   onUpdate: () => void;
+}
+
+interface IMessageState {
+  editedMessage: string,
+  isEditing: boolean,
+  hasNonLinkText: boolean,
+  links: MessageContent[],
+  attachments: MessageContent[],
+  anchorEl: any,
+  open: boolean
 }
 
 interface IAttachmentProps {
@@ -35,10 +45,6 @@ interface IMessageMediaProps {
   message: string,
   src: string,
   dimensions?: Dimensions
-}
-
-interface IMessageCanvasProps {
-  init: Function
 }
 
 interface IMessageContent {
@@ -424,12 +430,12 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   render() {
-    const messageContentObject = [] as JSX.Element[];
+    const messageContentObject = [] as Element[];
     const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      const messageParts = [] as JSX.Element[];
+      const messageParts = [] as Element[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
         else messageParts.push((word) as unknown as JSX.Element);

@@ -1,11 +1,19 @@
 import { Typography } from '@mui/material';
-import React, { Ref } from 'react';
-import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
-import Message from './Message';
+import React, { Ref, RefObject } from 'react';
+import Message from 'renderer/components/Messages/Message';
+import type { IMessageProps } from 'renderer/components/Messages/Message';
+
+interface IMessageCanvasProps {
+  init(canvas: MessageCanvas): void
+}
+
+interface IMessageCanvasState {
+  messages: Array<Message>
+}
 
 export default class MessageCanvas extends React.Component<IMessageCanvasProps> {
   state: IMessageCanvasState;
-  bottomDivRef: Ref<HTMLDivElement>;
+  bottomDivRef?: RefObject<HTMLDivElement>;
 
   constructor(props: IMessageCanvasProps) {
     super(props);

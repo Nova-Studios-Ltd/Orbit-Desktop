@@ -3,7 +3,6 @@ import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch } from 
 import { Close as CloseIcon, Settings as SettingsIcon, Add } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
-import type { ISettingsPageProps, ISettingsPageState } from 'types/interfaces';
 import Header from 'renderer/components/Header/Header';
 import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
@@ -12,8 +11,17 @@ import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/e
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import { Settings } from 'shared/SettingsManager';
 
+interface ISettingsPageProps {
 
-export default class SettingsPage extends React.Component {
+}
+
+interface ISettingsPageState {
+  UpdatedUser: boolean,
+  confirmUserAccountDeletionDialogOpen: boolean,
+  darkThemeEnabled: boolean
+}
+
+export default class SettingsPage extends React.Component<ISettingsPageProps> {
   state: ISettingsPageState;
 
   constructor(props: ISettingsPageProps) {

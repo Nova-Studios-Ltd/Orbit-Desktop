@@ -5,7 +5,7 @@ import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';
 import { Settings } from 'shared/SettingsManager';
 
-interface INotificationProps {
+export interface INotificationProps {
   title?: string,
   body?: string,
   playSound?: boolean,
@@ -34,14 +34,12 @@ export default class AppNotification {
   private sendAppToast() {
     let toastElement = null;
     if (this.title != null && this.title.length > 0) {
-      toastElement = () => {
-        return(
-          <div className='Notification_Container'>
-            <Typography className='Notification_Title' variant='subtitle1'>{this.title}</Typography>
-            <Typography className='Notification_Body' variant='caption'>{this.body}</Typography>
-          </div>
-        );
-      };
+      toastElement = (
+        <div className='Notification_Container'>
+          <Typography className='Notification_Title' variant='subtitle1'>{this.title}</Typography>
+          <Typography className='Notification_Body' variant='caption'>{this.body}</Typography>
+        </div>
+      );
     }
     else {
       toastElement = this.body;
@@ -85,7 +83,7 @@ export default class AppNotification {
     }
 
     if (this.playSound) {
-      const sound = new Audio(this.NotificationAssetPath);
+      const sound = new Audio(this.notificationAssetPath);
       if (sound != null) {
         sound.play();
       }
