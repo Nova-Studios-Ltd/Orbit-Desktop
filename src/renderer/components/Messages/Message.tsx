@@ -301,7 +301,6 @@ export default class Message extends React.Component<IMessageProps> {
       const link = links[l];
       if (this.imageURL(link) || await this.checkImageHeader(link)) {
         const dims = await this.getImageSize(link);
-        console.log(dims);
         messageLinks.push(new MessageContent({type: 'image', url: link, dimensions: {width: dims.width, height: dims.height}}));
       }
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
@@ -430,12 +429,12 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   render() {
-    const messageContentObject = [] as Element[];
+    const messageContentObject = [] as JSX.Element[];
     const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      const messageParts = [] as Element[];
+      const messageParts = [] as JSX.Element[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
         else messageParts.push((word) as unknown as JSX.Element);
