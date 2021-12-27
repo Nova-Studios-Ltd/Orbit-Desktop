@@ -21,22 +21,6 @@ export interface IMessageDeleteRequestArgs {
   messageID: string
 }
 
-export interface IGenericDialogProps {
-  title: string,
-  children: ReactChildren,
-  actions: ReactChildren
-}
-
-export interface IYesNoDialogProps {
-  title: string,
-  body: string,
-  show: boolean,
-  confirmButtonText?: string,
-  denyButtonText?: string,
-  onConfirm: MouseEvent<HTMLButtonElement, MouseEvent>,
-  onDeny: MouseEvent<HTMLButtonElement, MouseEvent>,
-}
-
 export interface IImageViewerProps {
 
 }

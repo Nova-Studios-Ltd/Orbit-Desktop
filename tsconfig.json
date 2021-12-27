@@ -23,5 +23,6 @@
     "resolveJsonModule": true,
     "allowJs": true,
   },
-  "exclude": ["test", "build/release", "build/app/dist", ".erb/dll"]
+  "exclude": ["build/release", "build/app/dist", ".erb/dll"],
+  "include": ["src/types/types.ts"]
 }

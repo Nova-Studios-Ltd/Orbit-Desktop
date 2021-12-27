@@ -92,8 +92,8 @@ export default class UserDropdownMenu extends React.Component {
         <MenuItem id='userinfo' onClick={this.menuItemClicked} onContextMenu={this.menuItemClicked}>
           <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
         </MenuItem>
-        <MenuItem id='settings' onClick={(event) => this.menuItemClicked(event)}>Settings</MenuItem>
-        <MenuItem id='logout' onClick={(event) => this.menuItemClicked(event)}>Logout</MenuItem>
+        <MenuItem id='settings' onClick={this.menuItemClicked}>Settings</MenuItem>
+        <MenuItem id='logout' onClick={this.menuItemClicked}>Logout</MenuItem>
       </Menu>
       </div>
     );
