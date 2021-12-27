@@ -135,10 +135,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.addChannel(channel);
   }
 
-  appendToCanvas(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
+  appendToCanvas(message: IMessageProps, isUpdate: boolean) {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
-      canvas.append(message, isUpdate, refreshList);
+      canvas.append(message, isUpdate);
     }
     else {
       Debug.Error('MessageCanvas is null', LogContext.Renderer, 'when appending message from ChatPage');
@@ -181,7 +181,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         else if (selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
         else if (!selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
       }
-      this.appendToCanvas(message, isUpdate, index == messages.length - 1 && !isUpdate);
+      this.appendToCanvas(message, isUpdate);
     }
   }
 

@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import React, { Ref, RefObject } from 'react';
+import React, { RefObject } from 'react';
 import Message from 'renderer/components/Messages/Message';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 
@@ -33,7 +33,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     }
   }
 
-  append(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
+  append(message: IMessageProps, isUpdate: boolean) {
     if (this.state.messages.length > 0)
     {
       this.setState((prevState: IMessageCanvasState) => {
