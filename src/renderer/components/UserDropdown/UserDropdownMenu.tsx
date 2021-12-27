@@ -12,7 +12,7 @@ interface IUserDropdownMenu {
   userData: UserData
 }
 
-interface IUserDropdownMenuFunctions {
+export interface IUserDropdownMenuFunctions {
   logout: Function
 }
 
@@ -41,7 +41,7 @@ export default class UserDropdownMenu extends React.Component<IUserDropdownMenu>
   }
 
   buttonClicked(event: React.MouseEvent<HTMLButtonElement>) {
-    this.setState((prevState: IUserDropdownMenuState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
+    this.setState((prevState: IUserDropdownMenuState) => ({ open: !prevState.open, anchorEl: event.target }));
   }
 
   async menuItemClicked(event: React.MouseEvent<HTMLLIElement>) {

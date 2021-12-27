@@ -2,7 +2,7 @@ import UserData from '../structs/UserData';
 
 const GLOBALS = {
   userData: new UserData(undefined),
-  appName: 'Nova Chat',
+  appName: 'Eden',
   appVersion: '3.0',
   currentChannel: '',
   HomePath: '/login',

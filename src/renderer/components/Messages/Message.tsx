@@ -238,7 +238,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-    this.setState((prevState: IMessageState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
+    this.setState((prevState: IMessageState) => ({ open: !prevState.open, anchorEl: event.target }));
   }
 
   menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {

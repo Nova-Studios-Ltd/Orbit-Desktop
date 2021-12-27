@@ -6,7 +6,7 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from '../Dialogs/YesNoDialog';
 
-interface IChannelProps {
+export interface IChannelProps {
   table_Id: string,
   owner_UUID?: string,
   isGroup: ChannelType,
@@ -52,7 +52,7 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   channelRightClicked(event: MouseEvent<HTMLButtonElement>) {
-    this.setState((prevState: IChannelState) => ({ contextMenuOpen: !prevState.contextMenuOpen, contextMenuAnchorEl: event.currentTarget }));
+    this.setState((prevState: IChannelState) => ({ contextMenuOpen: !prevState.contextMenuOpen, contextMenuAnchorEl: event.target }));
   }
 
   async channelClicked() {

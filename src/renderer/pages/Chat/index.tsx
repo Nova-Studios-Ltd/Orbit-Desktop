@@ -8,8 +8,7 @@ import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import type { IChannelProps, IMessageProps, IUserDropdownMenuFunctions } from 'types/interfaces';
-import UserDropdownMenu from 'renderer/components/UserDropdown/UserDropdownMenu';
+import UserDropdownMenu, { IUserDropdownMenuFunctions } from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
@@ -19,6 +18,8 @@ import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
+import type { IMessageProps } from 'renderer/components/Messages/Message';
+import type { IChannelProps } from 'renderer/components/Channels/Channel';
 
 interface IChatPageProps {
 
