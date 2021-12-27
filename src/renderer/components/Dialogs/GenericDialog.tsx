@@ -1,4 +1,4 @@
-import React, { ReactChildren } from 'react';
+import React from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 interface IGenericDialogProps {
@@ -7,7 +7,7 @@ interface IGenericDialogProps {
   actions: Element[]
 }
 
-export default class GenericDialog extends React.Component {
+export default class GenericDialog extends React.Component<IGenericDialogProps> {
   title: string;
 
   constructor(props: IGenericDialogProps) {

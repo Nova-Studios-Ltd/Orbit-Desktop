@@ -1,4 +1,4 @@
-import React, { ReactChildren } from 'react';
+import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
 
 interface IHeaderProps {
@@ -8,8 +8,7 @@ interface IHeaderProps {
   children: Element[]
 }
 
-export default class Header extends React.Component {
-  props: IHeaderProps;
+export default class Header extends React.Component<IHeaderProps> {
 
   render() {
     let IconObject = null;

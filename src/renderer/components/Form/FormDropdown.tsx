@@ -1,9 +1,8 @@
 import React from 'react';
-import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select} from '@mui/material';
+import { Box, FormControl, FormHelperText, InputLabel, Select} from '@mui/material';
 import type { IFormDropdownProps } from 'types/interfaces';
 
-export default class FormDropdown extends React.Component {
-  props: IFormDropdownProps;
+export default class FormDropdown extends React.Component<IFormDropdownProps> {
   id: string;
   label: string;
   description?: string;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate } from 'shared/helpers';
@@ -10,7 +10,7 @@ import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormAuthStatusType, FormStatusType } from 'types/enums';
 
-class LoginForm extends React.Component implements IAuthForm {
+class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
   state: ILoginFormState;
   props: ILoginFormProps;
 
@@ -24,7 +24,7 @@ class LoginForm extends React.Component implements IAuthForm {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event: React.FormEvent<HTMLFormElement>) {
+  handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
     this.setState({[name]: value});
   }
@@ -32,7 +32,7 @@ class LoginForm extends React.Component implements IAuthForm {
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { email, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
-    Authenticate(new Credentials({email: email, password: password, address: address})).then((result) => {
+    Authenticate(new Credentials({email, password, address})).then((result) => {
       switch (result) {
         case FormAuthStatusType.success:
           this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);

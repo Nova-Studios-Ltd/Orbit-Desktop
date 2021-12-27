@@ -32,7 +32,7 @@ class App extends React.Component<undefined> {
 
   componentDidMount() {
     // Will create memory leak, add a remove listener call on unmount
-    events.on('appThemeChanged', (theme: Theme) => {
+    events.on('appThemeChanged', () => {
       this.setState({ theme: AppTheme(), styles: AppStyles() });
     });
   }

@@ -6,7 +6,7 @@ interface IFormHeaderProps {
   body?: string
 }
 
-export default class FormHeader extends React.Component {
+export default class FormHeader extends React.Component<IFormHeaderProps> {
   heading?: string;
   body?: string;
 

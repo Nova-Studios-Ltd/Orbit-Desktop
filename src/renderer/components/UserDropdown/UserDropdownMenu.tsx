@@ -21,7 +21,7 @@ interface IUserDropdownMenuState {
   open: boolean
 }
 
-export default class UserDropdownMenu extends React.Component {
+export default class UserDropdownMenu extends React.Component<IUserDropdownMenu> {
   state: IUserDropdownMenuState;
   menuFunctions: IUserDropdownMenuFunctions;
   userData: UserData;
@@ -40,11 +40,11 @@ export default class UserDropdownMenu extends React.Component {
     this.menuItemClicked = this.menuItemClicked.bind(this);
   }
 
-  buttonClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+  buttonClicked(event: React.MouseEvent<HTMLButtonElement>) {
+    this.setState((prevState: IUserDropdownMenuState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
   }
 
-  async menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
+  async menuItemClicked(event: React.MouseEvent<HTMLLIElement>) {
     switch(event.currentTarget.id) {
       case 'userinfo':
         {
@@ -55,8 +55,8 @@ export default class UserDropdownMenu extends React.Component {
               new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
             }
           });
+          break;
         }
-        break;
       case 'settings':
         Navigate('/settings', null);
         break;
@@ -75,8 +75,8 @@ export default class UserDropdownMenu extends React.Component {
   render() {
     return(
       <div>
-        <IconButton onClick={this.buttonClicked}>
-          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${this.userData.uuid}?size=64`} />
+        <IconButton onClick={(event) => this.buttonClicked(event)}>
+          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${this.userData.uuid}?size=64&${Date.now()}`} />
         </IconButton>
 
         <Menu

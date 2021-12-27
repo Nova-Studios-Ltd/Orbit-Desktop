@@ -1,11 +1,9 @@
 import { Typography } from '@mui/material';
-import React, { memo } from 'react';
-import { Debug } from 'shared/helpers';
-import { LogContext } from 'types/enums';
+import React, { Ref } from 'react';
 import type { IMessageCanvasProps, IMessageCanvasState, IMessageProps } from 'types/interfaces';
 import Message from './Message';
 
-export default class MessageCanvas extends React.Component {
+export default class MessageCanvas extends React.Component<IMessageCanvasProps> {
   state: IMessageCanvasState;
   bottomDivRef: Ref<HTMLDivElement>;
 
@@ -30,15 +28,17 @@ export default class MessageCanvas extends React.Component {
   append(message: IMessageProps, isUpdate: boolean, refreshList: boolean) {
     if (this.state.messages.length > 0)
     {
-      const oldState = this.state;
-      if (isUpdate)
-        oldState.messages.push(new Message(message));
-      else
-        oldState.messages.unshift(new Message(message));
+      this.setState((prevState: IMessageCanvasState) => {
+        const oldState = prevState;
+        if (isUpdate)
+          oldState.messages.push(new Message(message));
+        else
+          oldState.messages.unshift(new Message(message));
 
-      if (refreshList)
-        this.setState({messages: []});
-      this.setState({messages: oldState.messages});
+        if (refreshList)
+          this.setState({messages: []});
+        return ({messages: oldState.messages});
+      })
     }
     else {
       this.setState({messages: [message]});
@@ -80,7 +80,8 @@ export default class MessageCanvas extends React.Component {
   }
 
   scrollToBottom() {
-    this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+    if (this.bottomDivRef != null)
+      this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
   componentDidUpdate() {

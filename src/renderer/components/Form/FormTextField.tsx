@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { TextField } from '@mui/material';
 
 interface IFormTextFieldProps {
@@ -13,7 +13,7 @@ interface IFormTextFieldProps {
   onChange?: () => void
 }
 
-export default class FormTextField extends React.Component {
+export default class FormTextField extends React.Component<IFormTextFieldProps> {
   id: string;
   classNames: string;
   label: string;
@@ -21,7 +21,7 @@ export default class FormTextField extends React.Component {
   autoFocus?: boolean;
   required?: boolean;
   sensitive?: boolean;
-  onChange?: () => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 
   constructor(props: IFormTextFieldProps) {
     super(props);

@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { FormEventHandler, MouseEvent, ReactChildren } from 'react'
+import type { MouseEventHandler, ReactChildren, ReactNode } from 'react'
 import type { SelectChangeEvent, Theme } from '@mui/material';
 import type { ClassNameMap, Styles } from '@mui/styles';
 import type FormStatusTuple from 'structs/FormStatusTypes';
-import type { ChannelType, FormStatusType, NotificationStatusType, NotificationAudienceType  } from 'types/enums';
-import type UserData from 'structs/UserData';
+import type { ChannelType  } from 'types/enums';
 import type ChannelView from 'renderer/components/Channels/ChannelView';
 import type MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import type Channel from 'renderer/components/Channels/Channel';
 import type Message from 'renderer/components/Messages/Message';
 import type MessageAttachment from 'structs/MessageAttachment';
 import type MessageContent from 'structs/MessageContent';
@@ -31,11 +29,11 @@ export interface IFileUploadSummaryProps {
 }
 
 export interface IHybridListItem {
-  className: string,
+  className?: string,
   id: string,
   text: string,
   icon: any,
-  onClick: Function
+  onClick: MouseEventHandler<HTMLLIElement>;
 }
 
 export interface IFileUploadDialog {
@@ -47,12 +45,12 @@ export interface IFormDropdownProps {
   label: string,
   description?: string,
   value: any,
-  onChange: SelectChangeEvent<unknown>
+  onChange: (event: SelectChangeEvent<any>, child: ReactNode) => void;
 }
 
 export interface ISettingsSectionProps {
   title: string,
-  children: ReactChildren
+  children: Element | ReactNode
 }
 
 export interface IUserData {
@@ -133,6 +131,7 @@ export interface IMessageCanvasState {
 }
 
 export interface ISettingsPageState {
+  UpdatedUser: boolean,
   confirmUserAccountDeletionDialogOpen: boolean,
   darkThemeEnabled: boolean
 }

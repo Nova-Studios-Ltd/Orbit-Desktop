@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { KeyboardEvent, ChangeEvent } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import { LogContext } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { Settings } from 'shared/SettingsManager';
-import FormTextField from '../Form/FormTextField';
 
 interface IMessageInputProps {
   onAddAttachment: (attachment: MessageAttachment) => void,
@@ -18,6 +17,7 @@ interface IMessageInputState {
 
 export default class MessageInput extends React.Component<IMessageInputProps> {
   state: IMessageInputState;
+  ctrlPressed: boolean;
 
   constructor(props: IMessageInputProps) {
     super(props);
@@ -31,6 +31,8 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
     this.addedAttachment = this.addedAttachment.bind(this);
 
     ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
+    
+    this.ctrlPressed = false;
 
     this.state = { message: '' };
   }
@@ -49,27 +51,39 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
     }
   }
 
-  handleChange(event: React.FormEvent<HTMLInputElement>) {
-    this.setMessageTo(event.target.value);
+  handleChange(event: ChangeEvent<HTMLInputElement>) {
+    this.setMessageTo(event.currentTarget.value);
   }
 
   async handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.code == 'Enter') {
       this.forwardMessage(this.state.message);
-      this.setMessageTo('', []);
+      this.setMessageTo('');
+    }
+    if (event.keyCode == 17 || event.keyCode == 91) {
+      this.ctrlPressed = true;
+    }
+    /*if (event.keyCode == 86 && this.ctrlPressed && false) {
+      const a = new MessageAttachment(await ipcRenderer.invoke('copyImageFromClipboard'), true);
+      if (a.contents == '') return;
+      this.state.attachments.push(a);
+      this.setState({attachments: this.state.attachments});
+      console.log(this.state.attachments);
+    }*/
+  }
+
+  handleKeyUp(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.keyCode == 17 || event.keyCode == 91) {
+      this.ctrlPressed = false;
     }
   }
 
-  handleKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
-
-  }
-
-  handleSendButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+  handleSendButtonClick() {
     this.forwardMessage(this.state.message);
     this.setMessageTo('');
   }
 
-  handleUploadButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+  handleUploadButtonClick() {
     ipcRenderer.send('pickUploadFiles');
   }
 

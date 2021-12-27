@@ -7,14 +7,7 @@ interface IFormStatusFieldProps {
   type?: FormStatusType
 }
 
-export default class FormStatusField extends React.Component {
-  static props: IFormStatusFieldProps;
-
-  constructor(props: IFormStatusFieldProps) {
-    super(props);
-    this.props = props;
-  }
-
+export default class FormStatusField extends React.Component<IFormStatusFieldProps> {
   getType()
   {
     const { type } = this.props;

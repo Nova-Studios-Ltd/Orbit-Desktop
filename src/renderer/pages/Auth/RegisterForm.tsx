@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import type { IAuthForm, IRegisterFormProps, IRegisterFormState } from 'types/interfaces';
@@ -10,7 +10,7 @@ import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 
-class RegisterForm extends React.Component implements IAuthForm {
+class RegisterForm extends React.Component<IRegisterFormProps> implements IAuthForm {
   state: IRegisterFormState;
   props: IRegisterFormProps;
 
@@ -24,7 +24,7 @@ class RegisterForm extends React.Component implements IAuthForm {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event: React.FormEvent<HTMLInputElement>) {
+  handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
     this.setState({[name]: value});
   }
