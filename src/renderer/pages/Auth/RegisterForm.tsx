@@ -12,6 +12,7 @@ import { FormStatusType } from 'types/enums';
 
 class RegisterForm extends React.Component<IRegisterFormProps> implements IAuthForm {
   state: IRegisterFormState;
+  props: IRegisterFormProps;
 
   constructor(props: IRegisterFormProps) {
     super(props);

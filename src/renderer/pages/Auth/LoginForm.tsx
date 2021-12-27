@@ -12,6 +12,7 @@ import { FormAuthStatusType, FormStatusType } from 'types/enums';
 
 class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
   state: ILoginFormState;
+  props: ILoginFormProps;
 
   constructor(props: ILoginFormProps) {
     super(props);

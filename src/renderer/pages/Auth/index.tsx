@@ -2,40 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
-import type { IAuthPageProps } from 'types/interfaces'
 import { ConductLogin } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 
-function LoginInit() {
-  ConductLogin();
-}
-
-function RegisterInit() {
-
-}
-
-function getRandomInt(min: number, max: number) {
-  const mmin = Math.ceil(min);
-  const mmax = Math.floor(max);
-  return Math.floor(Math.random() * (mmax - mmin) + mmin); //The maximum is exclusive and the minimum is inclusive
-}
-
-function hslToHex(h: number, s: number, l: number) {
-  const ll = l / 100;
-  const a = s * Math.min(ll, 1 - ll) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix '0' if needed
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function GenerateRandomColor() {
-  const h = getRandomInt(0, 360);
-  const s = getRandomInt(80, 100);
-  const l = 75;
-  return hslToHex(h, s, l);
+interface IAuthPageProps {
+  login?: boolean,
+  register?: boolean,
 }
 
 export default class AuthPage extends React.Component<IAuthPageProps> {
@@ -48,16 +20,51 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
         return 1;
       return 0;
     })();
+
+    this.LoginInit = this.LoginInit.bind(this);
+    this.RegisterInit = this.RegisterInit.bind(this);
+    this.GetRandomInt = this.GetRandomInt.bind(this);
+    this.GenerateRandomColor = this.GenerateRandomColor.bind(this);
+    this.HslToHex = this.HslToHex.bind(this);
+  }
+
+  LoginInit() {
+    ConductLogin();
+  }
+
+  RegisterInit() {
+
+  }
+
+  GetRandomInt(min: number, max: number) {
+    const mmin = Math.ceil(min);
+    const mmax = Math.floor(max);
+    return Math.floor(Math.random() * (mmax - mmin) + mmin); //The maximum is exclusive and the minimum is inclusive
+  }
+
+  GenerateRandomColor() {
+    return this.HslToHex(this.GetRandomInt(0, 360), this.GetRandomInt(80, 100), 75);
+  }
+
+  HslToHex(h: number, s: number, l: number) {
+    const ll = l / 100;
+    const a = s * Math.min(ll, 1 - ll) / 100;
+    const f = (n: number) => {
+      const k = (n + h / 30) % 12;
+      const color = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix '0' if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
   }
 
   render() {
     const title = this.formType == 1 ? 'Register' : 'Login';
-    const form = this.formType == 1 ? <RegisterForm init={RegisterInit}/> : <LoginForm init={LoginInit}/>;
+    const form = this.formType == 1 ? <RegisterForm init={this.RegisterInit}/> : <LoginForm init={this.LoginInit}/>;
     const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
     const AuthPageContainerClassNames = `Page Auth_Page_Container ${background}`;
 
     const st = {
-      backgroundImage: `linear-gradient(${getRandomInt(43, 150)}deg, ${GenerateRandomColor()} 0%, ${GenerateRandomColor()} 46%, ${GenerateRandomColor()} 100%)`,
+      backgroundImage: `linear-gradient(${this.GetRandomInt(43, 150)}deg, ${this.GenerateRandomColor()} 0%, ${this.GenerateRandomColor()} 46%, ${this.GenerateRandomColor()} 100%)`,
     };
 
     return (

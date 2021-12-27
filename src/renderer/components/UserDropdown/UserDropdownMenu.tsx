@@ -1,10 +1,25 @@
-import React, {MouseEvent} from 'react';
+import React from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import type { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
 import UserData from 'structs/UserData';
 import { copyToClipboard, Navigate } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+
+interface IUserDropdownMenu {
+  menuFunctions: {
+    logout: Function
+  },
+  userData: UserData
+}
+
+interface IUserDropdownMenuFunctions {
+  logout: Function
+}
+
+interface IUserDropdownMenuState {
+  anchorEl: Element | null,
+  open: boolean
+}
 
 export default class UserDropdownMenu extends React.Component<IUserDropdownMenu> {
   state: IUserDropdownMenuState;
@@ -25,15 +40,16 @@ export default class UserDropdownMenu extends React.Component<IUserDropdownMenu>
     this.menuItemClicked = this.menuItemClicked.bind(this);
   }
 
-  buttonClicked(event: MouseEvent<HTMLButtonElement>) {
+  buttonClicked(event: React.MouseEvent<HTMLButtonElement>) {
     this.setState((prevState: IUserDropdownMenuState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
   }
 
-  async menuItemClicked(event: MouseEvent<HTMLLIElement, globalThis.MouseEvent>, contextMenu?: number) {
+  async menuItemClicked(event: React.MouseEvent<HTMLLIElement>) {
     switch(event.currentTarget.id) {
-      case 'userinfo': {
-          const clipboardContent = contextMenu == 0 ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
-          const resultMessage = contextMenu == 0 ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
+      case 'userinfo':
+        {
+          const clipboardContent = event.type == 'click' ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
+          const resultMessage = event.type == 'click' ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
           await copyToClipboard(clipboardContent).then((result: boolean) => {
             if (result) {
               new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
@@ -59,7 +75,7 @@ export default class UserDropdownMenu extends React.Component<IUserDropdownMenu>
   render() {
     return(
       <div>
-        <IconButton onClick={this.buttonClicked}>
+        <IconButton onClick={(event) => this.buttonClicked(event)}>
           <Avatar src={`https://api.novastudios.tk/Media/Avatar/${this.userData.uuid}?size=64&${Date.now()}`} />
         </IconButton>
 
@@ -73,7 +89,7 @@ export default class UserDropdownMenu extends React.Component<IUserDropdownMenu>
           }}
         >
 
-        <MenuItem id='userinfo' onClick={(event) => this.menuItemClicked(event, 0)} onContextMenu={(event) => this.menuItemClicked(event, 1)}>
+        <MenuItem id='userinfo' onClick={this.menuItemClicked} onContextMenu={this.menuItemClicked}>
           <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
         </MenuItem>
         <MenuItem id='settings' onClick={(event) => this.menuItemClicked(event)}>Settings</MenuItem>

@@ -1,4 +1,9 @@
-import type { ICredentialsProps } from 'types/interfaces';
+interface ICredentialsProps {
+  email?: string,
+  username?: string,
+  password?: string,
+  address?: string
+}
 
 export default class Credentials {
   email?: string;
@@ -6,10 +11,10 @@ export default class Credentials {
   password?: string;
   address?: string;
 
-  constructor({ email, username, password, address} : ICredentialsProps) {
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.address = address;
+  constructor(props: ICredentialsProps) {
+    this.email = props.email;
+    this.username = props.username;
+    this.password = props.password;
+    this.address = props.address;
   }
 }

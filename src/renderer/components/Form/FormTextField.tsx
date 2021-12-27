@@ -1,6 +1,17 @@
 import React, { ChangeEvent } from 'react';
 import { TextField } from '@mui/material';
-import type { IFormTextFieldProps } from 'types/interfaces';
+
+interface IFormTextFieldProps {
+  id: string,
+  value: string,
+  classNames?: string,
+  label: string,
+  description?: string,
+  autoFocus?: boolean,
+  required?: boolean,
+  sensitive?: boolean,
+  onChange?: () => void
+}
 
 export default class FormTextField extends React.Component<IFormTextFieldProps> {
   id: string;

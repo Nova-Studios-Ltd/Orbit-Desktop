@@ -2,10 +2,26 @@ import React, { MouseEvent } from 'react';
 import { Card, Typography, Avatar, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
-import type { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from '../Dialogs/YesNoDialog';
+
+interface IChannelProps {
+  table_Id: string,
+  owner_UUID?: string,
+  isGroup: ChannelType,
+  channelName: string,
+  clickedCallback?: void,
+  channelIcon?: string,
+  members?: string[]
+}
+
+interface IChannelState {
+  contextMenuAnchorEl: Element | null,
+  contextMenuOpen: boolean,
+  confirmChannelDeletionDialogOpen: boolean
+}
+
 
 export default class Channel extends React.Component<IChannelProps> {
   state: IChannelState;

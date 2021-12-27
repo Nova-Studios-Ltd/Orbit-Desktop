@@ -1,6 +1,12 @@
 import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
-import type { IHeaderProps } from 'types/interfaces';
+
+interface IHeaderProps {
+  caption: string,
+  icon: any,
+  onClick: Function,
+  children: Element[]
+}
 
 export default class Header extends React.Component<IHeaderProps> {
 

@@ -1,8 +1,15 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import type { IChannelViewProps, IChannelViewState } from 'types/interfaces';
 import {events}from 'shared/helpers';
 import Channel from './Channel';
+
+interface IChannelViewProps {
+  init: Function
+}
+
+interface IChannelViewState {
+  channels: Channel[],
+}
 
 export default class ChannelView extends React.Component<IChannelViewProps> {
   state: IChannelViewState;
