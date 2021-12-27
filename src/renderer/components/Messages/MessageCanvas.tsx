@@ -42,9 +42,6 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
           oldState.messages.push(new Message(message));
         else
           oldState.messages.unshift(new Message(message));
-
-        if (refreshList)
-          this.setState({messages: []});
         return ({messages: oldState.messages});
       })
     }
