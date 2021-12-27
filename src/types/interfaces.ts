@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { FormEventHandler, MouseEvent, ReactChildren } from 'react'
+import type { ChangeEvent, FormEventHandler, MouseEventHandler, ReactChildren, ReactNode } from 'react'
 import type { SelectChangeEvent, Theme } from '@mui/material';
 import type { ClassNameMap, Styles } from '@mui/styles';
 import type FormStatusTuple from 'structs/FormStatusTypes';
@@ -34,8 +34,8 @@ export interface ISettingsPageProps {
 export interface IHeaderProps {
   caption: string,
   icon: any,
-  onClick: Function,
-  children: Element[]
+  onClick?: MouseEventHandler<HTMLButtonElement>,
+  children: Element | ReactNode
 }
 
 export interface IAuthFormProps {
@@ -53,14 +53,14 @@ export interface IFormHeaderProps {
 
 export interface IFormTextFieldProps {
   id: string,
-  value: string,
+  value?: string,
   classNames?: string,
   label: string,
   description?: string,
   autoFocus?: boolean,
   required?: boolean,
   sensitive?: boolean,
-  onChange?: () => void
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 export interface IFormStatusFieldProps {
@@ -70,13 +70,12 @@ export interface IFormStatusFieldProps {
 
 export interface IChannelProps {
   table_Id: string,
-  owner_UUID: string,
-  isGroup: boolean,
-  groupName: string,
+  owner_UUID?: string,
+  isGroup: ChannelType,
   channelName: string,
-  clickedCallback: Function,
+  clickedCallback?: Function,
   channelIcon?: string,
-  members: string[]
+  members?: string[]
 }
 
 export interface IChannelViewProps {
@@ -93,7 +92,7 @@ export interface IMessageProps {
   edited: boolean,
   avatar: string,
   attachments: IAttachmentProps[],
-  onUpdate: Function
+  onUpdate: () => void
 }
 
 export interface IAttachmentProps {
@@ -168,8 +167,8 @@ export interface IYesNoDialogProps {
   show: boolean,
   confirmButtonText?: string,
   denyButtonText?: string,
-  onConfirm: MouseEvent<HTMLButtonElement, MouseEvent>,
-  onDeny: MouseEvent<HTMLButtonElement, MouseEvent>,
+  onConfirm: MouseEventHandler<HTMLButtonElement>,
+  onDeny: MouseEventHandler<HTMLButtonElement>,
 }
 
 export interface IImageViewerProps {
@@ -182,11 +181,11 @@ export interface IFileUploadSummaryProps {
 }
 
 export interface IHybridListItem {
-  className: string,
+  className?: string,
   id: string,
   text: string,
   icon: any,
-  onClick: Function
+  onClick: MouseEventHandler<HTMLLIElement>;
 }
 
 export interface IFileUploadDialog {
@@ -198,12 +197,12 @@ export interface IFormDropdownProps {
   label: string,
   description?: string,
   value: any,
-  onChange: SelectChangeEvent<unknown>
+  onChange: (event: SelectChangeEvent<any>, child: ReactNode) => void;
 }
 
 export interface ISettingsSectionProps {
   title: string,
-  children: ReactChildren
+  children: Element | ReactNode
 }
 
 export interface IUserData {
@@ -303,6 +302,7 @@ export interface IUserDropdownMenuState {
 }
 
 export interface ISettingsPageState {
+  UpdatedUser: boolean,
   confirmUserAccountDeletionDialogOpen: boolean,
   darkThemeEnabled: boolean
 }

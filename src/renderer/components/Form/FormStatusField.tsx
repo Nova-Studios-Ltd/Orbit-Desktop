@@ -3,14 +3,8 @@ import { Typography } from '@mui/material';
 import type { IFormStatusFieldProps } from 'types/interfaces';
 import { FormStatusType } from 'types/enums';
 
-export default class FormStatusField extends React.Component {
-  props: IFormStatusFieldProps;
-
-  constructor(props: IFormStatusFieldProps) {
-    super(props);
-    this.props = props;
-  }
-
+export default class FormStatusField extends React.Component<IFormStatusFieldProps> {
+  
   getType()
   {
     const { type } = this.props;

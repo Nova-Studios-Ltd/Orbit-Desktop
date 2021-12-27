@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { KeyboardEvent, ChangeEvent } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
@@ -7,9 +7,8 @@ import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { Settings } from 'shared/SettingsManager';
 
-export default class MessageInput extends React.Component {
+export default class MessageInput extends React.Component<IMessageInputProps> {
   state: IMessageInputState;
-  props: IMessageInputProps;
   forwardMessageCallback: (message: string, attachments: MessageAttachment[]) => void;
   ctrlPressed: boolean;
 
@@ -46,8 +45,8 @@ export default class MessageInput extends React.Component {
     }
   }
 
-  handleChange(event: any) {
-    this.setMessageTo(event.target.value);
+  handleChange(event: ChangeEvent<HTMLInputElement>) {
+    this.setMessageTo(event.currentTarget.value);
   }
 
   async handleKeyDown(event: any) {
@@ -59,28 +58,28 @@ export default class MessageInput extends React.Component {
       this.ctrlPressed = true;
       console.log(this.ctrlPressed);
     }
-    if (event.keyCode == 86 && this.ctrlPressed && false) {
+    /*if (event.keyCode == 86 && this.ctrlPressed && false) {
       const a = new MessageAttachment(await ipcRenderer.invoke('copyImageFromClipboard'), true);
       if (a.contents == '') return;
       this.state.attachments.push(a);
       this.setState({attachments: this.state.attachments});
       console.log(this.state.attachments);
-    }
+    }*/
   }
 
-  handleKeyUp(event: any) {
+  handleKeyUp(event: KeyboardEvent<HTMLDivElement>) {
     if (event.keyCode == 17 || event.keyCode == 91) {
       this.ctrlPressed = false;
       console.log(this.ctrlPressed);
     }
   }
 
-  handleSendButtonClick(event: any) {
+  handleSendButtonClick() {
     this.forwardMessage(this.state.message, this.state.attachments);
     this.setMessageTo('', []);
   }
 
-  handleUploadButtonClick(event: any) {
+  handleUploadButtonClick() {
     ipcRenderer.send('pickUploadFiles');
   }
 

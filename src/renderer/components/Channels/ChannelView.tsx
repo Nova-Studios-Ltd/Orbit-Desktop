@@ -4,7 +4,7 @@ import type { IChannelViewProps, IChannelViewState } from 'types/interfaces';
 import {events}from 'shared/helpers';
 import Channel from './Channel';
 
-export default class ChannelView extends React.Component {
+export default class ChannelView extends React.Component<IChannelViewProps> {
   state: IChannelViewState;
 
   constructor(props: IChannelViewProps) {
@@ -23,9 +23,11 @@ export default class ChannelView extends React.Component {
   }
 
   addChannel(channel: Channel) {
-    const updatedChannels = this.state.channels;
-    updatedChannels.push(channel);
-    this.setState({channels: updatedChannels});
+    this.setState((prevState: IChannelViewState) => {
+      const updatedChannels = prevState.channels;
+      updatedChannels.push(channel);
+      this.setState({channels: updatedChannels});
+    });
   }
 
   removeChannel(channel_uuid: string) {
@@ -46,7 +48,7 @@ export default class ChannelView extends React.Component {
   }
 
   render() {
-    const channels = this.state.channels.map((c, key) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
+    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
     const channelEmptyPromptClassNames = this.isChannelListEmpty() ? 'AdaptiveText ChannelEmptyPrompt' : 'AdaptiveText ChannelEmptyPrompt Hidden';
 
     return(

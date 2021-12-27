@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -19,7 +19,6 @@ import { NotificationStruct } from 'structs/NotificationProps';
 import { GrowTransition } from 'types/transitions';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
-import { NCAPIResponse } from 'main/NCAPI';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 
 export default class ChatPage extends React.Component {
@@ -204,8 +203,9 @@ export default class ChatPage extends React.Component {
     this.setState({ AttachmentList: [] });
   }
 
-  handleFormChange(event: React.FormEvent<HTMLFormElement>) {
-    const { name, value } = event.target;
+  handleFormChange(event: React.FormEvent<HTMLInputElement>) {
+    // TODO If something breaks check here
+    const { name, value } = event.currentTarget;
     if (name == 'CreateChannelDialogRecipients') {
       const usernames = value.split(' ');
       usernames.forEach(async (username: string) => {
@@ -215,7 +215,7 @@ export default class ChatPage extends React.Component {
             if (result == 'UNKNOWN') return;
             this.state.CreateChannelDialogRecipients[username] = result;
             // Change this later to support multiple users for the dialog
-            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients, CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`});
+            this.setState((prevState: IChatPageState) => ({CreateChannelDialogRecipients: prevState.CreateChannelDialogRecipients, CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`}));
           });
         }
       });
@@ -265,12 +265,12 @@ export default class ChatPage extends React.Component {
     }
     else
     {
-      this.setState({ NavigationDrawerOpen: !this.state.NavigationDrawerOpen });
+      this.setState((prevState: IChatPageState) => ({ NavigationDrawerOpen: !prevState.NavigationDrawerOpen }));
     }
   }
 
-  navigationDrawerItemClicked(event: any) {
-    switch (event.target.name) {
+  navigationDrawerItemClicked(event: MouseEvent<HTMLLIElement>) {
+    switch (event.currentTarget.id) {
       case 'chat':
         new AppNotification(new NotificationStruct('Navigation', 'Navigating to Chat page', false, NotificationStatusType.info, NotificationAudienceType.app)).show();
         break;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {MouseEvent} from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import type { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
 import UserData from 'structs/UserData';
@@ -6,7 +6,7 @@ import { copyToClipboard, Navigate } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
-export default class UserDropdownMenu extends React.Component {
+export default class UserDropdownMenu extends React.Component<IUserDropdownMenu> {
   state: IUserDropdownMenuState;
   menuFunctions: IUserDropdownMenuFunctions;
   userData: UserData;
@@ -25,21 +25,22 @@ export default class UserDropdownMenu extends React.Component {
     this.menuItemClicked = this.menuItemClicked.bind(this);
   }
 
-  buttonClicked(event: MouseEvent<HTMLButtonElement, MouseEvent>) {
-    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+  buttonClicked(event: MouseEvent<HTMLButtonElement>) {
+    this.setState((prevState: IUserDropdownMenuState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
   }
 
-  async menuItemClicked(event: MouseEvent<HTMLLIElement, MouseEvent>, ...args) {
+  async menuItemClicked(event: MouseEvent<HTMLLIElement, globalThis.MouseEvent>, contextMenu?: number) {
     switch(event.currentTarget.id) {
-      case 'userinfo':
-          const clipboardContent = args[0] == 0 ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
-          const resultMessage = args[0] == 0 ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
+      case 'userinfo': {
+          const clipboardContent = contextMenu == 0 ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
+          const resultMessage = contextMenu == 0 ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
           await copyToClipboard(clipboardContent).then((result: boolean) => {
             if (result) {
               new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
             }
           });
-        break;
+          break;
+        }
       case 'settings':
         Navigate('/settings', null);
         break;
@@ -51,7 +52,7 @@ export default class UserDropdownMenu extends React.Component {
     this.setState({ open: false, anchorEl: null });
   }
 
-  handleClose(event) {
+  handleClose() {
     this.setState({ open: false, anchorEl: null });
   }
 
@@ -59,7 +60,7 @@ export default class UserDropdownMenu extends React.Component {
     return(
       <div>
         <IconButton onClick={this.buttonClicked}>
-          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${this.userData.uuid}?size=64`} />
+          <Avatar src={`https://api.novastudios.tk/Media/Avatar/${this.userData.uuid}?size=64&${Date.now()}`} />
         </IconButton>
 
         <Menu

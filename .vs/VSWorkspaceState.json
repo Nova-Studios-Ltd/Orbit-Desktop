@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\build",
+    "\\build\\app",
+    "\\src",
+    "\\src\\main",
+    "\\src\\renderer",
+    "\\src\\renderer\\pages",
+    "\\src\\renderer\\pages\\Chat",
+    "\\src\\shared"
+  ],
+  "SelectedNode": "\\src\\renderer\\pages\\Chat\\index.tsx",
+  "PreviewInSolutionExplorer": false
+}

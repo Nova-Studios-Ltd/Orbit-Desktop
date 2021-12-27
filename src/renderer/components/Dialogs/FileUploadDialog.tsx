@@ -1,16 +1,12 @@
 import React from 'react';
-import { Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog } from '@mui/material';
 import type { IFileUploadDialog } from 'types/interfaces';
 
-export default class FileUploadDialog extends React.Component {
-
-  constructor(props: IFileUploadDialog) {
-    super(props);
-  }
+export default class FileUploadDialog extends React.Component<IFileUploadDialog> {
 
   render() {
     return(
-      <Dialog>
+      <Dialog open={false}>
 
       </Dialog>
     );

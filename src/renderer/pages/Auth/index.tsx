@@ -3,43 +3,43 @@ import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import type { IAuthPageProps } from 'types/interfaces'
-import { ConductLogin, GetHistoryState } from 'shared/helpers';
+import { ConductLogin } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 
-function LoginInit(form: LoginForm) {
+function LoginInit() {
   ConductLogin();
 }
 
-function RegisterInit(form: RegisterForm) {
+function RegisterInit() {
 
 }
 
 function getRandomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
-
-function GenerateRandomColor() {
-  var h = getRandomInt(0, 360);
-  var s = getRandomInt(80, 100);
-  var l = 75;
-  return hslToHex(h, s, l);
+  const mmin = Math.ceil(min);
+  const mmax = Math.floor(max);
+  return Math.floor(Math.random() * (mmax - mmin) + mmin); //The maximum is exclusive and the minimum is inclusive
 }
 
 function hslToHex(h: number, s: number, l: number) {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
+  const ll = l / 100;
+  const a = s * Math.min(ll, 1 - ll) / 100;
   const f = (n: number) => {
     const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    const color = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix '0' if needed
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-export default class AuthPage extends React.Component {
-  formType: Number;
+function GenerateRandomColor() {
+  const h = getRandomInt(0, 360);
+  const s = getRandomInt(80, 100);
+  const l = 75;
+  return hslToHex(h, s, l);
+}
+
+export default class AuthPage extends React.Component<IAuthPageProps> {
+  formType: number;
 
   constructor(props: IAuthPageProps) {
     super(props);

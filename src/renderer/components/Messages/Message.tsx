@@ -10,7 +10,7 @@ import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
 
-export class MessageImage extends React.Component {
+export class MessageImage extends React.Component<IMessageMediaProps> {
   message: string;
   imageSrc: string;
   dimensions: Dimensions;
@@ -82,7 +82,7 @@ export class MessageImage extends React.Component {
   }
 }
 
-export class MessageVideo extends React.Component {
+export class MessageVideo extends React.Component<IMessageMediaProps> {
   message: string;
   videoSrc: string;
   dimensions: Dimensions;
@@ -115,7 +115,7 @@ export class MessageVideo extends React.Component {
   }
 }
 
-export class MessageEmbed extends React.Component {
+export class MessageEmbed extends React.Component<IMessageMediaProps> {
   message: string;
   videoSrc: string;
   dimensions: Dimensions;
@@ -141,7 +141,7 @@ export class MessageEmbed extends React.Component {
   }
 }
 
-export default class Message extends React.Component {
+export default class Message extends React.Component<IMessageProps> {
   state: IMessageState;
   message_Id: string;
   author_UUID: string;
@@ -154,7 +154,7 @@ export default class Message extends React.Component {
   avatar: string;
   divRef: Ref<HTMLDivElement>;
   hashedKey: string;
-  onUpdateCallback: Function;
+  onUpdateCallback: () => void;
 
   constructor(props: IMessageProps) {
     super(props);
@@ -195,7 +195,7 @@ export default class Message extends React.Component {
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+    this.setState((prevState: IMessageState) => ({ open: !prevState.open, anchorEl: event.currentTarget }));
   }
 
   menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
@@ -218,17 +218,17 @@ export default class Message extends React.Component {
     this.setState({ open: false, anchorEl: null });
   }
 
-  closeContextMenu(event: any) {
+  closeContextMenu() {
     this.setState({ open: false, anchorEl: null });
   }
 
-  mouseEnter(event: any) {
+  mouseEnter(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
       event.currentTarget.className = 'Message Message_Hover';
     }
   }
 
-  mouseLeave(event: any) {
+  mouseLeave(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
       event.currentTarget.className = 'Message';
     }
@@ -363,8 +363,9 @@ export default class Message extends React.Component {
     return this.author_UUID == GLOBALS.userData.uuid;
   }
 
-  editMessageChanged(event: React.FormEvent<HTMLFormElement>) {
-    this.setState({ editedMessage: event.target.value });
+  editMessageChanged(event: React.FormEvent<HTMLInputElement>) {
+    // TODO If editing breaks check here
+    this.setState({ editedMessage: event.currentTarget.value });
   }
 
   submitEditedMessage() {
@@ -391,10 +392,10 @@ export default class Message extends React.Component {
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
-      const messageParts = [] as any[];
+      const messageParts = [] as JSX.Element[];
       mes.forEach(word => {
         if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
-        else messageParts.push(word);
+        else messageParts.push((word) as unknown as JSX.Element);
       });
 
       messageContentObject.push(<Typography key={"MainMessage"} className='Message_Content'>{messageParts}</Typography>);
@@ -421,7 +422,7 @@ export default class Message extends React.Component {
     return (
       <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         <div className='Message_Left'>
-          <Avatar src={this.avatar} />
+          <Avatar src={`${this.avatar}&${Date.now()}`} />
         </div>
         <div className='Message_Right'>
           <div className='Message_Right_Header'>

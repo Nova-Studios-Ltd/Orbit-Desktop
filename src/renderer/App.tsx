@@ -15,7 +15,7 @@ import { LogContext, Theme } from 'types/enums';
 import type { IAppState } from 'types/interfaces';
 import { GlobalStyles } from '@mui/styled-engine';
 
-class App extends React.Component {
+class App extends React.Component<undefined> {
   state: IAppState;
 
   constructor(props: undefined) {
@@ -32,7 +32,7 @@ class App extends React.Component {
 
   componentDidMount() {
     // Will create memory leak, add a remove listener call on unmount
-    events.on('appThemeChanged', (theme: Theme) => {
+    events.on('appThemeChanged', () => {
       this.setState({ theme: AppTheme(), styles: AppStyles() });
     });
   }

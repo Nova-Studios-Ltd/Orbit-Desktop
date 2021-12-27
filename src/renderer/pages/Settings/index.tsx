@@ -1,6 +1,6 @@
-import React from 'react';
-import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
-import { Close as CloseIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import React, { ChangeEvent, MouseEvent } from 'react';
+import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch } from '@mui/material';
+import { Close as CloseIcon, Settings as SettingsIcon, Add } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import type { ISettingsPageProps, ISettingsPageState } from 'types/interfaces';
@@ -24,14 +24,18 @@ export default class SettingsPage extends React.Component {
     this.closeUserAccountDeletionDialog = this.closeUserAccountDeletionDialog.bind(this);
     this.exitSettings = this.exitSettings.bind(this);
     this.updateUserAvatar = this.updateUserAvatar.bind(this);
+    this.updatedAvatar = this.updatedAvatar.bind(this);
+
+    ipcRenderer.on('AvatarSet', this.updatedAvatar);
 
     this.state = {
+      UpdatedUser: false,
       confirmUserAccountDeletionDialogOpen: false,
       darkThemeEnabled: Boolean(Settings.Settings.Theme)
     }
   }
 
-  handleClick(event: any) {
+  handleClick(event: MouseEvent<HTMLButtonElement>) {
     switch (event.currentTarget.id) {
       case 'deleteAccount':
         this.setState({ confirmUserAccountDeletionDialogOpen: true });
@@ -39,10 +43,10 @@ export default class SettingsPage extends React.Component {
     }
   }
 
-  handleToggle(event: any) {
+  handleToggle(event: ChangeEvent<HTMLInputElement>) {
     switch (event.currentTarget.id) {
       case 'darkTheme':
-        this.setState({ darkThemeEnabled: !this.state.darkThemeEnabled }, () => {
+        this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
           Settings.SetTheme(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
         });
         break;
@@ -67,7 +71,15 @@ export default class SettingsPage extends React.Component {
     if (image != undefined) ipcRenderer.send("SETAvatar", GLOBALS.userData.uuid, image);
   }
 
+  updatedAvatar() {
+    this.setState({UpdatedUser: true});
+  }
+
   render() {
+    if (this.state.UpdatedUser) {
+      this.setState({UpdatedUser: false});
+      return (<></>)
+    }
     return(
       <div className='Page Settings_Page_Container'>
         <Helmet>
@@ -78,9 +90,10 @@ export default class SettingsPage extends React.Component {
         </Header>
         <div className='Settings_Page_InnerContainer'>
           <SettingsSection title='User'>
-            <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=512`} />
-            <br/>
-            <Button variant='outlined' onClick={this.updateUserAvatar}>Update Avatar</Button>
+            <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
+              <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
+              <Add fontSize='large' className='Overlay'/>
+            </IconButton>
           </SettingsSection>
           <SettingsSection title='Appearance'>
             <FormGroup>

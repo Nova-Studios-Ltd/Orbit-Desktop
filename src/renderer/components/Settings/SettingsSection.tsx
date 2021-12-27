@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import type { ISettingsSectionProps } from 'types/interfaces';
 
-export default class SettingsSection extends React.Component {
+export default class SettingsSection extends React.Component<ISettingsSectionProps> {
   title: string;
 
   constructor(props: ISettingsSectionProps) {

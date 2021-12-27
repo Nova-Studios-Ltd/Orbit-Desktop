@@ -1,5 +1,5 @@
-import React, { DOMElement, ForwardedRef, RefObject } from 'react';
-import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from '@mui/material';
+import React, { MouseEvent } from 'react';
+import { Card, Typography, Avatar, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
 import type { IChannelProps, IChannelState } from 'types/interfaces';
@@ -7,7 +7,7 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from '../Dialogs/YesNoDialog';
 
-export default class Channel extends React.Component {
+export default class Channel extends React.Component<IChannelProps> {
   state: IChannelState;
   channelName: string;
   channelType: ChannelType;
@@ -35,8 +35,8 @@ export default class Channel extends React.Component {
     }
   }
 
-  channelRightClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
-    this.setState({ contextMenuOpen: !this.state.contextMenuOpen, contextMenuAnchorEl: event.currentTarget });
+  channelRightClicked(event: MouseEvent<HTMLButtonElement>) {
+    this.setState((prevState: IChannelState) => ({ contextMenuOpen: !prevState.contextMenuOpen, contextMenuAnchorEl: event.currentTarget }));
   }
 
   async channelClicked() {
@@ -45,7 +45,7 @@ export default class Channel extends React.Component {
     ipcRenderer.send('GETMessages', GLOBALS.currentChannel);
   }
 
-  async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
+  async menuItemClicked(event: MouseEvent<HTMLLIElement>) {
     switch(event.currentTarget.id) {
       case 'edit':
         new AppNotification({title: 'Edit'}).show();
