@@ -1,7 +1,16 @@
 import React, { MouseEventHandler } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
-import type { IYesNoDialogProps } from 'types/interfaces';
 import { GrowTransition } from 'types/transitions';
+
+interface IYesNoDialogProps {
+  title: string,
+  body: string,
+  show: boolean,
+  confirmButtonText?: string,
+  denyButtonText?: string,
+  onConfirm: MouseEvent<HTMLButtonElement, MouseEvent>,
+  onDeny: MouseEvent<HTMLButtonElement, MouseEvent>,
+}
 
 export default class YesNoDialog extends React.Component<IYesNoDialogProps> {
   title: string;
