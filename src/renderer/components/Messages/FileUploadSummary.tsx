@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip, Stack } from '@mui/material';
-import type MessageAttachment from 'renderer/components/Messages/MessageAttachment'
+import type MessageAttachment from 'structs/MessageAttachment'
 
 interface IFileUploadSummaryProps {
   files: Array<MessageAttachment>,
