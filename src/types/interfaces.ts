@@ -14,142 +14,7 @@ import type MessageAttachment from 'structs/MessageAttachment';
 import type MessageContent from 'structs/MessageContent';
 import type { DefaultTheme } from '@mui/system';
 
-// Page Props
-
-export interface IAuthPageProps {
-  login?: Boolean,
-  register?: Boolean,
-}
-
-export interface IChatPageProps {
-
-}
-
-export interface ISettingsPageProps {
-
-}
-
 // Generic Component Props
-
-export interface IHeaderProps {
-  caption: string,
-  icon: any,
-  onClick: Function,
-  children: Element[]
-}
-
-export interface IAuthFormProps {
-  headerHeading?: string,
-  headerBody?: string,
-  status?: FormStatusTuple,
-  onSubmit?: FormEventHandler<HTMLFormElement>,
-  children?: JSX.Element|JSX.Element[]
-}
-
-export interface IFormHeaderProps {
-  heading?: string,
-  body?: string
-}
-
-export interface IFormTextFieldProps {
-  id: string,
-  value: string,
-  classNames?: string,
-  label: string,
-  description?: string,
-  autoFocus?: boolean,
-  required?: boolean,
-  sensitive?: boolean,
-  onChange?: () => void
-}
-
-export interface IFormStatusFieldProps {
-  message?: string,
-  type?: FormStatusType
-}
-
-export interface IChannelProps {
-  table_Id: string,
-  owner_UUID: string,
-  isGroup: boolean,
-  groupName: string,
-  channelName: string,
-  clickedCallback: Function,
-  channelIcon?: string,
-  members: string[]
-}
-
-export interface IChannelViewProps {
-  init: Function
-}
-
-export interface IMessageProps {
-  message_Id: string,
-  author_UUID: string,
-  author: string,
-  content: string,
-  timestamp: string,
-  editedTimestamp: string,
-  edited: boolean,
-  avatar: string,
-  attachments: IAttachmentProps[],
-  onUpdate: Function
-}
-
-export interface IAttachmentProps {
-  contentUrl: string,
-  filename: string,
-  size: number,
-  contentWidth: number,
-  contentHeight: number
-}
-
-export interface IMessageMediaProps {
-  message: string,
-  src: string,
-  dimensions?: Dimensions
-}
-
-export interface IMessageCanvasProps {
-  init: Function
-}
-
-export interface IMessageInputProps {
-  onAddAttachment: (attachment: MessageAttachment) => void,
-  onMessagePush: (message: string, attachments: MessageAttachment[]) => void
-}
-
-export interface IMessageContent {
-  type: string,
-  url: string,
-  dimensions?: Dimensions
-}
-
-export interface IUserDropdownMenu {
-  menuFunctions: {
-    logout: Function
-  },
-  userData: UserData
-}
-
-export interface IUserDropdownMenuFunctions {
-  logout: Function
-}
-
-export interface ICredentialsProps {
-  email?: string,
-  username?: string,
-  password?: string,
-  address?: string
-}
-
-export interface INotificationProps {
-  title?: string,
-  body?: string,
-  playSound?: boolean,
-  notificationType?: NotificationStatusType,
-  notificationAudience?: NotificationAudienceType
-}
 
 export interface IMessageDeleteRequestArgs {
   channelID: string,
@@ -269,16 +134,6 @@ export interface IRegisterFormState {
   status: FormStatusTuple
 }
 
-export interface IChannelViewState {
-  channels: Channel[],
-}
-
-export interface IChannelState {
-  contextMenuAnchorEl: any,
-  contextMenuOpen: boolean,
-  confirmChannelDeletionDialogOpen: boolean
-}
-
 export interface IMessageState {
   editedMessage: string,
   isEditing: boolean,
@@ -289,17 +144,8 @@ export interface IMessageState {
   open: boolean
 }
 
-export interface IMessageInputState {
-  message: string
-}
-
 export interface IMessageCanvasState {
   messages: Array<Message>
-}
-
-export interface IUserDropdownMenuState {
-  anchorEl: any,
-  open: boolean
 }
 
 export interface ISettingsPageState {

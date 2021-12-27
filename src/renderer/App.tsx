@@ -15,7 +15,7 @@ import { LogContext, Theme } from 'types/enums';
 import type { IAppState } from 'types/interfaces';
 import { GlobalStyles } from '@mui/styled-engine';
 
-class App extends React.Component {
+class App extends React.Component<undefined> {
   state: IAppState;
 
   constructor(props: undefined) {

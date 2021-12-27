@@ -191,7 +191,7 @@ export default class ChatPage extends React.Component {
       new Promise((resolve) => {
         attachments.forEach(async (attachment, index, array) => {
           const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment));
-          if (id.payload.length > 0) attachmentIds.push(id.payload);
+          if (id != null && id.payload != null && id.payload.length > 0) attachmentIds.push(id.payload);
           if (index === array.length - 1) resolve(true);
         });
       }).then(() => {
@@ -213,9 +213,13 @@ export default class ChatPage extends React.Component {
           const ud = username.split('#')
           await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result) => {
             if (result == 'UNKNOWN') return;
-            this.state.CreateChannelDialogRecipients[username] = result;
             // Change this later to support multiple users for the dialog
-            this.setState({CreateChannelDialogRecipients: this.state.CreateChannelDialogRecipients, CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`});
+            this.setState((prevState: IChatPageState) => {
+              prevState.CreateChannelDialogRecipients[username] = result;
+              return {
+                CreateChannelDialogRecipients: prevState.CreateChannelDialogRecipients,
+                CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`}
+              });
           });
         }
       });
@@ -265,7 +269,11 @@ export default class ChatPage extends React.Component {
     }
     else
     {
-      this.setState({ NavigationDrawerOpen: !this.state.NavigationDrawerOpen });
+      this.setState((prevState: IChatPageState) => {
+        return {
+          NavigationDrawerOpen: !prevState.NavigationDrawerOpen
+       }
+      });
     }
   }
 

@@ -2,10 +2,26 @@ import React, { DOMElement, ForwardedRef, RefObject } from 'react';
 import { Card, Typography, Avatar, CardMedia, Menu, MenuItem, ButtonBase } from '@mui/material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
-import type { IChannelProps, IChannelState } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from '../Dialogs/YesNoDialog';
+
+interface IChannelProps {
+  table_Id: string,
+  owner_UUID: string,
+  isGroup: boolean,
+  groupName: string,
+  channelName: string,
+  clickedCallback: void,
+  channelIcon?: string,
+  members: string[]
+}
+
+interface IChannelState {
+  contextMenuAnchorEl: Element,
+  contextMenuOpen: boolean,
+  confirmChannelDeletionDialogOpen: boolean
+}
 
 export default class Channel extends React.Component {
   state: IChannelState;

@@ -1,23 +1,32 @@
 import React from 'react';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import type { INotificationProps } from 'types/interfaces';
 import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';
-import GLOBALS from 'shared/globals';
-import { NotificationStruct } from 'structs/NotificationProps';
+import { Settings } from 'shared/SettingsManager';
+
+interface INotificationProps {
+  title?: string,
+  body?: string,
+  playSound?: boolean,
+  notificationAssetPath?: string,
+  notificationType?: NotificationStatusType,
+  notificationAudience?: NotificationAudienceType
+}
 
 export default class AppNotification {
   readonly title?: string;
   readonly body?: string;
-  readonly playSound?: Boolean;
+  readonly playSound?: boolean;
+  readonly notificationAssetPath?: string;
   readonly notificationType?: NotificationStatusType;
   readonly notificationAudience?: NotificationAudienceType;
 
-  constructor(props: NotificationStruct) {
+  constructor(props: INotificationProps) {
     this.title = props.title || '';
     this.body = props.body || '';
     this.playSound = props.playSound || false;
+    this.notificationAssetPath = props.notificationAssetPath || Settings.Settings.NotificationAssetPath || '';
     this.notificationType = props.notificationType || NotificationStatusType.default;
     this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
   }
@@ -76,7 +85,7 @@ export default class AppNotification {
     }
 
     if (this.playSound) {
-      const sound = new Audio(GLOBALS.NotificationAssetPath);
+      const sound = new Audio(this.NotificationAssetPath);
       if (sound != null) {
         sound.play();
       }

@@ -4,11 +4,47 @@ import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
-import type { IMessageProps, IMessageMediaProps, IMessageState, IAttachmentProps, Dimensions } from 'types/interfaces';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
+
+interface IMessageProps {
+  message_Id: string,
+  author_UUID: string,
+  author: string,
+  content: string,
+  timestamp: string,
+  editedTimestamp: string,
+  edited: boolean,
+  avatar: string,
+  attachments: IAttachmentProps[],
+  onUpdate: Function
+}
+
+interface IAttachmentProps {
+  contentUrl: string,
+  filename: string,
+  size: number,
+  contentWidth: number,
+  contentHeight: number
+}
+
+interface IMessageMediaProps {
+  message: string,
+  src: string,
+  dimensions?: Dimensions
+}
+
+interface IMessageCanvasProps {
+  init: Function
+}
+
+interface IMessageContent {
+  type: string,
+  url: string,
+  dimensions?: Dimensions
+}
 
 export class MessageImage extends React.Component {
   message: string;

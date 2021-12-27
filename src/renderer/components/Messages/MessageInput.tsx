@@ -1,17 +1,23 @@
 import React from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
-import type { IMessageInputProps, IMessageInputState } from 'types/interfaces';
 import { LogContext } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { Settings } from 'shared/SettingsManager';
+import FormTextField from '../Form/FormTextField';
 
-export default class MessageInput extends React.Component {
+interface IMessageInputProps {
+  onAddAttachment: (attachment: MessageAttachment) => void,
+  onMessagePush: (message: string) => void
+}
+
+interface IMessageInputState {
+  message: string
+}
+
+export default class MessageInput extends React.Component<IMessageInputProps> {
   state: IMessageInputState;
-  props: IMessageInputProps;
-  forwardMessageCallback: (message: string, attachments: MessageAttachment[]) => void;
-  ctrlPressed: boolean;
 
   constructor(props: IMessageInputProps) {
     super(props);
@@ -24,12 +30,9 @@ export default class MessageInput extends React.Component {
     this.forwardMessage = this.forwardMessage.bind(this);
     this.addedAttachment = this.addedAttachment.bind(this);
 
-    this.forwardMessageCallback = props.onMessagePush;
-    this.ctrlPressed = false;
-
     ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
 
-    this.state = { message: ''}
+    this.state = { message: '' };
   }
 
   addedAttachment(files: string[]) {
@@ -37,58 +40,41 @@ export default class MessageInput extends React.Component {
       files.forEach((file) => this.props.onAddAttachment(new MessageAttachment(file, false)));
   }
 
-  forwardMessage(message: string, attachments: MessageAttachment[]) {
-    if (this.forwardMessageCallback != null) {
-      this.forwardMessageCallback(message, attachments);
+  forwardMessage(message: string) {
+    if (this.props.onMessagePush != null) {
+      this.props.onMessagePush(message);
     }
     else {
       Debug.Error('forwardMessageCallback is null', LogContext.Renderer, 'when forwarding message to ChatPage from Messageinput');
     }
   }
 
-  handleChange(event: any) {
+  handleChange(event: React.FormEvent<HTMLInputElement>) {
     this.setMessageTo(event.target.value);
   }
 
-  async handleKeyDown(event: any) {
-    if (event.keyCode == 13) {
-      this.forwardMessage(this.state.message, this.state.attachments);
+  async handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.code == 'Enter') {
+      this.forwardMessage(this.state.message);
       this.setMessageTo('', []);
     }
-    if (event.keyCode == 17 || event.keyCode == 91) {
-      this.ctrlPressed = true;
-      console.log(this.ctrlPressed);
-    }
-    if (event.keyCode == 86 && this.ctrlPressed && false) {
-      const a = new MessageAttachment(await ipcRenderer.invoke('copyImageFromClipboard'), true);
-      if (a.contents == '') return;
-      this.state.attachments.push(a);
-      this.setState({attachments: this.state.attachments});
-      console.log(this.state.attachments);
-    }
   }
 
-  handleKeyUp(event: any) {
-    if (event.keyCode == 17 || event.keyCode == 91) {
-      this.ctrlPressed = false;
-      console.log(this.ctrlPressed);
-    }
+  handleKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
+
   }
 
-  handleSendButtonClick(event: any) {
-    this.forwardMessage(this.state.message, this.state.attachments);
-    this.setMessageTo('', []);
+  handleSendButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+    this.forwardMessage(this.state.message);
+    this.setMessageTo('');
   }
 
-  handleUploadButtonClick(event: any) {
+  handleUploadButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
     ipcRenderer.send('pickUploadFiles');
   }
 
-  setMessageTo(text: string, attachment?: string[]) {
-    if (attachment == undefined)
-      this.setState({message: text});
-    else
-      this.setState({message: text, attachments: attachment});
+  setMessageTo(text: string) {
+    this.setState({ message: text });
   }
 
   render() {

@@ -1,10 +1,25 @@
 import React from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import type { IUserDropdownMenu, IUserDropdownMenuFunctions, IUserDropdownMenuState } from 'types/interfaces';
 import UserData from 'structs/UserData';
 import { copyToClipboard, Navigate } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+
+interface IUserDropdownMenu {
+  menuFunctions: {
+    logout: Function
+  },
+  userData: UserData
+}
+
+interface IUserDropdownMenuFunctions {
+  logout: Function
+}
+
+interface IUserDropdownMenuState {
+  anchorEl: Element | null,
+  open: boolean
+}
 
 export default class UserDropdownMenu extends React.Component {
   state: IUserDropdownMenuState;
@@ -25,20 +40,22 @@ export default class UserDropdownMenu extends React.Component {
     this.menuItemClicked = this.menuItemClicked.bind(this);
   }
 
-  buttonClicked(event: MouseEvent<HTMLButtonElement, MouseEvent>) {
+  buttonClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   }
 
-  async menuItemClicked(event: MouseEvent<HTMLLIElement, MouseEvent>, ...args) {
+  async menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
     switch(event.currentTarget.id) {
       case 'userinfo':
-          const clipboardContent = args[0] == 0 ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
-          const resultMessage = args[0] == 0 ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
+        {
+          const clipboardContent = event.type == 'click' ? `${this.userData.username}#${this.userData.discriminator}` : this.userData.uuid;
+          const resultMessage = event.type == 'click' ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
           await copyToClipboard(clipboardContent).then((result: boolean) => {
             if (result) {
               new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
             }
           });
+        }
         break;
       case 'settings':
         Navigate('/settings', null);
@@ -51,7 +68,7 @@ export default class UserDropdownMenu extends React.Component {
     this.setState({ open: false, anchorEl: null });
   }
 
-  handleClose(event) {
+  handleClose() {
     this.setState({ open: false, anchorEl: null });
   }
 
@@ -72,7 +89,7 @@ export default class UserDropdownMenu extends React.Component {
           }}
         >
 
-        <MenuItem id='userinfo' onClick={(event) => this.menuItemClicked(event, 0)} onContextMenu={(event) => this.menuItemClicked(event, 1)}>
+        <MenuItem id='userinfo' onClick={this.menuItemClicked} onContextMenu={this.menuItemClicked}>
           <Typography variant='subtitle1'>{this.userData.username}<Typography variant='caption'>#{this.userData.discriminator}</Typography></Typography>
         </MenuItem>
         <MenuItem id='settings' onClick={(event) => this.menuItemClicked(event)}>Settings</MenuItem>
