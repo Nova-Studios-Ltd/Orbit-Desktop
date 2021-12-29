@@ -120,6 +120,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
 
       events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+      events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
       events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
@@ -163,6 +164,16 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     }
     else {
       Debug.Error('ChannelView is null', LogContext.Renderer, 'when appending channel from ChatPage');
+    }
+  }
+
+  removeChannel(channel_uuid: string) {
+    const channelList = this.state.ChannelList;
+    if (channelList != null) {
+      channelList.removeChannel(channel_uuid);
+    }
+    else {
+      Debug.Error('ChannelView is null', LogContext.Renderer, 'when removing channel from ChatPage');
     }
   }
 
