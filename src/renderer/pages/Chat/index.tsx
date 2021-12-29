@@ -260,9 +260,9 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   createChannelButtonClicked() {
     const users = Object.values(this.state.CreateChannelDialogRecipients);
     if (users.length == 1)
-      ipcRenderer.send('CREATEChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: users[0] });
+      ipcRenderer.send('CREATEChannel',  users[0]);
     else
-      ipcRenderer.send('CREATEGroupChannel', { channelName: this.state.CreateChannelDialogChannelName, recipients: users });
+      ipcRenderer.send('CREATEGroupChannel', this.state.CreateChannelDialogChannelName, users);
     this.closeCreateChannelDialog();
   }
 

@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import UserData from 'structs/UserData';
-import type { IChannelProps, IMessageProps } from 'types/interfaces';
+import type { IChannelProps } from 'renderer/components/Channels/Channel';
+import type { IMessageProps } from 'renderer/components/Messages/Message';
 import { ContentType } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthentication, PatchWithAuthentication } from './NCAPI';
 
@@ -71,6 +72,7 @@ ipcMain.handle('GETChannel', async (_event, channel_uuid: string) => {
 
 ipcMain.on('CREATEChannel', async (event, recipient_uuid: string) => {
   const resp = await PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${recipient_uuid}`, ContentType.JSON, '');
+  console.log(resp.error);
   if (resp.status == 200) event.sender.send('ChannelCreated', true);
   else event.sender.send('ChannelCreated', false);
 });
