@@ -72,7 +72,6 @@ ipcMain.handle('GETChannel', async (_event, channel_uuid: string) => {
 
 ipcMain.on('CREATEChannel', async (event, recipient_uuid: string) => {
   const resp = await PostWithAuthentication(`Channel/CreateChannel?recipient_uuid=${recipient_uuid}`, ContentType.JSON, '');
-  console.log(resp.error);
   if (resp.status == 200) event.sender.send('ChannelCreated', true);
   else event.sender.send('ChannelCreated', false);
 });
