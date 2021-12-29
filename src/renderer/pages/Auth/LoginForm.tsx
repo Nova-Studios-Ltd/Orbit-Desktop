@@ -10,7 +10,7 @@ import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormAuthStatusType, FormStatusType } from 'types/enums';
 
 interface ILoginFormProps {
-  init(form: LoginForm): void
+  init: (form: LoginForm) => void
 }
 
 interface ILoginFormState {

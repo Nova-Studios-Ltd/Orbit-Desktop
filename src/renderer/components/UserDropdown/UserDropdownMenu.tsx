@@ -5,19 +5,17 @@ import { copyToClipboard, Navigate } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
+export interface IUserDropdownMenuFunctions {
+  logout: () => void
+}
+
 interface IUserDropdownMenu {
-  menuFunctions: {
-    logout: Function
-  },
+  menuFunctions: IUserDropdownMenuFunctions,
   userData: UserData
 }
 
-export interface IUserDropdownMenuFunctions {
-  logout: Function
-}
-
 interface IUserDropdownMenuState {
-  anchorEl: Element | null,
+  anchorEl: JSX.Element | null,
   open: boolean
 }
 

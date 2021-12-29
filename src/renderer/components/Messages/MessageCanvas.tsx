@@ -4,7 +4,8 @@ import Message from 'renderer/components/Messages/Message';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 
 interface IMessageCanvasProps {
-  init(canvas: MessageCanvas): void
+  init: (canvas: MessageCanvas) => void,
+  isChannelSelected: boolean
 }
 
 interface IMessageCanvasState {
@@ -99,15 +100,35 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
 
   render() {
     const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} />));
-    const messagesEmptyPromptClassNames = this.isMessagesListEmpty() ? 'AdaptiveText MessagesEmptyPrompt' : 'AdaptiveText MessagesEmptyPrompt Hidden';
+    const PromptElement = () => {
+      if (this.isMessagesListEmpty() && this.props.isChannelSelected) {
+        return (
+          <div className='AdaptiveText StatusPrompt'>
+            <Typography variant='subtitle1'>No Messages Yet</Typography>
+            <Typography variant='caption'>Type a message to start the conversation!</Typography>
+          </div>
+        );
+      }
+
+      if (!this.props.isChannelSelected) {
+        return (
+          <div className='AdaptiveText StatusPrompt'>
+            <Typography variant='subtitle1'>No Channel Selected</Typography>
+            <Typography variant='caption'>Select a channel on the left to get started!</Typography>
+          </div>
+        )
+      }
+
+      return null;
+    }
 
     return (
       <div className='MessageCanvas'>
         <div>
-          {messagesToRender}
+          {this.props.isChannelSelected ? messagesToRender : null}
         </div>
         <div className='MessageCanvas_Bottom' ref={this.bottomDivRef}/>
-        <Typography className={messagesEmptyPromptClassNames} variant='subtitle1'>No Messages Yet</Typography>
+        <PromptElement />
       </div>
     );
   }

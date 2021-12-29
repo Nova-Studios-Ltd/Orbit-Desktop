@@ -11,13 +11,13 @@ export interface IChannelProps {
   owner_UUID?: string,
   isGroup: ChannelType,
   channelName: string,
-  clickedCallback?: void,
+  clickedCallback: () => void,
   channelIcon?: string,
   members?: string[]
 }
 
 interface IChannelState {
-  contextMenuAnchorEl: Element | null,
+  contextMenuAnchorEl: JSX.Element | null,
   contextMenuOpen: boolean,
   confirmChannelDeletionDialogOpen: boolean
 }

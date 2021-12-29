@@ -1,12 +1,12 @@
 import React from 'react';
-import { ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+import { ExtendButtonBase, ListItemButton, ListItemButtonTypeMap, ListItemIcon, ListItemText} from '@mui/material';
 
 interface IHybridListItem {
   className?: string,
   id: string,
   text: string,
-  icon: any,
-  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
+  icon: JSX.Element,
+  onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export default class HybridListItem extends React.Component<IHybridListItem> {

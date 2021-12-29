@@ -10,6 +10,7 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import http, { IncomingMessage, ServerResponse } from 'http';
 import path, { resolve } from 'path';
 import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
@@ -45,8 +46,8 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 
-  require('http').createServer(function (request: any, response: any) {
-    request.addListener('end', function () {
+  http.createServer((request: IncomingMessage, response: ServerResponse) => {
+    request.addListener('end', () => {
       file.serve(request, response);
     }).resume();
   }).listen(1212);
@@ -149,7 +150,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    if (url.includes('track') && spotifyInstalled) { 
+    if (url.includes('track') && spotifyInstalled) {
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
     else if (url.includes('playlist') && spotifyInstalled) {

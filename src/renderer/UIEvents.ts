@@ -1,11 +1,11 @@
 export class UIEvents {
-    events: { [id: string] : any; } = {};
+    events: { [id: string] : unknown; } = {};
 
-    on(event: string, callback: any) {
+    on(event: string, callback: () => unknown) {
         this.events[event] = callback;
     }
 
-    send(event: string, ...args: any) {
+    send(event: string, ...args: unknown[]) {
         if (event in this.events) {
             this.events[event](...args);
         }

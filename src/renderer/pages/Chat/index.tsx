@@ -20,6 +20,7 @@ import MessageAttachment from 'structs/MessageAttachment';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 import type { IChannelProps } from 'renderer/components/Channels/Channel';
+import type { FileUploadResponse } from 'types/NCAPIResponseMutations';
 
 interface IChatPageProps {
 
@@ -29,6 +30,7 @@ interface IChatPageState {
   CanvasObject?: MessageCanvas,
   ChannelList?: ChannelView,
   ChannelName: string,
+  isChannelSelected: boolean,
   AttachmentList: Array<MessageAttachment>,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: {[username: string]: string},
@@ -66,6 +68,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       CanvasObject: undefined,
       ChannelList: undefined,
       ChannelName: '',
+      isChannelSelected: false,
       AttachmentList: [],
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: {},
@@ -165,6 +168,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     console.log(messages);
+    this.setState({ isChannelSelected: true });
     if (GLOBALS.currentChannel != channel_uuid) return;
     ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
@@ -206,9 +210,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       const attachmentIds = [] as string[];
       new Promise((resolve) => {
         attachments.forEach(async (attachment, index, array) => {
-          const id = await ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment));
-          if (id != null && id.payload != null && id.payload.length > 0) attachmentIds.push(id.payload);
-          if (index === array.length - 1) resolve(true);
+          ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment)).then((id: FileUploadResponse) => {
+            if (id != null && id.payload != null && id.payload.length > 0) attachmentIds.push(id.payload);
+            if (index === array.length - 1) resolve(true);
+          });
         });
       }).then(() => {
         ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachmentIds);
@@ -228,7 +233,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       usernames.forEach(async (username: string) => {
         if (this.isValidUsername(username)) {
           const ud = username.split('#')
-          await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result) => {
+          await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result: string) => {
             if (result == 'UNKNOWN') return;
             // Change this later to support multiple users for the dialog
             this.setState((prevState: IChatPageState) => {
@@ -276,8 +281,8 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     });
   }
 
-  handleCreateChannelDialogChannelTypeChange(e: SelectChangeEvent<any>) {
-    this.setState({ CreateChannelDialogChannelType: e.target.value });
+  handleCreateChannelDialogChannelTypeChange(event: SelectChangeEvent<string>) {
+    this.setState({ CreateChannelDialogChannelType: event.target.value });
   }
 
   toggleNavigationDrawer(open?: boolean) {
@@ -294,7 +299,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     }
   }
 
-  navigationDrawerItemClicked(event: MouseEvent<HTMLLIElement>) {
+  navigationDrawerItemClicked(event: React.MouseEvent<HTMLDivElement>) {
     switch (event.currentTarget.id) {
       case 'chat':
         new AppNotification({ title: 'Navigation', body: 'Navigating to Chat page', playSound: false, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
@@ -327,6 +332,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     });
   }
 
+  setSelectedChannel() {
+
+  }
+
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
@@ -345,27 +354,27 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   render() {
-    let CreateChannelDialogItems = null;
     let titleString = null;
-    switch (this.state.CreateChannelDialogChannelType) {
-      case ChannelType.Group:
-        CreateChannelDialogItems = (
-          <div>
-            <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange}></FormTextField>
-            <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange}></FormTextField>
-          </div>
-        );
-        break;
-      case ChannelType.Default:
-      case ChannelType.User:
-      default:
-        CreateChannelDialogItems = (
-          <div className='CreateChannelDialog_User_Items'>
-            <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange}></FormTextField>
-            <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className='CreateChannelDialog_User_Avatar'/>
-          </div>
-        );
-        break;
+
+    const CreateChannelDialogElements = () => {
+      switch (this.state.CreateChannelDialogChannelType) {
+        case ChannelType.Group:
+          return (
+            <div>
+              <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange} />
+              <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange} />
+            </div>
+          );
+        case ChannelType.Default:
+        case ChannelType.User:
+        default:
+          return (
+            <div className='CreateChannelDialog_User_Items'>
+              <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange} />
+              <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className='CreateChannelDialog_User_Avatar'/>
+            </div>
+          );
+      }
     }
 
     if (this.state.ChannelName.length > 0) {
@@ -391,7 +400,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
             <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
-            <MessageCanvas init={this.initCanvas}/>
+            <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.isChannelSelected}/>
             <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>
             <MessageInput onAddAttachment={this.addAttachment} onMessagePush={this.sendMessage}/>
           </div>
@@ -404,11 +413,11 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
           <DialogTitle>Create a Channel</DialogTitle>
           <DialogContent>
-            <FormDropdown id='CreateChannelDialogType' value={this.state.CreateChannelDialogChannelType} onChange={this.handleCreateChannelDialogChannelTypeChange} label='Channel Type' description='Choose between a single user or group conversation.'>
+            <FormDropdown id='CreateChannelDialogType' value={this.state.CreateChannelDialogChannelType.toString()} onChange={this.handleCreateChannelDialogChannelTypeChange} label='Channel Type' description='Choose between a single user or group conversation.'>
               <MenuItem value={ChannelType.Default}>User</MenuItem>
               <MenuItem value={ChannelType.Group}>Group</MenuItem>
             </FormDropdown>
-            {CreateChannelDialogItems}
+            <CreateChannelDialogElements />
           </DialogContent>
           <DialogActions>
             <Button id='cancelButton' onClick={this.closeCreateChannelDialog}>Cancel</Button>

@@ -4,7 +4,7 @@ import type MessageAttachment from 'structs/MessageAttachment'
 
 interface IFileUploadSummaryProps {
   files: Array<MessageAttachment>,
-  onRemoveAttachment(id: string): void
+  onRemoveAttachment: (id: string) => void
 }
 
 export default class FileUploadSummary extends React.Component<IFileUploadSummaryProps> {

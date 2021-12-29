@@ -3,16 +3,15 @@ import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
-import type { IElectronRendererWindow } from 'types/interfaces';
 import { DebugRendererHandler } from './DebugLogger';
-import { Settings } from './SettingsManager';
+import { IElectronRendererWindow } from 'types/interfaces';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
 export const Debug = new DebugRendererHandler(ipcRenderer);
 
-export function Navigate(path: string, data: any)
+export function Navigate(path: string, data: unknown)
 {
   try {
     history.push(path, data);
@@ -22,8 +21,7 @@ export function Navigate(path: string, data: any)
   }
 }
 
-export function GetHistoryState()
-{
+export function GetHistoryState() {
   return history.location.state;
 }
 
@@ -117,7 +115,7 @@ function HandleWebsocket() {
 }
 
 export async function ConductLogin() {
-  if (GetHistoryState() != null && (<any>GetHistoryState()).failed) return;
+  if (GetHistoryState() != null && (GetHistoryState()).failed) return;
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     Navigate('/chat', null);
     ipcRenderer.send('GETUserChannels');

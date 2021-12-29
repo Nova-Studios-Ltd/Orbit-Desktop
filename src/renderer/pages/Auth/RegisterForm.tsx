@@ -10,7 +10,7 @@ import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 
 interface IRegisterFormProps {
-  init(form: RegisterForm): void
+  init: (form: RegisterForm) => void
 }
 
 interface IRegisterFormState {

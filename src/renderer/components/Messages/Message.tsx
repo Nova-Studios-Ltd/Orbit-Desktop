@@ -29,7 +29,7 @@ interface IMessageState {
   hasNonLinkText: boolean,
   links: MessageContent[],
   attachments: MessageContent[],
-  anchorEl: any,
+  anchorEl: JSX.Element,
   open: boolean
 }
 
@@ -208,7 +208,7 @@ export default class Message extends React.Component<IMessageProps> {
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
     this.edited = props.edited;
-    this.editedTimestamp = props.editedTimestamp.replace("T", " ");
+    this.editedTimestamp = props.editedTimestamp.replace("T", " @ ");
     this.avatar = props.avatar;
     this.onUpdateCallback = props.onUpdate;
     this.hashedKey = `${this.message_Id}_${this.timestamp}_${this.editedTimestamp}}`;
@@ -470,7 +470,7 @@ export default class Message extends React.Component<IMessageProps> {
           <div className='Message_Right_Header'>
             <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
             <Typography className='Message_Timestamp' variant='subtitle2'>{this.timestamp}</Typography>
-            {this.edited ? <Typography className='Message_Timestamp_Edited' variant='subtitle2'>(Edited at {this.editedTimestamp})</Typography> : null }
+            {this.edited ? <Typography className='Message_Timestamp_Edited' variant='subtitle2'>(Edited on {this.editedTimestamp})</Typography> : null }
           </div>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>

@@ -24,7 +24,7 @@ ipcMain.handle('GETUserUUID', async (_event, username: string, discriminator: st
 });
 
 // TODO Add type for 'data'
-ipcMain.on('EDITUser', (_event, user_uuid: string, data: any) => {
+ipcMain.on('EDITUser', (_event, user_uuid: string, data: unknown) => {
 
 });
 

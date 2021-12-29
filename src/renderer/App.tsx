@@ -3,7 +3,7 @@ import { Router, Route } from 'react-router-dom';
 import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
-import { Debug, events, history, Navigate, SetAuth } from 'shared/helpers';
+import { events, history, Navigate, SetAuth } from 'shared/helpers';
 import { Settings } from 'shared/SettingsManager';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
@@ -11,7 +11,7 @@ import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { ClassNameMap, ThemeProvider } from '@mui/material';
-import { LogContext, Theme } from 'types/enums';
+import { Theme } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 

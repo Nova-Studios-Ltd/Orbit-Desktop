@@ -5,8 +5,8 @@ interface IFormDropdownProps {
   id: string,
   label: string,
   description?: string,
-  value: any,
-  onChange: (event: SelectChangeEvent<any>, child: ReactNode) => void;
+  value: string | undefined,
+  onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void;
 }
 
 export default class FormDropdown extends React.Component<IFormDropdownProps> {

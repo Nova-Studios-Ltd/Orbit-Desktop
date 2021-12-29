@@ -2,28 +2,34 @@ import React from 'react';
 import { Icon, IconButton, Typography } from '@mui/material';
 
 interface IHeaderProps {
-  caption: string,
-  icon: any,
-  onClick: Function,
-  children: Element | Element[]
+  caption?: string,
+  icon?: JSX.Element,
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void,
+  children?: JSX.Element | JSX.Element[]
 }
 
 export default class Header extends React.Component<IHeaderProps> {
 
   render() {
-    let IconObject = null;
-    if (this.props.icon != null) {
-      if (this.props.onClick != null) {
-        IconObject = <IconButton className='Header_IconButton' onClick={this.props.onClick}>{this.props.icon}</IconButton>;
+    const IconElement = () => {
+      if (this.props.icon != null) {
+        if (this.props.onClick != null) {
+          return (
+            <IconButton className='Header_IconButton' onClick={this.props.onClick}>{this.props.icon}</IconButton>
+          );
+        }
+
+        return (
+          <Icon className='Header_Icon'>{this.props.icon}</Icon>
+        );
+
       }
-      else {
-        IconObject = <Icon className='Header_Icon'>{this.props.icon}</Icon>;
-      }
+      return null;
     }
 
     return(
       <div className='Header'>
-          {IconObject}
+          <IconElement />
           <Typography variant='h5'>{this.props.caption}</Typography>
           <div className='Header_Misc'>
             {this.props.children}

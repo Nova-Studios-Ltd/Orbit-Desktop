@@ -85,6 +85,9 @@ export function AppStyles() {
       '.AdaptiveText': {
         color: AppTheme().palette.text.primary,
       },
+      '.StatusPrompt': {
+        textAlign: 'center',
+      },
     },
   });
 }

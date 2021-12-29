@@ -4,7 +4,7 @@ import {events}from 'shared/helpers';
 import Channel from './Channel';
 
 interface IChannelViewProps {
-  init: Function
+  init: (channelList: ChannelView) => void
 }
 
 interface IChannelViewState {
@@ -56,12 +56,24 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
   render() {
     const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
-    const channelEmptyPromptClassNames = this.isChannelListEmpty() ? 'AdaptiveText ChannelEmptyPrompt' : 'AdaptiveText ChannelEmptyPrompt Hidden';
+
+    const PromptElement = () => {
+      if (this.isChannelListEmpty()) {
+        return (
+          <div className='AdaptiveText StatusPrompt'>
+            <Typography variant='subtitle1'>No Channels</Typography>
+            <Typography variant='caption'>Click the + to create a new channel!</Typography>
+          </div>
+        );
+      }
+
+      return null;
+    }
 
     return(
       <div className='ChannelView'>
         {channels}
-        <Typography className={channelEmptyPromptClassNames} variant='subtitle1'>No Channels</Typography>
+        <PromptElement />
       </div>
     );
   }

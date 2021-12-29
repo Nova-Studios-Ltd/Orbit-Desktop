@@ -1,6 +1,6 @@
-export default async function TimeoutUntil(target: any, condition: any, evalType: boolean, timeout?: number) {
+export default async function TimeoutUntil(target: unknown, condition: unknown, evalType: boolean, timeout?: number) {
   if (timeout != null) {
-    timeout = timeout * 10;
+    timeout *= 10;
   }
   else {
     timeout = 10;
