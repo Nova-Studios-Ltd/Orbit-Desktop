@@ -150,6 +150,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
+    DebugMain.Log(`Opening file ${url} in default browser`, LogContext.Main);
     if (url.includes('track') && spotifyInstalled) {
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
@@ -197,6 +198,8 @@ app.whenReady().then(() => {
   try {
     tray = new Tray('assets/icon.png');
     const contextMenu = Menu.buildFromTemplate([
+      { label: `${GLOBALS.appName} (Version ${GLOBALS.appVersion})` },
+      { type: 'separator' },
       { label: 'Open', click: () => resume() },
       { type: 'separator' },
       { label: 'Exit', click: () => quit() }

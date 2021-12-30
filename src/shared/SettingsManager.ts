@@ -65,7 +65,7 @@ class SettingsManager {
         Debug.Log(`Loaded setting ${key} with value ${String(this.Settings)}`, LogContext.Renderer);
       }
       else {
-        this.SaveSetting(key, this.Settings[key])
+        this.SaveSetting(key, this.Settings[key]);
       }
     });
   }

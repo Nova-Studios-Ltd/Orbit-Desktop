@@ -1,5 +1,5 @@
-import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem } from '@mui/material';
-import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
+import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, Icon } from '@mui/material';
+import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
 import { copyToClipboard, ipcRenderer } from 'shared/helpers';
@@ -43,20 +43,15 @@ interface IAttachmentProps {
 }
 
 interface IMessageMediaProps {
-  message: string,
+  message?: string,
   src: string,
+  size?: number;
   dimensions?: Dimensions,
   onImageClick?: (src: string, dimensions: Dimensions) => void;
 }
 
-interface IMessageContent {
-  type: string,
-  url: string,
-  dimensions?: Dimensions
-}
-
 export class MessageImage extends React.Component<IMessageMediaProps> {
-  message: string;
+  message?: string;
   imageSrc: string;
   dimensions: Dimensions;
   desiredDimensions: Dimensions;
@@ -123,7 +118,7 @@ export class MessageImage extends React.Component<IMessageMediaProps> {
 }
 
 export class MessageVideo extends React.Component<IMessageMediaProps> {
-  message: string;
+  message?: string;
   videoSrc: string;
   dimensions: Dimensions;
 
@@ -155,8 +150,46 @@ export class MessageVideo extends React.Component<IMessageMediaProps> {
   }
 }
 
+export class MessageFile extends React.Component<IMessageMediaProps> {
+  filename?: string;
+  filesize?: number;
+  url: string;
+
+  constructor(props: IMessageMediaProps) {
+    super(props);
+    this.filename = props.message;
+    this.filesize = props.size;
+    this.url = props.src;
+
+    this.download = this.download.bind(this);
+  }
+
+  download() {
+    window.open(this.url);
+  }
+
+  render() {
+    return (
+      <div className='FileAttachmentContainer'>
+        <div className='FileAttachmentContainer_Left'>
+          <Icon className='FileAttachmentContainer_Left_Icon'>
+            <FileIcon />
+          </Icon>
+        </div>
+        <div className='FileAttachmentContainer_Right'>
+          <div className='FileAttachmentContainer_Right_Text_Section'>
+            <Typography variant='subtitle1'>{this.filename}</Typography>
+            <Typography variant='caption'>{this.filesize} bytes</Typography>
+          </div>
+          <IconButton className='FileAttachmentContainer_Right_Download_Button' onClick={this.download}><DownloadIcon /></IconButton>
+        </div>
+      </div>
+    );
+  }
+}
+
 export class MessageEmbed extends React.Component<IMessageMediaProps> {
-  message: string;
+  message?: string;
   videoSrc: string;
   dimensions: Dimensions;
 
@@ -282,10 +315,13 @@ export default class Message extends React.Component<IMessageProps> {
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+      }
+      else {
+        attachmentContent.push(new MessageContent({type: 'file', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
       }
     }
 
@@ -461,6 +497,8 @@ export default class Message extends React.Component<IMessageProps> {
         messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
+      else if (link.type == 'file')
+        messageContentObject.push(<MessageFile key={MD5(link.url + Date.now().toString()).toString()} message={link.filename} size={link.filesize} src={link.url} />);
     });
 
     return (
