@@ -9,51 +9,35 @@ interface IImageViewerProps {
   onDismiss: () => void
 }
 
-interface IImageViewerState {
-  desiredDimensions: Dimensions;
-  finalDimensions: Dimensions;
-}
-
 export default class ImageViewer extends React.Component<IImageViewerProps> {
-  state: IImageViewerState;
-
-  constructor(props: IImageViewerProps) {
-    super(props);
-
-    this.state = {
-      desiredDimensions: { width: 0, height: 0 },
-      finalDimensions: { width: 0, height: 0 }
-    }
-  }
-
-  componentDidMount() {
-    this.setState({ desiredDimensions: { width: this.props.dimensions.width * 2, height: this.props.dimensions.height * 2 } }, () => {
-      if (this.props.dimensions.width > 0 && this.props.dimensions.height > 0) {
-        const xRatio = this.props.dimensions.width / this.state.desiredDimensions.width;
-        const yRatio = this.props.dimensions.height / this.state.desiredDimensions.height;
-        const ratio = Math.max(xRatio, yRatio);
-        let nnx = Math.floor(this.props.dimensions.width / ratio);
-        let nny = Math.floor(this.props.dimensions.height / ratio);
-
-        if (this.props.dimensions.width < this.state.desiredDimensions.width && this.props.dimensions.height < this.state.desiredDimensions.height) {
-          nnx = this.props.dimensions.width;
-          nny = this.props.dimensions.height;
-        }
-
-        this.setState({ finalDimensions: { width: nnx, height: nny } });
-      }
-      else {
-        this.setState({ finalDimensions: this.props.dimensions });
-      }
-    });
-  }
-
   render() {
     const ImageViewerElement = () => {
       if (this.props.open) {
+
+        const vw = Math.floor(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) * 0.7);
+        const vh = Math.floor(Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) * 0.7);
+        
+        let finalWidth = this.props.dimensions.width;
+        let finalHeight = this.props.dimensions.height;
+
+        if (this.props.dimensions.width > 0 && this.props.dimensions.height > 0) {
+          const xRatio = this.props.dimensions.width / vw;
+          const yRatio = this.props.dimensions.height / vh;
+          const ratio = Math.max(xRatio, yRatio);
+          const nnx = Math.floor(this.props.dimensions.width / ratio);
+          const nny = Math.floor(this.props.dimensions.height / ratio);
+    
+          finalWidth = nnx;
+          finalHeight = nny;
+        }
+
+        const styles = {
+          width: finalWidth > 0 ? finalWidth: '18rem',
+          height: finalHeight > 0 ? finalHeight: '30rem',
+        }
         return (
           <div className='ImageViewer_Container' tabIndex={0} role='button' onClick={this.props.onDismiss} onKeyDown={this.props.onDismiss}>
-            <img className='ImageViewer_Media' width={this.state.finalDimensions.width} height={this.state.finalDimensions.height} src={this.props.src} alt='Expanded View' />
+            <img className='ImageViewer_Media' style={styles} src={this.props.src} alt='Expanded View' />
             <Typography sx={{color: 'white', marginTop: 2}} variant='caption'>(click anywhere to close)</Typography>
           </div>
         );
