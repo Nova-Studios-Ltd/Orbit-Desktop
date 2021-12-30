@@ -21,6 +21,8 @@ import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 import type { IChannelProps } from 'renderer/components/Channels/Channel';
 import type { FileUploadResponse } from 'types/NCAPIResponseMutations';
+import ImageViewer from 'renderer/components/Dialogs/ImageViewer';
+import type { Dimensions } from 'types/types';
 
 interface IChatPageProps {
 
@@ -30,14 +32,17 @@ interface IChatPageState {
   CanvasObject?: MessageCanvas,
   ChannelList?: ChannelView,
   ChannelName: string,
-  isChannelSelected: boolean,
+  IsChannelSelected: boolean,
   AttachmentList: Array<MessageAttachment>,
   CreateChannelDialogChannelName: string,
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType,
   CreateChannelDialogRecipientAvatarSrc: string,
-  NavigationDrawerOpen: boolean
+  NavigationDrawerOpen: boolean,
+  ImageViewerOpen: boolean,
+  ImageViewerSrc: string,
+  ImageViewerDimensions: Dimensions
 }
 
 export default class ChatPage extends React.Component<IChatPageProps> {
@@ -63,19 +68,24 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.addAttachment = this.addAttachment.bind(this);
     this.removeAttachment = this.removeAttachment.bind(this);
+    this.openImageViewer = this.openImageViewer.bind(this);
+    this.closeImageViewer = this.closeImageViewer.bind(this);
 
     this.state = {
       CanvasObject: undefined,
       ChannelList: undefined,
       ChannelName: '',
-      isChannelSelected: false,
+      IsChannelSelected: false,
       AttachmentList: [],
       CreateChannelDialogChannelName: '',
       CreateChannelDialogRecipients: {},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
       CreateChannelDialogRecipientAvatarSrc: '',
-      NavigationDrawerOpen: false
+      NavigationDrawerOpen: false,
+      ImageViewerOpen: false,
+      ImageViewerSrc: '',
+      ImageViewerDimensions: {width: 0, height: 0}
     };
 
     this.UserDropdownMenuFunctions = { logout: this.Logout };
@@ -179,7 +189,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     console.log(messages);
-    this.setState({ isChannelSelected: true });
+    this.setState({ IsChannelSelected: true });
     if (GLOBALS.currentChannel != channel_uuid) return;
     ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
@@ -347,6 +357,14 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
   }
 
+  openImageViewer(src?: string, dimensions?: Dimensions) {
+    this.setState({ ImageViewerSrc: (src != null ? src : ''), ImageViewerDimensions: (dimensions != null ? dimensions : { width: 0, height: 0 }), ImageViewerOpen: true });
+  }
+
+  closeImageViewer() {
+    this.setState({ ImageViewerSrc: '', ImageViewerOpen: false });
+  }
+
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
@@ -411,11 +429,12 @@ export default class ChatPage extends React.Component<IChatPageProps> {
             <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
-            <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.isChannelSelected}/>
+            <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.IsChannelSelected} onImageClick={this.openImageViewer} />
             <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>
             <MessageInput onAddAttachment={this.addAttachment} onMessagePush={this.sendMessage}/>
           </div>
         </div>
+        <ImageViewer src={this.state.ImageViewerSrc} dimensions={this.state.ImageViewerDimensions} open={this.state.ImageViewerOpen} onDismiss={this.closeImageViewer} />
         <Drawer className='NavigationDrawer' anchor='left' open={this.state.NavigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
           <List className='NavigationDrawerList'>
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />

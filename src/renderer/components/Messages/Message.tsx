@@ -21,6 +21,7 @@ export interface IMessageProps {
   avatar: string,
   attachments: IAttachmentProps[],
   onUpdate: () => void;
+  onImageClick?: (src: string, dimensions: Dimensions) => void;
 }
 
 interface IMessageState {
@@ -29,7 +30,7 @@ interface IMessageState {
   hasNonLinkText: boolean,
   links: MessageContent[],
   attachments: MessageContent[],
-  anchorEl: JSX.Element,
+  anchorEl: JSX.Element | null,
   open: boolean
 }
 
@@ -44,7 +45,8 @@ interface IAttachmentProps {
 interface IMessageMediaProps {
   message: string,
   src: string,
-  dimensions?: Dimensions
+  dimensions?: Dimensions,
+  onImageClick?: (src: string, dimensions: Dimensions) => void;
 }
 
 interface IMessageContent {
@@ -69,13 +71,7 @@ export class MessageImage extends React.Component<IMessageMediaProps> {
       width: 575,
       height: 400
     };
-    this.finalDimensions = {
-      width: 0,
-      height: 0
-    };
-  }
 
-  render() {
     if (this.dimensions.width > 0 && this.dimensions.height > 0) {
       const xRatio = this.dimensions.width / this.desiredDimensions.width;
       const yRatio = this.dimensions.height / this.desiredDimensions.height;
@@ -88,30 +84,31 @@ export class MessageImage extends React.Component<IMessageMediaProps> {
         nny = this.dimensions.height;
       }
 
-      const styles = {
-        width: nnx,
-        height: nny,
-      }
+      this.finalDimensions = {width: nnx, height: nny}
+    }
+    else {
+      this.finalDimensions = {
+        width: 0,
+        height: 0
+      };
+    }
 
-      return (
-        <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
-          {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-            <Card className='Message_Embed' style={styles}>
-              <CardMedia
-              className='Message_Embed_Content'
-              component='img'
-              src={this.imageSrc}
-            />
-            </Card>
-        </div>
-      );
-    }
+    this.onImageClick = this.onImageClick.bind(this);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onImageClick(_event: never) {
+    if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(this.imageSrc, this.dimensions);
+  }
+
+  render() {
     const styles = {
-      width: '18rem',
-      height: '30rem',
+      width: this.finalDimensions.width > 0 ? this.finalDimensions.width: '18rem',
+      height: this.finalDimensions.height > 0 ? this.finalDimensions.height: '30rem',
     }
+
     return (
-      <div className='Message_Content' style={({marginBottom: '0.8rem'})}>
+      <div className='Message_Content' style={({marginBottom: '0.8rem'})} tabIndex={0} role='button' onClick={this.onImageClick} onKeyDown={this.onImageClick}>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
           <Card className='Message_Embed' style={styles}>
             <CardMedia
@@ -233,6 +230,7 @@ export default class Message extends React.Component<IMessageProps> {
     this.editMessageChanged = this.editMessageChanged.bind(this);
     this.submitEditedMessage = this.submitEditedMessage.bind(this);
     this.resetMessageEdit = this.resetMessageEdit.bind(this);
+    this.onImageClick = this.onImageClick.bind(this);
 
     this.divRef = React.createRef();
   }
@@ -428,6 +426,10 @@ export default class Message extends React.Component<IMessageProps> {
     this.setState({ editedMessage: '', isEditing: false });
   }
 
+  onImageClick(src: string, dimensions: Dimensions) {
+    if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(src, dimensions);
+  }
+
   render() {
     const messageContentObject = [] as JSX.Element[];
     const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
@@ -445,7 +447,7 @@ export default class Message extends React.Component<IMessageProps> {
 
     this.state.links.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions}/>);
+        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
@@ -456,7 +458,7 @@ export default class Message extends React.Component<IMessageProps> {
 
     this.state.attachments.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
+        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == 'video')
         messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
     });

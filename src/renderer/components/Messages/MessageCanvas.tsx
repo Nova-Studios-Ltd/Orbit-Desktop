@@ -2,9 +2,11 @@ import { Typography } from '@mui/material';
 import React, { RefObject } from 'react';
 import Message from 'renderer/components/Messages/Message';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
+import type { Dimensions } from 'types/types';
 
 interface IMessageCanvasProps {
   init: (canvas: MessageCanvas) => void,
+  onImageClick?: (src: string, dimensions: Dimensions) => void;
   isChannelSelected: boolean
 }
 
@@ -26,6 +28,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     this.isMessagesListEmpty = this.isMessagesListEmpty.bind(this);
     this.scrollToBottom = this.scrollToBottom.bind(this);
     this.messageUpdated = this.messageUpdated.bind(this);
+    this.onImageClick = this.onImageClick.bind(this);
 
     this.bottomDivRef = React.createRef();
 
@@ -78,7 +81,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
   }
 
   clear() {
-    this.setState({messages: []});
+    this.setState({ messages: [] });
   }
 
   isMessagesListEmpty() {
@@ -86,7 +89,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
   }
 
   scrollToBottom() {
-    if (this.bottomDivRef != null)
+    if (this.bottomDivRef != null && this.bottomDivRef.current != null)
       this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
   }
 
@@ -98,8 +101,12 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     this.scrollToBottom();
   }
 
+  onImageClick(src: string, dimensions: Dimensions) {
+    if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(src, dimensions);
+  }
+
   render() {
-    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} onImageClick={this.onImageClick} />));
     const PromptElement = () => {
       if (this.isMessagesListEmpty() && this.props.isChannelSelected) {
         return (

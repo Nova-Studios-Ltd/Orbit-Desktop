@@ -57,6 +57,7 @@
 .Message_Embed {
   /*height: 18rem;
   width: 30rem;*/
+  cursor: pointer;
 }
 
 .Message_Embed_Content {
