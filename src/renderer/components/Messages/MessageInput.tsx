@@ -4,7 +4,7 @@ import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import { LogContext } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
-import { Settings } from 'shared/SettingsManager';
+import { SettingsManager } from 'shared/SettingsManager';
 
 interface IMessageInputProps {
   onAddAttachment: (attachment: MessageAttachment) => void,
@@ -31,7 +31,7 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
     this.addedAttachment = this.addedAttachment.bind(this);
 
     ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
-    
+
     this.ctrlPressed = false;
 
     this.state = { message: '' };
@@ -92,14 +92,14 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
   }
 
   render() {
-    const availableCharacterRemainder = Settings.Settings.MessageCharacterLimit - this.state.message.length;
-    const showMaxLength = availableCharacterRemainder > Settings.Settings.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
+    const availableCharacterRemainder = SettingsManager.Settings.MessageCharacterLimit - this.state.message.length;
+    const showMaxLength = availableCharacterRemainder > SettingsManager.Settings.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
 
     return (
       <div className='Chat_Page_Bottom'>
         <IconButton className='Chat_IconButton' onClick={this.handleUploadButtonClick}><UploadIcon /></IconButton>
         <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} autoFocus onChange={this.handleChange} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} inputProps={{
-          maxLength: Settings.Settings.MessageCharacterLimit,
+          maxLength: SettingsManager.Settings.MessageCharacterLimit,
         }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{

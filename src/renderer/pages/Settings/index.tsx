@@ -1,6 +1,6 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
 import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch } from '@mui/material';
-import { Close as CloseIcon, Settings as SettingsIcon, Add } from '@mui/icons-material';
+import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
@@ -9,7 +9,7 @@ import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
-import { Settings } from 'shared/SettingsManager';
+import { SettingsManager } from 'shared/SettingsManager';
 
 interface ISettingsPageProps {
 
@@ -39,7 +39,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.state = {
       UpdatedUser: false,
       confirmUserAccountDeletionDialogOpen: false,
-      darkThemeEnabled: Boolean(Settings.Settings.Theme)
+      darkThemeEnabled: Boolean(SettingsManager.Settings.Theme)
     }
   }
 
@@ -55,7 +55,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     switch (event.currentTarget.id) {
       case 'darkTheme':
         this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
-          Settings.SetTheme(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          SettingsManager.SetTheme(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
         });
         break;
     }
@@ -100,7 +100,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
           <SettingsSection title='User'>
             <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
               <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
-              <Add fontSize='large' className='Overlay'/>
+              <AddIcon fontSize='large' className='Overlay'/>
             </IconButton>
           </SettingsSection>
           <SettingsSection title='Appearance'>

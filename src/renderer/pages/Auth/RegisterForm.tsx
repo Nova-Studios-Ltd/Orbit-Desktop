@@ -71,9 +71,11 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
 
     return (
       <AuthForm onSubmit={this.handleSubmit} headerHeading={`${GLOBALS.appName} ${GLOBALS.appVersion}`} headerBody={`Register for a ${GLOBALS.appName} account.`} status={this.state.status}>
-        <FormTextField id='email' label='Email' description='Your email address. This will be used when signing in, and for account-related operations.' autoFocus required onChange={this.handleChange} />
-        <FormTextField id='username' label='Username' description='Your new username.' required onChange={this.handleChange} />
-        <FormTextField id='password' label='Password' description='Your new password.' required sensitive onChange={this.handleChange} />
+        <FormTextField id='email' label='Email' placeholder='Your Email Address' description='This will be used when signing in, and for account-related operations.' autoFocus required onChange={this.handleChange} />
+        <FormTextField id='username' label='Username' placeholder='Your New username' required onChange={this.handleChange} />
+        <FormTextField id='password' label='Password' placeholder='Your New password' required sensitive onChange={this.handleChange} />
+        <br />
+        <Typography className='Generic_Form_Item' sx={{color: 'red'}} variant='caption'>Warning: Due to end to end encryption, if you forget your password, you will lose your messages, so please keep your password stored somewhere safe (e.g. write it down or use a password manager).</Typography>
         <br />
         <Accordion disabled className={AdvancedOptionsAccordionStyles}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>

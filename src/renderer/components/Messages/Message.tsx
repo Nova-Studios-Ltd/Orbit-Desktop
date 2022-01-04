@@ -30,7 +30,7 @@ interface IMessageState {
   hasNonLinkText: boolean,
   links: MessageContent[],
   attachments: MessageContent[],
-  anchorEl: JSX.Element | null,
+  anchorPos: { x: number, y: number},
   open: boolean
 }
 
@@ -249,7 +249,7 @@ export default class Message extends React.Component<IMessageProps> {
       hasNonLinkText: false,
       links: [],
       attachments: [],
-      anchorEl: null,
+      anchorPos: { x: 0, y: 0},
       open: false
     }
 
@@ -269,7 +269,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   openContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-    this.setState((prevState: IMessageState) => ({ open: !prevState.open, anchorEl: event.target }));
+    this.setState({ open: true, anchorPos: { x: event.clientX, y: event.clientY } });
   }
 
   menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
@@ -289,11 +289,11 @@ export default class Message extends React.Component<IMessageProps> {
         break;
     }
 
-    this.setState({ open: false, anchorEl: null });
+    this.setState({ open: false, anchorPos: { x: 0, y: 0} });
   }
 
   closeContextMenu() {
-    this.setState({ open: false, anchorEl: null });
+    this.setState({ open: false, anchorPos: { x: 0, y: 0} });
   }
 
   mouseEnter(event: React.MouseEvent<HTMLDivElement>) {
@@ -520,8 +520,9 @@ export default class Message extends React.Component<IMessageProps> {
           </form>
         </div>
         <Menu
-          id='userdropdown-menu'
-          anchorEl={this.state.anchorEl}
+          id='message-context-menu'
+          anchorReference='anchorPosition'
+          anchorPosition={{ top: this.state.anchorPos.y, left: this.state.anchorPos.x }}
           open={this.state.open}
           onClose={this.closeContextMenu}
           MenuListProps={{

@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
@@ -10,7 +10,7 @@ import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
 import UserDropdownMenu, { IUserDropdownMenuFunctions } from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
@@ -35,6 +35,7 @@ interface IChatPageState {
   IsChannelSelected: boolean,
   AttachmentList: Array<MessageAttachment>,
   CreateChannelDialogChannelName: string,
+  CreateChannelDialogRecipientsRaw: string,
   CreateChannelDialogRecipients: {[username: string]: string},
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType,
@@ -78,6 +79,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       IsChannelSelected: false,
       AttachmentList: [],
       CreateChannelDialogChannelName: '',
+      CreateChannelDialogRecipientsRaw: '',
       CreateChannelDialogRecipients: {},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
@@ -250,21 +252,23 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     // TODO If something breaks check here
     const { name, value } = event.currentTarget;
     if (name == 'CreateChannelDialogRecipients') {
-      const usernames = value.split(' ');
-      usernames.forEach(async (username: string) => {
-        if (this.isValidUsername(username)) {
-          const ud = username.split('#')
-          await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result: string) => {
-            if (result == 'UNKNOWN') return;
-            // Change this later to support multiple users for the dialog
-            this.setState((prevState: IChatPageState) => {
-              prevState.CreateChannelDialogRecipients[username] = result;
-              return {
-                CreateChannelDialogRecipients: prevState.CreateChannelDialogRecipients,
-                CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`}
-              });
-          });
-        }
+      this.setState({ CreateChannelDialogRecipientsRaw: value }, () => {
+        const usernames = value.split(' ');
+        usernames.forEach(async (username: string) => {
+          if (this.isValidUsername(username)) {
+            const ud = username.split('#')
+            await ipcRenderer.invoke('GETUserUUID', ud[0], ud[1]).then((result: string) => {
+              if (result == 'UNKNOWN') return;
+              // Change this later to support multiple users for the dialog
+              this.setState((prevState: IChatPageState) => {
+                prevState.CreateChannelDialogRecipients[username] = result;
+                return {
+                  CreateChannelDialogRecipients: prevState.CreateChannelDialogRecipients,
+                  CreateChannelDialogRecipientAvatarSrc: `https://api.novastudios.tk/Media/Avatar/${result}?size=64`}
+                });
+            });
+          }
+        });
       });
       return;
     }
@@ -295,6 +299,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   resetCreateChannelDialogState() {
     this.setState({
       CreateChannelDialogChannelName: '',
+      CreateChannelDialogRecipientsRaw: '',
       CreateChannelDialogRecipients: {} as {[username: string]: string},
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
@@ -324,6 +329,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     switch (event.currentTarget.id) {
       case 'chat':
         new AppNotification({ title: 'Navigation', body: 'Navigating to Chat page', playSound: false, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
+        this.setState({ NavigationDrawerOpen: false });
         break;
     }
   }
@@ -383,15 +389,13 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   render() {
-    let titleString = null;
-
     const CreateChannelDialogElements = () => {
       switch (this.state.CreateChannelDialogChannelType) {
         case ChannelType.Group:
           return (
             <div>
               <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange} />
-              <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required onChange={this.handleFormChange} />
+              <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
             </div>
           );
         case ChannelType.Default:
@@ -399,19 +403,20 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         default:
           return (
             <div className='CreateChannelDialog_User_Items'>
-              <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required onChange={this.handleFormChange} />
+              <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
               <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className='CreateChannelDialog_User_Avatar'/>
             </div>
           );
       }
     }
 
-    if (this.state.ChannelName.length > 0) {
-      titleString = `${GLOBALS.appName} ${GLOBALS.appVersion} - ${this.state.ChannelName}`;
-    }
-    else {
-      titleString = `${GLOBALS.appName} ${GLOBALS.appVersion}`;
-    }
+    const titleString = (() => {
+      if (this.state.ChannelName.length > 0) {
+        return `${GLOBALS.appName} ${GLOBALS.appVersion} - ${this.state.ChannelName}`;
+      }
+
+      return `${GLOBALS.appName} ${GLOBALS.appVersion}`;
+    })();
 
     return (
       <div className='Page Chat_Page_Container'>

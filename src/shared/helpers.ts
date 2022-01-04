@@ -4,7 +4,7 @@ import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugRendererHandler } from './DebugLogger';
-import { IElectronRendererWindow } from 'types/interfaces';
+import { IElectronRendererWindow } from 'types/types';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;

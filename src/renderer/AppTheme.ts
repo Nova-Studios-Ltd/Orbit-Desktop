@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import { createTheme } from '@mui/material/styles';
-import { Settings } from 'shared/SettingsManager';
+import { SettingsManager } from 'shared/SettingsManager';
 import { Theme } from 'types/enums';
 
 const LightTheme = createTheme({
@@ -24,7 +24,9 @@ const DarkTheme = createTheme({
 });
 
 export function AppTheme() {
-  return Settings.Settings.Theme == Theme.Dark ? DarkTheme : LightTheme;
+  const theme = SettingsManager.Settings.Theme == Theme.Dark ? DarkTheme : LightTheme;
+  console.log(theme);
+  return theme;
 }
 
 export function AppStyles() {
@@ -74,7 +76,7 @@ export function AppStyles() {
       '.Header': {
         color: AppTheme().palette.text.primary,
       },
-      Chat_Page_Bottom: {
+      'Chat_Page_Bottom': {
         backgroundColor: AppTheme().palette.background.default,
       },
       '.Settings_Section': {
@@ -88,6 +90,18 @@ export function AppStyles() {
       '.StatusPrompt': {
         textAlign: 'center',
       },
+      '.NoInternetWarningContainer': {
+        position: 'absolute',
+        background: 'rgba(200, 0, 0, 0.8)',
+        borderRadius: '5px',
+        padding: '5px',
+        marginTop: '5px',
+        left: '50%',
+        transform: 'translate(-50%, 0)',
+        color: 'white',
+        textAlign: 'center',
+        zIndex: '1000'
+      }
     },
   });
 }

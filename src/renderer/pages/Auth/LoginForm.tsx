@@ -44,16 +44,16 @@ class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
     Authenticate(new Credentials({email, password, address})).then((result: FormAuthStatusType) => {
       switch (result) {
         case FormAuthStatusType.success:
-          this.updateStatus('Yay, logged in successfully! Redirecting...', FormStatusType.success);
+          this.updateStatus('Logged in! Redirecting...', FormStatusType.success);
           break;
         case FormAuthStatusType.genericIncorrectUsernamePassword:
           this.updateStatus('Incorrect Username or Password', FormStatusType.error);
           break;
         case FormAuthStatusType.networkTimeout:
-          this.updateStatus('Unable to connect to server (try checking your internet connection, or making sure the address is correct)', FormStatusType.error);
+          this.updateStatus('Unable to connect to server (try checking your internet connection)', FormStatusType.error);
           break;
         case FormAuthStatusType.serverError:
-          this.updateStatus('Uhh, the server seems to have encountered an error. Try again?', FormStatusType.error);
+          this.updateStatus('Internal Server Error. Please try again.', FormStatusType.error);
           break;
       }
     });

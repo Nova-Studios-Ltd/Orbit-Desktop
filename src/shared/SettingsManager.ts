@@ -31,7 +31,7 @@ interface ISettingsKeys extends ISettingsKeySignature {
   'Theme': Theme
 }
 
-class SettingsManager {
+class SettingsManagerRenderer {
   Settings: ISettingsKeys;
 
   constructor() {
@@ -81,4 +81,9 @@ class SettingsManager {
   }
 }
 
-export const Settings =  new SettingsManager();
+class SettingsManagerMain {
+
+}
+
+export const SettingsManager = new SettingsManagerRenderer();
+export const SettingsMain =  new SettingsManagerMain();

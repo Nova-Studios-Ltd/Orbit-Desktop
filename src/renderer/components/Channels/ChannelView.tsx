@@ -38,12 +38,15 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   removeChannel(channel_uuid: string) {
-    const oldState = this.state;
-    const index = oldState.channels.findIndex(e => e.channelID === channel_uuid);
-    if (index > -1) {
-      oldState.channels.splice(index, 1);
-      this.setState({channels: oldState.channels});
-    }
+    console.log(channel_uuid);
+    this.setState((prevState: IChannelViewState) => {
+      const index = prevState.channels.findIndex(e => e.channelID === channel_uuid);
+      if (index > -1) {
+        prevState.channels.splice(index, 1);
+        return { channels: prevState.channels };
+      }
+      return null;
+    });
   }
 
   clearChannels() {
@@ -55,7 +58,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   render() {
-    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} />));
+    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} />));
 
     const PromptElement = () => {
       if (this.isChannelListEmpty()) {

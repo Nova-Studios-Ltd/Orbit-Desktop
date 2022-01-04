@@ -1,43 +1,42 @@
 import React from 'react';
 import { TextField } from '@mui/material';
 
-interface IFormTextFieldProps {
+interface IChipTextFieldProps {
   id: string,
   label: string,
-  placeholder?: string,
   value?: string,
   classNames?: string,
   description?: string,
   autoFocus?: boolean,
   required?: boolean,
   sensitive?: boolean,
-  disabled?: boolean,
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export default class FormTextField extends React.Component<IFormTextFieldProps> {
+interface IChipTextFieldState {
+  selectedItem: JSX.Element | undefined
+}
+
+export default class ChipTextField extends React.Component<IChipTextFieldProps> {
   id: string;
   classNames: string;
   label: string;
-  placeholder?: string;
   description?: string;
   autoFocus?: boolean;
   required?: boolean;
   sensitive?: boolean;
-  disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  state: IChipTextFieldState;
 
-  constructor(props: IFormTextFieldProps) {
+  constructor(props: IChipTextFieldProps) {
     super(props);
     this.id = props.id || '';
     this.classNames = props.classNames || '';
     this.label = props.label || '';
-    this.placeholder = props.placeholder || '';
     this.description = props.description || '';
     this.autoFocus = props.autoFocus || false;
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
-    this.disabled = props.disabled || false;
     this.onChange = props.onChange || undefined;
   }
 
@@ -49,7 +48,27 @@ export default class FormTextField extends React.Component<IFormTextFieldProps> 
     }
 
     return (
-      <TextField className={finalClassNames} FormHelperTextProps={{ className: 'Form_Text_Field_Description' }} value={this.props.value} name={this.id} label={this.label} placeholder={this.placeholder} helperText={this.description} type={fieldType} required={this.required} variant='outlined' autoFocus={this.autoFocus} disabled={this.disabled} onChange={this.onChange} />
+      <TextField
+        className={finalClassNames}
+        value={this.props.value}
+        name={this.id}
+        label={this.label}
+        helperText={this.description}
+        type={fieldType}
+        required={this.required}
+        variant="outlined"
+        autoFocus={this.autoFocus}
+        onChange={this.onChange}
+        inputProps={{
+          startAdornment: () => {
+            if (this.state.selectedItem != null) {
+              this.state.selectedItem.map(item => {
+                <Chip />
+              });
+            }
+          }
+        }}
+      />
     );
   }
 }

@@ -3,7 +3,7 @@ import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
 import { Typography } from '@mui/material';
-import { Settings } from 'shared/SettingsManager';
+import { SettingsManager } from 'shared/SettingsManager';
 
 export interface INotificationProps {
   title?: string,
@@ -26,7 +26,7 @@ export default class AppNotification {
     this.title = props.title || '';
     this.body = props.body || '';
     this.playSound = props.playSound || false;
-    this.notificationAssetPath = props.notificationAssetPath || Settings.Settings.NotificationAssetPath || '';
+    this.notificationAssetPath = props.notificationAssetPath || SettingsManager.Settings.NotificationAssetPath || '';
     this.notificationType = props.notificationType || NotificationStatusType.default;
     this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
   }

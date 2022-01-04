@@ -36,6 +36,10 @@
   width: 100%;
 }
 
+.Form_Text_Field_Description {
+  margin-left: 0 !important;
+}
+
 @media screen and (min-width:800px) and (max-width: 900px) {
   .AuthForm_Container {
     width: 70%;

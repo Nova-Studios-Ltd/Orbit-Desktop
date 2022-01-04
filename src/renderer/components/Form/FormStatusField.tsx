@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormStatusType } from 'types/enums';
+import { AppTheme } from 'renderer/AppTheme';
 
 interface IFormStatusFieldProps {
   message?: string,
@@ -14,13 +15,13 @@ export default class FormStatusField extends React.Component<IFormStatusFieldPro
     switch (type)
     {
       case FormStatusType.info:
-        return '#000000'
+        return AppTheme().palette.text.primary;
       case FormStatusType.warn:
-        return '#f2c41d'
+        return AppTheme().palette.warning.main;
       case FormStatusType.error:
-        return '#ff0011'
+        return AppTheme().palette.error.main;
       case FormStatusType.success:
-        return '#27D507'
+        return AppTheme().palette.success.main;
       default:
         return '#000000'
     }

@@ -1,11 +1,10 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
-import fs from 'fs';
-import type { IChannelProps, IMessageDeleteRequestArgs, IMessageProps, INotificationProps } from 'types/interfaces';
+import type { INotificationProps } from 'renderer/components/Notification/Notification';
 import MessageAttachment from 'structs/MessageAttachment';
 import Credentials from '../structs/Credentials';
 import { DebugMain } from '../shared/DebugLogger';
-import { ChannelType, ContentType, FormAuthStatusType, LogType, LogContext } from '../types/enums';
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PostWithoutAuthentication, PutWithAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication, NCAPIResponse } from './NCAPI';
+import { ContentType, FormAuthStatusType, LogContext } from '../types/enums';
+import { PostWithoutAuthentication, PostFileWithAuthentication, SetCookie, PostBufferWithAuthentication } from './NCAPI';
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
