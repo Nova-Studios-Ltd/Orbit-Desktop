@@ -1,32 +1,25 @@
-/* eslint global-require: off, no-console: off */
+/* eslint global-require: off, no-console: off, promise/always-return: off */
 
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `yarn build` or `yarn build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import http, { IncomingMessage, ServerResponse } from 'http';
-import path, { resolve } from 'path';
+import http from 'http';
+import type { IncomingMessage, ServerResponse } from 'http';
+import path from 'path';
 import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { resolveHtmlPath } from './util';
+import { sync as checkCommand } from 'command-exists';
+import { Server } from 'node-static';
+
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
+import { LogContext, LogType } from '../types/enums';
+import { resolveHtmlPath } from './util';
+
 import './events';
 import './apiEvents';
 import './debugEvents';
-import { LogContext, LogType } from '../types/enums';
 
-const stat = require('node-static');
-const checkCommand = require('command-exists').sync;
-
-const file = new stat.Server(path.resolve(__dirname, '../renderer/'));
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let allowCompleteExit = false;
@@ -46,11 +39,13 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 
+  const server = new Server(path.resolve(__dirname, '../renderer/'));
+
   http.createServer((request: IncomingMessage, response: ServerResponse) => {
     request.addListener('end', () => {
-      file.serve(request, response);
+      server.serve(request, response);
     }).resume();
-  }).listen(1212);
+  }).listen(process.env.port || 1212);
 }
 
 const isDevelopment =
@@ -86,10 +81,7 @@ function getSpotifyPlaylistId(url: string) {
 }
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (isDevelopment) {
     await installExtensions();
   }
 
@@ -105,7 +97,6 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    minWidth: 640,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -116,9 +107,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       DebugMain.Error('mainWindow is not defined', LogContext.Main, '(when creating the window)');
       throw new Error('"mainWindow" is not defined');
@@ -164,7 +153,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  //ew AppUpdater();
 };
 
 /**
@@ -174,9 +163,9 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  /*if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit();
-  }*/
+  }
 });
 
 app.whenReady().then(() => {
@@ -191,7 +180,6 @@ app.whenReady().then(() => {
   }
 
   function quit() {
-    allowCompleteExit = true;
     app.quit();
   }
 
@@ -212,19 +200,16 @@ app.whenReady().then(() => {
   }
   catch {
     DebugMain.Error('Unable to load tray icon', LogContext.Main);
-    allowCompleteExit = true;
   }
 
-  DebugMain.Success('App Loaded', LogContext.Main);
-  createWindow();
+  createWindow().then(() => {
+    DebugMain.Success('App Loaded', LogContext.Main);
+  });
+
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) createWindow().catch(console.log);
+  });
+
 }).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'on app initialization'));
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
-});
-
-app.on('before-quit', () => {
-  return (!GLOBALS.closeToTray && allowCompleteExit);
-});

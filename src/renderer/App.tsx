@@ -21,10 +21,10 @@ interface IAppState {
   isConnectedToInternet: boolean
 }
 
-class App extends React.Component<undefined> {
+class App extends React.Component {
   state: IAppState;
 
-  constructor(props: undefined) {
+  constructor(props: never) {
     super(props);
     SettingsManager.Init();
     Navigate(GLOBALS.HomePath, null);

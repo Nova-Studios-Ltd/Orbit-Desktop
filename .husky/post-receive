@@ -1,0 +1,6 @@
+GIT_WORK_TREE=/build/NovaUI3 git checkout -f master
+if [ $(systemctl is-active --quiet BuildElectron) -eq 0 ]
+then
+ sudo StopNCUBuild
+fi
+sudo StartNCUBuild
