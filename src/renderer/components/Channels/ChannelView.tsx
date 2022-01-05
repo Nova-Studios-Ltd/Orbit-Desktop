@@ -38,7 +38,6 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   removeChannel(channel_uuid: string) {
-    console.log(channel_uuid);
     this.setState((prevState: IChannelViewState) => {
       const index = prevState.channels.findIndex(e => e.channelID === channel_uuid);
       if (index > -1) {
