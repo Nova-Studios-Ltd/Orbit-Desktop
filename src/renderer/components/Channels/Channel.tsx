@@ -75,7 +75,7 @@ export default class Channel extends React.Component<IChannelProps> {
   async channelClicked() {
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
-    ipcRenderer.send('GETMessages', GLOBALS.currentChannel);
+    ipcRenderer.send('GETMessages', GLOBALS.currentChannel, GLOBALS.userData);
   }
 
   async menuItemClicked(event: MouseEvent<HTMLLIElement>) {

@@ -17,7 +17,7 @@ export default class FileUploadSummary extends React.Component<IFileUploadSummar
         classNames = classNames.concat(' ', 'Hidden');
       }
 
-      filesObj = this.props.files.map((v) => (<Chip key={v.id} className='Message_Content' label={v.contents} onDelete={() => this.props.onRemoveAttachment(v.id)} />))
+      filesObj = this.props.files.map((v) => (<Chip key={v.id} className='Message_Content' label={v.isBuffer? 'unknown.png' : v.contents} onDelete={() => this.props.onRemoveAttachment(v.id)} />))
     }
 
     return (

@@ -1,11 +1,8 @@
+import type { AESMemoryEncryptData, IAESMemoryEncryptData } from "main/encryptionClasses";
+
 export type Dimensions = {
   width: number,
   height: number
-}
-
-export interface IMessageDeleteRequestArgs {
-  channelID: string,
-  messageID: string
 }
 
 export interface IUserData {
@@ -14,6 +11,18 @@ export interface IUserData {
   token: string,
   discriminator: string,
   avatarSrc: string
+}
+
+export interface IUserLoginData {
+  uuid: string,
+  token: string,
+  publicKey: string,
+  key: IAESMemoryEncryptData
+}
+
+export interface IMessageDeleteRequestArgs {
+  channelID: string,
+  messageID: string
 }
 
 export interface IElectronRendererWindow {

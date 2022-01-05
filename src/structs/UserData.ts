@@ -1,9 +1,12 @@
 import type { IUserData } from 'types/types';
+import { RSAMemoryKeyPair } from '../main/encryptionClasses';
 
 export default class UserData {
   username: string;
   uuid: string;
   token: string;
+  keyPair: RSAMemoryKeyPair;
+  keystore: { [key: string] : string; };
   discriminator: string;
   avatarSrc: string;
 
@@ -22,5 +25,7 @@ export default class UserData {
       this.discriminator = '';
       this.avatarSrc = '';
     }
+    this.keyPair = new RSAMemoryKeyPair('', '');
+    this.keystore = {}
   }
 }

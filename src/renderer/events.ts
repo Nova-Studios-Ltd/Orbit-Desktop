@@ -1,20 +1,25 @@
 import GLOBALS from 'shared/globals';
-import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials } from 'shared/helpers';
+import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
-ipcRenderer.on('endAuth', (data: boolean) => {
-  if (data) {
-    SetAuth();
-    ConductLogin();
-  }
+ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
+  SetCookie('userData', JSON.stringify({uuid, token}), 60);
+
+  console.log('End auth run');
+
+  // Store Pub/Priv key
+  console.log(await ipcRenderer.invoke('SetPubkey', pubKey));
+
+  SetAuth();
+  ConductLogin();
 });
 
 ipcRenderer.on('ChannelCreated', (data: boolean) => {
   if (data)
     new AppNotification({ title: 'Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification({ title: 'Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('CREATEGroupChannel', (data: boolean) => {

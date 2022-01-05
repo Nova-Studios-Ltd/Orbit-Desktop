@@ -2,10 +2,9 @@ import { session } from 'electron';
 import { createReadStream } from 'fs';
 import Axios from 'axios';
 import FormData from 'form-data';
-import { FormData as FormDataNode } from 'formdata-node'
-import {FormDataEncoder} from "form-data-encoder"
-import { Readable } from 'stream';
-import https from 'https';
+import { basename } from 'path';
+import { createCipheriv } from 'crypto';
+import { PassThrough } from 'stream';
 import { ContentType } from '../types/enums';
 
 export class NCAPIResponse {
@@ -38,6 +37,22 @@ export async function QueryWithAuthentication(endpoint: string) : Promise<NCAPIR
   try {
     const token = await RetreiveToken();
     const resp = await Axios.get(`https://api.novastudios.tk/${endpoint}`, {
+      headers: {
+        'Authorization': token
+      }
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
+}
+
+export async function GETWithAuthentication(url: string) : Promise<NCAPIResponse> {
+  try {
+    const token = await RetreiveToken();
+    const resp = await Axios.get(url, {
+      responseType: 'arraybuffer',
       headers: {
         'Authorization': token
       }
@@ -128,8 +143,10 @@ export async function PatchWithAuthentication(endpoint: string, content_type: Co
 
 export async function PostFileWithAuthentication(endpoint: string, file: string) : Promise<NCAPIResponse> {
   try {
+    const read = createReadStream(file);
+
     const payload = new FormData();
-    payload.append('file', createReadStream(file));
+    payload.append('file', read, {filename: basename(file) });
     const token = await RetreiveToken();
     const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
       headers: {
@@ -147,18 +164,47 @@ export async function PostFileWithAuthentication(endpoint: string, file: string)
 }
 
 
-export async function PostBufferWithAuthentication(endpoint: string, buffer: Buffer) : Promise<NCAPIResponse> {
+export async function PostFileWithAuthenticationAndEncryption(endpoint: string, file: string, key: string, iv: string) : Promise<NCAPIResponse> {
   try {
+    const cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+    const read = createReadStream(file);
+    const d = new PassThrough();
+    read.pipe(cipher).pipe(d);
+
     const payload = new FormData();
-
-
-
-    payload.append('file', buffer, { filename: 'unknown.png'});
-    //payload.append('file', stream, { filename: 'unknown.png', contentType: 'image/png', knownLength: buffer.toString().length });
+    payload.append('file', d, {filename: basename(file) });
     const token = await RetreiveToken();
     const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
       headers: {
-        'Content-Type': `multipart/form-data; boundary=${payload.getBoundary()}`,
+        ...payload.getHeaders(),
+        'Authorization': token
+      },
+      maxBodyLength: 20971520,
+      maxContentLength: 20971520
+    });
+    return new NCAPIResponse(resp.status, resp.statusText, resp.data);
+  }
+  catch (e) {
+    return new NCAPIResponse(undefined, undefined, undefined, e);
+  }
+}
+
+
+export async function PostBufferWithAuthenticationAndEncryption(endpoint: string, buffer: Buffer, key: string, iv: string) : Promise<NCAPIResponse> {
+  try {
+    const payload = new FormData();
+
+    const cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+    const d = new PassThrough();
+    const out = new PassThrough();
+    d.end(buffer);
+    d.pipe(cipher).pipe(out);
+
+    payload.append('file', out, { filename: 'unknown.png'});
+    const token = await RetreiveToken();
+    const resp = await Axios.post(`https://api.novastudios.tk/${endpoint}`, payload, {
+      headers: {
+        ...payload.getHeaders(),
         'Authorization': token
       },
       maxBodyLength: 20971520,

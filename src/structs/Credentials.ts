@@ -14,7 +14,8 @@ export default class Credentials {
   constructor(props: ICredentialsProps) {
     this.email = props.email;
     this.username = props.username;
-    this.password = props.password;
+    if (props.password != undefined)
+      this.password = props.password;
     this.address = props.address;
   }
 }

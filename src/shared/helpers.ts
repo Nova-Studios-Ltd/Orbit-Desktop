@@ -26,7 +26,7 @@ export function GetHistoryState() {
   return history.location.state;
 }
 
-export function getCookie(cname: string) {
+export function GetCookie(cname: string) {
   const name = `${cname}=`;
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
@@ -42,8 +42,19 @@ export function getCookie(cname: string) {
   return '';
 }
 
+export function SetCookie(name: string, value: string, days: number) {
+  let expires = "";
+  if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = `; expires=${date.toUTCString()}`;
+  }
+  document.cookie = `${name}=${value || ""}${expires}; path=/`;
+}
+
 let reconnectAttempts = 1;
-const timestepStates = [1000, 4000, 8000, 12000]
+let reconnect: NodeJS.Timeout;
+const timestepStates = [2500, 4000, 8000, 12000]
 function HandleWebsocket() {
   const { token, uuid } = GLOBALS.userData;
   const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
@@ -54,7 +65,7 @@ function HandleWebsocket() {
         console.log('<Beat>');
         break;
       case 0: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message, GLOBALS.userData);
         if (message == undefined) break;
         events.send('OnNewMessage', message, event.Channel);
         break;
@@ -63,7 +74,7 @@ function HandleWebsocket() {
         events.send('OnMessageDelete', event.Channel, event.Message);
         break;
       case 2: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message, GLOBALS.userData);
         if (message == undefined) break;
         events.send('OnMessageEdit', message, event.Channel, event.Message);
         break;
@@ -79,6 +90,24 @@ function HandleWebsocket() {
       case 6:
         events.send('OnChannelNewMember', event.Channel);
         break;
+      case 7: { // New key in keystore
+        console.log(event);
+        const key = await ipcRenderer.invoke('GETKey', GLOBALS.userData.uuid, event.keyUserUUID);
+        GLOBALS.userData.keystore[event.keyUserUUID] = key;
+        await ipcRenderer.invoke('SaveKeystore', GLOBALS.userData.keystore);
+        break;
+      }
+      case 8: { // Key removed from keystore
+        delete GLOBALS.userData.keystore[event.keyUserUUID];
+        await ipcRenderer.invoke('SaveKeystore', GLOBALS.userData.keystore);
+        break;
+      }
+      case 9: { // Re-request entire keystore
+        const keystore = await ipcRenderer.invoke('GETKeystore', GLOBALS.userData.uuid);
+        await ipcRenderer.invoke('SaveKeystore', keystore);
+        GLOBALS.userData.keystore = keystore;
+        break;
+      }
       case 420: // Because why not
         // Trigger fake socket disconnect
         reconnectAttempts = event.Attempts;
@@ -92,25 +121,28 @@ function HandleWebsocket() {
     }
   };
   socket.onerror = () => {
-    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${reconnectAttempts}s`);
+    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
+      GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
       return;
     }
-    setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
+    reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
     reconnectAttempts++;
   };
   socket.onopen = () => {
+    clearTimeout(reconnect)
     reconnectAttempts = 1;
     socket.send(token);
   };
   socket.onclose = () => {
-    console.warn(`Socket closed. Attempting reconnect in ${reconnectAttempts}s`);
+    console.warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
+      GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
       return;
     }
-    setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
+    reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
     reconnectAttempts++;
   };
 }
@@ -141,21 +173,29 @@ export function Authenticate(data: Credentials) {
   return ipcRenderer.invoke('beginAuth', data, window.location.origin);
 }
 
-export function SetAuth() {
-  const cookie = getCookie('userData');
+export async function SetAuth() {
+  const cookie = GetCookie('userData');
   if (cookie.length > 0) {
-    const cookie_data = JSON.parse(getCookie('userData'));
+    const cookie_data = JSON.parse(GetCookie('userData'));
     if (cookie_data != null) {
       const { token, uuid } = cookie_data;
       if (token != null && uuid != null) {
         GLOBALS.userData.token = token;
         GLOBALS.userData.uuid = uuid;
+        GLOBALS.userData.keyPair.PrivateKey = await ipcRenderer.invoke('GetPrivkey');
+        GLOBALS.userData.keyPair.PublicKey = await ipcRenderer.invoke('GetPubkey');
+
+        // Request Keystore
+        await ipcRenderer.invoke('SaveKeystore', await ipcRenderer.invoke('GETKeystore', GLOBALS.userData.uuid));
+
+        GLOBALS.userData.keystore = await ipcRenderer.invoke("LoadKeystore");
       }
     }
   }
 }
 
 export function RemoveCachedCredentials() {
+  GLOBALS.loggedOut = true;
   ipcRenderer.send('logout');
   GLOBALS.userData = new UserData(undefined);
 }
