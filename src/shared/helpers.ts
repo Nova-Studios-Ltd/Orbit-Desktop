@@ -6,6 +6,7 @@ import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugRendererHandler } from 'shared/DebugLogger';
 import { IElectronRendererWindow } from 'types/types';
+import { LogContext } from 'types/enums';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
@@ -16,6 +17,7 @@ export function Navigate(path: string, data: unknown)
 {
   try {
     history.push(path, data);
+    Debug.Success(`Navigated to ${path}`, LogContext.Renderer);
   }
   catch (error) {
     console.error(error);
@@ -166,6 +168,7 @@ export async function ConductLogin() {
   }
   else {
     console.warn('UUID and Token not found, returning to login page.');
+    Navigate('/login', null);
   }
 }
 

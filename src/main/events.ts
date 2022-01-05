@@ -1,25 +1,27 @@
 import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
 import { INotificationProps } from 'renderer/components/Notification/Notification';
 import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile } from 'fs';
-import { IUserLoginData } from 'types/types';
+import type { AuthResponse } from 'types/NCAPIResponseMutations';
 import Credentials from '../structs/Credentials';
 import { DebugMain } from '../shared/DebugLogger';
 import { ContentType, FormAuthStatusType, LogContext } from '../types/enums';
 import { PostWithoutAuthentication } from './NCAPI';
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from './encryptionUtils';
 
+
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
-  const resp = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email}));
-  if (resp.status == 403 || resp.status == 404) return FormAuthStatusType.genericIncorrectUsernamePassword;
-  if (resp.status == 500) return FormAuthStatusType.serverError;
-  if (resp.status == 200 && resp.payload != undefined && creds.password != undefined) {
-    const login = <IUserLoginData>resp.payload;
-    const decryptedKey = DecryptUsingAES(creds.password, login.key);
-    writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
-    DebugMain.Success(`User ${creds.username} Logged In Successfully`, LogContext.Main);
-    return FormAuthStatusType.success;
-  }
-  return FormAuthStatusType.serverError;
+  PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
+    if (resp.status == 403 || resp.status == 404) return FormAuthStatusType.genericIncorrectUsernamePassword;
+    if (resp.status == 500) return FormAuthStatusType.serverError;
+    if (resp.status == 200 && resp.payload != undefined && creds.password != undefined) {
+      const login = resp.payload;
+      const decryptedKey = DecryptUsingAES(creds.password, login.key);
+      writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
+      DebugMain.Success(`User ${login.uuid} Logged In Successfully`, LogContext.Main);
+      return FormAuthStatusType.success;
+    }
+    return FormAuthStatusType.serverError;
+  });
 });
 
 ipcMain.on('logout', () => {
@@ -27,6 +29,7 @@ ipcMain.on('logout', () => {
   if (existsSync('keystore')) unlinkSync('keystore');
   if (existsSync('rsa')) unlinkSync('rsa');
   if (existsSync('rsa.pub')) unlinkSync('rsa.pub');
+  DebugMain.Success("Logged out successfully", LogContext.Main);
 });
 
 ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean> => {

@@ -65,8 +65,8 @@ export enum LogContext {
 }
 
 export enum LogType {
-  Success = 'Success',
-  Warn = 'Warning',
-  Error = 'Error',
-  Info = 'Info'
+  Success = 'SUCCESS',
+  Warn = 'WARNING',
+  Error = 'ERROR',
+  Info = 'INFO'
 }
