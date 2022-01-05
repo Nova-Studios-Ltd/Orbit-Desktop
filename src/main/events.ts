@@ -111,7 +111,7 @@ ipcMain.handle('GetPrivkey', async (_event) : Promise<string> => {
 
 ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
   try {
-    DebugMain.Log('Writing public key to file' LogContext.Main);
+    DebugMain.Log('Writing public key to file', LogContext.Main);
     writeFileSync("rsa.pub", key);
     return true;
   }
