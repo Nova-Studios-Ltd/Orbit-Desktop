@@ -161,6 +161,16 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     }
   }
 
+  appendAllToCanvas(messages: IMessageProps[]) {
+    const canvas = this.state.CanvasObject;
+    if (canvas != null) {
+      canvas.appendAll(messages);
+    }
+    else {
+      Debug.Error('MessageCanvas is null', LogContext.Renderer, 'when appending messages from ChatPage');
+    }
+  }
+
   clearCanvas() {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
@@ -196,8 +206,11 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
     });
-    if (!isUpdate)
+    if (!isUpdate) {
       this.clearCanvas();
+      this.appendAllToCanvas(messages);
+      return;
+    }
 
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];

@@ -27,10 +27,10 @@ export interface IMessageDeleteRequestArgs {
 
 export interface IElectronRendererWindow {
   ipcRenderer: {
-    send: (channel: string, ...data: unknown[]) => void,
-    on: (channel: string, func: (...args: unknown[]) => void) => void,
-    once: (channel: string, func: (...args: unknown[]) => void) => void,
+    send: (channel: string, ...data: any[]) => void,
+    on: (channel: string, func: (...args: any[]) => void) => void,
+    once: (channel: string, func: (...args: any[]) => void) => void,
     removeAllListeners: (channel: string) => void,
-    invoke: (channel: string, ...data: unknown[]) => Promise<unknown>
+    invoke: (channel: string, ...data: any[]) => Promise<any>
   }
 }

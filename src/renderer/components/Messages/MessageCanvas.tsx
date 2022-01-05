@@ -22,6 +22,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     super(props);
     props.init(this);
     this.append = this.append.bind(this);
+    this.appendAll = this.appendAll.bind(this);
     this.remove = this.remove.bind(this);
     this.edit = this.edit.bind(this);
     this.clear = this.clear.bind(this);
@@ -35,6 +36,20 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     this.state = {
       messages: []
     }
+  }
+
+  appendAll(messages: IMessageProps[]) {
+    this.setState((prevState: IMessageCanvasState) => {
+      const oldState = prevState;
+      for (let m = 0; m < messages.length; m++) {
+        const message = messages[m];
+        if (oldState.messages.length > 0)
+          oldState.messages.unshift(new Message(message));
+        else
+          oldState.messages = [new Message(message)];
+      }
+      return ({messages: oldState.messages});
+    });
   }
 
   append(message: IMessageProps, isUpdate: boolean) {
@@ -106,7 +121,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
   }
 
   render() {
-    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} onUpdate={this.messageUpdated} onImageClick={this.onImageClick} />));
+    const messagesToRender = this.state.messages.map((messageProps) => (<Message key={messageProps.hashedKey} message_Id={messageProps.message_Id} author_UUID={messageProps.author_UUID} author={messageProps.author} content={messageProps.content} attachments={messageProps.attachments} timestamp={messageProps.timestamp} avatar={messageProps.avatar} edited={messageProps.edited} editedTimestamp={messageProps.editedTimestamp} encryptedKeys={messageProps.encryptedKeys} iv={messageProps.iv} onUpdate={this.messageUpdated} onImageClick={this.onImageClick} />));
     const PromptElement = () => {
       if (this.isMessagesListEmpty() && this.props.isChannelSelected) {
         return (
