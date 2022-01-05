@@ -24,9 +24,7 @@ const DarkTheme = createTheme({
 });
 
 export function AppTheme() {
-  const theme = SettingsManager.Settings.Theme == Theme.Dark ? DarkTheme : LightTheme;
-  console.log(theme);
-  return theme;
+  return SettingsManager.Settings.Theme == Theme.Dark ? DarkTheme : LightTheme;
 }
 
 export function AppStyles() {

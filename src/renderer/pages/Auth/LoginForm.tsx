@@ -20,7 +20,7 @@ interface ILoginFormState {
   status: FormStatusTuple
 }
 
-class LoginForm extends React.Component<ILoginFormProps> implements IAuthForm {
+class LoginForm extends React.Component<ILoginFormProps> {
   state: ILoginFormState;
 
   constructor(props: ILoginFormProps) {
