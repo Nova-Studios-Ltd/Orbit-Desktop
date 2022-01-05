@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Authenticate, Navigate } from 'shared/helpers';
+import { Authenticate, Navigate, ipcRenderer } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import GLOBALS from 'shared/globals';
 import AuthForm from 'renderer/components/Form/AuthForm';
@@ -38,10 +38,10 @@ class LoginForm extends React.Component<ILoginFormProps> {
     this.setState({[name]: value});
   }
 
-  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { email, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
-    Authenticate(new Credentials({email, password, address})).then((result: FormAuthStatusType) => {
+    Authenticate(new Credentials({email, password: await ipcRenderer.invoke('SHA256HASH', password), address})).then((result: FormAuthStatusType) => {
       switch (result) {
         case FormAuthStatusType.success:
           this.updateStatus('Logged in! Redirecting...', FormStatusType.success);

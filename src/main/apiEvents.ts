@@ -1,12 +1,11 @@
 import { ipcMain } from 'electron';
 import UserData from 'structs/UserData';
 import type { IChannelProps } from 'renderer/components/Channels/Channel';
-import type { IMessageProps, IAttachmentProps } from 'renderer/components/Messages/Message';
+import type { IMessageProps } from 'renderer/components/Messages/Message';
 import MessageAttachment from 'structs/MessageAttachment';
 import sizeOf from 'image-size';
 import { PassThrough } from 'stream';
 import { createDecipheriv } from 'crypto';
-import { createWriteStream } from 'fs';
 import { ContentType } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from './NCAPI';
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from './encryptionUtils';

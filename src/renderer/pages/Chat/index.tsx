@@ -98,16 +98,16 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
       if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
         GLOBALS.currentChannel = lastOpenedChannel;
-        ipcRenderer.send('GETMessages', lastOpenedChannel);
+        ipcRenderer.send('GETMessages', lastOpenedChannel, GLOBALS.userData);
       }
       else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
-        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID);
+        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID, GLOBALS.userData);
         GLOBALS.currentChannel = this.state.ChannelList.state.channels[0].channelID;
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
       }
     }
     else {
-      ipcRenderer.send('GETMessages', GLOBALS.currentChannel);
+      ipcRenderer.send('GETMessages', GLOBALS.currentChannel, GLOBALS.userData);
     }
   }
 
@@ -230,7 +230,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     const attachments = this.state.AttachmentList;
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
-      const attachmentIds = [] as string[];
+      /*const attachmentIds = [] as string[];
       new Promise((resolve) => {
         attachments.forEach(async (attachment, index, array) => {
           ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment)).then((id: FileUploadResponse) => {
@@ -240,10 +240,11 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         });
       }).then(() => {
         ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachmentIds);
-      });
+      });*/
+      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachments, GLOBALS.userData);
     }
     else if (message.length > 0) {
-      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, []);
+      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, [], GLOBALS.userData);
     }
     this.setState({ AttachmentList: [] });
   }
@@ -290,7 +291,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   createChannelButtonClicked() {
     const users = Object.values(this.state.CreateChannelDialogRecipients);
     if (users.length == 1)
-      ipcRenderer.send('CREATEChannel',  users[0]);
+      ipcRenderer.send('CREATEChannel', users[0]);
     else
       ipcRenderer.send('CREATEGroupChannel', this.state.CreateChannelDialogChannelName, users);
     this.closeCreateChannelDialog();

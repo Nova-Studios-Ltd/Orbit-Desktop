@@ -4,7 +4,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import GLOBALS from 'shared/globals';
-import { Navigate, Register } from 'shared/helpers';
+import { Navigate, Register, ipcRenderer } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
@@ -39,7 +39,7 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
     this.setState({[name]: value});
   }
 
-  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { email, username, password, address } = this.state;
     if (!new RegExp(/^([a-zA-Z0-9]*@[a-zA-Z0-9]*\.[a-zA-Z0-9.]*)/g).test(email))
     {
@@ -47,7 +47,7 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
       this.updateStatus(`'${email}' is not a valid email address. Please enter a correct one and try again`, FormStatusType.error);
       return;
     }
-    Register(new Credentials({email, username, password, address})).then(async (result) => {
+    Register(new Credentials({email, username, password: await ipcRenderer.invoke('SHA256HASH', password), address})).then(async (result) => {
       switch (result) {
         case true:
           this.updateStatus('Registered Successfully! Taking you to the login page...', FormStatusType.success);

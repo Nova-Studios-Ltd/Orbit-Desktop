@@ -15,6 +15,8 @@ export interface IMessageProps {
   author_UUID: string,
   author: string,
   content: string,
+  iv: string,
+  encryptedKeys: { [key: string] : string; },
   timestamp: string,
   editedTimestamp: string,
   edited: boolean,
@@ -36,6 +38,7 @@ interface IMessageState {
 
 interface IAttachmentProps {
   contentUrl: string,
+  content: Uint8Array,
   filename: string,
   size: number,
   contentWidth: number,
@@ -220,6 +223,8 @@ export default class Message extends React.Component<IMessageProps> {
   author_UUID: string;
   author: string;
   content: string;
+  iv: string;
+  encryptedKeys: { [key: string] : string; };
   attachments: IAttachmentProps[];
   timestamp: string;
   edited: boolean;
@@ -242,6 +247,8 @@ export default class Message extends React.Component<IMessageProps> {
     this.avatar = props.avatar;
     this.onUpdateCallback = props.onUpdate;
     this.hashedKey = `${this.message_Id}_${this.timestamp}_${this.editedTimestamp}}`;
+    this.encryptedKeys = props.encryptedKeys;
+    this.iv = props.iv;
 
     this.state = {
       editedMessage: '',
@@ -315,7 +322,7 @@ export default class Message extends React.Component<IMessageProps> {
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'image', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: 'image', url: URL.createObjectURL(new Blob([attachment.content], {type: 'image/jpeg'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment.contentUrl)) {
         attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
@@ -446,7 +453,7 @@ export default class Message extends React.Component<IMessageProps> {
 
   submitEditedMessage() {
     if (this.state.editedMessage.length > 0) {
-      ipcRenderer.invoke('EDITMessage', GLOBALS.currentChannel, this.message_Id, this.state.editedMessage).then((result: boolean) => {
+      ipcRenderer.invoke('EDITMessage', GLOBALS.currentChannel, this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv, GLOBALS.userData).then((result: boolean) => {
         if (result) {
           new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {
