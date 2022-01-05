@@ -322,13 +322,13 @@ export default class Message extends React.Component<IMessageProps> {
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'image', url: URL.createObjectURL(new Blob([attachment.content], {type: 'image/jpeg'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: 'image', id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: 'image/jpeg'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'video', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: 'video', id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: 'video/mp4'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else {
-        attachmentContent.push(new MessageContent({type: 'file', url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
+        attachmentContent.push(new MessageContent({type: 'file', id: attachment.contentUrl, url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
       }
     }
 
@@ -490,22 +490,22 @@ export default class Message extends React.Component<IMessageProps> {
 
     this.state.links.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
+        messageContentObject.push(<MessageImage key={MD5(link.url)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == 'video')
-        messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageVideo key={MD5(link.url)} message={link.url} src={link.url} />);
       else if (link.type == 'youtube')
-        messageContentObject.push(<MessageEmbed key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
       else if (link.type == 'spotify')
-        messageContentObject.push(<MessageEmbed key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
     });
 
     this.state.attachments.forEach(link => {
       if (link.type == 'image')
-        messageContentObject.push(<MessageImage key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
+        messageContentObject.push(<MessageImage key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == 'video')
-        messageContentObject.push(<MessageVideo key={MD5(link.url + Date.now().toString()).toString()} message={link.url} src={link.url} dimensions={link.dimensions} />);
+        messageContentObject.push(<MessageVideo key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} />);
       else if (link.type == 'file')
-        messageContentObject.push(<MessageFile key={MD5(link.url + Date.now().toString()).toString()} message={link.filename} size={link.filesize} src={link.url} />);
+        messageContentObject.push(<MessageFile key={MD5(link.id)} message={link.filename} size={link.filesize} src={link.url} />);
     });
 
     return (

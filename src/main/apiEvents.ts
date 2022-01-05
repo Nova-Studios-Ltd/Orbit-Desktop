@@ -60,16 +60,6 @@ ipcMain.handle('SETKey', async (_event, user_uuid: string, key_user_uuid: string
 });
 
 // Messages
-
-function toArrayBuffer(buf: Buffer) {
-  const ab = new ArrayBuffer(buf.length);
-  const view = new Uint8Array(ab);
-  for (let i = 0; i < buf.length; ++i) {
-      view[i] = buf[i];
-  }
-  return ab;
-}
-
 ipcMain.handle('GETMessage', async (_event, channel_uuid: string, message_id: string, userData: UserData) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`);
   if (resp.status == 200 && resp.payload != undefined) {

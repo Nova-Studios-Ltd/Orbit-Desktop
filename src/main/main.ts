@@ -43,6 +43,8 @@ if (process.env.NODE_ENV === 'production') {
 
   http.createServer((request: IncomingMessage, response: ServerResponse) => {
     request.addListener('end', () => {
+      request.url = resolveHtmlPath('index.html');
+      DebugMain.Log(request.url, LogContext.Main)
       server.serve(request, response);
     }).resume();
   }).listen(process.env.port || 1212);
@@ -102,6 +104,8 @@ const createWindow = async () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  mainWindow.webContents.openDevTools();
 
   mainWindow.removeMenu();
 

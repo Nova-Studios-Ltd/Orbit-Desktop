@@ -6,7 +6,8 @@ interface IMessageContent {
   url: string,
   filename?: string,
   filesize?: number,
-  dimensions?: Dimensions
+  dimensions?: Dimensions,
+  id?: string
 }
 
 export default class MessageContent extends React.Component {
@@ -15,6 +16,7 @@ export default class MessageContent extends React.Component {
   filename?: string;
   filesize?: number;
   dimensions?: Dimensions;
+  id?: string;
 
   constructor(props: IMessageContent) {
     super(props);
@@ -23,5 +25,6 @@ export default class MessageContent extends React.Component {
     this.filename = props.filename;
     this.filesize = props.filesize;
     this.dimensions = props.dimensions;
+    this.id = props.id;
   }
 }
