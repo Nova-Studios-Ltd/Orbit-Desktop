@@ -1,18 +1,22 @@
 import GLOBALS from 'shared/globals';
-import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie } from 'shared/helpers';
+import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie, Debug } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
   SetCookie('userData', JSON.stringify({uuid, token}), 60);
 
-  console.log('End auth run');
-
   // Store Pub/Priv key
-  console.log(await ipcRenderer.invoke('SetPubkey', pubKey));
-
-  SetAuth();
-  ConductLogin();
+  ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
+    if (result) {
+      Debug.Success('Public key stored successfully', LogContext.Renderer);
+      SetAuth();
+      ConductLogin();
+    }
+    else {
+      Debug.Error('Unable to store public key. Aborting login...', LogContext.Renderer, 'when writing public key to file');
+    }
+  })
 });
 
 ipcRenderer.on('ChannelCreated', (data: boolean) => {

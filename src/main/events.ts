@@ -16,7 +16,7 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
     const login = <IUserLoginData>resp.payload;
     const decryptedKey = DecryptUsingAES(creds.password, login.key);
     writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
-    DebugMain.Log(JSON.stringify(login), LogContext.Main);
+    DebugMain.Success(`User ${creds.username} Logged In Successfully`, LogContext.Main);
     return FormAuthStatusType.success;
   }
   return FormAuthStatusType.serverError;
@@ -111,7 +111,7 @@ ipcMain.handle('GetPrivkey', async (_event) : Promise<string> => {
 
 ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
   try {
-    console.log('writting public key')
+    DebugMain.Log('Writing public key to file', LogContext.Main);
     writeFileSync("rsa.pub", key);
     return true;
   }
