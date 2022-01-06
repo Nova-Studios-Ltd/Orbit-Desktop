@@ -39,6 +39,7 @@ class LoginForm extends React.Component<ILoginFormProps> {
   }
 
   async handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     const { email, password, address } = this.state;
     this.updateStatus('Attempting to log you in, please wait...', FormStatusType.info);
     Authenticate(new Credentials({email, password: await ipcRenderer.invoke('SHA256HASH', password), address})).then((result: FormAuthStatusType) => {
@@ -57,7 +58,6 @@ class LoginForm extends React.Component<ILoginFormProps> {
           break;
       }
     });
-    event.preventDefault();
   }
 
   updateStatus(message: string, type: FormStatusType) {

@@ -62,7 +62,7 @@ class SettingsManagerRenderer {
     ipcRenderer.invoke('retrieveSetting', key).then((value: string | boolean | number) => {
       if (value != null) {
         this.Settings[key] = value;
-        Debug.Log(`Loaded setting ${key} with value ${String(this.Settings)}`, LogContext.Renderer);
+        Debug.Success(`Loaded setting ${key} with value ${String(this.Settings)}`, LogContext.Renderer);
       }
       else {
         this.SaveSetting(key, this.Settings[key]);

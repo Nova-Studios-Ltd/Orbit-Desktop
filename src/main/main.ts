@@ -2,19 +2,16 @@
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import http from 'http';
-import type { IncomingMessage, ServerResponse } from 'http';
 import path from 'path';
 import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { sync as checkCommand } from 'command-exists';
-import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
 import { LogContext, LogType } from '../types/enums';
-import { resolveHtmlPath } from './util';
+import { isDevelopment, resolveHtmlPath } from './util';
 
 import './events';
 import './apiEvents';
@@ -38,20 +35,7 @@ export default class AppUpdater {
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
-
-  const server = new Server(path.resolve(__dirname, '../renderer/'));
-
-  http.createServer((request: IncomingMessage, response: ServerResponse) => {
-    request.addListener('end', () => {
-      request.url = resolveHtmlPath('index.html');
-      DebugMain.Log(request.url, LogContext.Main)
-      server.serve(request, response);
-    }).resume();
-  }).listen(process.env.port || 1212);
 }
-
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDevelopment) {
   require('electron-debug')();
@@ -105,8 +89,6 @@ const createWindow = async () => {
     },
   });
 
-  mainWindow.webContents.openDevTools();
-
   mainWindow.removeMenu();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -157,7 +139,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  //ew AppUpdater();
+  // AppUpdater();
 };
 
 /**

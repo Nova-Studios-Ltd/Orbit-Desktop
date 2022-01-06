@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { DebugMain } from '../shared/DebugLogger';
 import { LogContext, LogType } from '../types/enums';
 
-DebugMain.events.on('logEntryAdded', (message: string, logType: LogType) => {
+DebugMain.events.on('logEntryAdded', (message: (string | unknown), logType: LogType) => {
   switch (logType) {
     case LogType.Error:
       console.log(chalk.redBright.bold(message));
@@ -20,6 +20,6 @@ DebugMain.events.on('logEntryAdded', (message: string, logType: LogType) => {
   }
 });
 
-ipcMain.on('logEntryFromRenderer', (event: IpcMainEvent, message: string, logType: LogType, contextType?: LogContext, context?: string) => {
+ipcMain.on('logEntryFromRenderer', (_event: IpcMainEvent, message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) => {
   DebugMain.appendToLog(message, logType, contextType, context);
 });
