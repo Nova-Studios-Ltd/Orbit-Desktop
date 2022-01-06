@@ -6,14 +6,13 @@ import http from 'http';
 import type { IncomingMessage, ServerResponse } from 'http';
 import path from 'path';
 import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
+//import { autoUpdater } from 'electron-updater';
 import { sync as checkCommand } from 'command-exists';
 import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
-import { LogContext, LogType } from '../types/enums';
+import { LogContext } from '../types/enums';
 import { resolveHtmlPath } from './util';
 
 import './events';
@@ -22,28 +21,34 @@ import './debugEvents';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
-let allowCompleteExit = false;
+//let allowCompleteExit = false;
 
 // Check if spotify is installed
 const spotifyInstalled = checkCommand('spotify');
 
-export default class AppUpdater {
+/*export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
     autoUpdater.checkForUpdatesAndNotify();
   }
-}
+}*/
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 
+  DebugMain.Log(path.resolve(__dirname, '../renderer/'), LogContext.Main);
   const server = new Server(path.resolve(__dirname, '../renderer/'));
 
   http.createServer((request: IncomingMessage, response: ServerResponse) => {
     request.addListener('end', () => {
-      request.url = resolveHtmlPath('index.html');
+      // Be aware of memory caching
+      // Handles react router weridness
+      // Serves 'index.html' for any request of '/login'or '/register' etc.
+      // If the request url matches a filter it serves that file directly
+      if (!request.url?.includes('renderer.js') && !request.url?.includes('styles.css'))
+        request.url = resolveHtmlPath('index.html');
       DebugMain.Log(request.url, LogContext.Main)
       server.serve(request, response);
     }).resume();
@@ -67,7 +72,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((e) => DebugMain.Error(e, LogContext.Main, 'when initializing extensions'));
+    .catch((e: Error) => DebugMain.Error(e.message, LogContext.Main, 'when initializing extensions'));
 };
 
 function getSpotifyTrackId(url: string) {
