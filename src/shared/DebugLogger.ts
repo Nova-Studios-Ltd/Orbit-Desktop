@@ -17,9 +17,17 @@ class DebugLogger {
     this.LogDump = this.LogDump.bind(this);
   }
 
-  appendToLog(message: string, logType: LogType, contextType?: LogContext, context?: string) {
+  appendToLog(message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) {
     if (contextType == null) contextType = LogContext.Default;
-    let finalMessage = `[${contextType}] ${logType}: ${message}`;
+    if (typeof(message) != 'string') {
+      try {
+        message = JSON.stringify(message)
+      }
+      catch {
+        message = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
+      }
+    }
+    let finalMessage = `[${contextType}] ${logType} => ${message}`;
     if (context != null && context?.length > 0) finalMessage = finalMessage.concat(' ', `(${context})`);
 
     finalMessage = `${new Date().toISOString()} ${finalMessage}`
@@ -28,19 +36,19 @@ class DebugLogger {
     this.events.emit('logEntryAdded', finalMessage, logType);
   }
 
-  Error(message: string, type?: LogContext, context?: string) {
+  Error(message: (string | unknown), type?: LogContext, context?: string) {
     this.appendToLog(message, LogType.Error, type, context);
   }
 
-  Warn(message: string, type?: LogContext, context?: string) {
+  Warn(message: (string | unknown), type?: LogContext, context?: string) {
     this.appendToLog(message, LogType.Warn, type, context);
   }
 
-  Success(message: string, type?: LogContext, context?: string) {
+  Success(message: (string | unknown), type?: LogContext, context?: string) {
     this.appendToLog(message, LogType.Success, type, context);
   }
 
-  Log(message: string, type?: LogContext, context?: string) {
+  Log(message: (string | unknown), type?: LogContext, context?: string) {
     this.appendToLog(message, LogType.Info, type, context);
   }
 
@@ -62,23 +70,23 @@ export class DebugRendererHandler {
     this.LogDump = this.LogDump.bind(this);
   }
 
-  private sendLogMessageToMain(message: string, logType: LogType, contextType?: LogContext, context?: string) {
+  private sendLogMessageToMain(message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) {
     this.ipcRendererObject.send('logEntryFromRenderer', message, logType, contextType, context);
   }
 
-  Error(message: string, type?: LogContext, context?: string) {
+  Error(message: (string | unknown), type?: LogContext, context?: string) {
     this.sendLogMessageToMain(message, LogType.Error, type, context);
   }
 
-  Warn(message: string, type?: LogContext, context?: string) {
+  Warn(message: (string | unknown), type?: LogContext, context?: string) {
     this.sendLogMessageToMain(message, LogType.Warn, type, context);
   }
 
-  Success(message: string, type?: LogContext, context?: string) {
+  Success(message: (string | unknown), type?: LogContext, context?: string) {
     this.sendLogMessageToMain(message, LogType.Success, type, context);
   }
 
-  Log(message: string, type?: LogContext, context?: string) {
+  Log(message: (string | unknown), type?: LogContext, context?: string) {
     this.sendLogMessageToMain(message, LogType.Info, type, context);
   }
 

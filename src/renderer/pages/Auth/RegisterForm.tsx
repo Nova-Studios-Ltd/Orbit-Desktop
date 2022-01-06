@@ -40,6 +40,7 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
   }
 
   async handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     const { email, username, password, address } = this.state;
     if (!new RegExp(/^([a-zA-Z0-9]*@[a-zA-Z0-9]*\.[a-zA-Z0-9.]*)/g).test(email))
     {
@@ -59,7 +60,6 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
           break;
       }
     });
-    event.preventDefault();
   }
 
   updateStatus(message: string, type: FormStatusType) {

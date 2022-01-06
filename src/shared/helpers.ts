@@ -5,7 +5,7 @@ import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugRendererHandler } from 'shared/DebugLogger';
-import { IElectronRendererWindow } from 'types/types';
+import { IElectronRendererWindow, IUserData } from 'types/types';
 import { LogContext } from 'types/enums';
 
 export const history = createBrowserHistory();
@@ -19,8 +19,8 @@ export function Navigate(path: string, data: unknown)
     history.push(path, data);
     Debug.Success(`Navigated to ${path}`, LogContext.Renderer);
   }
-  catch (error) {
-    console.error(error);
+  catch (error: unknown) {
+    Debug.Error(`Unable to navigate to path ${path}`, LogContext.Renderer, (<Error>error).message)
   }
 }
 
@@ -123,7 +123,7 @@ function HandleWebsocket() {
     }
   };
   socket.onerror = () => {
-    console.error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
+    Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`, LogContext.Renderer);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
@@ -138,7 +138,7 @@ function HandleWebsocket() {
     socket.send(token);
   };
   socket.onclose = () => {
-    console.warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
+    Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`, LogContext.Renderer);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
@@ -155,19 +155,18 @@ export async function ConductLogin() {
     Navigate('/chat', null);
     ipcRenderer.send('GETUserChannels');
 
-    const { uuid } = GLOBALS.userData;
+    ipcRenderer.invoke('GETUser', GLOBALS.userData).then((userData: IUserData) => {
+      if (userData != undefined) {
+        GLOBALS.userData.username = userData.username;
+        GLOBALS.userData.discriminator = userData.discriminator;
 
-    const userData = await ipcRenderer.invoke('GETUser', uuid);
-    if (userData != undefined) {
-      GLOBALS.userData.username = userData.username;
-      GLOBALS.userData.discriminator = userData.discriminator;
-    }
-
-    GLOBALS.loggedOut = false;
-    HandleWebsocket();
+        GLOBALS.loggedOut = false;
+        HandleWebsocket();
+      }
+    });
   }
   else {
-    console.warn('UUID and Token not found, returning to login page.');
+    Debug.Warn('UUID and Token not found, returning to login page.', LogContext.Renderer);
     Navigate('/login', null);
   }
 }

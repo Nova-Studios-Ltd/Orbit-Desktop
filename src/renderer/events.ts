@@ -10,8 +10,7 @@ ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, 
   ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
     if (result) {
       Debug.Success('Public key stored successfully', LogContext.Renderer);
-      SetAuth();
-      ConductLogin();
+      SetAuth().then(() => ConductLogin());
     }
     else {
       Debug.Error('Unable to store public key. Aborting login...', LogContext.Renderer, 'when writing public key to file');
@@ -50,4 +49,4 @@ ipcRenderer.on('UserDeleted', (success: boolean) => {
   else {
     new AppNotification({ title: 'Account Management', body: 'Failed to delete your user account.', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
   }
-})
+});
