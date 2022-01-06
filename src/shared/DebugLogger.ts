@@ -18,16 +18,18 @@ class DebugLogger {
   }
 
   appendToLog(message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) {
-    if (contextType == null) contextType = LogContext.Default;
-    if (typeof(message) != 'string') {
+    let m = message;
+    let ct = contextType
+    if (contextType == null) ct = LogContext.Default;
+    if (typeof(m) != 'string') {
       try {
-        message = JSON.stringify(message)
+        m = JSON.stringify(m)
       }
       catch {
-        message = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
+        m = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
       }
     }
-    let finalMessage = `[${contextType}] ${logType} => ${message}`;
+    let finalMessage = `[${ct}] ${logType} => ${m}`;
     if (context != null && context?.length > 0) finalMessage = finalMessage.concat(' ', `(${context})`);
 
     finalMessage = `${new Date().toISOString()} ${finalMessage}`
@@ -52,7 +54,8 @@ class DebugLogger {
     this.appendToLog(message, LogType.Info, type, context);
   }
 
-  LogDump(path: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  LogDump(_path: string) {
     // Send event to ipcMain to write file
   }
 }
@@ -90,7 +93,8 @@ export class DebugRendererHandler {
     this.sendLogMessageToMain(message, LogType.Info, type, context);
   }
 
-  LogDump(path: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  LogDump(_path: string) {
     // Send event to ipcMain to write file
   }
 }
