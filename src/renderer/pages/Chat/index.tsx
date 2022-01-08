@@ -10,7 +10,7 @@ import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
 import UserDropdownMenu, { IUserDropdownMenuFunctions } from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
@@ -20,7 +20,6 @@ import MessageAttachment from 'structs/MessageAttachment';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 import type { IChannelProps } from 'renderer/components/Channels/Channel';
-import type { FileUploadResponse } from 'types/NCAPIResponseMutations';
 import ImageViewer from 'renderer/components/Dialogs/ImageViewer';
 import type { Dimensions } from 'types/types';
 
@@ -49,6 +48,7 @@ interface IChatPageState {
 export default class ChatPage extends React.Component<IChatPageProps> {
   UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
   state: IChatPageState;
+  initLoad: boolean;
 
   constructor(props: IChatPageProps) {
     super(props);
@@ -71,6 +71,9 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.removeAttachment = this.removeAttachment.bind(this);
     this.openImageViewer = this.openImageViewer.bind(this);
     this.closeImageViewer = this.closeImageViewer.bind(this);
+    this.onMessageCanvasScroll = this.onMessageCanvasScroll.bind(this);
+
+    this.initLoad = true;
 
     this.state = {
       CanvasObject: undefined,
@@ -116,6 +119,11 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       this.setState({ CanvasObject: canvas });
 
       ipcRenderer.on('GotMessages', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
+      ipcRenderer.on('GotMessagesWithArgs', (messages: IMessageProps[], channel_uuid: string) => {
+        if (GLOBALS.currentChannel != channel_uuid) return;
+        this.appendAllToCanvas(messages);
+        this.requestedHistory = false;
+      });
 
       events.on('OnNewMessage', (message: IMessageProps, channel_uuid: string) => this.onReceivedChannelData([message], channel_uuid, true));
       events.on('OnMessageEdit', (message: IMessageProps, channel_uuid: string, message_id: string) => this.onReceivedMessageEdit(channel_uuid, message_id, message));
@@ -209,6 +217,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     if (!isUpdate) {
       this.clearCanvas();
       this.appendAllToCanvas(messages);
+      this.initLoad = false;
       return;
     }
 
@@ -243,17 +252,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     const attachments = this.state.AttachmentList;
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
-      /*const attachmentIds = [] as string[];
-      new Promise((resolve) => {
-        attachments.forEach(async (attachment, index, array) => {
-          ipcRenderer.invoke('uploadFile', GLOBALS.currentChannel, JSON.stringify(attachment)).then((id: FileUploadResponse) => {
-            if (id != null && id.payload != null && id.payload.length > 0) attachmentIds.push(id.payload);
-            if (index === array.length - 1) resolve(true);
-          });
-        });
-      }).then(() => {
-        ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachmentIds);
-      });*/
       ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachments, GLOBALS.userData);
     }
     else if (message.length > 0) {
@@ -373,6 +371,15 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     });
   }
 
+  requestedHistory: boolean = false;
+  onMessageCanvasScroll(yIndex: number, oldestMessageID: string) {
+    if (parseInt(oldestMessageID, 10) <= 1) return;
+    if (yIndex < 25 && !this.initLoad && !this.requestedHistory) {
+      this.requestedHistory = true;
+      ipcRenderer.send('GETMessagesWithArgs', GLOBALS.currentChannel, GLOBALS.userData, 30, oldestMessageID);
+    }
+  }
+
   setSelectedChannel() {
 
   }
@@ -448,7 +455,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
             <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
               <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
             </Header>
-            <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.IsChannelSelected} onImageClick={this.openImageViewer} />
+            <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.IsChannelSelected} onImageClick={this.openImageViewer} onCanvasScroll={this.onMessageCanvasScroll} />
             <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>
             <MessageInput onAddAttachment={this.addAttachment} onMessagePush={this.sendMessage}/>
           </div>

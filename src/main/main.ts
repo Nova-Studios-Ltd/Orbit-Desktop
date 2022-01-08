@@ -51,10 +51,10 @@ if (process.env.NODE_ENV === 'production') {
       // Be aware of memory caching
       // Handles react router weridness
       // Serves 'index.html' for any request of '/login'or '/register' etc.
-      // If the request url matches a filter it serves that file directly
+      // If the request url includes a filter it serves that file directly
       if (!request.url?.includes('renderer.js') && !request.url?.includes('styles.css'))
         request.url = resolveHtmlPath('index.html');
-      DebugMain.Log(request.url, LogContext.Main)
+      DebugMain.Log(request.url, LogContext.Main);
       server.serve(request, response);
     }).resume();
   }).listen(process.env.port || 1212);

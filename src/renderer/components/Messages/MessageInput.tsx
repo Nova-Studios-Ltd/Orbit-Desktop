@@ -1,10 +1,11 @@
 import React, { KeyboardEvent, ChangeEvent } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
-import { LogContext } from 'types/enums';
+import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { SettingsManager } from 'shared/SettingsManager';
+import AppNotification from '../Notification/Notification';
 
 interface IMessageInputProps {
   onAddAttachment: (attachment: MessageAttachment) => void,
@@ -29,12 +30,22 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
     this.handleUploadButtonClick = this.handleUploadButtonClick.bind(this);
     this.forwardMessage = this.forwardMessage.bind(this);
     this.addedAttachment = this.addedAttachment.bind(this);
+    this.messageSent = this.messageSent.bind(this);
 
     ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
+    ipcRenderer.on('MessageSent', this.messageSent);
 
     this.ctrlPressed = false;
 
     this.state = { message: '' };
+  }
+
+  messageSent(result: boolean) {
+    if (result) this.setMessageTo('');
+    else {
+      // TODO Make this do something to the input box
+      new AppNotification({ title: 'Message Sent', body: 'Message failed to sent for a unknown reason, try sending the message again. If it fails restart the app and check your internet connection', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    }
   }
 
   addedAttachment(files: string[]) {
@@ -58,18 +69,16 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
   async handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.code == 'Enter') {
       this.forwardMessage(this.state.message);
-      this.setMessageTo('');
+      //this.setMessageTo('');
     }
     if (event.keyCode == 17 || event.keyCode == 91) {
       this.ctrlPressed = true;
     }
-    /*if (event.keyCode == 86 && this.ctrlPressed && false) {
+    if (event.keyCode == 86 && this.ctrlPressed) {
       const a = new MessageAttachment(await ipcRenderer.invoke('copyImageFromClipboard'), true);
       if (a.contents == '') return;
-      this.state.attachments.push(a);
-      this.setState({attachments: this.state.attachments});
-      console.log(this.state.attachments);
-    }*/
+      this.props.onAddAttachment(a);
+    }
   }
 
   handleKeyUp(event: KeyboardEvent<HTMLDivElement>) {
@@ -80,7 +89,7 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
 
   handleSendButtonClick() {
     this.forwardMessage(this.state.message);
-    this.setMessageTo('');
+    //this.setMessageTo('');
   }
 
   handleUploadButtonClick() {

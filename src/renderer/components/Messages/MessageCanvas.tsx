@@ -1,12 +1,13 @@
 import { Typography } from '@mui/material';
-import React, { RefObject } from 'react';
+import React, { RefObject, UIEvent } from 'react';
 import Message from 'renderer/components/Messages/Message';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
 import type { Dimensions } from 'types/types';
 
 interface IMessageCanvasProps {
   init: (canvas: MessageCanvas) => void,
-  onImageClick?: (src: string, dimensions: Dimensions) => void;
+  onImageClick?: (src: string, dimensions: Dimensions) => void,
+  onCanvasScroll?: (yIndex: number, oldestMessageID: string) => void,
   isChannelSelected: boolean
 }
 
@@ -31,7 +32,11 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     this.messageUpdated = this.messageUpdated.bind(this);
     this.onImageClick = this.onImageClick.bind(this);
 
+    this.onMessageCanvasScroll = this.onMessageCanvasScroll.bind(this);
+
     this.bottomDivRef = React.createRef();
+
+    this.isUpdating = true;
 
     this.state = {
       messages: []
@@ -61,6 +66,20 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
           oldState.messages.push(new Message(message));
         else
           oldState.messages.unshift(new Message(message));
+        return ({messages: oldState.messages});
+      })
+    }
+    else {
+      this.setState({messages: [message]});
+    }
+  }
+
+  appendTop(message: IMessageProps) {
+    if (this.state.messages.length > 0)
+    {
+      this.setState((prevState: IMessageCanvasState) => {
+        const oldState = prevState;
+        oldState.messages.unshift(new Message(message));
         return ({messages: oldState.messages});
       })
     }
@@ -104,8 +123,10 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
   }
 
   scrollToBottom() {
-    if (this.bottomDivRef != null && this.bottomDivRef.current != null)
+    if (this.bottomDivRef != null && this.bottomDivRef.current != null) {
+      this.isUpdating = true;
       this.bottomDivRef.current.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+    }
   }
 
   componentDidUpdate() {
@@ -118,6 +139,22 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
 
   onImageClick(src: string, dimensions: Dimensions) {
     if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(src, dimensions);
+  }
+
+  isUpdating: boolean = true;
+  isUpdatedCount: number = 0;
+
+  onMessageCanvasScroll(event: UIEvent<HTMLDivElement>) {
+    if (this.isUpdating) {
+      console.log("Programmatic");
+      this.isUpdatedCount++;
+      if (this.isUpdatedCount >= 10) this.isUpdating = false;
+    }
+    else {
+      // eslint-disable-next-line no-lonely-if
+      console.log("User");
+      if (this.props != null && this.props.onCanvasScroll != null && this.state.messages.length > 0) this.props.onCanvasScroll(event.currentTarget.scrollTop, this.state.messages[0].message_Id);
+    }
   }
 
   render() {
@@ -145,7 +182,7 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
     }
 
     return (
-      <div className='MessageCanvas'>
+      <div className='MessageCanvas' onScroll={this.onMessageCanvasScroll}>
         <div>
           {this.props.isChannelSelected ? messagesToRender : null}
         </div>

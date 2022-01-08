@@ -10,7 +10,7 @@ import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, Generat
 
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
-  PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
+  const a = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
     if (resp.status == 403 || resp.status == 404) return FormAuthStatusType.genericIncorrectUsernamePassword;
     if (resp.status == 500) return FormAuthStatusType.serverError;
     if (resp.status == 200 && resp.payload != undefined && creds.password != undefined) {
@@ -22,6 +22,7 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
     }
     return FormAuthStatusType.serverError;
   });
+  return a;
 });
 
 ipcMain.on('logout', () => {

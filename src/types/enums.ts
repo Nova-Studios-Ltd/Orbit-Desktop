@@ -43,7 +43,8 @@ export enum ContentType {
   EMPTY = '',
   JSON = 'application/json',
   PNG = 'image/png',
-  FORMDATA = 'multipart/form-data'
+  FORMDATA = 'multipart/form-data',
+  TEXT = 'text/plain'
 }
 
 export enum ChannelType {

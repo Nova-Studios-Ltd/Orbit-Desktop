@@ -65,6 +65,7 @@ function HandleWebsocket() {
     switch (event.EventType) {
       case -1:
         console.log('<Beat>');
+        //socket.send('<Beep>')
         break;
       case 0: {
         const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message, GLOBALS.userData);
@@ -155,7 +156,7 @@ export async function ConductLogin() {
     Navigate('/chat', null);
     ipcRenderer.send('GETUserChannels');
 
-    ipcRenderer.invoke('GETUser', GLOBALS.userData).then((userData: IUserData) => {
+    ipcRenderer.invoke('GETUser', GLOBALS.userData.uuid).then((userData: IUserData) => {
       if (userData != undefined) {
         GLOBALS.userData.username = userData.username;
         GLOBALS.userData.discriminator = userData.discriminator;

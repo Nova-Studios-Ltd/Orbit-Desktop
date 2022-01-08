@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { session } from 'electron';
 import { createReadStream } from 'fs';
 import Axios from 'axios';
@@ -11,9 +12,9 @@ export class NCAPIResponse {
   status: number | undefined;
   statusText: string | undefined;
   error: unknown | undefined;
-  payload: unknown | undefined;
+  payload: any | undefined;
 
-  constructor(status?: number | undefined, statusText?: string | undefined, payload?: unknown | undefined, error?: unknown | undefined) {
+  constructor(status?: number | undefined, statusText?: string | undefined, payload?: unknown, error?: unknown | undefined) {
     this.status = status || -1;
     this.statusText = statusText || '';
     this.error = error;
