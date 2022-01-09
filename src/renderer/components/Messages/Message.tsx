@@ -317,7 +317,8 @@ export default class Message extends React.Component<IMessageProps> {
 
   async componentDidMount() {
     let containsNonLinkText = false;
-    const links = this.content.match(/(https:\/\/[\S]*)/g);
+    //const links = this.content.match(/(https:\/\/[\S]*)/g);
+    const links = this.content.split(' ');
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
@@ -332,15 +333,17 @@ export default class Message extends React.Component<IMessageProps> {
       }
     }
 
-    if (links == null) {
+    if (this.content.match(/(https:\/\/[\S]*)/g) == null) {
       this.setState({hasNonLinkText: true, attachments: attachmentContent});
-      return;
     }
 
     const messageLinks = [] as Array<MessageContent>;
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
-      if (this.imageURL(link) || await this.checkImageHeader(link)) {
+      if (!this.validURL(link)) {
+        containsNonLinkText = true;
+      }
+      else if (this.imageURL(link) || await this.checkImageHeader(link)) {
         const dims = await this.getImageSize(link);
         messageLinks.push(new MessageContent({type: 'image', url: link, dimensions: {width: dims.width, height: dims.height}}));
       }

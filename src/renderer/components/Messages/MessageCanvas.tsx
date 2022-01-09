@@ -180,7 +180,6 @@ export default class MessageCanvas extends React.Component<IMessageCanvasProps> 
 
       return null;
     }
-
     return (
       <div className='MessageCanvas' onScroll={this.onMessageCanvasScroll}>
         <div>
