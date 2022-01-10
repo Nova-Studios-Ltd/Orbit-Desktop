@@ -52,9 +52,10 @@ if (process.env.NODE_ENV === 'production') {
       // Handles react router weridness
       // Serves 'index.html' for any request of '/login'or '/register' etc.
       // If the request url includes a filter it serves that file directly
-      if (!request.url?.includes('renderer.js') && !request.url?.includes('styles.css'))
+      DebugMain.Log(`Before: ${request.url}`, LogContext.Main);
+      if (!request.url?.includes('styles.css') && !request.url?.includes('style.css') && !request.url?.includes('renderer.js'))
         request.url = resolveHtmlPath('index.html');
-      DebugMain.Log(request.url, LogContext.Main);
+      DebugMain.Log(`After: ${request.url}`, LogContext.Main);
       server.serve(request, response);
     }).resume();
   }).listen(process.env.port || 1212);
@@ -113,6 +114,7 @@ const createWindow = async () => {
   });
 
   mainWindow.removeMenu();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

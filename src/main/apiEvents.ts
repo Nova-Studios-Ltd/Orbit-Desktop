@@ -216,8 +216,10 @@ ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, 
     channel.members.forEach((member) => {
       if (member != userData.uuid) {
         const pubKey = userData.keystore[member];
-        const encryptedKey = EncryptUsingPubKey(pubKey, messageKey);
-        encKeys[member] = encryptedKey;
+        if (pubKey != undefined) {
+          const encryptedKey = EncryptUsingPubKey(pubKey, messageKey);
+          encKeys[member] = encryptedKey;
+        }
       }
     });
     encKeys[userData.uuid] = EncryptUsingPubKey(userData.keyPair.PublicKey, messageKey);
