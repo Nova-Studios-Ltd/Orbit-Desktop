@@ -196,6 +196,8 @@ ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, 
         width = dims.width || 0;
         height = dims.height || 0;
         const re = await PostFileWithAuthenticationAndEncryption(`Media/Channel/${channel_uuid}?width=${width}&height=${height}`, file.contents, messageKey, encryptedMessage.iv);
+        console.log(re.status);
+        console.log(re.error);
         if (re != undefined && re.payload != undefined) attachments.push(<string>re.payload);
       }
       else if (file.isBuffer) {
@@ -260,8 +262,8 @@ ipcMain.on('CREATEChannel', async (event, recipient_uuid: string) => {
 
 ipcMain.on('CREATEGroupChannel', async (event, groupName: string, receipients: string[]) => {
   const resp = await PostWithAuthentication(`Channel/CreateGroupChannel?group_name=${groupName}`, ContentType.JSON, JSON.stringify(receipients));
-  if (resp.status == 200) event.sender.send('GroupChannelCreated', true);
-  else event.sender.send('GroupChannelCreated', false);
+  if (resp.status == 200) event.sender.send('ChannelCreated', true);
+  else event.sender.send('ChannelCreated', false);
 });
 
 ipcMain.on('UPDATEChannelName', async (event, channel_uuid: string, newName: string) => {

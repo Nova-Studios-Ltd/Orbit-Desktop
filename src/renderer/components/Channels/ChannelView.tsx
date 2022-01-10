@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import {events}from 'shared/helpers';
 import Channel from './Channel';
 
 interface IChannelViewProps {
@@ -22,7 +21,6 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
 
-    events.on('OnChannelDeleted', this.removeChannel)
 
     this.state = {
       channels: [],

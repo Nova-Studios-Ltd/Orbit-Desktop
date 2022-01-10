@@ -199,6 +199,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   removeChannel(channel_uuid: string) {
+    Debug.Log('Removing channel...', LogContext.Renderer);
     const channelList = this.state.ChannelList;
     if (channelList != null) {
       channelList.removeChannel(channel_uuid);
