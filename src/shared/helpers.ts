@@ -62,6 +62,7 @@ function HandleWebsocket() {
   const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
   socket.onmessage = async (data) => {
     const event = JSON.parse(data.data);
+    console.log(event);
     switch (event.EventType) {
       case -1:
         console.log('<Beat>');
@@ -86,7 +87,7 @@ function HandleWebsocket() {
         events.send('OnChannelCreated', event.Channel);
         break;
       case 4:
-        events.send('OnChannelDeleted', event.channel);
+        events.send('OnChannelDeleted', event.Channel);
         break;
       case 5:
         break;
