@@ -189,7 +189,7 @@ export default class Channel extends React.Component<IChannelProps> {
           open={this.state.contextMenuOpen}
           onClose={this.closeContextMenu}
         >
-          <MenuItem id="edit" onClick={this.menuItemClicked} disabled={!this.isOwner()}>
+          <MenuItem id="edit" onClick={this.menuItemClicked}>
             Edit
           </MenuItem>
           <MenuItem id="hide" onClick={this.menuItemClicked} disabled>
@@ -213,7 +213,7 @@ export default class Channel extends React.Component<IChannelProps> {
             </div>
             <div>
               <FormTextField id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
-              <FormTextField disabled id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
+              <FormTextField disabled={!this.isOwner()} id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
             </div>
             </DialogContent>
           <DialogActions>

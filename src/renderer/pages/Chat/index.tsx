@@ -54,6 +54,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     super(props);
     this.initCanvas = this.initCanvas.bind(this);
     this.initChannelView = this.initChannelView.bind(this);
+    this.removeChannel = this.removeChannel.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
@@ -414,16 +415,16 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       switch (this.state.CreateChannelDialogChannelType) {
         case ChannelType.Group:
           return (
-            <div>
-              <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required onChange={this.handleFormChange} />
-              <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
+            <div key='CreateChannelDialogTypeGroup'>
+              <FormTextField key='CreateChannelDialogChannelName' id='CreateChannelDialogChannelName' label='Channel Name' description='The new name for the channel (can be changed later).' required value={this.state.CreateChannelDialogChannelName} onChange={this.handleFormChange} />
+              <FormTextField key='CreateChannelDialogRecipients' id='CreateChannelDialogRecipients' label='Recipients' description='Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321).' required value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
             </div>
           );
         case ChannelType.Default:
         case ChannelType.User:
         default:
           return (
-            <div className='CreateChannelDialog_User_Items'>
+            <div key='CreateChannelDialogTypeSingle' className='CreateChannelDialog_User_Items'>
               <FormTextField key='CreateChannelDialogRecipientsSingle' id='CreateChannelDialogRecipients' label='Recipient' description='The username and discriminator of the person you are trying to add. (e.g Eden#1234)' required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
               <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className='CreateChannelDialog_User_Avatar'/>
             </div>
