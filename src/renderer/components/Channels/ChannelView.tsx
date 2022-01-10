@@ -57,7 +57,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   render() {
-    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} />));
+    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
 
     const PromptElement = () => {
       if (this.isChannelListEmpty()) {

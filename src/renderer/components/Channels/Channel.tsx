@@ -34,6 +34,7 @@ export default class Channel extends React.Component<IChannelProps> {
   channelID: string;
   channelIcon?: string;
   channelMembers?: string[];
+  channelOwner?: string;
 
   constructor(props: IChannelProps) {
     super(props);
@@ -42,6 +43,7 @@ export default class Channel extends React.Component<IChannelProps> {
     this.channelID = props.table_Id;
     this.channelIcon = props.channelIcon;
     this.channelMembers = props.members || [];
+    this.channelOwner = props.owner_UUID || undefined;
 
     this.channelClicked = this.channelClicked.bind(this);
     this.channelRightClicked = this.channelRightClicked.bind(this);
@@ -72,6 +74,10 @@ export default class Channel extends React.Component<IChannelProps> {
     });
   }
 
+  isOwner() {
+    return GLOBALS.userData.uuid == this.channelOwner;
+  }
+
   async channelClicked() {
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
@@ -94,7 +100,11 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   chooseChannelIcon() {
-
+    ipcRenderer.invoke('OpenFile').then((file: string) => {
+      if (file != undefined) {
+        this.setState({ editDialogChannelIcon: file });
+      }
+    });
   }
 
   closeContextMenu() {
@@ -119,7 +129,16 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   submitChannelEdits() {
+    if (this.isOwner()) {
+      ipcRenderer.invoke('EditChannel', {
+        NewChannelName: this.state.editDialogChannelName,
+        NewChannelIcon: this.state.editDialogChannelIcon,
+        NewChannelRecipients: this.state.editDialogChannelRecipients
+      }).then((result) => {
 
+      });
+    }
+    this.closeChannelEditDialog();
   }
 
   removeUserFromThisChannel() {
@@ -170,7 +189,7 @@ export default class Channel extends React.Component<IChannelProps> {
           open={this.state.contextMenuOpen}
           onClose={this.closeContextMenu}
         >
-          <MenuItem id="edit" onClick={this.menuItemClicked}>
+          <MenuItem id="edit" onClick={this.menuItemClicked} disabled={!this.isOwner()}>
             Edit
           </MenuItem>
           <MenuItem id="hide" onClick={this.menuItemClicked} disabled>
@@ -201,7 +220,7 @@ export default class Channel extends React.Component<IChannelProps> {
             <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
               Cancel
             </Button>
-            <Button id="editButton" onClick={this.closeChannelEditDialog}>
+            <Button id="editButton" onClick={this.submitChannelEdits}>
               Save
             </Button>
           </DialogActions>
