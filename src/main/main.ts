@@ -11,7 +11,6 @@ import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
-import { LogContext } from '../types/enums';
 import { isDevelopment, resolveHtmlPath } from './util';
 
 import './events';
@@ -33,17 +32,17 @@ const spotifyInstalled = checkCommand('spotify');
   }
 }*/
 
-DebugMain.Log('Just A Message', LogContext.Main);
-DebugMain.Success('Just A Success', LogContext.Main);
-DebugMain.Warn('Just A Warning', LogContext.Main);
-DebugMain.Error('Just A Error', LogContext.Main);
+DebugMain.Log('Just A Message');
+DebugMain.Success('Just A Success');
+DebugMain.Warn('Just A Warning');
+DebugMain.Error('Just A Error');
 
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 
-  DebugMain.Log(path.resolve(__dirname, '../renderer/'), LogContext.Main);
+  DebugMain.Log(path.resolve(__dirname, '../renderer/'));
   const server = new Server(path.resolve(__dirname, '../renderer/'));
 
   http.createServer((request: IncomingMessage, response: ServerResponse) => {
@@ -52,10 +51,10 @@ if (process.env.NODE_ENV === 'production') {
       // Handles react router weridness
       // Serves 'index.html' for any request of '/login'or '/register' etc.
       // If the request url includes a filter it serves that file directly
-      DebugMain.Log(`Before: ${request.url}`, LogContext.Main);
+      DebugMain.Log(`Before: ${request.url}`);
       if (!request.url?.includes('styles.css') && !request.url?.includes('style.css') && !request.url?.includes('renderer.js'))
         request.url = resolveHtmlPath('index.html');
-      DebugMain.Log(`After: ${request.url}`, LogContext.Main);
+      DebugMain.Log(`After: ${request.url}`);
       server.serve(request, response);
     }).resume();
   }).listen(process.env.port || 1212);
@@ -75,7 +74,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((e: Error) => DebugMain.Error(e.message, LogContext.Main, 'when initializing extensions'));
+    .catch((e: Error) => DebugMain.Error(e.message, 'when initializing extensions'));
 };
 
 function getSpotifyTrackId(url: string) {
@@ -120,7 +119,7 @@ const createWindow = async () => {
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
-      DebugMain.Error('mainWindow is not defined', LogContext.Main, '(when creating the window)');
+      DebugMain.Error('mainWindow is not defined', '(when creating the window)');
       throw new Error('"mainWindow" is not defined');
     }
     if (process.env.START_MINIMIZED) {
@@ -129,7 +128,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-    DebugMain.Success('Main Window Loaded', LogContext.Main);
+    DebugMain.Success('Main Window Loaded');
   });
 
   mainWindow.on('closed', () => {
@@ -150,7 +149,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    DebugMain.Log(`Opening file ${url} in default browser`, LogContext.Main);
+    DebugMain.Log(`Opening file ${url} in default browser`);
     if (url.includes('track') && spotifyInstalled) {
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
@@ -210,11 +209,11 @@ app.whenReady().then(() => {
     tray.setContextMenu(contextMenu);
   }
   catch {
-    DebugMain.Error('Unable to load tray icon', LogContext.Main);
+    DebugMain.Error('Unable to load tray icon');
   }
 
   createWindow().then(() => {
-    DebugMain.Success('App Loaded', LogContext.Main);
+    DebugMain.Success('App Loaded');
   });
 
   app.on('activate', () => {
@@ -223,4 +222,4 @@ app.whenReady().then(() => {
     if (mainWindow === null) createWindow().catch(console.log);
   });
 
-}).catch((e) => DebugMain.Error(e.message, LogContext.Main, 'on app initialization'));
+}).catch((e) => DebugMain.Error(e.message, 'on app initialization'));

@@ -7,6 +7,7 @@ import sizeOf from 'image-size';
 import { PassThrough } from 'stream';
 import { createDecipheriv } from 'crypto';
 import { readFileSync } from 'fs';
+import { DebugMain } from '../shared/DebugLogger';
 import { ContentType } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from './NCAPI';
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from './encryptionUtils';
@@ -268,51 +269,57 @@ ipcMain.on('CREATEGroupChannel', async (event, groupName: string, receipients: s
 
 ipcMain.on('UPDATEChannelName', async (event, channel_uuid: string, newName: string) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}/Name?new_name=${newName}`, ContentType.EMPTY, '');
-  if (resp.status == 200) event.sender.send('ChannelNameUpdated', true);
-  event.sender.send('ChannelNameUpdated', false);
+  if (resp.status == 200) event.sender.send('ChannelNameUpdated', channel_uuid, newName);
+  else event.sender.send('ChannelNameUpdated', null);
+});
+
+ipcMain.on('UPDATEChannelIcon', async (event, channel_uuid: string, file: string) => {
+  const resp = await PostFileWithAuthentication(`/Media/Channel/${channel_uuid}/Icon`, file);
+  if (resp.status == 200) event.sender.send('ChannelIconUpdated', channel_uuid);
+  else event.sender.send('ChannelIconUpdated', null);
 });
 
 ipcMain.on('ADDChannelMember', async (event, channel_uuid: string, recipients: string[]) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}`, ContentType.JSON, JSON.stringify(recipients))
   if (resp.status == 200) event.sender.send('ChannelMemberAdded', true);
-  event.sender.send('ChannelMemberAdded', false);
+  else event.sender.send('ChannelMemberAdded', false);
 });
 
 ipcMain.on('ARCHIVEChannel', async (event, channel_uuid: string) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}/Achrive`, ContentType.EMPTY, '');
   if (resp.status == 200) event.sender.send('ChannelArchived', true);
-  event.sender.send('ChannelArchived', false);
+  else event.sender.send('ChannelArchived', false);
 });
 
 ipcMain.on('UNARCHIVEChannel', async (event, channel_uuid: string) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}/Unachrive`, ContentType.EMPTY, '');
   if (resp.status == 200) event.sender.send('ChannelUnarchived', true);
-  event.sender.send('ChannelUnarchived', false);
+  else event.sender.send('ChannelUnarchived', false);
 });
 
 ipcMain.on('DELETEChannel', async (event, channel_uuid: string) => {
   const resp = await DeleteWithAuthentication(`/Channel/${channel_uuid}`);
   if (resp.status == 200) event.sender.send('ChannelDeleted', true);
-  event.sender.send('ChannelDeleted', false);
+  else event.sender.send('ChannelDeleted', false);
 });
 
 ipcMain.on('REMOVEChannelMember', async (event, channel_uuid: string, recipient: string) => {
   const resp = await DeleteWithAuthentication(`/Channel/${channel_uuid}/Members?recipient=${recipient}`)
   if (resp.status == 200) event.sender.send('ChannelMemberRemoved', true);
-  event.sender.send('ChannelMemberRemoved', false);
+  else event.sender.send('ChannelMemberRemoved', false);
 });
 
 // Media
 ipcMain.on('SETAvatar', async (event, user_uuid: string, file: string) => {
   const resp = await PostFileWithAuthentication(`/Media/Avatar/${user_uuid}`, file);
   if (resp.status == 200) event.sender.send('AvatarSet', true);
-  event.sender.send('AvatarSet', false);
+  else event.sender.send('AvatarSet', false);
 });
 
 ipcMain.on('SETChannelIcon', async (event, channel_uuid: string, file: string) => {
   const resp = await PostFileWithAuthentication(`/Media/Channel/${channel_uuid}`, file);
   if (resp.status == 200) event.sender.send('ChannelIconSet', true);
-  event.sender.send('ChannelIconSet', false);
+  else event.sender.send('ChannelIconSet', false);
 });
 
 ipcMain.handle('GETChannelName', async (_event, uuid: string) => {

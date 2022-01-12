@@ -6,7 +6,6 @@ import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugRendererHandler } from 'shared/DebugLogger';
 import { IElectronRendererWindow, IUserData } from 'types/types';
-import { LogContext } from 'types/enums';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
@@ -17,10 +16,10 @@ export function Navigate(path: string, data: unknown)
 {
   try {
     history.push(path, data);
-    Debug.Success(`Navigated to ${path}`, LogContext.Renderer);
+    Debug.Success(`Navigated to ${path}`);
   }
   catch (error: unknown) {
-    Debug.Error(`Unable to navigate to path ${path}`, LogContext.Renderer, (<Error>error).message)
+    Debug.Error(`Unable to navigate to path ${path}`, (<Error>error).message)
   }
 }
 
@@ -125,7 +124,7 @@ function HandleWebsocket() {
     }
   };
   socket.onerror = () => {
-    Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`, LogContext.Renderer);
+    Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
@@ -140,7 +139,7 @@ function HandleWebsocket() {
     socket.send(token);
   };
   socket.onclose = () => {
-    Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`, LogContext.Renderer);
+    Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
       Navigate('/Login', { failed: true });
@@ -168,7 +167,7 @@ export async function ConductLogin() {
     });
   }
   else {
-    Debug.Warn('UUID and Token not found, returning to login page.', LogContext.Renderer);
+    Debug.Warn('UUID and Token not found, returning to login page.');
     Navigate('/login', null);
   }
 }

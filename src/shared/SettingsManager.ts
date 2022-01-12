@@ -3,7 +3,7 @@
 // Figure out how settings can be interfaced by the client
 
 import { Debug, events, ipcRenderer } from 'shared/helpers';
-import { LogContext, Theme } from 'types/enums';
+import { Theme } from 'types/enums';
 import UserData from 'structs/UserData';
 
 // Settings
@@ -62,7 +62,7 @@ class SettingsManagerRenderer {
     ipcRenderer.invoke('retrieveSetting', key).then((value: string | boolean | number) => {
       if (value != null) {
         this.Settings[key] = value;
-        Debug.Success(`Loaded setting ${key} with value ${this.Settings.Theme.toString()}`, LogContext.Renderer);
+        Debug.Success(`Loaded setting ${key} with value ${this.Settings.Theme.toString()}`);
       }
       else {
         this.SaveSetting(key, this.Settings[key]);
@@ -75,7 +75,7 @@ class SettingsManagerRenderer {
   }
 
   SetTheme(theme: Theme) {
-    Debug.Log(`Changed theme to: ${theme}`, LogContext.Renderer);
+    Debug.Log(`Changed theme to: ${theme}`);
     this.SaveSetting('Theme', theme);
     events.send('appThemeChanged', theme);
   }

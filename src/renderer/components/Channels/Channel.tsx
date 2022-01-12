@@ -4,8 +4,8 @@ import { Add as AddIcon } from '@mui/icons-material';
 import GLOBALS from 'shared/globals'
 import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
 import { ChannelType } from 'types/enums';
-import YesNoDialog from '../Dialogs/YesNoDialog';
-import FormTextField from '../Form/FormTextField';
+import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
+import FormTextField from 'renderer/components/Form/FormTextField';
 
 export interface IChannelProps {
   table_Id: string,
@@ -16,13 +16,21 @@ export interface IChannelProps {
   members?: string[],
 }
 
+export interface IChannelUpdateProps {
+  channelID: string,
+  channelName?: string,
+  channelIcon?: boolean,
+  members?: string[],
+}
+
 interface IChannelState {
   contextMenuAnchorPos: { x: 0, y: 0},
   contextMenuOpen: boolean,
   confirmChannelDeletionDialogOpen: boolean,
   editDialogOpen: boolean,
   editDialogChannelName: string,
-  editDialogChannelIcon: string | undefined,
+  editDialogChannelIconPath: string | undefined,
+  editDialogChannelIconPreview: string | undefined,
   editDialogChannelRecipients: string
 }
 
@@ -55,6 +63,7 @@ export default class Channel extends React.Component<IChannelProps> {
     this.channelEditDialogChanged = this.channelEditDialogChanged.bind(this);
     this.submitChannelEdits = this.submitChannelEdits.bind(this);
     this.chooseChannelIcon = this.chooseChannelIcon.bind(this);
+    this.isOwner = this.isOwner.bind(this);
 
     this.state = {
       contextMenuAnchorPos: { x: 0, y: 0},
@@ -62,7 +71,8 @@ export default class Channel extends React.Component<IChannelProps> {
       confirmChannelDeletionDialogOpen: false,
       editDialogOpen: false,
       editDialogChannelName: this.channelName,
-      editDialogChannelIcon: this.channelIcon,
+      editDialogChannelIconPath: this.channelIcon,
+      editDialogChannelIconPreview: this.channelIcon,
       editDialogChannelRecipients: this.channelMembers.toString(),
     };
   }
@@ -76,6 +86,10 @@ export default class Channel extends React.Component<IChannelProps> {
 
   isOwner() {
     return GLOBALS.userData.uuid == this.channelOwner;
+  }
+
+  canEdit() {
+    return this.isOwner() && this.props.isGroup;
   }
 
   async channelClicked() {
@@ -100,9 +114,19 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   chooseChannelIcon() {
-    ipcRenderer.invoke('OpenFile').then((file: string) => {
-      if (file != undefined) {
-        this.setState({ editDialogChannelIcon: file });
+    ipcRenderer.invoke('OpenFile').then((data: { path: string, contents?: Buffer }) => {
+      if (data != undefined) {
+        this.setState(() => {
+          let preview = null;
+          if (data.contents != null) {
+            preview = URL.createObjectURL(new Blob([Uint8Array.from(data.contents)]));
+          }
+          else {
+            preview = this.channelIcon;
+          }
+          console.log(preview);
+          return { editDialogChannelIconPath: data.path, editDialogChannelIconPreview: preview }
+        });
       }
     });
   }
@@ -119,7 +143,8 @@ export default class Channel extends React.Component<IChannelProps> {
     this.setState({
       editDialogOpen: false,
       editDialogChannelName: this.channelName,
-      editDialogChannelIcon: this.channelIcon,
+      editDialogChannelIconPath: this.channelIcon,
+      editDialogChannelIconPreview: this.channelIcon,
       editDialogChannelRecipients: this.channelMembers?.toString(),
     });
   }
@@ -130,13 +155,12 @@ export default class Channel extends React.Component<IChannelProps> {
 
   submitChannelEdits() {
     if (this.isOwner()) {
-      ipcRenderer.invoke('EditChannel', {
-        NewChannelName: this.state.editDialogChannelName,
-        NewChannelIcon: this.state.editDialogChannelIcon,
-        NewChannelRecipients: this.state.editDialogChannelRecipients
-      }).then((result) => {
-
-      });
+      if (this.state.editDialogChannelName != this.channelName) {
+        ipcRenderer.send('UPDATEChannelName', this.channelID, this.state.editDialogChannelName);
+      }
+      if (this.state.editDialogChannelIconPath != this.channelIcon) {
+        ipcRenderer.send('UPDATEChannelIcon', this.channelID, this.state.editDialogChannelIconPath);
+      }
     }
     this.closeChannelEditDialog();
   }
@@ -163,6 +187,26 @@ export default class Channel extends React.Component<IChannelProps> {
       this.channelType == ChannelType.Group
         ? LeaveChannelPromptTextGroup
         : LeaveChannelPromptTextUser;
+
+    const DialogActionButtons = () => {
+      if (this.canEdit()) return (
+        <div>
+          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
+            Cancel
+          </Button>
+          <Button id="editButton" onClick={this.submitChannelEdits}>
+            Save
+          </Button>
+        </div>
+      )
+      return (
+        <div>
+          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
+            Close
+          </Button>
+        </div>
+      )
+    }
 
     return (
       <div className="Channel">
@@ -203,26 +247,21 @@ export default class Channel extends React.Component<IChannelProps> {
           <DialogTitle>Edit Channel &quot;{this.channelName}&quot;</DialogTitle>
           <DialogContent style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div>
-              <IconButton className="OverlayContainer" onClick={this.chooseChannelIcon}>
+              <IconButton className="OverlayContainer" disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
                 <Avatar
                   sx={{ width: 64, height: 64 }}
-                  src={this.state.editDialogChannelIcon}
+                  src={this.state.editDialogChannelIconPreview}
                 />
                 <AddIcon fontSize="large" className="Overlay" />
               </IconButton>
             </div>
             <div>
-              <FormTextField id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
-              <FormTextField disabled={!this.isOwner()} id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
+              <FormTextField disabled={!this.canEdit()} id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
+              <FormTextField disabled id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
             </div>
             </DialogContent>
           <DialogActions>
-            <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
-              Cancel
-            </Button>
-            <Button id="editButton" onClick={this.submitChannelEdits}>
-              Save
-            </Button>
+            <DialogActionButtons />
           </DialogActions>
         </Dialog>
         <YesNoDialog

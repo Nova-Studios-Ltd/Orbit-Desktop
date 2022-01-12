@@ -1,7 +1,7 @@
 import React, { KeyboardEvent, ChangeEvent } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
-import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
 import { SettingsManager } from 'shared/SettingsManager';
@@ -58,7 +58,7 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
       this.props.onMessagePush(message);
     }
     else {
-      Debug.Error('forwardMessageCallback is null', LogContext.Renderer, 'when forwarding message to ChatPage from Messageinput');
+      Debug.Error('forwardMessageCallback is null', 'when forwarding message to ChatPage from Messageinput');
     }
   }
 
