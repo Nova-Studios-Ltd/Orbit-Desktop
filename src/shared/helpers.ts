@@ -4,14 +4,14 @@ import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
-import { DebugRendererHandler } from 'shared/DebugLogger';
+import { DebugLogger } from 'shared/debugRenderer';
 import { IElectronRendererWindow, IUserData } from 'types/types';
 import { SettingsManager } from './settingsManagerRenderer';
 
 export const history = createBrowserHistory();
 export const { ipcRenderer }: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
-export const Debug = new DebugRendererHandler(ipcRenderer);
+export const Debug = new DebugLogger(ipcRenderer);
 export const Manager = new SettingsManager(ipcRenderer);
 
 export function Navigate(path: string, data: unknown)

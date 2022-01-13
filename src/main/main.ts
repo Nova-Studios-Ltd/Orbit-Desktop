@@ -10,9 +10,9 @@ import http, { IncomingMessage, ServerResponse } from 'http';
 import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
-import { Debug } from '../shared/DebugLogger';
+import { Debug } from './debug';
 import { isDevelopment, resolveHtmlPath } from './util';
-import {Manager} from "./settingsManager";
+import { SettingsManager } from "./settingsManager";
 
 import './events';
 import './apiEvents';
@@ -194,7 +194,7 @@ app.whenReady().then(() => {
   try {
     tray = new Tray('assets/icon.png');
     const contextMenu = Menu.buildFromTemplate([
-      { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
+      { label: `${SettingsManager.AppName} (Version ${SettingsManager.AppVersion})` },
       { type: 'separator' },
       { label: 'Open', click: () => resume() },
       { type: 'separator' },

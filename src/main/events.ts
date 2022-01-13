@@ -3,7 +3,7 @@ import { INotificationProps } from 'renderer/components/Notification/Notificatio
 import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from 'fs';
 import type { AuthResponse } from 'types/NCAPIResponseMutations';
 import Credentials from '../structs/Credentials';
-import { Debug } from '../shared/DebugLogger';
+import { Debug } from './debug';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import { PostWithoutAuthentication } from './NCAPI';
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from './encryptionUtils';
