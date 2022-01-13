@@ -1,15 +1,7 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync } from "fs";
 import UserData from "structs/UserData";
-
-
-interface Dictionary<T> {
-  [x: string] : T;
-}
-
-class Dictionary<T> {
-
-}
+import { Dictionary } from "./dictionary";
 
 export class SettingsManager {
   // Settings, initalised at startup
