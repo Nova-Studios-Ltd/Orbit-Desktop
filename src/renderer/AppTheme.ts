@@ -65,6 +65,9 @@ export function AppStyles() {
       '.Chat_Page_Bottom': {
         background: AppTheme().palette.background.paper,
       },
+      '.FileUploadSummary': {
+        background: AppTheme().palette.background.paper,
+      },
       '.MessageCanvas': {
         background: AppTheme().palette.background.paper,
       },
