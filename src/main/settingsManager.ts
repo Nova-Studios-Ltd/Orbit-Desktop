@@ -154,3 +154,5 @@ export class SettingsManager {
     }
   }
 }
+
+export const Manager = new SettingsManager();

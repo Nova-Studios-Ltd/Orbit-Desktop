@@ -12,7 +12,7 @@ import { Server } from 'node-static';
 import GLOBALS from '../shared/globals';
 import { Debug } from './debug';
 import { isDevelopment, resolveHtmlPath } from './util';
-import { SettingsManager } from "./settingsManager";
+import { Manager } from "./settingsManager";
 
 import './events';
 import './apiEvents';
@@ -194,7 +194,7 @@ app.whenReady().then(() => {
   try {
     tray = new Tray('assets/icon.png');
     const contextMenu = Menu.buildFromTemplate([
-      { label: `${SettingsManager.AppName} (Version ${SettingsManager.AppVersion})` },
+      { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
       { type: 'separator' },
       { label: 'Open', click: () => resume() },
       { type: 'separator' },

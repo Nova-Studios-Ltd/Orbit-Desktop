@@ -4,19 +4,20 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { events, history, ipcRenderer, Navigate, SetAuth } from 'shared/helpers';
+import { copyToClipboard, events, history, ipcRenderer, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
 import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
-import { ClassNameMap, Divider, Drawer, List, ThemeProvider, Typography } from '@mui/material';
+import { Avatar, ClassNameMap, Divider, Drawer, List, ThemeProvider, Typography } from '@mui/material';
 import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
+import AppNotification from 'renderer/components/Notification/Notification';
 import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
@@ -47,7 +48,7 @@ class App extends React.Component {
     };
   }
 
-  navigationDrawerItemClicked(event: React.MouseEvent<HTMLDivElement>) {
+  async navigationDrawerItemClicked(event: React.MouseEvent<HTMLDivElement>) {
     switch (event.currentTarget.id) {
       case 'chat':
         Navigate('/chat', null);
@@ -64,6 +65,17 @@ class App extends React.Component {
       case 'debug':
         ipcRenderer.send('openDevTools');
         break;
+      case 'user':
+        {
+          const clipboardContent = event.type == 'click' ? `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}` : GLOBALS.userData.uuid;
+          const resultMessage = event.type == 'click' ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
+          copyToClipboard(clipboardContent).then((result: boolean) => {
+            if (result) {
+              new AppNotification({ body: resultMessage, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+            }
+          });
+        }
+        return;
     }
     this.setState({ navigationDrawerOpen: false });
   }
@@ -80,6 +92,12 @@ class App extends React.Component {
        }
       });
     }
+  }
+
+  Logout() {
+    RemoveCachedCredentials();
+    GLOBALS.loggedOut = true;
+    Navigate('/login', null);
   }
 
   onNavigationDrawerOpened(_event: React.MouseEvent<HTMLButtonElement>, open?: boolean) {
@@ -131,10 +149,10 @@ class App extends React.Component {
         />
         <NoInternetConnectionBanner />
         <Drawer className='NavigationDrawer' anchor='left' open={this.state.navigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
-          <List className='NavigationDrawerList'>
+          <List className='NavigationDrawerListTop'>
             <div className='NavigationDrawerBranding'>
               <img src={AppIcon} width='64' height='64' style={{ padding: 1, margin: 10 }} alt='App Logo'/>
-              <Typography sx={{ padding: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
+              <Typography sx={{ padding: 1, marginRight: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
             </div>
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />
@@ -142,6 +160,9 @@ class App extends React.Component {
             <Divider />
             <HybridListItem id='reload' text='Reload App' icon={<RefreshIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='debug' text='DevTools' icon={<BugIcon />} onClick={this.navigationDrawerItemClicked} />
+          </List>
+          <List className='NavigationDrawerListBottom'>
+            <HybridListItem id='user' text={`${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}`} icon={<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />} onClick={this.navigationDrawerItemClicked} onContextMenu={this.navigationDrawerItemClicked} />
           </List>
         </Drawer>
         <Router history={history}>

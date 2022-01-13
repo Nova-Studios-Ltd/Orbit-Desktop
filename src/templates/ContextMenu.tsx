@@ -18,7 +18,7 @@ closeContextMenu(event: any) {
 render() {
   return(
     <Menu
-      id='userdropdown-menu'
+      id='generic-menu'
       anchorEl={this.state.anchorEl}
       open={this.state.open}
       onClose={this.closeContextMenu}
