@@ -12,11 +12,11 @@ import { Server } from 'node-static';
 import GLOBALS from '../shared/globals';
 import { DebugMain } from '../shared/DebugLogger';
 import { isDevelopment, resolveHtmlPath } from './util';
+import {Manager} from "./settingsManager";
 
 import './events';
 import './apiEvents';
 import './debugEvents';
-import { SettingsManager } from './settingsManager';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -194,7 +194,7 @@ app.whenReady().then(() => {
   try {
     tray = new Tray('assets/icon.png');
     const contextMenu = Menu.buildFromTemplate([
-      { label: `${GLOBALS.appName} (Version ${GLOBALS.appVersion})` },
+      { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
       { type: 'separator' },
       { label: 'Open', click: () => resume() },
       { type: 'separator' },

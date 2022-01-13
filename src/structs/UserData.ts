@@ -26,6 +26,6 @@ export default class UserData {
       this.avatarSrc = '';
     }
     this.keyPair = new RSAMemoryKeyPair('', '');
-    this.keystore = {}
+    this.keystore = {};
   }
 }
