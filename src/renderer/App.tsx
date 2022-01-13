@@ -136,7 +136,7 @@ class App extends React.Component {
       <ThemeProvider theme={this.state.theme}>
         <GlobalStyles styles={this.state.styles} />
         <ToastContainer
-          position="bottom-left"
+          position="top-right"
           autoClose={5000}
           limit={3}
           hideProgressBar={false}
