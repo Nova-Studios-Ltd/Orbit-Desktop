@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 
 interface IFormTextFieldProps {
   id?: string,
-  label: string,
+  label?: string,
   placeholder?: string,
   value?: string,
   classNames?: string,

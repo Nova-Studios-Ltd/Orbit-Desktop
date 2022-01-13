@@ -1,6 +1,7 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
-import { Avatar, Button, Card, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
+import { Avatar, Button, Card, Dialog, DialogContent, DialogActions, DialogTitle, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from '@mui/icons-material';
+import { MD5 } from 'crypto-js';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
@@ -10,15 +11,20 @@ import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import { SettingsManager } from 'shared/SettingsManager';
+import { IOpenFileDialogResults } from 'types/types';
+import FormTextField from 'renderer/components/Form/FormTextField';
 
 interface ISettingsPageProps {
   onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
 }
 
 interface ISettingsPageState {
-  UpdatedUser: boolean,
+  avatarStateKey: string,
+  usernameStateKey: string,
+  darkThemeEnabled: boolean,
   confirmUserAccountDeletionDialogOpen: boolean,
-  darkThemeEnabled: boolean
+  editUsernameDialogOpen: boolean,
+  editUsernameDialogField: string
 }
 
 export default class SettingsPage extends React.Component<ISettingsPageProps> {
@@ -27,19 +33,28 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   constructor(props: ISettingsPageProps) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.deleteAccount = this.deleteAccount.bind(this);
+    this.openChangeUsernameDialog = this.openChangeUsernameDialog.bind(this);
+    this.closeChangeUsernameDialog = this.closeChangeUsernameDialog.bind(this);
+    this.submitNewUsername = this.submitNewUsername.bind(this);
     this.closeUserAccountDeletionDialog = this.closeUserAccountDeletionDialog.bind(this);
     this.exitSettings = this.exitSettings.bind(this);
     this.updateUserAvatar = this.updateUserAvatar.bind(this);
-    this.updatedAvatar = this.updatedAvatar.bind(this);
+    this.avatarUpdated = this.avatarUpdated.bind(this);
+    this.usernameUpdated = this.usernameUpdated.bind(this);
 
-    ipcRenderer.on('AvatarSet', this.updatedAvatar);
+    ipcRenderer.on('AvatarSet', this.avatarUpdated);
+    ipcRenderer.on('UsernameUpdated', this.usernameUpdated);
 
     this.state = {
-      UpdatedUser: false,
+      avatarStateKey: MD5(Date.now().toString()).toString(),
+      usernameStateKey: MD5(Date.now().toString()).toString(),
+      darkThemeEnabled: Boolean(SettingsManager.Settings.Theme),
       confirmUserAccountDeletionDialogOpen: false,
-      darkThemeEnabled: Boolean(SettingsManager.Settings.Theme)
+      editUsernameDialogOpen: false,
+      editUsernameDialogField: ''
     }
   }
 
@@ -49,6 +64,11 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
         this.setState({ confirmUserAccountDeletionDialogOpen: true });
         break;
     }
+  }
+
+  handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+    this.setState({[name]: value});
   }
 
   handleToggle(event: ChangeEvent<HTMLInputElement>) {
@@ -66,6 +86,19 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.closeUserAccountDeletionDialog();
   }
 
+  openChangeUsernameDialog() {
+    this.setState({ editUsernameDialogOpen: true });
+  }
+
+  closeChangeUsernameDialog() {
+    this.setState({ editUsernameDialogOpen: false, editUsernameDialogField: '' });
+  }
+
+  submitNewUsername() {
+    ipcRenderer.send('UPDATEUsername', GLOBALS.userData.uuid, this.state.editUsernameDialogField);
+    this.closeChangeUsernameDialog();
+  }
+
   closeUserAccountDeletionDialog() {
     this.setState({ confirmUserAccountDeletionDialogOpen: false });
   }
@@ -75,19 +108,23 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   async updateUserAvatar() {
-    const image = await ipcRenderer.invoke("OpenFile");
-    if (image != undefined) ipcRenderer.send("SETAvatar", GLOBALS.userData.uuid, image);
+    ipcRenderer.invoke("OpenFile").then((data: IOpenFileDialogResults) => {
+      if (data != undefined && data.path != null) ipcRenderer.send("SETAvatar", GLOBALS.userData.uuid, data.path);
+    });
   }
 
-  updatedAvatar() {
-    this.setState({UpdatedUser: true});
+  avatarUpdated() {
+    this.setState({ avatarStateKey: MD5(Date.now().toString()).toString() });
+  }
+
+  usernameUpdated(result: boolean, newUsername?: string) {
+    if (result && newUsername != null) {
+      GLOBALS.userData.username = newUsername;
+      this.setState({ usernameStateKey: MD5(Date.now().toString()).toString() });
+    }
   }
 
   render() {
-    if (this.state.UpdatedUser) {
-      this.setState({UpdatedUser: false});
-      return (<></>)
-    }
     return(
       <div className='Page Settings_Page_Container'>
         <Helmet>
@@ -100,11 +137,11 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
           <SettingsSection title='User'>
             <Card className='Settings_User_Section_Card'>
               <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
-                <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
+                <Avatar key={this.state.avatarStateKey} sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
                 <AddIcon fontSize='large' className='Overlay'/>
               </IconButton>
-              <Typography variant='h5'>{GLOBALS.userData.username}#{GLOBALS.userData.discriminator}</Typography>
-              <Button>Edit Username</Button>
+              <Typography key={this.state.usernameStateKey} variant='h5'>{GLOBALS.userData.username}#{GLOBALS.userData.discriminator}</Typography>
+              <Button onClick={this.openChangeUsernameDialog}>Edit Username</Button>
               <Button disabled>Change Password</Button>
               <Button disabled>Logout</Button>
             </Card>
@@ -130,6 +167,16 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
             }}>Copy Token to Clipboard</Button>
             <Button id='deleteAccount' className='Settings_Section_Item' variant='outlined' color='error' onClick={this.handleClick}>Delete Account</Button>
           </SettingsSection>
+          <Dialog open={this.state.editUsernameDialogOpen}>
+            <DialogTitle>Change Username</DialogTitle>
+            <DialogContent sx={{ overflow: 'hidden' }}>
+              <FormTextField id='editUsernameDialogField' label='Username' placeholder='New Username' autoFocus value={this.state.editUsernameDialogField} onChange={this.handleChange}></FormTextField>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.closeChangeUsernameDialog}>Cancel</Button>
+              <Button onClick={this.submitNewUsername}>Change</Button>
+            </DialogActions>
+          </Dialog>
           <YesNoDialog
           title='Delete Account'
           body='Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat.'

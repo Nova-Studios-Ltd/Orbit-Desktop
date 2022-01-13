@@ -11,13 +11,13 @@ import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
-import { ClassNameMap, Drawer, List, ThemeProvider, Typography } from '@mui/material';
-import { Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { ClassNameMap, Divider, Drawer, List, ThemeProvider, Typography } from '@mui/material';
+import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
-import AppNotification from 'renderer/components/Notification/Notification';
+import AppIcon from '../../assets/icon.png';
 
 interface IAppState {
   theme: Theme,
@@ -60,6 +60,9 @@ class App extends React.Component {
         break;
       case 'reload':
         window.location.reload();
+        break;
+      case 'debug':
+        ipcRenderer.send('openDevTools');
         break;
     }
     this.setState({ navigationDrawerOpen: false });
@@ -129,10 +132,17 @@ class App extends React.Component {
         <NoInternetConnectionBanner />
         <Drawer className='NavigationDrawer' anchor='left' open={this.state.navigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
           <List className='NavigationDrawerList'>
+            <div className='NavigationDrawerBranding'>
+              <img src={AppIcon} width='64' height='64' alt='App Logo'/>
+              <Typography sx={{ padding: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
+            </div>
+            <Divider />
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='settings' text='Settings' icon={<SettingsIcon />} onClick={this.navigationDrawerItemClicked} />
+            <Divider />
             <HybridListItem id='reload' text='Reload App' icon={<RefreshIcon />} onClick={this.navigationDrawerItemClicked} />
+            <HybridListItem id='debug' text='DevTools' icon={<BugIcon />} onClick={this.navigationDrawerItemClicked} />
           </List>
         </Drawer>
         <Router history={history}>
