@@ -1,6 +1,8 @@
 import { Typography } from '@mui/material';
 import React from 'react';
+import { MD5 } from 'crypto-js';
 import Channel from './Channel';
+import type { IChannelUpdateProps } from './Channel';
 
 interface IChannelViewProps {
   init: (channelList: ChannelView) => void
@@ -17,6 +19,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     super(props);
     props.init(this);
     this.addChannel = this.addChannel.bind(this);
+    this.updateChannel = this.updateChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
@@ -32,6 +35,27 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
       const updatedChannels = prevState.channels;
       updatedChannels.push(channel);
       this.setState({channels: updatedChannels});
+    });
+  }
+
+  updateChannel(updatedChannelProps: IChannelUpdateProps) {
+    this.setState((prevState: IChannelViewState) => {
+      if (updatedChannelProps != null && updatedChannelProps.channelID != null) {
+        const { channels } = prevState;
+        for (let i = 0; i < channels.length; i++) {
+          if (channels[i].channelID == updatedChannelProps.channelID)
+          {
+            if (updatedChannelProps.channelName != null) {
+              channels[i].channelName = updatedChannelProps.channelName;
+            }
+            if (updatedChannelProps.channelIcon) {
+              channels[i].channelIcon = `${channels[i].channelIcon}&${Date.now()}`;
+            }
+            return channels;
+          }
+        }
+      }
+      return null;
     });
   }
 
@@ -55,7 +79,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   render() {
-    const channels = this.state.channels.map((c) => (<Channel key={c.channelID} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
+    const channels = this.state.channels.map((c) => (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
 
     const PromptElement = () => {
       if (this.isChannelListEmpty()) {

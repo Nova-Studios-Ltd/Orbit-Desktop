@@ -1,4 +1,5 @@
 import { publicEncrypt, privateDecrypt, generateKeyPairSync, createCipheriv, randomBytes, createDecipheriv, createHash } from 'crypto';
+import { DebugMain } from '../shared/DebugLogger';
 import { AESMemoryEncryptData, RSAMemoryKeyPair } from './encryptionClasses';
 
 export function GenerateRSAKeyPair(): RSAMemoryKeyPair {
@@ -33,36 +34,44 @@ export async function GenerateRSAKeyPairAsync() : Promise<RSAMemoryKeyPair> {
 
 export function EncryptUsingPubKey(pub: string, data: string) : string {
   const dataBuffer = Buffer.from(data);
-  return publicEncrypt(pub, dataBuffer).toString("base64");
+  return publicEncrypt(pub, dataBuffer).toString('base64');
 }
 
 export async function EncryptUsingPubKeyAsync(pub: string, data: string) : Promise<string> {
   const dataBuffer = Buffer.from(data);
-  return publicEncrypt(pub, dataBuffer).toString("base64");
+  return publicEncrypt(pub, dataBuffer).toString('base64');
 }
 
 export function DecryptUsingPrivKey(priv: string, data: string) : string {
-  const dataBuffer = Buffer.from(data, "base64");
-  return privateDecrypt(priv, dataBuffer).toString("utf-8");
+  if (data != null) {
+    const dataBuffer = Buffer.from(data, 'base64');
+    return privateDecrypt(priv, dataBuffer).toString('utf-8');
+  }
+  DebugMain.Error('Failed to decrypt message: buffer was empty');
+  return '';
 }
 
 export async function DecryptUsingPrivKeyAsync(priv: string, data: string) : Promise<string> {
-  const dataBuffer = Buffer.from(data, "base64");
-  return privateDecrypt(priv, dataBuffer).toString("utf-8");
+  if (data != null) {
+    const dataBuffer = Buffer.from(data, 'base64');
+    return privateDecrypt(priv, dataBuffer).toString('utf-8');
+  }
+  DebugMain.Error('Failed to decrypt message: buffer was empty', 'async');
+  return '';
 }
 
 export function EncryptUsingAES(key: string, data: string, init_iv?: string) : AESMemoryEncryptData {
   const iv = (init_iv == undefined)? randomBytes(16) : Buffer.from(init_iv, 'base64');
   const cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'base64'), iv);
   const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
-  return new AESMemoryEncryptData(iv.toString("base64"), encrypted.toString("base64"));
+  return new AESMemoryEncryptData(iv.toString('base64'), encrypted.toString('base64'));
 }
 
 export async function EncryptUsingAESAsync(key: string, data: string, init_iv?: string) : Promise<AESMemoryEncryptData> {
   const iv = (init_iv == undefined)? randomBytes(16) : Buffer.from(init_iv, 'base64');
   const cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'base64'), iv);
   const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
-  return new AESMemoryEncryptData(iv.toString("base64"), encrypted.toString("base64"));
+  return new AESMemoryEncryptData(iv.toString('base64'), encrypted.toString('base64'));
 }
 
 export function DecryptUsingAES(key: string, data: AESMemoryEncryptData) : string {

@@ -10,21 +10,20 @@ import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
 import UserDropdownMenu, { IUserDropdownMenuFunctions } from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, IconButton, List, MenuItem, SelectChangeEvent } from '@mui/material';
-import { ChannelType, LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
+import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormDropdown from 'renderer/components/Form/FormDropdown';
 import { GrowTransition } from 'types/transitions';
-import HybridListItem from 'renderer/components/List/HybridListItem';
 import MessageAttachment from 'structs/MessageAttachment';
 import FileUploadSummary from 'renderer/components/Messages/FileUploadSummary';
 import type { IMessageProps } from 'renderer/components/Messages/Message';
-import type { IChannelProps } from 'renderer/components/Channels/Channel';
+import type { IChannelProps, IChannelUpdateProps } from 'renderer/components/Channels/Channel';
 import ImageViewer from 'renderer/components/Dialogs/ImageViewer';
 import type { Dimensions } from 'types/types';
 
 interface IChatPageProps {
-
+  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
 }
 
 interface IChatPageState {
@@ -39,7 +38,6 @@ interface IChatPageState {
   CreateChannelDialogVisible: boolean,
   CreateChannelDialogChannelType: ChannelType,
   CreateChannelDialogRecipientAvatarSrc: string,
-  NavigationDrawerOpen: boolean,
   ImageViewerOpen: boolean,
   ImageViewerSrc: string,
   ImageViewerDimensions: Dimensions
@@ -54,6 +52,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     super(props);
     this.initCanvas = this.initCanvas.bind(this);
     this.initChannelView = this.initChannelView.bind(this);
+    this.updateChannel = this.updateChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
@@ -66,8 +65,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleCreateChannelDialogChannelTypeChange = this.handleCreateChannelDialogChannelTypeChange.bind(this);
     this.resetCreateChannelDialogState = this.resetCreateChannelDialogState.bind(this);
-    this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
-    this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.addAttachment = this.addAttachment.bind(this);
     this.removeAttachment = this.removeAttachment.bind(this);
     this.openImageViewer = this.openImageViewer.bind(this);
@@ -88,7 +85,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       CreateChannelDialogVisible: false,
       CreateChannelDialogChannelType: ChannelType.Default,
       CreateChannelDialogRecipientAvatarSrc: '',
-      NavigationDrawerOpen: false,
       ImageViewerOpen: false,
       ImageViewerSrc: '',
       ImageViewerDimensions: {width: 0, height: 0}
@@ -131,7 +127,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       events.on('OnMessageDelete', (channel_uuid: string, message_id: string) => this.onReceivedMessageDelete(channel_uuid, message_id));
     }
     else {
-      Debug.Error('Failed to initialize MessageCanvas', LogContext.Renderer, 'from ChatPage initialization callback');
+      Debug.Error('Failed to initialize MessageCanvas', 'from ChatPage initialization callback');
     }
   }
 
@@ -139,13 +135,19 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     if (channelList != null) {
       this.setState({ChannelList: channelList });
       ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
+      ipcRenderer.on('ChannelNameUpdated', (channelID: string, channelName: string) => {
+        if (channelID != null && channelName != null) this.updateChannel({ channelID, channelName, channelIcon: false });
+      });
+      ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
+        if (channelID != null) this.updateChannel({ channelID, channelIcon: true });
+      });
 
       events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
       events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     }
     else {
-      Debug.Error('Failed to initialize ChannelView', LogContext.Renderer, 'from ChatPage initialization callback');
+      Debug.Error('Failed to initialize ChannelView', 'from ChatPage initialization callback');
     }
   }
 
@@ -166,7 +168,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       canvas.append(message, isUpdate);
     }
     else {
-      Debug.Error('MessageCanvas is null', LogContext.Renderer, 'when appending message from ChatPage');
+      Debug.Error('MessageCanvas is null', 'when appending message from ChatPage');
     }
   }
 
@@ -176,7 +178,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       canvas.appendAll(messages);
     }
     else {
-      Debug.Error('MessageCanvas is null', LogContext.Renderer, 'when appending messages from ChatPage');
+      Debug.Error('MessageCanvas is null', 'when appending messages from ChatPage');
     }
   }
 
@@ -194,18 +196,27 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       this.preloadChannel();
     }
     else {
-      Debug.Error('ChannelView is null', LogContext.Renderer, 'when appending channel from ChatPage');
+      Debug.Error('ChannelView is null', 'when appending channel from ChatPage');
+    }
+  }
+
+  updateChannel(channel: IChannelUpdateProps) {
+    const channelList = this.state.ChannelList;
+    if (channelList != null) {
+      channelList.updateChannel(channel);
+    }
+    else {
+      Debug.Error('ChannelView is null', 'when editing channel from ChatPage');
     }
   }
 
   removeChannel(channel_uuid: string) {
-    Debug.Log('Removing channel...', LogContext.Renderer);
     const channelList = this.state.ChannelList;
     if (channelList != null) {
       channelList.removeChannel(channel_uuid);
     }
     else {
-      Debug.Error('ChannelView is null', LogContext.Renderer, 'when removing channel from ChatPage');
+      Debug.Error('ChannelView is null', 'when removing channel from ChatPage');
     }
   }
 
@@ -298,6 +309,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   closeCreateChannelDialog() {
+    this.resetCreateChannelDialogState();
     this.setState({ CreateChannelDialogVisible: false });
   }
 
@@ -325,29 +337,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.setState({ CreateChannelDialogChannelType: event.target.value });
   }
 
-  toggleNavigationDrawer(open?: boolean) {
-    if (open != null) {
-      this.setState({ NavigationDrawerOpen: open });
-    }
-    else
-    {
-      this.setState((prevState: IChatPageState) => {
-        return {
-          NavigationDrawerOpen: !prevState.NavigationDrawerOpen
-       }
-      });
-    }
-  }
-
-  navigationDrawerItemClicked(event: React.MouseEvent<HTMLDivElement>) {
-    switch (event.currentTarget.id) {
-      case 'chat':
-        new AppNotification({ title: 'Navigation', body: 'Navigating to Chat page', playSound: false, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
-        this.setState({ NavigationDrawerOpen: false });
-        break;
-    }
-  }
-
   addAttachment(attachment: MessageAttachment) {
     this.setState((prevState: IChatPageState) => {
       const newAttachmentList = prevState.AttachmentList;
@@ -367,7 +356,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         return { AttachmentList: prevState.AttachmentList};
       }
 
-      Debug.Warn(`Unable to remove attachment ${id}`, LogContext.Renderer, 'ID not found in attachment list');
+      Debug.Warn(`Unable to remove attachment ${id}`, 'ID not found in attachment list');
 
       return null;
     });
@@ -448,7 +437,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         </Helmet>
         <div className='Chat_Page_Body'>
           <div className='Chat_Page_Body_Left'>
-            <Header caption='Channels' onClick={() => this.toggleNavigationDrawer(true)} icon={<ListIcon />}>
+            <Header caption='Channels' onClick={this.props.onNavigationDrawerOpened} icon={<ListIcon />}>
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
             <ChannelView init={this.initChannelView} />
@@ -463,11 +452,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
           </div>
         </div>
         <ImageViewer src={this.state.ImageViewerSrc} dimensions={this.state.ImageViewerDimensions} open={this.state.ImageViewerOpen} onDismiss={this.closeImageViewer} />
-        <Drawer className='NavigationDrawer' anchor='left' open={this.state.NavigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
-          <List className='NavigationDrawerList'>
-            <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
-          </List>
-        </Drawer>
         <Dialog id='createChannelDialog' open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
           <DialogTitle>Create a Channel</DialogTitle>
           <DialogContent>
@@ -475,7 +459,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
               <MenuItem value={ChannelType.Default}>User</MenuItem>
               <MenuItem value={ChannelType.Group}>Group</MenuItem>
             </FormDropdown>
-            <CreateChannelDialogElements />
+            {CreateChannelDialogElements()}
           </DialogContent>
           <DialogActions>
             <Button id='cancelButton' onClick={this.closeCreateChannelDialog}>Cancel</Button>

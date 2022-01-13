@@ -1,5 +1,5 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
-import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Switch } from '@mui/material';
+import { Avatar, Button, Card, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
 import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
@@ -12,7 +12,7 @@ import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import { SettingsManager } from 'shared/SettingsManager';
 
 interface ISettingsPageProps {
-
+  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
 }
 
 interface ISettingsPageState {
@@ -98,10 +98,16 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
         </Header>
         <div className='Settings_Page_InnerContainer'>
           <SettingsSection title='User'>
-            <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
-              <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
-              <AddIcon fontSize='large' className='Overlay'/>
-            </IconButton>
+            <Card className='Settings_User_Section_Card'>
+              <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
+                <Avatar sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
+                <AddIcon fontSize='large' className='Overlay'/>
+              </IconButton>
+              <Typography variant='h5'>{GLOBALS.userData.username}#{GLOBALS.userData.discriminator}</Typography>
+              <Button>Edit Username</Button>
+              <Button disabled>Change Password</Button>
+              <Button disabled>Logout</Button>
+            </Card>
           </SettingsSection>
           <SettingsSection title='Appearance'>
             <FormGroup>

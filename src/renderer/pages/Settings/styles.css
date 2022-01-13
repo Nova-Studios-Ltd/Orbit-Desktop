@@ -38,3 +38,11 @@
 .OverlayContainer:not(.OverlayContainer:hover) .Overlay {
   color: transparent;
 }
+
+.Settings_User_Section_Card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px !important;
+}

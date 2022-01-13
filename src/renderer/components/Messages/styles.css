@@ -28,6 +28,8 @@
   align-self: center;
   overflow-wrap: anywhere;
   width: 100%;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .Message_Right_Header {

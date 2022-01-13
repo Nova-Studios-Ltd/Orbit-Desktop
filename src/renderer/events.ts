@@ -1,7 +1,7 @@
 import GLOBALS from 'shared/globals';
 import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie, Debug } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { LogContext, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
   SetCookie('userData', JSON.stringify({uuid, token}), 60);
@@ -9,11 +9,11 @@ ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, 
   // Store Pub/Priv key
   ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
     if (result) {
-      Debug.Success('Public key stored successfully', LogContext.Renderer);
+      Debug.Success('Public key stored successfully');
       SetAuth().then(() => ConductLogin());
     }
     else {
-      Debug.Error('Unable to store public key. Aborting login...', LogContext.Renderer, 'when writing public key to file');
+      Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');
     }
   })
 });
@@ -22,15 +22,32 @@ ipcRenderer.on('ChannelCreated', (data: boolean) => {
   if (data)
     new AppNotification({ title: 'Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification({ title: 'Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Not Create', body: 'Task failed successfullyl', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('CREATEGroupChannel', (data: boolean) => {
   if (data)
-    new AppNotification({ title: 'Group Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Group Channel Created', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification({ title: 'Group Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Unable to Create Group Channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 });
+
+ipcRenderer.on('ChannelNameUpdated', (channelID: string) => {
+  if (channelID != null) {
+    new AppNotification({ title: 'Channel Name Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+  }
+  else {
+    new AppNotification({ title: 'Channel Name Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+  }
+});
+
+ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
+  if (channelID != null) {
+    new AppNotification({ title: 'Channel Icon Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+  }
+  else {
+    new AppNotification({ title: 'Channel Icon Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+  }});
 
 ipcRenderer.on('clientFocused', (data: boolean) => {
   GLOBALS.isFocused = true;

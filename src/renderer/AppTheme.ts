@@ -59,7 +59,10 @@ export function AppStyles() {
       '.ChannelView': {
         background: AppTheme().palette.background.default,
       },
-      '.Channel': {
+      '.ChannelInner': {
+        color: AppTheme().palette.text.primary,
+      },
+      '.Chat_Page_Bottom': {
         background: AppTheme().palette.background.paper,
       },
       '.MessageCanvas': {
@@ -67,6 +70,9 @@ export function AppStyles() {
       },
       '.Message': {
         color: AppTheme().palette.text.primary,
+      },
+      '.Message_Right': {
+        background: AppTheme().palette.background.default,
       },
       '.Message_Hover': {
         backgroundColor: AppTheme().palette.action.hover,

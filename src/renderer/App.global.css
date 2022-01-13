@@ -1,5 +1,10 @@
 @import 'pages/Auth/styles.css';
 @import 'pages/Chat/styles.css';
+@import 'pages/Friends/styles.css';
 @import 'pages/Settings/styles.css';
 @import 'components/styles.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
+
+.NavigationDrawer .NavigationDrawerList {
+  width: 15rem;
+}

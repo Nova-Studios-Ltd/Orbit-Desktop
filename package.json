@@ -160,6 +160,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/command-exists": "^1.2.0",
+    "@types/crypto-js": "^4.1.0",
     "@types/jest": "^27.0.3",
     "@types/node": "17.0.5",
     "@types/node-static": "^0.7.7",

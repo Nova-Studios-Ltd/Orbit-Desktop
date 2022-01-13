@@ -18,40 +18,42 @@ class DebugLogger {
   }
 
   appendToLog(message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) {
-    let m = message;
-    let ct = contextType
-    if (contextType == null) ct = LogContext.Default;
-    if (typeof(m) != 'string') {
+    let _message = message;
+    let _contextType = contextType;
+    let _logType = logType;
+    if (contextType == null) _contextType = LogContext.Default;
+    if (typeof(_message) != 'string') {
       try {
-        m = JSON.stringify(m)
+        _message = JSON.stringify(_message)
       }
       catch {
-        m = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
+        _message = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
+        _logType = LogType.Error;
       }
     }
-    let finalMessage = `[${ct}] ${logType} => ${m}`;
+    let finalMessage = `[${_contextType}] ${_logType} => ${_message}`;
     if (context != null && context?.length > 0) finalMessage = finalMessage.concat(' ', `(${context})`);
 
     finalMessage = `${new Date().toISOString()} ${finalMessage}`
 
     this.logBuffer.push(finalMessage);
-    this.events.emit('logEntryAdded', finalMessage, logType);
+    this.events.emit('logEntryAdded', finalMessage, _logType);
   }
 
-  Error(message: (string | unknown), type?: LogContext, context?: string) {
-    this.appendToLog(message, LogType.Error, type, context);
+  Error(message: (string | unknown), context?: string) {
+    this.appendToLog(message, LogType.Error, LogContext.Main, context);
   }
 
-  Warn(message: (string | unknown), type?: LogContext, context?: string) {
-    this.appendToLog(message, LogType.Warn, type, context);
+  Warn(message: (string | unknown), context?: string) {
+    this.appendToLog(message, LogType.Warn, LogContext.Main, context);
   }
 
-  Success(message: (string | unknown), type?: LogContext, context?: string) {
-    this.appendToLog(message, LogType.Success, type, context);
+  Success(message: (string | unknown), context?: string) {
+    this.appendToLog(message, LogType.Success, LogContext.Main, context);
   }
 
-  Log(message: (string | unknown), type?: LogContext, context?: string) {
-    this.appendToLog(message, LogType.Info, type, context);
+  Log(message: (string | unknown), context?: string) {
+    this.appendToLog(message, LogType.Info, LogContext.Main, context);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,7 +63,7 @@ class DebugLogger {
 }
 
 export class DebugRendererHandler {
-  ipcRendererObject: IpcRenderer;
+  private ipcRendererObject: IpcRenderer;
 
   constructor(ipcRenderer: IpcRenderer) {
     this.ipcRendererObject = ipcRenderer;
@@ -73,24 +75,24 @@ export class DebugRendererHandler {
     this.LogDump = this.LogDump.bind(this);
   }
 
-  private sendLogMessageToMain(message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) {
-    this.ipcRendererObject.send('logEntryFromRenderer', message, logType, contextType, context);
+  private sendLogMessageToMain(message: (string | unknown), logType: LogType, context?: string) {
+    this.ipcRendererObject.send('logEntryFromRenderer', message, logType, context);
   }
 
-  Error(message: (string | unknown), type?: LogContext, context?: string) {
-    this.sendLogMessageToMain(message, LogType.Error, type, context);
+  Error(message: (string | unknown), context?: string) {
+    this.sendLogMessageToMain(message, LogType.Error, context);
   }
 
-  Warn(message: (string | unknown), type?: LogContext, context?: string) {
-    this.sendLogMessageToMain(message, LogType.Warn, type, context);
+  Warn(message: (string | unknown), context?: string) {
+    this.sendLogMessageToMain(message, LogType.Warn, context);
   }
 
-  Success(message: (string | unknown), type?: LogContext, context?: string) {
-    this.sendLogMessageToMain(message, LogType.Success, type, context);
+  Success(message: (string | unknown), context?: string) {
+    this.sendLogMessageToMain(message, LogType.Success, context);
   }
 
-  Log(message: (string | unknown), type?: LogContext, context?: string) {
-    this.sendLogMessageToMain(message, LogType.Info, type, context);
+  Log(message: (string | unknown), context?: string) {
+    this.sendLogMessageToMain(message, LogType.Info, context);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

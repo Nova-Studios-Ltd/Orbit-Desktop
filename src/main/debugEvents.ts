@@ -20,6 +20,6 @@ DebugMain.events.on('logEntryAdded', (message: (string | unknown), logType: LogT
   }
 });
 
-ipcMain.on('logEntryFromRenderer', (_event: IpcMainEvent, message: (string | unknown), logType: LogType, contextType?: LogContext, context?: string) => {
-  DebugMain.appendToLog(message, logType, contextType, context);
+ipcMain.on('logEntryFromRenderer', (_event: IpcMainEvent, message: (string | unknown), logType: LogType, context?: string) => {
+  DebugMain.appendToLog(message, logType, LogContext.Renderer, context);
 });

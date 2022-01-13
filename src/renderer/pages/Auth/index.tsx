@@ -8,6 +8,7 @@ import GLOBALS from 'shared/globals';
 interface IAuthPageProps {
   login?: boolean,
   register?: boolean,
+  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
 }
 
 export default class AuthPage extends React.Component<IAuthPageProps> {
