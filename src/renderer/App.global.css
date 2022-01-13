@@ -8,3 +8,10 @@
 .NavigationDrawer .NavigationDrawerList {
   width: 15rem;
 }
+
+.NavigationDrawerBranding {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
