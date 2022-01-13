@@ -12,7 +12,7 @@ import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { ClassNameMap, Drawer, List, ThemeProvider, Typography } from '@mui/material';
-import { Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
@@ -60,6 +60,9 @@ class App extends React.Component {
         break;
       case 'reload':
         window.location.reload();
+        break;
+      case 'debug':
+        ipcRenderer.send('openDevTools');
         break;
     }
     this.setState({ navigationDrawerOpen: false });
@@ -133,6 +136,7 @@ class App extends React.Component {
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='settings' text='Settings' icon={<SettingsIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='reload' text='Reload App' icon={<RefreshIcon />} onClick={this.navigationDrawerItemClicked} />
+            <HybridListItem id='debug' text='DevTools' icon={<BugIcon />} onClick={this.navigationDrawerItemClicked} />
           </List>
         </Drawer>
         <Router history={history}>

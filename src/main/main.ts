@@ -3,7 +3,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, Menu, shell, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
 //import { autoUpdater } from 'electron-updater';
 import { sync as checkCommand } from 'command-exists';
 import http, { IncomingMessage, ServerResponse } from 'http';
@@ -108,7 +108,6 @@ const createWindow = async () => {
   });
 
   mainWindow.removeMenu();
-  mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -164,6 +163,10 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+
+ipcMain.on('openDevTools', () => {
+  mainWindow?.webContents.openDevTools();
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
