@@ -22,31 +22,31 @@ ipcRenderer.on('ChannelCreated', (data: boolean) => {
   if (data)
     new AppNotification({ title: 'Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification({ title: 'Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Not Create', body: 'Task failed successfullyl', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('CREATEGroupChannel', (data: boolean) => {
   if (data)
-    new AppNotification({ title: 'Group Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Group Channel Created', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   else
-    new AppNotification({ title: 'Group Channel Not Create', body: 'Failed to create channel', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Unable to Create Group Channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 });
 
 ipcRenderer.on('ChannelNameUpdated', (channelID: string) => {
   if (channelID != null) {
-    new AppNotification({ title: 'Channel Name Updated', body: 'Channel name changed successfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Name Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   }
   else {
-    new AppNotification({ title: 'Channel Name Update Failed', body: 'Server reported that the channel name did not update successfully', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Name Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
   }
 });
 
 ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
   if (channelID != null) {
-    new AppNotification({ title: 'Channel Icon Updated', body: 'Channel icon changed successfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Icon Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   }
   else {
-    new AppNotification({ title: 'Channel Icon Update Failed', body: 'Server reported that the channel icon could not be updated', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Channel Icon Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
   }});
 
 ipcRenderer.on('clientFocused', (data: boolean) => {

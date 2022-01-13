@@ -148,28 +148,30 @@ ipcMain.on('GETMessages', async (event, channel_uuid: string, userData: UserData
     for (let m = 0; m < rawMessages.length; m++) {
       const message = rawMessages[m];
       const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid]);
-      if (message.content.length != 0) {
-        const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
-        message.content = decryptedMessage;
-      }
-      for (let a = 0; a < message.attachments.length; a++) {
-        const attachment = message.attachments[a];
-        const content = await GETWithAuthentication(attachment.contentUrl);
-        const cipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'base64'), Buffer.from(message.iv, 'base64'));
-        const d = new PassThrough();
-        d.end(content.payload);
-        const buffer = await new Promise<Buffer>((resolve) => {
-          const out = new PassThrough();
-          const buffers = [] as Uint8Array[];
-          out.on('data', (chunk) => buffers.push(chunk));
-          out.on('end', () => {
-            resolve(Buffer.concat(buffers));
+      if (key.length > 0) {
+        if (message.content.length > 0) {
+          const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
+          message.content = decryptedMessage;
+        }
+        for (let a = 0; a < message.attachments.length; a++) {
+          const attachment = message.attachments[a];
+          const content = await GETWithAuthentication(attachment.contentUrl);
+          const cipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'base64'), Buffer.from(message.iv, 'base64'));
+          const d = new PassThrough();
+          d.end(content.payload);
+          const buffer = await new Promise<Buffer>((resolve) => {
+            const out = new PassThrough();
+            const buffers = [] as Uint8Array[];
+            out.on('data', (chunk) => buffers.push(chunk));
+            out.on('end', () => {
+              resolve(Buffer.concat(buffers));
+            });
+            d.pipe(cipher).pipe(out);
           });
-          d.pipe(cipher).pipe(out);
-        });
-        message.attachments[a].content = Uint8Array.from(buffer);
+          message.attachments[a].content = Uint8Array.from(buffer);
+        }
+        decryptedMessages.push(message);
       }
-      decryptedMessages.push(message);
     }
     event.sender.send('GotMessages', decryptedMessages, channel_uuid);
   }

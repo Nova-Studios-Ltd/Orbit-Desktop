@@ -32,12 +32,6 @@ const spotifyInstalled = checkCommand('spotify');
   }
 }*/
 
-DebugMain.Log('Just A Message');
-DebugMain.Success('Just A Success');
-DebugMain.Warn('Just A Warning');
-DebugMain.Error('Just A Error');
-
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();

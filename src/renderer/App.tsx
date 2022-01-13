@@ -4,7 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { events, history, Navigate, SetAuth } from 'shared/helpers';
+import { events, history, ipcRenderer, Navigate, SetAuth } from 'shared/helpers';
 import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
