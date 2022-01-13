@@ -1,5 +1,5 @@
 .Settings_Page_Container {
-
+  overflow-y: auto;
 }
 
 .Settings_Page_InnerContainer {
