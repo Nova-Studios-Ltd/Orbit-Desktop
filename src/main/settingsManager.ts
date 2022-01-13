@@ -72,7 +72,7 @@ export class SettingsManager {
     ipcMain.on('SetLoggedOUt', (_event, loggedOut: boolean) => { this.LoggedOut = loggedOut; })
 
     // Save
-    ipcMain.on('Save', () => this.Save());
+    ipcMain.handle('Save', () => this.Save());
   }
 
   // Settings
@@ -154,5 +154,3 @@ export class SettingsManager {
     }
   }
 }
-
-export const Manager = new SettingsManager();
