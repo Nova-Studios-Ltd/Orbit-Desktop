@@ -7,7 +7,7 @@ import sizeOf from 'image-size';
 import { PassThrough } from 'stream';
 import { createDecipheriv } from 'crypto';
 import { readFileSync } from 'fs';
-import { DebugMain } from '../shared/DebugLogger';
+import { Debug } from '../shared/DebugLogger';
 import { ContentType } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from './NCAPI';
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from './encryptionUtils';

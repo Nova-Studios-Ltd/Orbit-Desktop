@@ -1,5 +1,5 @@
 import { publicEncrypt, privateDecrypt, generateKeyPairSync, createCipheriv, randomBytes, createDecipheriv, createHash } from 'crypto';
-import { DebugMain } from '../shared/DebugLogger';
+import { Debug } from '../shared/DebugLogger';
 import { AESMemoryEncryptData, RSAMemoryKeyPair } from './encryptionClasses';
 
 export function GenerateRSAKeyPair(): RSAMemoryKeyPair {
@@ -47,7 +47,7 @@ export function DecryptUsingPrivKey(priv: string, data: string) : string {
     const dataBuffer = Buffer.from(data, 'base64');
     return privateDecrypt(priv, dataBuffer).toString('utf-8');
   }
-  DebugMain.Error('Failed to decrypt message: buffer was empty');
+  Debug.Error('Failed to decrypt message: buffer was empty');
   return '';
 }
 
@@ -56,7 +56,7 @@ export async function DecryptUsingPrivKeyAsync(priv: string, data: string) : Pro
     const dataBuffer = Buffer.from(data, 'base64');
     return privateDecrypt(priv, dataBuffer).toString('utf-8');
   }
-  DebugMain.Error('Failed to decrypt message: buffer was empty', 'async');
+  Debug.Error('Failed to decrypt message: buffer was empty', 'async');
   return '';
 }
 

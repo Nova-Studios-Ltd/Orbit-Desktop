@@ -17,7 +17,7 @@ import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/e
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
-import AppIcon from '../../assets/icon.png';
+import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
   theme: Theme,
@@ -133,10 +133,9 @@ class App extends React.Component {
         <Drawer className='NavigationDrawer' anchor='left' open={this.state.navigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
           <List className='NavigationDrawerList'>
             <div className='NavigationDrawerBranding'>
-              <img src={AppIcon} width='64' height='64' alt='App Logo'/>
+              <img src={AppIcon} width='64' height='64' style={{ padding: 1, margin: 10 }} alt='App Logo'/>
               <Typography sx={{ padding: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
             </div>
-            <Divider />
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='settings' text='Settings' icon={<SettingsIcon />} onClick={this.navigationDrawerItemClicked} />

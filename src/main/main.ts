@@ -10,7 +10,7 @@ import http, { IncomingMessage, ServerResponse } from 'http';
 import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
-import { DebugMain } from '../shared/DebugLogger';
+import { Debug } from '../shared/DebugLogger';
 import { isDevelopment, resolveHtmlPath } from './util';
 import {Manager} from "./settingsManager";
 
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 
-  DebugMain.Log(path.resolve(__dirname, '../renderer/'));
+  Debug.Log(path.resolve(__dirname, '../renderer/'));
   const server = new Server(path.resolve(__dirname, '../renderer/'));
 
   http.createServer((request: IncomingMessage, response: ServerResponse) => {
@@ -46,10 +46,10 @@ if (process.env.NODE_ENV === 'production') {
       // Handles react router weridness
       // Serves 'index.html' for any request of '/login'or '/register' etc.
       // If the request url includes a filter it serves that file directly
-      DebugMain.Log(`Before: ${request.url}`);
+      Debug.Log(`Before: ${request.url}`);
       if (!request.url?.includes('styles.css') && !request.url?.includes('style.css') && !request.url?.includes('renderer.js'))
         request.url = resolveHtmlPath('index.html');
-      DebugMain.Log(`After: ${request.url}`);
+      Debug.Log(`After: ${request.url}`);
       server.serve(request, response);
     }).resume();
   }).listen(process.env.port || 1212);
@@ -69,7 +69,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((e: Error) => DebugMain.Error(e.message, 'when initializing extensions'));
+    .catch((e: Error) => Debug.Error(e.message, 'when initializing extensions'));
 };
 
 function getSpotifyTrackId(url: string) {
@@ -113,7 +113,7 @@ const createWindow = async () => {
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
-      DebugMain.Error('mainWindow is not defined', '(when creating the window)');
+      Debug.Error('mainWindow is not defined', '(when creating the window)');
       throw new Error('"mainWindow" is not defined');
     }
     if (process.env.START_MINIMIZED) {
@@ -122,7 +122,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-    DebugMain.Success('Main Window Loaded');
+    Debug.Success('Main Window Loaded');
   });
 
   mainWindow.on('closed', () => {
@@ -143,7 +143,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    DebugMain.Log(`Opening file ${url} in default browser`);
+    Debug.Log(`Opening file ${url} in default browser`);
     if (url.includes('track') && spotifyInstalled) {
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
@@ -207,11 +207,11 @@ app.whenReady().then(() => {
     tray.setContextMenu(contextMenu);
   }
   catch {
-    DebugMain.Error('Unable to load tray icon');
+    Debug.Error('Unable to load tray icon');
   }
 
   createWindow().then(() => {
-    DebugMain.Success('App Loaded');
+    Debug.Success('App Loaded');
   });
 
   app.on('activate', () => {
@@ -220,4 +220,4 @@ app.whenReady().then(() => {
     if (mainWindow === null) createWindow().catch(console.log);
   });
 
-}).catch((e) => DebugMain.Error(e.message, 'on app initialization'));
+}).catch((e) => Debug.Error(e.message, 'on app initialization'));

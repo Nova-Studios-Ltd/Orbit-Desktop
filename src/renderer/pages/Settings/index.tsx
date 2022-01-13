@@ -54,7 +54,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
       darkThemeEnabled: Boolean(SettingsManager.Settings.Theme),
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
-      editUsernameDialogField: ''
+      editUsernameDialogField: GLOBALS.userData.username
     }
   }
 
@@ -87,7 +87,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   openChangeUsernameDialog() {
-    this.setState({ editUsernameDialogOpen: true });
+    this.setState({ editUsernameDialogOpen: true, editUsernameDialogField: GLOBALS.userData.username });
   }
 
   closeChangeUsernameDialog() {

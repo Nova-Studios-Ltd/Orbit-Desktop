@@ -101,4 +101,4 @@ export class DebugRendererHandler {
   }
 }
 
-export const DebugMain = new DebugLogger();
+export const Debug = new DebugLogger();
