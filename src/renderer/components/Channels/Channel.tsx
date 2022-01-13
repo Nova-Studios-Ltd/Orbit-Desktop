@@ -64,6 +64,7 @@ export default class Channel extends React.Component<IChannelProps> {
     this.channelEditDialogChanged = this.channelEditDialogChanged.bind(this);
     this.submitChannelEdits = this.submitChannelEdits.bind(this);
     this.chooseChannelIcon = this.chooseChannelIcon.bind(this);
+    this.removeChannelIcon = this.removeChannelIcon.bind(this);
     this.isOwner = this.isOwner.bind(this);
 
     this.state = {
@@ -105,6 +106,7 @@ export default class Channel extends React.Component<IChannelProps> {
         this.setState({ editDialogOpen: true });
         break;
       case 'hide':
+        ipcRenderer.send('ARCHIVEChannel', this.channelID);
         break;
       case 'delete':
         this.setState({ confirmChannelDeletionDialogOpen: true });
@@ -177,6 +179,10 @@ export default class Channel extends React.Component<IChannelProps> {
     this.closeChannelDeletionDialog();
   }
 
+  removeChannelIcon() {
+    ipcRenderer.send('REMOVEChannelIcon', this.channelID);
+  }
+
   render() {
     const LeaveChannelPromptTextGroup =
       'You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!';
@@ -237,7 +243,7 @@ export default class Channel extends React.Component<IChannelProps> {
           <MenuItem id='edit' onClick={this.menuItemClicked}>
             Edit
           </MenuItem>
-          <MenuItem id='hide' onClick={this.menuItemClicked} disabled>
+          <MenuItem id='hide' onClick={this.menuItemClicked}>
             Hide
           </MenuItem>
           <MenuItem id='delete' onClick={this.menuItemClicked}>
@@ -246,8 +252,8 @@ export default class Channel extends React.Component<IChannelProps> {
         </Menu>
         <Dialog open={this.state.editDialogOpen}>
           <DialogTitle>Edit Channel &quot;{this.channelName}&quot;</DialogTitle>
-          <DialogContent style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <div>
+          <DialogContent style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <IconButton className='OverlayContainer' disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
                 <Avatar
                   sx={{ width: 64, height: 64 }}
@@ -255,8 +261,9 @@ export default class Channel extends React.Component<IChannelProps> {
                 />
                 <AddIcon fontSize='large' className='Overlay' />
               </IconButton>
+              {this.canEdit() ? <Button onClick={this.removeChannelIcon}>Remove Icon</Button> : undefined}
             </div>
-            <div>
+            <div style={{ marginLeft: 10 }}>
               <FormTextField disabled={!this.canEdit()} id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
               <FormTextField disabled id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
               <FormTextField disabled label='Channel UUID' value={this.channelID}/>

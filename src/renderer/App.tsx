@@ -136,7 +136,7 @@ class App extends React.Component {
       <ThemeProvider theme={this.state.theme}>
         <GlobalStyles styles={this.state.styles} />
         <ToastContainer
-          position="top-right"
+          position="bottom-right"
           autoClose={5000}
           limit={3}
           hideProgressBar={false}
@@ -156,13 +156,13 @@ class App extends React.Component {
             </div>
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />
-            <HybridListItem id='settings' text='Settings' icon={<SettingsIcon />} onClick={this.navigationDrawerItemClicked} />
             <Divider />
             <HybridListItem id='reload' text='Reload App' icon={<RefreshIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='debug' text='DevTools' icon={<BugIcon />} onClick={this.navigationDrawerItemClicked} />
           </List>
           <List className='NavigationDrawerListBottom'>
             <HybridListItem id='user' text={`${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}`} icon={<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />} onClick={this.navigationDrawerItemClicked} onContextMenu={this.navigationDrawerItemClicked} />
+            <HybridListItem id='settings' text='Settings' icon={<SettingsIcon />} onClick={this.navigationDrawerItemClicked} />
           </List>
         </Drawer>
         <Router history={history}>

@@ -46,7 +46,7 @@ ipcRenderer.on('ChannelNameUpdated', (channelID: string) => {
     new AppNotification({ title: 'Channel Name Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   }
   else {
-    new AppNotification({ title: 'Channel Name Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    new AppNotification({ title: 'Unable to Update Channel Name', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
   }
 });
 
@@ -55,8 +55,16 @@ ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
     new AppNotification({ title: 'Channel Icon Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
   }
   else {
-    new AppNotification({ title: 'Channel Icon Update Failed', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
-  }});
+    new AppNotification({ title: 'Unable to Update Channel Icon', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+}});
+
+ipcRenderer.on('ChannelArchived', (channelID: string) => {
+  if (channelID != null) {
+    new AppNotification({ title: 'Channel Archived', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+  }
+  else {
+    new AppNotification({ title: 'Unable to Archive Channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+}});
 
 ipcRenderer.on('clientFocused', (data: boolean) => {
   GLOBALS.isFocused = true;

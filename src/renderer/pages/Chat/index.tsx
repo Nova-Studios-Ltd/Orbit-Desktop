@@ -136,6 +136,9 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
         if (channelID != null) this.updateChannel({ channelID, channelIcon: true });
       });
+      ipcRenderer.on('ChannelArchived', (channelID: string) => {
+        if (channelID != null) this.removeChannel(channelID);
+      });
 
       events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
