@@ -7,6 +7,13 @@
   height: 2rem;
 }
 
+.Header_Caption {
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .Header_Icon {
   padding: 8px;
 }

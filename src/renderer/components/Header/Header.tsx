@@ -30,7 +30,7 @@ export default class Header extends React.Component<IHeaderProps> {
     return(
       <div className='Header'>
           <IconElement />
-          <Typography variant='h5'>{this.props.caption}</Typography>
+          <Typography variant='h5' className='Header_Caption'>{this.props.caption}</Typography>
           <div className='Header_Misc'>
             {this.props.children}
           </div>
