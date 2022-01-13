@@ -3,7 +3,7 @@ import { INotificationProps } from 'renderer/components/Notification/Notificatio
 import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from 'fs';
 import type { AuthResponse } from 'types/NCAPIResponseMutations';
 import Credentials from '../structs/Credentials';
-import { DebugMain } from '../shared/DebugLogger';
+import { Debug } from '../shared/DebugLogger';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import { PostWithoutAuthentication } from './NCAPI';
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from './encryptionUtils';
@@ -17,7 +17,7 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
       const login = resp.payload;
       const decryptedKey = DecryptUsingAES(creds.password, login.key);
       writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
-      DebugMain.Success(`User ${login.uuid} Logged In Successfully`);
+      Debug.Success(`User ${login.uuid} Logged In Successfully`);
       return FormAuthStatusType.success;
     }
     return FormAuthStatusType.serverError;
@@ -30,7 +30,7 @@ ipcMain.on('logout', () => {
   if (existsSync('keystore')) unlinkSync('keystore');
   if (existsSync('rsa')) unlinkSync('rsa');
   if (existsSync('rsa.pub')) unlinkSync('rsa.pub');
-  DebugMain.Success("Logged out successfully");
+  Debug.Success("Logged out successfully");
 });
 
 ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean> => {
@@ -68,7 +68,7 @@ ipcMain.on('toast', (_, notification: INotificationProps) => {
 ipcMain.on('pickUploadFiles', (event) => {
   dialog.showOpenDialog({ properties: ['openFile', 'multiSelections', 'showHiddenFiles'] }).then((r) => {
     if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);
-  }).catch((e) => DebugMain.Error(e.message, 'when trying to retrieve paths from file picker for file uploading'));
+  }).catch((e) => Debug.Error(e.message, 'when trying to retrieve paths from file picker for file uploading'));
 });
 
 ipcMain.handle('OpenFile', async () => {
@@ -85,15 +85,15 @@ ipcMain.handle('OpenFile', async () => {
           const contents = readFileSync(path);
           return { path, contents };
         }
-        DebugMain.Error(`Requested file ${path} is too big (${size}) to load into buffer, but returning path anyways`, 'when picking file');
+        Debug.Error(`Requested file ${path} is too big (${size}) to load into buffer, but returning path anyways`, 'when picking file');
         return { path };
       }
       catch {
-        DebugMain.Error(`Error reading file ${path} into buffer, but returning path anyways`, 'when picking file');
+        Debug.Error(`Error reading file ${path} into buffer, but returning path anyways`, 'when picking file');
         return { path };
       }
     }
-    DebugMain.Error(`Requested file ${path} does not exist`, 'when picking file');
+    Debug.Error(`Requested file ${path} does not exist`, 'when picking file');
   }
   return undefined;
 })
@@ -133,7 +133,7 @@ ipcMain.handle('GetPrivkey', async (_event) : Promise<string> => {
 
 ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
   try {
-    DebugMain.Log('Writing public key to file');
+    Debug.Log('Writing public key to file');
     writeFileSync("rsa.pub", key);
     return true;
   }
