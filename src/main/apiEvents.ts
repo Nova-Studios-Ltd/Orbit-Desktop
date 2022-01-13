@@ -32,8 +32,8 @@ ipcMain.handle('GETUserUUID', async (_event, username: string, discriminator: st
 });
 
 ipcMain.on('UPDATEUsername', async (event, user_uuid: string, newUsername: string) => {
-  const resp = await PatchWithAuthentication(`/User/${user_uuid}/Username`, ContentType.TEXT, newUsername);
-  if (resp.status == 200) event.sender.send('UsernameUpdated', true);
+  const resp = await PatchWithAuthentication(`/User/${user_uuid}/Username`, ContentType.JSON, newUsername);
+  if (resp.status == 200) event.sender.send('UsernameUpdated', true, newUsername);
   else event.sender.send('UsernameUpdated', false);
 });
 

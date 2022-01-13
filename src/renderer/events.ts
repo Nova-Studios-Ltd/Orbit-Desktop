@@ -18,6 +18,15 @@ ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, 
   })
 });
 
+ipcRenderer.on('UsernameUpdated', (result: boolean) => {
+  if (result) {
+    new AppNotification({ title: 'Username Updated', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+  }
+  else {
+    new AppNotification({ title: 'Unable to Change Username', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+  }
+});
+
 ipcRenderer.on('ChannelCreated', (data: boolean) => {
   if (data)
     new AppNotification({ title: 'Channel Created', body: 'Channel has been created succesfully', playSound: false, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();

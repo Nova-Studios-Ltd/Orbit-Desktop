@@ -6,6 +6,7 @@ import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import FormTextField from 'renderer/components/Form/FormTextField';
+import { IOpenFileDialogResults } from 'types/types';
 
 export interface IChannelProps {
   table_Id: string,
@@ -114,7 +115,7 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   chooseChannelIcon() {
-    ipcRenderer.invoke('OpenFile').then((data: { path: string, contents?: Buffer }) => {
+    ipcRenderer.invoke('OpenFile').then((data: IOpenFileDialogResults) => {
       if (data != undefined) {
         this.setState(() => {
           let preview = null;

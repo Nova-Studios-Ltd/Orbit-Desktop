@@ -25,6 +25,11 @@ export interface IMessageDeleteRequestArgs {
   messageID: string
 }
 
+export interface IOpenFileDialogResults {
+  path: string,
+  contents?: Buffer
+}
+
 export interface IElectronRendererWindow {
   ipcRenderer: {
     send: (channel: string, ...data: any[]) => void,
