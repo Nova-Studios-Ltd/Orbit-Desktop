@@ -258,6 +258,7 @@ export default class Channel extends React.Component<IChannelProps> {
             <div>
               <FormTextField disabled={!this.canEdit()} id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
               <FormTextField disabled id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
+              <FormTextField disabled label='Channel UUID' value={this.channelID}/>
             </div>
             </DialogContent>
           <DialogActions>
