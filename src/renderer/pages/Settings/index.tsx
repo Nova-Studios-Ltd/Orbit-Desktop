@@ -12,7 +12,7 @@ import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import { SettingsManager } from 'shared/SettingsManager';
 
 interface ISettingsPageProps {
-
+  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
 }
 
 interface ISettingsPageState {

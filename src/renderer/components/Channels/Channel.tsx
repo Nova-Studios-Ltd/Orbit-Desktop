@@ -191,17 +191,17 @@ export default class Channel extends React.Component<IChannelProps> {
     const DialogActionButtons = () => {
       if (this.canEdit()) return (
         <div>
-          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
+          <Button id='cancelButton' onClick={this.closeChannelEditDialog}>
             Cancel
           </Button>
-          <Button id="editButton" onClick={this.submitChannelEdits}>
+          <Button id='editButton' onClick={this.submitChannelEdits}>
             Save
           </Button>
         </div>
       )
       return (
         <div>
-          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
+          <Button id='cancelButton' onClick={this.closeChannelEditDialog}>
             Close
           </Button>
         </div>
@@ -209,37 +209,37 @@ export default class Channel extends React.Component<IChannelProps> {
     }
 
     return (
-      <div className="Channel">
-        <Card className="ChannelInner">
+      <div className='Channel'>
           <ButtonBase
-            className="ChannelInner"
+            className='ChannelInnerButtonBase'
             onClick={this.channelClicked}
             onContextMenu={this.channelRightClicked}
           >
-            <div className="ChannelLeft">
-              <Avatar className="ChannelIcon" src={this.channelIcon} />
-            </div>
-            <div className="ChannelRight">
-              <Typography className="ChannelCaption" variant="h6">
-                {this.channelName}
-              </Typography>
+            <div className='ChannelInner'>
+              <div className='ChannelLeft'>
+                <Avatar className='ChannelIcon' src={this.channelIcon} />
+              </div>
+              <div className='ChannelRight'>
+                <Typography className='ChannelCaption' variant='h6'>
+                  {this.channelName}
+                </Typography>
+              </div>
             </div>
           </ButtonBase>
-        </Card>
         <Menu
-          id="channel-dropdown-menu"
+          id='channel-dropdown-menu'
           anchorReference='anchorPosition'
           anchorPosition={{ top: this.state.contextMenuAnchorPos.y, left: this.state.contextMenuAnchorPos.x }}
           open={this.state.contextMenuOpen}
           onClose={this.closeContextMenu}
         >
-          <MenuItem id="edit" onClick={this.menuItemClicked}>
+          <MenuItem id='edit' onClick={this.menuItemClicked}>
             Edit
           </MenuItem>
-          <MenuItem id="hide" onClick={this.menuItemClicked} disabled>
+          <MenuItem id='hide' onClick={this.menuItemClicked} disabled>
             Hide
           </MenuItem>
-          <MenuItem id="delete" onClick={this.menuItemClicked}>
+          <MenuItem id='delete' onClick={this.menuItemClicked}>
             {LeaveChannelButtonText}
           </MenuItem>
         </Menu>
@@ -247,12 +247,12 @@ export default class Channel extends React.Component<IChannelProps> {
           <DialogTitle>Edit Channel &quot;{this.channelName}&quot;</DialogTitle>
           <DialogContent style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div>
-              <IconButton className="OverlayContainer" disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
+              <IconButton className='OverlayContainer' disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
                 <Avatar
                   sx={{ width: 64, height: 64 }}
                   src={this.state.editDialogChannelIconPreview}
                 />
-                <AddIcon fontSize="large" className="Overlay" />
+                <AddIcon fontSize='large' className='Overlay' />
               </IconButton>
             </div>
             <div>
@@ -268,7 +268,7 @@ export default class Channel extends React.Component<IChannelProps> {
           title={`Confirm ${LeaveChannelButtonText} Channel`}
           body={LeaveChannelPromptText}
           confirmButtonText={LeaveChannelButtonText}
-          denyButtonText="Cancel"
+          denyButtonText='Cancel'
           onConfirm={this.removeUserFromThisChannel}
           onDeny={this.closeChannelDeletionDialog}
           show={this.state.confirmChannelDeletionDialogOpen}
