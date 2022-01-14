@@ -15,6 +15,8 @@ export interface IChannelProps {
   channelName: string,
   channelIcon?: string,
   members?: string[],
+  isSelectedChannel: boolean,
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>, channelID: string) => void
 }
 
 export interface IChannelUpdateProps {
@@ -94,7 +96,8 @@ export default class Channel extends React.Component<IChannelProps> {
     return this.isOwner() && this.props.isGroup;
   }
 
-  async channelClicked() {
+  async channelClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    if (this.props.onClick != null) this.props.onClick(event, this.channelID);
     GLOBALS.currentChannel = this.channelID;
     setDefaultChannel(this.channelID);
     ipcRenderer.send('GETMessages', GLOBALS.currentChannel, GLOBALS.userData);
@@ -195,6 +198,9 @@ export default class Channel extends React.Component<IChannelProps> {
         ? LeaveChannelPromptTextGroup
         : LeaveChannelPromptTextUser;
 
+    let channelClassNames = 'Channel';
+    if (this.props.isSelectedChannel) channelClassNames = channelClassNames.concat(' ', 'SelectedChannel')
+
     const DialogActionButtons = () => {
       if (this.canEdit()) return (
         <div>
@@ -216,7 +222,7 @@ export default class Channel extends React.Component<IChannelProps> {
     }
 
     return (
-      <div className='Channel'>
+      <div className={channelClassNames}>
           <ButtonBase
             className='ChannelInnerButtonBase'
             onClick={this.channelClicked}

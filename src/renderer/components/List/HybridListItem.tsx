@@ -1,11 +1,23 @@
 import React from 'react';
-import { ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+import { Divider, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 
-interface IHybridListItemProps {
+export interface IHybridListItemProps {
   className?: string,
-  id: string,
-  text: string,
+  id?: string,
+  text?: string,
   icon?: JSX.Element,
+  selected?: boolean,
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
+  onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
+}
+
+export interface IHybridListItemSkeleton {
+  className?: string,
+  id?: string,
+  text?: string,
+  icon?: JSX.Element,
+  selectable?: boolean,
+  isDivider?: boolean,
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
   onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
@@ -14,7 +26,7 @@ export default class HybridListItem extends React.Component<IHybridListItemProps
   className?: string;
   id: string;
   text: string;
-  icon: JSX.Element;
+  icon: JSX.Element | undefined;
 
   constructor(props: IHybridListItemProps) {
     super(props);
@@ -26,7 +38,7 @@ export default class HybridListItem extends React.Component<IHybridListItemProps
 
   render() {
     return(
-      <ListItemButton id={this.id} className={this.className} onClick={this.props.onClick} onContextMenu={this.props.onContextMenu}>
+      <ListItemButton id={this.id} className={this.className} selected={this.props.selected} onClick={this.props.onClick} onContextMenu={this.props.onContextMenu}>
         <ListItemIcon>
           {this.icon}
         </ListItemIcon>
