@@ -1,4 +1,3 @@
-import React from 'react';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { toast } from 'react-toastify';
 import { ipcRenderer } from 'shared/helpers';
@@ -11,7 +10,8 @@ export interface INotificationProps {
   playSound?: boolean,
   notificationAssetPath?: string,
   notificationType?: NotificationStatusType,
-  notificationAudience?: NotificationAudienceType
+  notificationAudience?: NotificationAudienceType,
+  onClick?: () => void
 }
 
 export default class AppNotification {
@@ -21,6 +21,7 @@ export default class AppNotification {
   readonly notificationAssetPath?: string;
   readonly notificationType?: NotificationStatusType;
   readonly notificationAudience?: NotificationAudienceType;
+  readonly onClick: () => void;
 
   constructor(props: INotificationProps) {
     this.title = props.title || '';
@@ -29,13 +30,14 @@ export default class AppNotification {
     this.notificationAssetPath = props.notificationAssetPath || SettingsManager.Settings.NotificationAssetPath || '';
     this.notificationType = props.notificationType || NotificationStatusType.default;
     this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
+    this.onClick = props.onClick || (() => { });
   }
 
   private sendAppToast() {
     let toastElement = null;
     if (this.title != null && this.title.length > 0) {
       toastElement = (
-        <div className='Notification_Container'>
+        <div className='Notification_Container' onClick={this.onClick}>
           <Typography className='Notification_Title' variant='subtitle1'>{this.title}</Typography>
           <Typography className='Notification_Body' variant='caption'>{this.body}</Typography>
         </div>

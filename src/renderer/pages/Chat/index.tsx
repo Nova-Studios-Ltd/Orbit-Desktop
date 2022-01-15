@@ -2,13 +2,12 @@ import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Debug, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials, Manager } from 'shared/helpers';
+import { Debug, ipcRenderer, events, setDefaultChannel, Manager, RemoveCachedCredentials, Navigate } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
 import Header from 'renderer/components/Header/Header';
 import GLOBALS from 'shared/globals'
-import UserDropdownMenu, { IUserDropdownMenuFunctions } from 'renderer/components/UserDropdown/UserDropdownMenu';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from '@mui/material';
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from 'types/enums';
@@ -44,7 +43,6 @@ interface IChatPageState {
 }
 
 export default class ChatPage extends React.Component<IChatPageProps> {
-  UserDropdownMenuFunctions: IUserDropdownMenuFunctions;
   state: IChatPageState;
   initLoad: boolean;
 
@@ -57,7 +55,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     this.sendMessage = this.sendMessage.bind(this);
     this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
-    this.Logout = this.Logout.bind(this);
     this.Unload = this.Unload.bind(this);
     this.openCreateChannelDialog = this.openCreateChannelDialog.bind(this);
     this.createChannelButtonClicked = this.createChannelButtonClicked.bind(this);
@@ -89,8 +86,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       ImageViewerSrc: '',
       ImageViewerDimensions: {width: 0, height: 0}
     };
-
-    this.UserDropdownMenuFunctions = { logout: this.Logout };
   }
 
   async preloadChannel() {
@@ -140,6 +135,9 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       });
       ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
         if (channelID != null) this.updateChannel({ channelID, channelIcon: true });
+      });
+      ipcRenderer.on('ChannelArchived', (channelID: string) => {
+        if (channelID != null) this.removeChannel(channelID);
       });
 
       events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
@@ -443,9 +441,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
             <ChannelView init={this.initChannelView} />
           </div>
           <div className='Chat_Page_Body_Right'>
-            <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
-              <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={Manager.UserData} />
-            </Header>
+            <Header caption={this.state.ChannelName} icon={<ChatIcon />} />
             <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.IsChannelSelected} onImageClick={this.openImageViewer} onCanvasScroll={this.onMessageCanvasScroll} />
             <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>
             <MessageInput onAddAttachment={this.addAttachment} onMessagePush={this.sendMessage}/>

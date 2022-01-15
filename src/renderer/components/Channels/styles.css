@@ -24,6 +24,7 @@
   overflow-wrap: anywhere;
   text-overflow: ellipsis;
   white-space: nowrap;
+  border-radius: 10px;
 }
 
 .ChannelInner {

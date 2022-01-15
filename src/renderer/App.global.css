@@ -5,8 +5,18 @@
 @import 'components/styles.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
 
-.NavigationDrawer .NavigationDrawerList {
+.NavigationDrawer .NavigationDrawerListTop .NavigationDrawerListBottom {
   width: 15rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.NavigationDrawerListTop {
+
+}
+
+.NavigationDrawerListBottom {
+  margin-top: auto !important;
 }
 
 .NavigationDrawerBranding {

@@ -3,6 +3,8 @@ import React from 'react';
 import { MD5 } from 'crypto-js';
 import Channel from './Channel';
 import type { IChannelUpdateProps } from './Channel';
+import GLOBALS from 'shared/globals';
+import { Debug } from 'shared/helpers';
 
 interface IChannelViewProps {
   init: (channelList: ChannelView) => void
@@ -10,6 +12,7 @@ interface IChannelViewProps {
 
 interface IChannelViewState {
   channels: Channel[],
+  selectedChannel: string
 }
 
 export default class ChannelView extends React.Component<IChannelViewProps> {
@@ -23,10 +26,11 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     this.removeChannel = this.removeChannel.bind(this);
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
-
+    this.channelClicked = this.channelClicked.bind(this);
 
     this.state = {
       channels: [],
+      selectedChannel: GLOBALS.currentChannel || localStorage.getItem('lastOpenedChannel') || ''
     }
   }
 
@@ -78,8 +82,16 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     return this.state.channels.length < 1;
   }
 
+  getSelectedChannel(channelID: string) {
+    return channelID == this.state.selectedChannel;
+  }
+
+  channelClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, channelID: string) {
+    this.setState({ selectedChannel: channelID });
+  }
+
   render() {
-    const channels = this.state.channels.map((c) => (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
+    const channels = this.state.channels.map((c) => (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isSelectedChannel={this.getSelectedChannel(c.channelID)} onClick={this.channelClicked} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
 
     const PromptElement = () => {
       if (this.isChannelListEmpty()) {

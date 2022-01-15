@@ -287,6 +287,12 @@ ipcMain.on('UPDATEChannelIcon', async (event, channel_uuid: string, file: string
   else event.sender.send('ChannelIconUpdated', null);
 });
 
+ipcMain.on('REMOVEChannelIcon', async (event, channel_uuid: string) => {
+  const resp = await PostWithAuthentication(`/Media/Channel/${channel_uuid}/ClearIcon`, ContentType.EMPTY, '');
+  if (resp.status == 200) event.sender.send('ChannelIconUpdated', channel_uuid);
+  else event.sender.send('ChannelIconUpdated', null);
+});
+
 ipcMain.on('ADDChannelMember', async (event, channel_uuid: string, recipients: string[]) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}`, ContentType.JSON, JSON.stringify(recipients))
   if (resp.status == 200) event.sender.send('ChannelMemberAdded', true);
@@ -295,8 +301,8 @@ ipcMain.on('ADDChannelMember', async (event, channel_uuid: string, recipients: s
 
 ipcMain.on('ARCHIVEChannel', async (event, channel_uuid: string) => {
   const resp = await PatchWithAuthentication(`/Channel/${channel_uuid}/Achrive`, ContentType.EMPTY, '');
-  if (resp.status == 200) event.sender.send('ChannelArchived', true);
-  else event.sender.send('ChannelArchived', false);
+  if (resp.status == 200) event.sender.send('ChannelArchived', channel_uuid);
+  else event.sender.send('ChannelArchived', null);
 });
 
 ipcMain.on('UNARCHIVEChannel', async (event, channel_uuid: string) => {

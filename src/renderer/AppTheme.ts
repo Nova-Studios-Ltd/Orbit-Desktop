@@ -59,10 +59,16 @@ export function AppStyles() {
       '.ChannelView': {
         background: AppTheme().palette.background.default,
       },
+      '.SelectedChannel': {
+        background: `${AppTheme().palette.mode == 'dark' ? AppTheme().palette.grey.A700 : AppTheme().palette.grey.A100} !important`,
+      },
       '.ChannelInner': {
         color: AppTheme().palette.text.primary,
       },
       '.Chat_Page_Bottom': {
+        background: AppTheme().palette.background.paper,
+      },
+      '.FileUploadSummary': {
         background: AppTheme().palette.background.paper,
       },
       '.MessageCanvas': {

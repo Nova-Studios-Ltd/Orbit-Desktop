@@ -106,10 +106,12 @@ export class MessageImage extends React.Component<IMessageMediaProps> {
     }
 
     return (
-      <div className='Message_Content' style={({marginBottom: '0.8rem'})} tabIndex={0} role='button' onClick={this.onImageClick} onKeyDown={this.onImageClick}>
+      <div className='Message_Content'>
         {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
           <Card className='Message_Embed' style={styles}>
             <CardMedia
+            onClick={this.onImageClick}
+            onKeyDown={this.onImageClick}
             className='Message_Embed_Content'
             component='img'
             src={this.imageSrc}

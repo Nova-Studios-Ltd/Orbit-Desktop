@@ -10,7 +10,7 @@ import http, { IncomingMessage, ServerResponse } from 'http';
 import { Server } from 'node-static';
 
 import GLOBALS from '../shared/globals';
-import { Debug } from '../shared/DebugLogger';
+import { Debug } from './debug';
 import { isDevelopment, resolveHtmlPath } from './util';
 import { Manager, CreateManager } from "./settingsManager";
 

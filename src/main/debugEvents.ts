@@ -1,6 +1,6 @@
 import { ipcMain, IpcMainEvent } from 'electron';
 import chalk from 'chalk';
-import { Debug } from '../shared/DebugLogger';
+import { Debug } from './debug';
 import { LogContext, LogType } from '../types/enums';
 
 Debug.events.on('logEntryAdded', (message: (string | unknown), logType: LogType) => {
