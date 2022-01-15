@@ -4,7 +4,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import GLOBALS from 'shared/globals';
-import { Navigate, Register, ipcRenderer } from 'shared/helpers';
+import { Navigate, Register, ipcRenderer, Manager } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
@@ -70,7 +70,7 @@ class RegisterForm extends React.Component<IRegisterFormProps> {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${GLOBALS.appName} ${GLOBALS.appVersion}`} headerBody={`Register for a ${GLOBALS.appName} account.`} status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody={`Register for a ${Manager.AppName} account.`} status={this.state.status}>
         <FormTextField id='email' label='Email' placeholder='Your Email Address' description='This will be used when signing in, and for account-related operations.' autoFocus required onChange={this.handleChange} />
         <FormTextField id='username' label='Username' placeholder='Your New username' required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' placeholder='Your New password' required sensitive onChange={this.handleChange} />

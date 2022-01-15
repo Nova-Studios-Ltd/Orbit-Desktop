@@ -6,7 +6,14 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(channel, ...data);
     },
     on(channel, func) {
-      ipcRenderer.on(channel, (event, ...args) => func(...args));
+      ipcRenderer.on(channel, (event, ...args) => {
+        try {
+          func(...args);
+        }
+        catch (e) {
+          console.error(`Failed to exe-cute ${channel} with ${e}`);
+        }
+      });
     },
     once(channel, func) {
       ipcRenderer.once(channel, (event, ...args) => func(...args));
@@ -15,7 +22,8 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.removeAllListeners(channel);
     },
     async invoke(channel, ...data) {
-      return await ipcRenderer.invoke(channel, ...data);
+      const v = await ipcRenderer.invoke(channel, ...data);
+      return v;
     }
   }
 });

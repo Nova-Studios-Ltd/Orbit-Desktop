@@ -6,13 +6,14 @@ import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow, IUserData } from 'types/types';
+import { RSAMemoryKeyPair } from 'main/encryptionClasses';
 import { SettingsManager } from './settingsManagerRenderer';
 
 export const history = createBrowserHistory();
-export const { ipcRenderer }: IElectronRendererWindow = window.electron;
+export const {ipcRenderer}: IElectronRendererWindow = window.electron;
 export const events = new UIEvents();
+export const Manager = new SettingsManager();
 export const Debug = new DebugLogger(ipcRenderer);
-export const Manager = new SettingsManager(ipcRenderer);
 
 export function Navigate(path: string, data: unknown)
 {
@@ -58,19 +59,20 @@ export function SetCookie(name: string, value: string, days: number) {
 let reconnectAttempts = 1;
 let reconnect: NodeJS.Timeout;
 const timestepStates = [2500, 4000, 8000, 12000]
-function HandleWebsocket() {
-  const { token, uuid } = GLOBALS.userData;
+async function HandleWebsocket() {
+  const userData = Manager.UserData;
+  const {token} = userData;
+  const {uuid} = userData;
   const socket = new WebSocket(`wss://api.novastudios.tk/Events/Listen?user_uuid=${uuid}`)
   socket.onmessage = async (data) => {
     const event = JSON.parse(data.data);
-    console.log(event);
     switch (event.EventType) {
       case -1:
         console.log('<Beat>');
         //socket.send('<Beep>')
         break;
       case 0: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message, GLOBALS.userData);
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
         if (message == undefined) break;
         events.send('OnNewMessage', message, event.Channel);
         break;
@@ -79,7 +81,7 @@ function HandleWebsocket() {
         events.send('OnMessageDelete', event.Channel, event.Message);
         break;
       case 2: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message, GLOBALS.userData);
+        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
         if (message == undefined) break;
         events.send('OnMessageEdit', message, event.Channel, event.Message);
         break;
@@ -96,21 +98,20 @@ function HandleWebsocket() {
         events.send('OnChannelNewMember', event.Channel);
         break;
       case 7: { // New key in keystore
-        console.log(event);
-        const key = await ipcRenderer.invoke('GETKey', GLOBALS.userData.uuid, event.keyUserUUID);
-        GLOBALS.userData.keystore[event.keyUserUUID] = key;
-        await ipcRenderer.invoke('SaveKeystore', GLOBALS.userData.keystore);
+        const key = await ipcRenderer.invoke('GETKey', userData.uuid, event.keyUserUUID);
+        userData.keystore.setValue(event.keyUserUUID, key);
+        await ipcRenderer.invoke('SaveKeystore', userData.keystore);
         break;
       }
       case 8: { // Key removed from keystore
-        delete GLOBALS.userData.keystore[event.keyUserUUID];
-        await ipcRenderer.invoke('SaveKeystore', GLOBALS.userData.keystore);
+        userData.keystore.clear(event.keyUserUUID);
+        await ipcRenderer.invoke('SaveKeystore', userData.keystore);
         break;
       }
       case 9: { // Re-request entire keystore
-        const keystore = await ipcRenderer.invoke('GETKeystore', GLOBALS.userData.uuid);
+        const keystore = await ipcRenderer.invoke('GETKeystore', userData.uuid);
         await ipcRenderer.invoke('SaveKeystore', keystore);
-        GLOBALS.userData.keystore = keystore;
+        userData.keystore = keystore;
         break;
       }
       case 420: // Because why not
@@ -157,12 +158,12 @@ export async function ConductLogin() {
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
     ipcRenderer.send('GETUserChannels');
 
-    ipcRenderer.invoke('GETUser', GLOBALS.userData.uuid).then((userData: IUserData) => {
-      if (userData != undefined) {
-        GLOBALS.userData.username = userData.username;
-        GLOBALS.userData.discriminator = userData.discriminator;
+    ipcRenderer.invoke('GETUser', userData.uuid).then(async (uData: IUserData) => {
+      if (uData != undefined) {
+        userData.username = uData.username;
+        userData.discriminator = uData.discriminator;
 
-        GLOBALS.loggedOut = false;
+        Manager.LoggedOut = false;
         HandleWebsocket();
       }
     });
@@ -184,24 +185,25 @@ export async function SetAuth() {
     if (cookie_data != null) {
       const { token, uuid } = cookie_data;
       if (token != null && uuid != null) {
-        GLOBALS.userData.token = token;
-        GLOBALS.userData.uuid = uuid;
-        GLOBALS.userData.keyPair.PrivateKey = await ipcRenderer.invoke('GetPrivkey');
-        GLOBALS.userData.keyPair.PublicKey = await ipcRenderer.invoke('GetPubkey');
+        const userData = Manager.UserData;
+        if (userData == undefined) return;
+        userData.token = token;
+        userData.uuid = uuid;
+        userData.keyPair = new RSAMemoryKeyPair(await ipcRenderer.invoke('GetPrivkey'), await ipcRenderer.invoke('GetPubkey'));
 
         // Request Keystore
-        await ipcRenderer.invoke('SaveKeystore', await ipcRenderer.invoke('GETKeystore', GLOBALS.userData.uuid));
+        await ipcRenderer.invoke('SaveKeystore', await ipcRenderer.invoke('GETKeystore', userData.uuid));
 
-        GLOBALS.userData.keystore = await ipcRenderer.invoke("LoadKeystore");
+        userData.keystore = await ipcRenderer.invoke("LoadKeystore");
       }
     }
   }
 }
 
 export function RemoveCachedCredentials() {
-  GLOBALS.loggedOut = true;
+  Manager.LoggedOut = true;
   ipcRenderer.send('logout');
-  GLOBALS.userData = new UserData(undefined);
+  //Manager.UserData = new UserData(undefined);
 }
 
 export function Register(data: Credentials) {

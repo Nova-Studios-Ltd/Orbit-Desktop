@@ -39,3 +39,7 @@ export interface IElectronRendererWindow {
     invoke: (channel: string, ...data: any[]) => Promise<any>
   }
 }
+
+export interface IEWindow extends Window {
+  electron: IElectronRendererWindow;
+}

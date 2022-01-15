@@ -1,13 +1,16 @@
-interface IDictionary<V> {
-  get(key: string) : V;
-  set(key: string, value: V) : void;
+export type Indexable<V> = {[key in string]: V};
+
+export interface IDictionary<V> {
+  _dict: Indexable<V>;
+  getValue(key: string) : V;
+  setValue(key: string, value: V) : void;
   empty() : void;
   clear(key: string) : boolean;
   containsKey(key: string) : boolean;
   forEach(callback: (pair: KeyValuePair<V>) => void) : void
 }
 
-class KeyValuePair<V> {
+export class KeyValuePair<V> {
   readonly Key: string;
   readonly Value: V;
 
@@ -18,26 +21,35 @@ class KeyValuePair<V> {
 }
 
 export class Dictionary<V> implements IDictionary<V> {
-  private _dict: {[key: string] : V};
+  _dict: Indexable<V>;
+  public OnUpdate?: () => void;
 
-  constructor() {
-    this._dict = {};
+  constructor(dict?: IDictionary<V>, onUpdate?: () => void) {
+    this.OnUpdate = onUpdate;
+    if (dict !== undefined)
+      dict.forEach((pair: KeyValuePair<V>) => {
+        this._dict[pair.Key] = pair.Value;
+      });
+    this._dict = {} as Indexable<V>;
   }
 
-  get(key: string) : V {
+  getValue(key: string) : V {
     return this._dict[key];
   }
 
-  set(key: string, value: V) : void {
+  setValue(key: string, value: V) : void {
     this._dict[key] = value;
+    if (this.OnUpdate != undefined) this.OnUpdate();
   }
 
   empty() : void {
-    this._dict = {};
+    this._dict = {} as Indexable<V>;
+    if (this.OnUpdate != undefined) this.OnUpdate();
   }
 
   clear(key: string) : boolean {
     delete this._dict[key];
+    if (this.OnUpdate != undefined) this.OnUpdate();
     return true;
   }
 

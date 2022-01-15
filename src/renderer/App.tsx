@@ -4,10 +4,9 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { ConductLogin, copyToClipboard, Debug, events, history, ipcRenderer, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
+import { ConductLogin, copyToClipboard, Debug, events, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
 import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
-import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
@@ -34,9 +33,11 @@ class App extends React.Component {
 
   constructor(props: never) {
     super(props);
-    SettingsManager.Init();
-    Navigate(GLOBALS.HomePath, null);
-    SetAuth();
+    Manager.onReady = () => {
+      console.log(Manager.HomePath);
+      Navigate(Manager.HomePath, null);
+      SetAuth();
+    }
 
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
@@ -203,7 +204,7 @@ class App extends React.Component {
           <List className='NavigationDrawerListTop'>
             <div className='NavigationDrawerBranding'>
               <img src={AppIcon} width='64' height='64' style={{ padding: 1, margin: 10 }} alt='App Logo'/>
-              <Typography sx={{ padding: 1, marginRight: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
+              <Typography sx={{ padding: 1 }} variant='h5'>{Manager.AppName} {Manager.AppVersion}</Typography>
             </div>
             <Divider />
             {navigationDrawerListTopJSXArray}

@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Authenticate, Navigate, ipcRenderer } from 'shared/helpers';
+import { Authenticate, Navigate, ipcRenderer, Manager } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
 import GLOBALS from 'shared/globals';
 import AuthForm from 'renderer/components/Form/AuthForm';
@@ -68,7 +68,7 @@ class LoginForm extends React.Component<ILoginFormProps> {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${GLOBALS.appName} ${GLOBALS.appVersion}`} headerBody='Welcome! Please log in to continue.' status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody='Welcome! Please log in to continue.' status={this.state.status}>
         <FormTextField id='email' label='Email' autoFocus required onChange={this.handleChange} />
         <FormTextField id='password' label='Password' required sensitive onChange={this.handleChange} />
         <br />

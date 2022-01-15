@@ -1,4 +1,5 @@
 import type { IUserData } from 'types/types';
+import { Dictionary } from '../main/dictionary';
 import { RSAMemoryKeyPair } from '../main/encryptionClasses';
 
 export default class UserData {
@@ -6,12 +7,12 @@ export default class UserData {
   uuid: string;
   token: string;
   keyPair: RSAMemoryKeyPair;
-  keystore: { [key: string] : string; };
+  keystore: Dictionary<string>;
   discriminator: string;
   avatarSrc: string;
 
   constructor(props?: IUserData) {
-    if (props != null) {
+    if (props != undefined) {
       this.username = props.username || '';
       this.uuid = props.uuid || '';
       this.token = props.token || '';
@@ -26,6 +27,6 @@ export default class UserData {
       this.avatarSrc = '';
     }
     this.keyPair = new RSAMemoryKeyPair('', '');
-    this.keystore = {};
+    this.keystore = new Dictionary<string>();
   }
 }

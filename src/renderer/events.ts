@@ -1,5 +1,4 @@
-import GLOBALS from 'shared/globals';
-import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie, Debug } from 'shared/helpers';
+import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie, Debug, Manager } from 'shared/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
@@ -69,12 +68,12 @@ ipcRenderer.on('ChannelArchived', (channelID: string) => {
     new AppNotification({ title: 'Unable to Archive Channel', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
 }});
 
-ipcRenderer.on('clientFocused', (data: boolean) => {
-  GLOBALS.isFocused = true;
+ipcRenderer.on('clientFocused', async () => {
+  Manager.IsFocused = true;
 });
 
-ipcRenderer.on('clientUnfocused', (data: boolean) => {
-  GLOBALS.isFocused = false;
+ipcRenderer.on('clientUnfocused', () => {
+  Manager.IsFocused = false;
 });
 
 ipcRenderer.on('UserDeleted', (success: boolean) => {
