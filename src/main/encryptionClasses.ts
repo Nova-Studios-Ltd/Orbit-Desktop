@@ -1,10 +1,10 @@
 export class RSAMemoryKeyPair {
-  PrivateKey: string;
-  PublicKey: string;
+  readonly PrivateKey: string;
+  readonly PublicKey: string;
 
   constructor(priv: string, pub: string) {
-      this.PrivateKey = priv;
-      this.PublicKey = pub;
+    this.PrivateKey = priv;
+    this.PublicKey = pub;
   }
 }
 

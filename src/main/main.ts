@@ -12,7 +12,7 @@ import { Server } from 'node-static';
 import GLOBALS from '../shared/globals';
 import { Debug } from '../shared/DebugLogger';
 import { isDevelopment, resolveHtmlPath } from './util';
-import {Manager} from "./settingsManager";
+import { Manager, CreateManager } from "./settingsManager";
 
 import './events';
 import './apiEvents';
@@ -107,6 +107,8 @@ const createWindow = async () => {
     },
   });
 
+  CreateManager(mainWindow.webContents);
+
   mainWindow.removeMenu();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -127,7 +129,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (!GLOBALS.closeToTray) {
+    if (!Manager.CloseToTray) {
       app.quit();
     }
   });

@@ -2,7 +2,7 @@ import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, 
 import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
-import { copyToClipboard, ipcRenderer } from 'shared/helpers';
+import { copyToClipboard, ipcRenderer, Manager } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
@@ -436,7 +436,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('DELETEMessage', GLOBALS.currentChannel, this.message_Id).then((result: boolean) => {
+    ipcRenderer.invoke('DELETEMessage', Manager.CurrentChannel, this.message_Id).then((result: boolean) => {
       if (result) {
         new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
@@ -446,7 +446,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   isOwnMessage() {
-    return this.author_UUID == GLOBALS.userData.uuid;
+    return this.author_UUID == Manager.UserData.uuid;
   }
 
   editMessageChanged(event: React.FormEvent<HTMLInputElement>) {
@@ -456,7 +456,7 @@ export default class Message extends React.Component<IMessageProps> {
 
   submitEditedMessage() {
     if (this.state.editedMessage.length > 0) {
-      ipcRenderer.invoke('EDITMessage', GLOBALS.currentChannel, this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv, GLOBALS.userData).then((result: boolean) => {
+      ipcRenderer.invoke('EDITMessage', Manager.CurrentChannel, this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv).then((result: boolean) => {
         if (result) {
           new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {

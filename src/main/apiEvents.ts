@@ -7,7 +7,8 @@ import sizeOf from 'image-size';
 import { PassThrough } from 'stream';
 import { createDecipheriv } from 'crypto';
 import { readFileSync } from 'fs';
-import { Debug } from '../shared/DebugLogger';
+import { Manager } from './settingsManager';
+import { Dictionary } from './dictionary';
 import { ContentType } from '../types/enums';
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from './NCAPI';
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from './encryptionUtils';
@@ -76,9 +77,10 @@ ipcMain.handle('SETKey', async (_event, user_uuid: string, key_user_uuid: string
 });
 
 // Messages
-ipcMain.handle('GETMessage', async (_event, channel_uuid: string, message_id: string, userData: UserData) => {
+ipcMain.handle('GETMessage', async (_event, channel_uuid: string, message_id: string) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages/${message_id}`);
   if (resp.status == 200 && resp.payload != undefined) {
+    const userData = Manager.UserData;
     const rawMessage = <IMessageProps>resp.payload;
     const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, rawMessage.encryptedKeys[userData.uuid]);
     const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(rawMessage.iv, rawMessage.content));
@@ -105,9 +107,10 @@ ipcMain.handle('GETMessage', async (_event, channel_uuid: string, message_id: st
   return undefined;
 });
 
-ipcMain.on('GETMessagesWithArgs', async (event, channel_uuid: string, userData: UserData, limit = 30, before = 2147483647) => {
+ipcMain.on('GETMessagesWithArgs', async (event, channel_uuid: string, limit = 30, before = 2147483647) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages?limit=${limit}&before=${before}`);
   if (resp.status == 200 && resp.payload != undefined) {
+    const userData = Manager.UserData;
     const rawMessages = <IMessageProps[]>resp.payload
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
@@ -140,9 +143,10 @@ ipcMain.on('GETMessagesWithArgs', async (event, channel_uuid: string, userData: 
   }
 });
 
-ipcMain.on('GETMessages', async (event, channel_uuid: string, userData: UserData) => {
+ipcMain.on('GETMessages', async (event, channel_uuid: string) => {
   const resp = await QueryWithAuthentication(`/Message/${channel_uuid}/Messages`);
   if (resp.status == 200 && resp.payload != undefined) {
+    const userData = Manager.UserData;
     const rawMessages = <IMessageProps[]>resp.payload
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
@@ -177,9 +181,10 @@ ipcMain.on('GETMessages', async (event, channel_uuid: string, userData: UserData
   }
 });
 
-ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, rawAttachments: MessageAttachment[], userData: UserData) => {
+ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, rawAttachments: MessageAttachment[]) => {
   const resp = await QueryWithAuthentication(`/Channel/${channel_uuid}`);
   if (resp.status == 200 && resp.payload != undefined) {
+    const userData = Manager.UserData;
     const channel = <IChannelProps>resp.payload;
     if (channel.members == undefined) {
       event.sender.send('MessageSent', false);
@@ -220,7 +225,7 @@ ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, 
     const encKeys = {} as {[uuid: string]: string; };
     channel.members.forEach((member) => {
       if (member != userData.uuid) {
-        const pubKey = userData.keystore[member];
+        const pubKey = userData.keystore.getValue(member);
         if (pubKey != undefined) {
           const encryptedKey = EncryptUsingPubKey(pubKey, messageKey);
           encKeys[member] = encryptedKey;
@@ -236,7 +241,8 @@ ipcMain.on('SENDMessage', async (event, channel_uuid: string, contents: string, 
   event.sender.send('MessageSent', false);
 });
 
-ipcMain.handle('EDITMessage', async (_event, channel_uuid: string, message_id: string, message: string, encryptedKeys: {[uuid: string] : string;}, iv: string, userData: UserData) => {
+ipcMain.handle('EDITMessage', async (_event, channel_uuid: string, message_id: string, message: string, encryptedKeys: {[uuid: string] : string;}, iv: string) => {
+  const userData = Manager.UserData;
   const key = await DecryptUsingPrivKeyAsync(userData.keyPair.PrivateKey, encryptedKeys[userData.uuid]);
   const c = await EncryptUsingAESAsync(key, message, iv);
   const resp = await PutWithAuthentication(`Message/${channel_uuid}/Messages/${message_id}`, ContentType.JSON, JSON.stringify({content: c.content}));

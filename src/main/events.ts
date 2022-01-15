@@ -7,6 +7,7 @@ import { Debug } from '../shared/DebugLogger';
 import { ContentType, FormAuthStatusType } from '../types/enums';
 import { PostWithoutAuthentication } from './NCAPI';
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from './encryptionUtils';
+import { Dictionary } from './dictionary';
 
 
 ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
@@ -122,7 +123,7 @@ ipcMain.handle('SetPrivkey', async (_event, key: string) : Promise<boolean> => {
   }
 });
 
-ipcMain.handle('GetPrivkey', async (_event) : Promise<string> => {
+ipcMain.handle('GetPrivkey', async () : Promise<string> => {
   try {
     return readFileSync('rsa', 'utf-8');
   }
@@ -142,7 +143,7 @@ ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
   }
 });
 
-ipcMain.handle('GetPubkey', async (_event) : Promise<string> => {
+ipcMain.handle('GetPubkey', async () : Promise<string> => {
   try {
     return readFileSync('rsa.pub', 'utf-8');
   }
@@ -151,7 +152,7 @@ ipcMain.handle('GetPubkey', async (_event) : Promise<string> => {
   }
 });
 
-ipcMain.handle('SaveKeystore', async (_event, keys: { [key: string] : string; }) : Promise<boolean> => {
+ipcMain.handle('SaveKeystore', async (_event, keys: Dictionary<string>) : Promise<boolean> => {
   try {
     writeFileSync("keystore", JSON.stringify(keys));
     return true;
@@ -161,12 +162,12 @@ ipcMain.handle('SaveKeystore', async (_event, keys: { [key: string] : string; })
   }
 });
 
-ipcMain.handle('LoadKeystore', async (_event) : Promise<{ [key: string] : string; }> => {
+ipcMain.handle('LoadKeystore', async () : Promise<Dictionary<string>> => {
   try {
-    return <{ [key: string] : string; }>JSON.parse(readFileSync('keystore', 'utf-8'));
+    return <Dictionary<string>>JSON.parse(readFileSync('keystore', 'utf-8'));
   }
   catch {
-    return {};
+    return new Dictionary<string>();
   }
 });
 

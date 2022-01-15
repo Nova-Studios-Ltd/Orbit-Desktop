@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
-import { ConductLogin } from 'shared/helpers';
+import { ConductLogin, Manager } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 
 interface IAuthPageProps {
@@ -71,7 +71,7 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
     return (
       <div className={AuthPageContainerClassNames} style={st}>
         <Helmet>
-          <title>{`${GLOBALS.appName} ${GLOBALS.appVersion} - ${title}`}</title>
+          <title>{`${Manager.AppName} ${Manager.AppVersion} - ${title}`}</title>
         </Helmet>
         <div className='Auth_Page_Left' />
         {form}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Debug, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials } from 'shared/helpers';
+import { Debug, Navigate, ipcRenderer, events, setDefaultChannel, RemoveCachedCredentials, Manager } from 'shared/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -94,20 +94,20 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   async preloadChannel() {
-    if (GLOBALS.currentChannel != null && GLOBALS.currentChannel.length < 1) {
+    if (Manager.CurrentChannel != null && Manager.CurrentChannel.length < 1) {
       const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
       if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
-        GLOBALS.currentChannel = lastOpenedChannel;
-        ipcRenderer.send('GETMessages', lastOpenedChannel, GLOBALS.userData);
+        Manager.CurrentChannel = lastOpenedChannel;
+        ipcRenderer.send('GETMessages', lastOpenedChannel);
       }
       else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
-        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID, GLOBALS.userData);
-        GLOBALS.currentChannel = this.state.ChannelList.state.channels[0].channelID;
+        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID);
+        Manager.CurrentChannel = this.state.ChannelList.state.channels[0].channelID;
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
       }
     }
     else {
-      ipcRenderer.send('GETMessages', GLOBALS.currentChannel, GLOBALS.userData);
+      ipcRenderer.send('GETMessages', Manager.CurrentChannel);
     }
   }
 
@@ -117,7 +117,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
       ipcRenderer.on('GotMessages', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
       ipcRenderer.on('GotMessagesWithArgs', (messages: IMessageProps[], channel_uuid: string) => {
-        if (GLOBALS.currentChannel != channel_uuid) return;
+        if (Manager.CurrentChannel != channel_uuid) return;
         this.appendAllToCanvas(messages);
         this.requestedHistory = false;
       });
@@ -223,7 +223,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     console.log(messages);
     this.setState({ IsChannelSelected: true });
-    if (GLOBALS.currentChannel != channel_uuid) return;
+    if (Manager.CurrentChannel != channel_uuid) return;
     ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
     });
@@ -236,26 +236,26 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];
-      if (isUpdate && message.author_UUID != GLOBALS.userData.uuid) {
-        const selected = GLOBALS.currentChannel == channel_uuid;
-        if (selected && GLOBALS.isFocused) {}
-        else if (!selected && GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
-        else if (selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
-        else if (!selected && !GLOBALS.isFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
+      if (isUpdate && message.author_UUID != Manager.UserData.uuid) {
+        const selected = Manager.CurrentChannel == channel_uuid;
+        if (selected && Manager.IsFocused) {}
+        else if (!selected && Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
+        else if (selected && !Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
+        else if (!selected && !Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
       }
       this.appendToCanvas(message, isUpdate);
     }
   }
 
   onReceivedMessageEdit(channel_uuid: string, id: string, message: IMessageProps) {
-    if (GLOBALS.currentChannel != channel_uuid) return;
+    if (Manager.CurrentChannel != channel_uuid) return;
     if (this.state.CanvasObject != null) {
       this.state.CanvasObject.edit(id, message);
     }
   }
 
   onReceivedMessageDelete(channel_uuid: string, message_id: string) {
-    if (GLOBALS.currentChannel != channel_uuid) return;
+    if (Manager.CurrentChannel != channel_uuid) return;
     if (this.state.CanvasObject != null) {
       this.state.CanvasObject.remove(message_id);
     }
@@ -265,10 +265,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     const attachments = this.state.AttachmentList;
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
-      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, attachments, GLOBALS.userData);
+      ipcRenderer.send('SENDMessage', Manager.CurrentChannel, message, attachments);
     }
     else if (message.length > 0) {
-      ipcRenderer.send('SENDMessage', GLOBALS.currentChannel, message, [], GLOBALS.userData);
+      ipcRenderer.send('SENDMessage', Manager.CurrentChannel, message, []);
     }
     this.setState({ AttachmentList: [] });
   }
@@ -367,7 +367,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     if (parseInt(oldestMessageID, 10) <= 1) return;
     if (yIndex < 25 && !this.initLoad && !this.requestedHistory) {
       this.requestedHistory = true;
-      ipcRenderer.send('GETMessagesWithArgs', GLOBALS.currentChannel, GLOBALS.userData, 30, oldestMessageID);
+      ipcRenderer.send('GETMessagesWithArgs', Manager.CurrentChannel, 30, oldestMessageID);
     }
   }
 
@@ -386,7 +386,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
-    GLOBALS.loggedOut = true;
+    Manager.LoggedOut = true;
     Navigate('/login', null);
   }
 
@@ -424,10 +424,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
     const titleString = (() => {
       if (this.state.ChannelName.length > 0) {
-        return `${GLOBALS.appName} ${GLOBALS.appVersion} - ${this.state.ChannelName}`;
+        return `${Manager.AppName} ${Manager.AppVersion} - ${this.state.ChannelName}`;
       }
 
-      return `${GLOBALS.appName} ${GLOBALS.appVersion}`;
+      return `${Manager.AppName} ${Manager.AppVersion}`;
     })();
 
     return (
@@ -444,7 +444,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
           </div>
           <div className='Chat_Page_Body_Right'>
             <Header caption={this.state.ChannelName} icon={<ChatIcon />}>
-              <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={GLOBALS.userData} />
+              <UserDropdownMenu menuFunctions={this.UserDropdownMenuFunctions} userData={Manager.UserData} />
             </Header>
             <MessageCanvas init={this.initCanvas} isChannelSelected={this.state.IsChannelSelected} onImageClick={this.openImageViewer} onCanvasScroll={this.onMessageCanvasScroll} />
             <FileUploadSummary files={this.state.AttachmentList} onRemoveAttachment={this.removeAttachment}/>

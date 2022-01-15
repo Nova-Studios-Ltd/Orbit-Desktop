@@ -4,16 +4,14 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { events, history, ipcRenderer, Navigate, SetAuth } from 'shared/helpers';
-import { SettingsManager } from 'shared/SettingsManager';
+import { events, history, ipcRenderer, Navigate, SetAuth, Manager } from 'shared/helpers';
 import 'renderer/events';
-import GLOBALS from 'shared/globals';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { ClassNameMap, Divider, Drawer, List, ThemeProvider, Typography } from '@mui/material';
 import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
-import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { Theme } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
@@ -31,9 +29,11 @@ class App extends React.Component {
 
   constructor(props: never) {
     super(props);
-    SettingsManager.Init();
-    Navigate(GLOBALS.HomePath, null);
-    SetAuth();
+    Manager.onReady = () => {
+      console.log(Manager.HomePath);
+      Navigate(Manager.HomePath, null);
+      SetAuth();
+    }
 
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
@@ -134,7 +134,7 @@ class App extends React.Component {
           <List className='NavigationDrawerList'>
             <div className='NavigationDrawerBranding'>
               <img src={AppIcon} width='64' height='64' style={{ padding: 1, margin: 10 }} alt='App Logo'/>
-              <Typography sx={{ padding: 1 }} variant='h5'>{GLOBALS.appName} {GLOBALS.appVersion}</Typography>
+              <Typography sx={{ padding: 1 }} variant='h5'>{Manager.AppName} {Manager.AppVersion}</Typography>
             </div>
             <HybridListItem id='chat' text='Chat' icon={<ChatIcon />} onClick={this.navigationDrawerItemClicked} />
             <HybridListItem id='friends' text='Friends' icon={<PeopleIcon />} onClick={this.navigationDrawerItemClicked} />

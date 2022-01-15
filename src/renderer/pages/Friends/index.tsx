@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import GLOBALS from 'shared/globals';
+import { Manager } from 'shared/helpers';
 
 interface IFriendsPageProps {
   onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
@@ -26,7 +27,7 @@ export default class FriendsPage extends React.Component<IFriendsPageProps> {
     return(
       <div>
         <Helmet>
-        <title>{`${GLOBALS.appName} ${GLOBALS.appVersion} - No Friends`}</title>
+        <title>{`${Manager.AppName} ${Manager.AppVersion} - No Friends`}</title>
         </Helmet>
         <Button onClick={this.props.onNavigationDrawerOpened}>Open Drawer</Button>
       </div>

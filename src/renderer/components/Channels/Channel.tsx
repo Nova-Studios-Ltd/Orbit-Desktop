@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react';
 import { Button, Card, Typography, Avatar, Menu, MenuItem, ButtonBase, Dialog, DialogContent, DialogActions, DialogTitle, IconButton, TextField } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import GLOBALS from 'shared/globals'
-import { ipcRenderer, setDefaultChannel } from 'shared/helpers';
+import { ipcRenderer, Manager, setDefaultChannel } from 'shared/helpers';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import FormTextField from 'renderer/components/Form/FormTextField';
@@ -86,7 +86,7 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   isOwner() {
-    return GLOBALS.userData.uuid == this.channelOwner;
+    return Manager.UserData.uuid == this.channelOwner;
   }
 
   canEdit() {
@@ -94,9 +94,9 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   async channelClicked() {
-    GLOBALS.currentChannel = this.channelID;
+    Manager.CurrentChannel = this.channelID;
     setDefaultChannel(this.channelID);
-    ipcRenderer.send('GETMessages', GLOBALS.currentChannel, GLOBALS.userData);
+    ipcRenderer.send('GETMessages', Manager.CurrentChannel);
   }
 
   async menuItemClicked(event: MouseEvent<HTMLLIElement>) {
@@ -171,7 +171,7 @@ export default class Channel extends React.Component<IChannelProps> {
       ipcRenderer.send(
         'REMOVEChannelMember',
         this.channelID,
-        GLOBALS.userData.uuid
+        Manager.UserData.uuid
       );
     else ipcRenderer.send('DELETEChannel', this.channelID);
     this.closeChannelDeletionDialog();

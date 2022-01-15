@@ -5,7 +5,7 @@ import { MD5 } from 'crypto-js';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
-import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
+import { ConductLogin, copyToClipboard, ipcRenderer, Manager } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
@@ -54,7 +54,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
       darkThemeEnabled: Boolean(SettingsManager.Settings.Theme),
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
-      editUsernameDialogField: GLOBALS.userData.username
+      editUsernameDialogField: Manager.UserData.username
     }
   }
 
@@ -82,12 +82,12 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   deleteAccount() {
-    ipcRenderer.send('DELETEUser', GLOBALS.userData.uuid);
+    ipcRenderer.send('DELETEUser', Manager.UserData.uuid);
     this.closeUserAccountDeletionDialog();
   }
 
   openChangeUsernameDialog() {
-    this.setState({ editUsernameDialogOpen: true, editUsernameDialogField: GLOBALS.userData.username });
+    this.setState({ editUsernameDialogOpen: true, editUsernameDialogField: Manager.UserData.username });
   }
 
   closeChangeUsernameDialog() {
@@ -95,7 +95,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   submitNewUsername() {
-    ipcRenderer.send('UPDATEUsername', GLOBALS.userData.uuid, this.state.editUsernameDialogField);
+    ipcRenderer.send('UPDATEUsername', Manager.UserData.uuid, this.state.editUsernameDialogField);
     this.closeChangeUsernameDialog();
   }
 
@@ -109,7 +109,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   async updateUserAvatar() {
     ipcRenderer.invoke("OpenFile").then((data: IOpenFileDialogResults) => {
-      if (data != undefined && data.path != null) ipcRenderer.send("SETAvatar", GLOBALS.userData.uuid, data.path);
+      if (data != undefined && data.path != null) ipcRenderer.send("SETAvatar", Manager.UserData.uuid, data.path);
     });
   }
 
@@ -119,7 +119,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   usernameUpdated(result: boolean, newUsername?: string) {
     if (result && newUsername != null) {
-      GLOBALS.userData.username = newUsername;
+      Manager.UserData.username = newUsername;
       this.setState({ usernameStateKey: MD5(Date.now().toString()).toString() });
     }
   }
@@ -128,7 +128,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     return(
       <div className='Page Settings_Page_Container'>
         <Helmet>
-          <title>{`${GLOBALS.appName} ${GLOBALS.appVersion} - Settings`}</title>
+          <title>{`${Manager.AppName} ${Manager.AppVersion} - Settings`}</title>
         </Helmet>
         <Header caption='Settings' icon={<SettingsIcon />}>
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
@@ -137,10 +137,10 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
           <SettingsSection title='User'>
             <Card className='Settings_User_Section_Card'>
               <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
-                <Avatar key={this.state.avatarStateKey} sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=128&${Date.now()}`}/>
+                <Avatar key={this.state.avatarStateKey} sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${Manager.UserData.uuid}?size=128&${Date.now()}`}/>
                 <AddIcon fontSize='large' className='Overlay'/>
               </IconButton>
-              <Typography key={this.state.usernameStateKey} variant='h5'>{GLOBALS.userData.username}#{GLOBALS.userData.discriminator}</Typography>
+              <Typography key={this.state.usernameStateKey} variant='h5'>{Manager.UserData.username}#{Manager.UserData.discriminator}</Typography>
               <Button onClick={this.openChangeUsernameDialog}>Edit Username</Button>
               <Button disabled>Change Password</Button>
               <Button disabled>Logout</Button>
@@ -159,7 +159,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
           </SettingsSection>
           <SettingsSection title='Advanced'>
             <Button className='Settings_Section_Item' variant='outlined' onClick={async () => {
-              await copyToClipboard(GLOBALS.userData.token).then((result: boolean) => {
+              await copyToClipboard(Manager.UserData.token).then((result: boolean) => {
                 if (result) {
                   new AppNotification({ body: 'Copied token to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
                 }
