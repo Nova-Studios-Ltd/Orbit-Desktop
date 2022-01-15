@@ -5,7 +5,7 @@ import { MD5 } from 'crypto-js';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
-import { ConductLogin, copyToClipboard, ipcRenderer } from 'shared/helpers';
+import { Navigate, copyToClipboard, ipcRenderer, ConductLogin } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
@@ -105,6 +105,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   exitSettings() {
     ConductLogin();
+    Navigate('/chat', null);
   }
 
   async updateUserAvatar() {

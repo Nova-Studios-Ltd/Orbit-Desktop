@@ -10,7 +10,10 @@ ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, 
   ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
     if (result) {
       Debug.Success('Public key stored successfully');
-      SetAuth().then(() => ConductLogin());
+      SetAuth().then(() => {
+        ConductLogin()
+        Navigate('/chat', null);
+      });
     }
     else {
       Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');

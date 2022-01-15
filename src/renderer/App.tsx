@@ -4,7 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { copyToClipboard, Debug, events, history, ipcRenderer, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
+import { ConductLogin, copyToClipboard, Debug, events, history, ipcRenderer, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
 import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import GLOBALS from 'shared/globals';
@@ -12,7 +12,7 @@ import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { Avatar, ClassNameMap, Divider, DividerProps, Drawer, List, ThemeProvider, Typography } from '@mui/material';
-import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { BugReport as BugIcon, Chat as ChatIcon, Logout as LogoutIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
@@ -41,14 +41,14 @@ class App extends React.Component {
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
     this.onNavigationDrawerOpened = this.onNavigationDrawerOpened.bind(this);
-    this.Logout = this.Logout.bind(this);
+    this.logout = this.logout.bind(this);
 
     this.state = {
       theme: AppTheme(),
       styles: AppStyles(),
       isConnectedToInternet: true,
       navigationDrawerOpen: false,
-      currentRoute: ''
+      currentRoute: 'chat'
     };
   }
 
@@ -58,6 +58,7 @@ class App extends React.Component {
         if (event.type == 'click') {
           this.setState({ currentRoute: event.currentTarget.id });
           Navigate('/chat', null);
+          ConductLogin();
         }
         break;
       case 'friends':
@@ -93,6 +94,9 @@ class App extends React.Component {
           });
         }
         return;
+      case 'logout':
+        this.logout();
+        break;
     }
     this.setState({ navigationDrawerOpen: false });
   }
@@ -111,7 +115,7 @@ class App extends React.Component {
     }
   }
 
-  Logout() {
+  logout() {
     RemoveCachedCredentials();
     GLOBALS.loggedOut = true;
     Navigate('/login', null);
@@ -159,7 +163,8 @@ class App extends React.Component {
 
     const navigationItemsBottom: Array<IHybridListItemSkeleton> = [
       { id: 'user', text: `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />))() },
-      { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() },
+      { id: 'logout', text: 'Logout', icon: (() => (<LogoutIcon />))() },
+      { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() }
     ];
 
     const mapSkeletonToListItem = (element: IHybridListItemSkeleton, index: number) => {

@@ -10,6 +10,14 @@
   overflow-y: auto;
 }
 
+.ChannelViewTabBar {
+  margin-bottom: 10px !important;
+}
+
+.ChannelsContainer {
+
+}
+
 .Channel {
   height: 50px;
   margin: 0.15rem 0.15rem 0.25rem 0.15rem;

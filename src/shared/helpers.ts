@@ -4,7 +4,7 @@ import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
-import { DebugLogger } from 'shared/debugRenderer';
+import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow, IUserData } from 'types/types';
 import { SettingsManager } from './settingsManagerRenderer';
 
@@ -26,7 +26,7 @@ export function Navigate(path: string, data: unknown)
 }
 
 export function GetHistoryState() {
-  return history.location.state;
+  return history.location.state as { failed: boolean };
 }
 
 export function GetCookie(cname: string) {
@@ -129,14 +129,14 @@ function HandleWebsocket() {
     Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
-      Navigate('/Login', { failed: true });
+      Navigate('/login', { failed: true });
       return;
     }
     reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
     reconnectAttempts++;
   };
   socket.onopen = () => {
-    clearTimeout(reconnect)
+    clearTimeout(reconnect);
     reconnectAttempts = 1;
     socket.send(token);
   };
@@ -144,7 +144,7 @@ function HandleWebsocket() {
     Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
       GLOBALS.loggedOut = true;
-      Navigate('/Login', { failed: true });
+      Navigate('/login', { failed: true });
       return;
     }
     reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
@@ -155,7 +155,6 @@ function HandleWebsocket() {
 export async function ConductLogin() {
   if (GetHistoryState() != null && (GetHistoryState()).failed) return;
   if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
-    Navigate('/chat', null);
     ipcRenderer.send('GETUserChannels');
 
     ipcRenderer.invoke('GETUser', GLOBALS.userData.uuid).then((userData: IUserData) => {

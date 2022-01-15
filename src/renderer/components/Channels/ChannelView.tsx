@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
+import { Tab, Tabs, Typography } from '@mui/material';
 import React from 'react';
 import { MD5 } from 'crypto-js';
+import GLOBALS from 'shared/globals';
 import Channel from './Channel';
 import type { IChannelUpdateProps } from './Channel';
-import GLOBALS from 'shared/globals';
 import { Debug } from 'shared/helpers';
+import { ChannelType } from 'types/enums';
 
 interface IChannelViewProps {
   init: (channelList: ChannelView) => void
@@ -12,7 +13,8 @@ interface IChannelViewProps {
 
 interface IChannelViewState {
   channels: Channel[],
-  selectedChannel: string
+  selectedChannel: string,
+  selectedTab: number
 }
 
 export default class ChannelView extends React.Component<IChannelViewProps> {
@@ -27,10 +29,12 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
     this.channelClicked = this.channelClicked.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
 
     this.state = {
       channels: [],
-      selectedChannel: GLOBALS.currentChannel || localStorage.getItem('lastOpenedChannel') || ''
+      selectedChannel: GLOBALS.currentChannel || localStorage.getItem('lastOpenedChannel') || '',
+      selectedTab: 0
     }
   }
 
@@ -74,6 +78,10 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
     });
   }
 
+  handleTabChange(event: React.SyntheticEvent, newValue: number) {
+    this.setState({ selectedTab: newValue });
+  }
+
   clearChannels() {
     this.setState({ channels: [] });
   }
@@ -91,7 +99,15 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
   }
 
   render() {
-    const channels = this.state.channels.map((c) => (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isSelectedChannel={this.getSelectedChannel(c.channelID)} onClick={this.channelClicked} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />));
+    const channels = this.state.channels.map((c) => {
+      if (this.state.selectedTab == 0 ) {
+        if (c.channelType == ChannelType.User) return (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isSelectedChannel={this.getSelectedChannel(c.channelID)} onClick={this.channelClicked} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />);
+      }
+      else if (this.state.selectedTab == 1) {
+        if (c.channelType == ChannelType.Group) return (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`)} isSelectedChannel={this.getSelectedChannel(c.channelID)} onClick={this.channelClicked} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />);
+      }
+      return null;
+    });
 
     const PromptElement = () => {
       if (this.isChannelListEmpty()) {
@@ -108,7 +124,13 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
     return(
       <div className='ChannelView'>
-        {channels}
+        <Tabs className='ChannelViewTabBar' variant='fullWidth' value={this.state.selectedTab} onChange={this.handleTabChange}>
+          <Tab label='Private DMs' value={0} />
+          <Tab label='Group DMs' value={1} />
+        </Tabs>
+        <div className='ChannelsContainer'>
+          {channels}
+        </div>
         <PromptElement />
       </div>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
-import { ConductLogin } from 'shared/helpers';
+import { ConductLogin, Navigate } from 'shared/helpers';
 import GLOBALS from 'shared/globals';
 
 interface IAuthPageProps {
@@ -31,6 +31,7 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
 
   LoginInit() {
     ConductLogin();
+    Navigate('/chat', null);
   }
 
   RegisterInit() {
