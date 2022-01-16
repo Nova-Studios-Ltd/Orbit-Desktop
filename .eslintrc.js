@@ -41,7 +41,8 @@ module.exports = {
     'promise/no-nesting': 'off',
     'no-await-in-loop': 'off',
     'react/no-access-state-in-setstate': 'warn',
-    'no-underscore-dangle': 'off'
+    'no-underscore-dangle': 'off',
+    'import/order': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

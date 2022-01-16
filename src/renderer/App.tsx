@@ -1,11 +1,10 @@
 import React from 'react';
-import { Router, Route, useLocation } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
 import { ConductLogin, copyToClipboard, Debug, events, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
-import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
@@ -16,9 +15,8 @@ import { Theme, NotificationAudienceType, NotificationStatusType } from 'types/e
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
-import type { IHybridListItemProps, IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
+import type { IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Dictionary } from 'main/dictionary';
 import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
