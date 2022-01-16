@@ -1,7 +1,7 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import UserData from "../structs/UserData";
-import { Dictionary, IDictionary } from "./dictionary";
+import { Dictionary } from "./dictionary";
 
 class SettingsManager {
   // Settings, initalised at startup
