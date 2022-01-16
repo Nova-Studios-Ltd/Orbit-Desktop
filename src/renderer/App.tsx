@@ -4,7 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { events, history, ipcRenderer, Navigate, SetAuth, Manager } from 'shared/helpers';
+import { events, history, ipcRenderer, Navigate, SetAuth, Manager, copyToClipboard, RemoveCachedCredentials } from 'shared/helpers';
 import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
@@ -12,12 +12,13 @@ import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
 import { Avatar, ClassNameMap, Divider, DividerProps, Drawer, List, ThemeProvider, Typography } from '@mui/material';
 import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
-import { Theme } from 'types/enums';
+import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import type { IHybridListItemProps, IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
+import { Dictionary } from 'main/dictionary';
 import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
@@ -33,6 +34,7 @@ class App extends React.Component {
 
   constructor(props: never) {
     super(props);
+
     Manager.onReady = () => {
       console.log(Manager.HomePath);
       Navigate(Manager.HomePath, null);
@@ -85,7 +87,7 @@ class App extends React.Component {
         break;
       case 'user':
         {
-          const clipboardContent = event.type == 'click' ? `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}` : GLOBALS.userData.uuid;
+          const clipboardContent = event.type == 'click' ? `${Manager.UserData.username}#${Manager.UserData.discriminator}` : Manager.UserData.uuid;
           const resultMessage = event.type == 'click' ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
           copyToClipboard(clipboardContent).then((result: boolean) => {
             if (result) {
@@ -114,7 +116,7 @@ class App extends React.Component {
 
   Logout() {
     RemoveCachedCredentials();
-    GLOBALS.loggedOut = true;
+    Manager.LoggedOut = true;
     Navigate('/login', null);
   }
 
@@ -159,7 +161,7 @@ class App extends React.Component {
     ];
 
     const navigationItemsBottom: Array<IHybridListItemSkeleton> = [
-      { id: 'user', text: `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />))() },
+      { id: 'user', text: `${Manager.UserData.username}#${Manager.UserData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />))() },
       { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() },
     ];
 

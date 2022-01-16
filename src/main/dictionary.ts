@@ -26,11 +26,29 @@ export class Dictionary<V> implements IDictionary<V> {
 
   constructor(dict?: IDictionary<V>, onUpdate?: () => void) {
     this.OnUpdate = onUpdate;
+    this._dict = {} as Indexable<V>;
     if (dict !== undefined)
       dict.forEach((pair: KeyValuePair<V>) => {
         this._dict[pair.Key] = pair.Value;
       });
-    this._dict = {} as Indexable<V>;
+  }
+
+  toJSON() {
+    return {_dict: this._dict};
+  }
+
+  static fromJSON<V>(json: string) : Dictionary<V> | undefined {
+    const d = new Dictionary<V>();
+    const dic = <Indexable<V>>JSON.parse(json, (key: string, value: any) => {
+      console.log(`${key} -> ${value}`);
+      console.log(value._dict);
+      if (key != '' && value._dict != undefined)
+        return Dictionary.fromJSON(JSON.stringify(value));
+      return value;
+    })._dict;
+    if (dic == undefined) return undefined;
+    d._dict = <Indexable<V>>dic;
+    return d;
   }
 
   getValue(key: string) : V {

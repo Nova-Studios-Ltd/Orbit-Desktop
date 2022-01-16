@@ -232,70 +232,46 @@ export class SettingsManager {
   // Settings
   // Read Functions
   ReadNumber(key: string) : number | undefined {
-    if (typeof this.Settings.getValue(key) == 'number')
-      return <number>this.Settings.getValue(key);
-    return undefined;
+    return ipcRenderer.sendSync('ReadNumber', key);
   }
   ReadString(key: string) : string | undefined {
-    if (typeof this.Settings.getValue(key) == 'string')
-      return <string>this.Settings.getValue(key);
-    return undefined;
+    return ipcRenderer.sendSync('ReadString', key);
   }
   ReadBoolean(key: string) : boolean | undefined {
-    if (typeof this.Settings.getValue(key) == 'boolean')
-      return <boolean>this.Settings.getValue(key);
-    return undefined;
+    return ipcRenderer.sendSync('ReadBoolean', key);
   }
 
   // Read Table Functions
   ReadTableNumber(key: string, subKey: string) : number | undefined {
-    if (this.Settings.getValue(key) instanceof Dictionary) {
-      const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey)== 'number')
-      return <number>sub.getValue(subKey);
-    }
-    return undefined;
+    return ipcRenderer.sendSync('ReadTableNumber', key, subKey);
   }
   ReadTableString(key: string, subKey: string) : string | undefined {
-    if (this.Settings.getValue(key) instanceof Dictionary) {
-      const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey) == 'string')
-      return <string>sub.getValue(subKey);
-    }
-    return undefined;
+    return ipcRenderer.sendSync('ReadTableString', key, subKey);
   }
   ReadTableBoolean(key: string, subKey: string) : boolean | undefined {
-    if (this.Settings.getValue(key) instanceof Dictionary) {
-      const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey) == 'boolean')
-      return <boolean>sub.getValue(subKey);
-    }
-    return undefined;
+    return ipcRenderer.sendSync('ReadTableBoolean', key, subKey);
   }
 
   // Write Functions
   WriteNumber(key: string, value: number) {
-    this.Settings.setValue(key, value);
+    ipcRenderer.send('WriteNumber', key, value);
   }
   WriteBoolean(key: string, value: boolean) {
-    this.Settings.setValue(key, value);
+    ipcRenderer.send('WriteNumber', key, value);
   }
   WriteString(key: string, value: string) {
-    this.Settings.setValue(key, value);
+    ipcRenderer.send('WriteNumber', key, value);
   }
 
   // Write Table Functions
   WriteTableNumber(key: string, subKey: string, value: number) {
-    if (!this.Settings.containsKey(key)) this.Settings.setValue(subKey, new Dictionary<number|string|boolean>(undefined, this.Settings.OnUpdate));
-    (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
+    ipcRenderer.send('WriteTableNumber', key, subKey, value);
   }
   WriteTableString(key: string, subKey: string, value: string) {
-    if (this.Settings.getValue(key) == undefined) this.Settings.setValue(key, new Dictionary<number|string|boolean>(undefined, this.Settings.OnUpdate));
-    (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
+    ipcRenderer.send('WriteTableString', key, subKey, value);
   }
   WriteTableBoolean(key: string, subKey: string, value: boolean) {
-    if (!this.Settings.containsKey(key)) this.Settings.setValue(subKey, new Dictionary<number|string|boolean>(undefined, this.Settings.OnUpdate));
-    (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
+    ipcRenderer.send('WriteTableBoolean', key, subKey, value);
   }
 
   async Save() : Promise<boolean> {

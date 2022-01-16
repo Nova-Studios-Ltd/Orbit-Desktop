@@ -24,6 +24,9 @@ contextBridge.exposeInMainWorld('electron', {
     async invoke(channel, ...data) {
       const v = await ipcRenderer.invoke(channel, ...data);
       return v;
+    },
+    sendSync(channel, ...data) {
+      return ipcRenderer.sendSync(channel, ...data);
     }
   }
 });

@@ -1,3 +1,4 @@
+import { SettingsRemote } from "@mui/icons-material";
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import UserData from "../structs/UserData";
@@ -23,8 +24,11 @@ class SettingsManager {
   LoggedOut: boolean = false;
 
   constructor(webContents: Electron.WebContents) {
-    if (existsSync('UserSettings.json'))
-      this.Settings = JSON.parse(readFileSync('UserSettings.json', { encoding: 'utf-8'}));
+    if (existsSync('UserSettings.json')) {
+      const d = Dictionary.fromJSON<number | string | boolean | Dictionary<number | string | boolean>>(readFileSync('UserSettings.json', { encoding: 'utf-8'}));
+      if (d == undefined) this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send('SettingsUpdated'); });
+      this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>d;
+    }
     else
       this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send('SettingsUpdated'); });
 
@@ -50,19 +54,38 @@ class SettingsManager {
 
     // Operational
     ipcMain.handle('GetCurrentChannel', () => this.CurrentChannel)
-    ipcMain.on('SetCurrentChannel', (_event, channel_uuid: string) => { this.CurrentChannel = channel_uuid; webContents.send('UpdateReady'); })
+    ipcMain.on('SetCurrentChannel', (_event, channel_uuid: string) => { this.CurrentChannel = channel_uuid; webContents.send('UpdateReady'); });
 
     ipcMain.handle('GetIsFocused', () => this.IsFocused)
-    ipcMain.on('SetIsFocused', (_event, isFocused: boolean) => { this.IsFocused = isFocused; webContents.send('UpdateReady'); })
+    ipcMain.on('SetIsFocused', (_event, isFocused: boolean) => { this.IsFocused = isFocused; webContents.send('UpdateReady'); });
 
     ipcMain.handle('GetCloseTray', () => this.CloseToTray)
-    ipcMain.on('SetCloseTray', (_event, closeToTray: boolean) => { this.CloseToTray = closeToTray; webContents.send('UpdateReady'); })
+    ipcMain.on('SetCloseTray', (_event, closeToTray: boolean) => { this.CloseToTray = closeToTray; webContents.send('UpdateReady'); });
 
     ipcMain.handle('GetLoggedOut', () => this.LoggedOut)
-    ipcMain.on('SetLoggedOut', (_event, loggedOut: boolean) => { this.LoggedOut = loggedOut; webContents.send('UpdateReady'); })
+    ipcMain.on('SetLoggedOut', (_event, loggedOut: boolean) => { this.LoggedOut = loggedOut; webContents.send('UpdateReady'); });
 
     // Save
     ipcMain.handle('Save', () => this.Save());
+
+    ipcMain.on('ReadNumber', (event, key: string) => { event.returnValue = this.ReadNumber(key); });
+    ipcMain.on('WriteNumber', (_event, key: string, value: number) => this.WriteNumber(key, value));
+
+    ipcMain.on('ReadString', (event, key: string) => { event.returnValue = this.ReadString(key); });
+    ipcMain.on('WriteString', (_event, key: string, value: string) => this.WriteString(key, value));
+
+    ipcMain.on('ReadBoolean', (event, key: string) => { event.returnValue = this.ReadBoolean(key); });
+    ipcMain.on('WriteBoolean', (_event, key: string, value: boolean) => this.WriteBoolean(key, value));
+
+
+    ipcMain.on('ReadTableNumber', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableNumber(key, subkey); });
+    ipcMain.on('WriteTableNumber', (_event, key: string, subKey:string, value: number) => this.WriteTableNumber(key, subKey, value));
+
+    ipcMain.on('ReadTableString', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableString(key, subkey); });
+    ipcMain.on('WriteTableString', (_event, key: string, subKey:string, value: string) => this.WriteTableString(key, subKey, value));
+
+    ipcMain.on('ReadTableBoolean', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableBoolean(key, subkey); });
+    ipcMain.on('WriteTableBoolean', (_event, key: string, subKey:string, value: boolean) => this.WriteTableBoolean(key, subKey, value));
   }
 
   // Settings
