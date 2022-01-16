@@ -86,7 +86,7 @@ class App extends React.Component {
         break;
       case 'user':
         {
-          const clipboardContent = event.type == 'click' ? `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}` : GLOBALS.userData.uuid;
+          const clipboardContent = event.type == 'click' ? `${Manager.UserData.username}#${Manager.UserData.discriminator}` : Manager.UserData.uuid;
           const resultMessage = event.type == 'click' ? 'Copied username and discriminator to clipboard' : 'Copied UUID to clipboard';
           copyToClipboard(clipboardContent).then((result: boolean) => {
             if (result) {
@@ -118,7 +118,7 @@ class App extends React.Component {
 
   logout() {
     RemoveCachedCredentials();
-    GLOBALS.loggedOut = true;
+    Manager.WriteBoolean('loggedOut', true);
     Navigate('/login', null);
   }
 
@@ -163,7 +163,7 @@ class App extends React.Component {
     ];
 
     const navigationItemsBottom: Array<IHybridListItemSkeleton> = [
-      { id: 'user', text: `${GLOBALS.userData.username}#${GLOBALS.userData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />))() },
+      { id: 'user', text: `${Manager.UserData.username}#${Manager.UserData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${Manager.UserData.uuid}?size=64&${Date.now()}`} />))() },
       { id: 'logout', text: 'Logout', icon: (() => (<LogoutIcon />))() },
       { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() }
     ];

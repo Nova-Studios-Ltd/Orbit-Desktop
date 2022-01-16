@@ -31,7 +31,7 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
 
   LoginInit() {
     ConductLogin();
-    Navigate('/chat', null);
+    //Navigate('/chat', null);
   }
 
   RegisterInit() {
