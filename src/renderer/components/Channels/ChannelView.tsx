@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { MD5 } from 'crypto-js';
+import { Debug, Manager } from 'shared/helpers';
+import GLOBALS from 'shared/globals';
 import Channel from './Channel';
 import type { IChannelUpdateProps } from './Channel';
-import GLOBALS from 'shared/globals';
-import { Debug, Manager } from 'shared/helpers';
 
 interface IChannelViewProps {
   init: (channelList: ChannelView) => void

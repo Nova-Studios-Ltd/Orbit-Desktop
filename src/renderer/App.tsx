@@ -1,24 +1,22 @@
 import React from 'react';
-import { Router, Route, useLocation } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
 import { events, history, ipcRenderer, Navigate, SetAuth, Manager, copyToClipboard, RemoveCachedCredentials } from 'shared/helpers';
-import { SettingsManager } from 'shared/SettingsManager';
 import 'renderer/events';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
 import SettingsPage from 'renderer/pages/Settings';
-import { Avatar, ClassNameMap, Divider, DividerProps, Drawer, List, ThemeProvider, Typography } from '@mui/material';
+import { Avatar, ClassNameMap, Divider, Drawer, List, ThemeProvider, Typography } from '@mui/material';
 import { BugReport as BugIcon, Chat as ChatIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import { GlobalStyles } from '@mui/styled-engine';
 import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
-import type { IHybridListItemProps, IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
+import type { IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
-import { Dictionary } from 'main/dictionary';
 import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
