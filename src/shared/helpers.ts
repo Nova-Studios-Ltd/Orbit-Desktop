@@ -1,5 +1,4 @@
 import { createBrowserHistory } from 'history';
-
 import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import GLOBALS from 'shared/globals';
@@ -7,6 +6,7 @@ import UserData from 'structs/UserData';
 import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow, IUserData } from 'types/types';
 import { RSAMemoryKeyPair } from 'main/encryptionClasses';
+import { Dictionary } from 'main/dictionary';
 import { SettingsManager } from './settingsManagerRenderer';
 
 export const history = createBrowserHistory();

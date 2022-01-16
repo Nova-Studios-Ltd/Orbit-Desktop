@@ -164,7 +164,12 @@ ipcMain.handle('SaveKeystore', async (_event, keys: Dictionary<string>) : Promis
 
 ipcMain.handle('LoadKeystore', async () : Promise<Dictionary<string>> => {
   try {
-    return <Dictionary<string>>JSON.parse(readFileSync('keystore', 'utf-8'));
+    /*const d = new Dictionary<string>();
+    d._dict = <Indexable<string>>JSON.parse(readFileSync('keystore', 'utf-8'));*/
+    const d = Dictionary.fromJSON<string>(readFileSync('keystore', 'utf-8'));
+    if (d == undefined)
+      return new Dictionary<string>();
+    return d;
   }
   catch {
     return new Dictionary<string>();

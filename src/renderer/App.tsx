@@ -18,6 +18,7 @@ import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import type { IHybridListItemProps, IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
+import { Dictionary } from 'main/dictionary';
 import AppIcon from '../../assets/icon.svg';
 
 interface IAppState {
@@ -33,6 +34,7 @@ class App extends React.Component {
 
   constructor(props: never) {
     super(props);
+
     Manager.onReady = () => {
       console.log(Manager.HomePath);
       Navigate(Manager.HomePath, null);
@@ -118,7 +120,7 @@ class App extends React.Component {
 
   logout() {
     RemoveCachedCredentials();
-    Manager.WriteBoolean('loggedOut', true);
+    Manager.LoggedOut = true;
     Navigate('/login', null);
   }
 
@@ -168,7 +170,7 @@ class App extends React.Component {
       { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() }
     ];
 
-    const mapSkeletonToListItem = (element: IHybridListItemSkeleton, index: number) => {
+    const mapSkeletonToListItem = (element: IHybridListItemSkeleton) => {
       if (element.isDivider) {
         return <Divider />
       }
