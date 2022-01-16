@@ -29,4 +29,8 @@ export default class UserData {
     this.keyPair = new RSAMemoryKeyPair('', '');
     this.keystore = new Dictionary<string>();
   }
+
+  /*toJSON() {
+    return {keystore: {_dict: this.keystore._dict}};
+  }*/
 }

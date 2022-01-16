@@ -1,93 +1,99 @@
-import type { IpcRenderer } from "electron";
 import { Dictionary } from "main/dictionary";
 import { RSAMemoryKeyPair } from "main/encryptionClasses";
 import UserData from "structs/UserData";
 // eslint-disable-next-line import/no-cycle
-import { Debug, ipcRenderer } from "./helpers";
+import { ipcRenderer } from "./helpers";
 
-export class SyncedUserData implements UserData {
-  userData: UserData;
+export class SyncedUserData {
+  UserData: UserData;
 
   constructor(userData?: UserData) {
-    if (userData == undefined) this.userData = new UserData();
-    else this.userData = userData;
-    if (this.userData.keystore != undefined)
-      this.userData.keystore.OnUpdate = () => this.SetUserdata();
+    if (userData == undefined) this.UserData = new UserData();
+    else this.UserData = userData;
+    if (this.UserData.keystore != undefined)
+      this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     ipcRenderer.on('UserdataUpdated', (uData: string) =>
     {
-      this.userData = <UserData>JSON.parse(uData);
-      this.userData.keystore.OnUpdate = () => this.SetUserdata();
+      const obj = JSON.parse(uData);
+      this.UserData = <UserData>obj;
+      const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
+      if (store != undefined)
+        this.UserData.keystore = store;
+      console.log(this.UserData);
+      this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     });
   }
 
   // Getters/Setters
   get username() : string {
-    return this.userData.username;
+    return this.UserData.username;
   }
 
   set username(v: string) {
-    this.userData.username = v;
+    this.UserData.username = v;
     this.SetUserdata();
   }
 
   get uuid() : string {
-    return this.userData.uuid;
+    return this.UserData.uuid;
   }
 
   set uuid(v: string) {
-    this.userData.uuid = v;
+    this.UserData.uuid = v;
     this.SetUserdata();
   }
 
   get token() : string {
-    return this.userData.token;
+    return this.UserData.token;
   }
 
   set token(v: string) {
-    this.userData.token = v;
+    this.UserData.token = v;
     this.SetUserdata();
   }
 
   get keyPair(): RSAMemoryKeyPair {
-    return this.userData.keyPair;
+    return this.UserData.keyPair;
   }
 
   set keyPair(v: RSAMemoryKeyPair) {
-    this.userData.keyPair = v;
+    this.UserData.keyPair = v;
     this.SetUserdata();
   }
 
   get keystore(): Dictionary<string> {
-    return this.userData.keystore;
+    return this.UserData.keystore;
   }
 
   set keystore(v: Dictionary<string>) {
-    this.userData.keystore = v;
-    this.userData.keystore.OnUpdate = () => this.SetUserdata();
+    console.log(v);
+    this.UserData.keystore = v;
+    this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     this.SetUserdata();
   }
 
   get discriminator(): string {
-    return this.userData.discriminator;
+    return this.UserData.discriminator;
   }
 
   set discriminator(v: string) {
-    this.userData.discriminator = v;
+    this.UserData.discriminator = v;
     this.SetUserdata();
   }
 
   get avatarSrc(): string {
-    return this.userData.avatarSrc;
+    return this.UserData.avatarSrc;
   }
 
   set avatarSrc(v: string) {
-    this.userData.avatarSrc = v;
+    this.UserData.avatarSrc = v;
     this.SetUserdata();
   }
 
   SetUserdata() {
-    if (this.userData == undefined) return;
-    ipcRenderer.send('SetUserdata', JSON.stringify(this.userData), JSON.stringify(this.userData.keystore));
+    if (this.UserData == undefined) return;
+    ipcRenderer.send('SetUserdata', JSON.stringify(this.UserData));
+    console.log(JSON.stringify(this.UserData));
   }
 }
 
@@ -126,7 +132,15 @@ export class SettingsManager {
     ipcRenderer.invoke('GetUserdata').then((v: string) => {
       //this._UserData = new SyncedUserData(<UserData>JSON.parse(v));
       console.log(v);
-      this._UserData = new SyncedUserData(Object.assign(new UserData(), v));
+
+      const obj = JSON.parse(v);
+      const uData = <UserData>obj;
+      const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
+      if (store != undefined)
+        uData.keystore = store;
+      console.log(uData);
+
+      this._UserData = new SyncedUserData(uData);
     });
 
     ipcRenderer.invoke('GetSettings').then((v: string) => {

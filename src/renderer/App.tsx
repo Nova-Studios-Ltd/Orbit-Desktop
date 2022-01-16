@@ -161,7 +161,7 @@ class App extends React.Component {
     ];
 
     const navigationItemsBottom: Array<IHybridListItemSkeleton> = [
-      { id: 'user', text: `${Manager.UserData.username}#${Manager.UserData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${GLOBALS.userData.uuid}?size=64&${Date.now()}`} />))() },
+      { id: 'user', text: `${Manager.UserData.username}#${Manager.UserData.discriminator}`, icon: (() => (<Avatar src={`https://api.novastudios.tk/Media/Avatar/${Manager.UserData.uuid}?size=64&${Date.now()}`} />))() },
       { id: 'settings', text: 'Settings', selectable: true, icon: (() => (<SettingsIcon />))() },
     ];
 

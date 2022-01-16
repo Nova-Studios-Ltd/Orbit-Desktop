@@ -4,7 +4,7 @@ import { MD5 } from 'crypto-js';
 import Channel from './Channel';
 import type { IChannelUpdateProps } from './Channel';
 import GLOBALS from 'shared/globals';
-import { Debug } from 'shared/helpers';
+import { Debug, Manager } from 'shared/helpers';
 
 interface IChannelViewProps {
   init: (channelList: ChannelView) => void
@@ -30,7 +30,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
     this.state = {
       channels: [],
-      selectedChannel: GLOBALS.currentChannel || localStorage.getItem('lastOpenedChannel') || ''
+      selectedChannel: Manager.CurrentChannel || localStorage.getItem('lastOpenedChannel') || ''
     }
   }
 
