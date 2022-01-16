@@ -1,7 +1,6 @@
 import { createBrowserHistory } from 'history';
 import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
-import GLOBALS from 'shared/globals';
 import UserData from 'structs/UserData';
 import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow, IUserData } from 'types/types';
@@ -128,8 +127,8 @@ async function HandleWebsocket() {
   };
   socket.onerror = () => {
     Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
-    if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
-      GLOBALS.loggedOut = true;
+    if (reconnectAttempts > 4 || Manager.LoggedOut) {
+      Manager.LoggedOut = true;
       Navigate('/login', { failed: true });
       return;
     }
@@ -143,8 +142,8 @@ async function HandleWebsocket() {
   };
   socket.onclose = () => {
     Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
-    if (reconnectAttempts > 4 || GLOBALS.loggedOut) {
-      GLOBALS.loggedOut = true;
+    if (reconnectAttempts > 4 || Manager.LoggedOut) {
+      Manager.LoggedOut = true;
       Navigate('/login', { failed: true });
       return;
     }
@@ -155,7 +154,7 @@ async function HandleWebsocket() {
 
 export async function ConductLogin() {
   if (GetHistoryState() != null && (GetHistoryState()).failed) return;
-  if (GLOBALS.userData != null && GLOBALS.userData.uuid.length > 0 && GLOBALS.userData.token.length > 0) {
+  if (Manager.userData != null && Manager.userData.uuid.length > 0 && Manager.userData.token.length > 0) {
     ipcRenderer.send('GETUserChannels');
 
     ipcRenderer.invoke('GETUser', userData.uuid).then(async (uData: IUserData) => {

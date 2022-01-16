@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import { createTheme } from '@mui/material/styles';
-import { SettingsManager } from 'shared/SettingsManager';
+import { Manager } from 'shared/helpers';
 import { Theme } from 'types/enums';
 
 const LightTheme = createTheme({
@@ -24,7 +24,9 @@ const DarkTheme = createTheme({
 });
 
 export function AppTheme() {
-  return SettingsManager.Settings.Theme == Theme.Dark ? DarkTheme : LightTheme;
+  const theme = Manager.ReadNumber('Theme');
+  if (theme != null) return Manager.ReadNumber('Theme') == Theme.Dark ? DarkTheme : LightTheme;
+  return LightTheme;
 }
 
 export function AppStyles() {

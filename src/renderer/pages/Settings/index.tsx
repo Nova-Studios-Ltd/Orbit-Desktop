@@ -7,10 +7,8 @@ import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
 import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
-import GLOBALS from 'shared/globals';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
-import { SettingsManager } from 'shared/SettingsManager';
 import { IOpenFileDialogResults } from 'types/types';
 import FormTextField from 'renderer/components/Form/FormTextField';
 
@@ -51,7 +49,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.state = {
       avatarStateKey: MD5(Date.now().toString()).toString(),
       usernameStateKey: MD5(Date.now().toString()).toString(),
-      darkThemeEnabled: Boolean(SettingsManager.Settings.Theme),
+      darkThemeEnabled: Boolean(Manager.ReadNumber('Theme')) || false,
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
       editUsernameDialogField: Manager.UserData.username
@@ -75,7 +73,8 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     switch (event.currentTarget.id) {
       case 'darkTheme':
         this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
-          SettingsManager.SetTheme(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          Manager.WriteNumber(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          events.send('appThemeChanged', theme);
         });
         break;
     }

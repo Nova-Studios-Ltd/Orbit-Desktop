@@ -4,7 +4,7 @@ import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Debug, ipcRenderer } from 'shared/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
-import { SettingsManager } from 'shared/SettingsManager';
+import { Manager } from 'shared/helpers';
 import AppNotification from '../Notification/Notification';
 
 interface IMessageInputProps {
@@ -101,14 +101,14 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
   }
 
   render() {
-    const availableCharacterRemainder = SettingsManager.Settings.MessageCharacterLimit - this.state.message.length;
-    const showMaxLength = availableCharacterRemainder > SettingsManager.Settings.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
+    const availableCharacterRemainder = Manager.MessageCharacterLimit - this.state.message.length;
+    const showMaxLength = availableCharacterRemainder > Manager.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
 
     return (
       <div className='Chat_Page_Bottom'>
         <IconButton className='Chat_IconButton' onClick={this.handleUploadButtonClick}><UploadIcon /></IconButton>
         <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} autoFocus onChange={this.handleChange} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} inputProps={{
-          maxLength: SettingsManager.Settings.MessageCharacterLimit,
+          maxLength: Manager.MessageCharacterLimit,
         }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{

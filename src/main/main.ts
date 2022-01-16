@@ -9,10 +9,10 @@ import { sync as checkCommand } from 'command-exists';
 import http, { IncomingMessage, ServerResponse } from 'http';
 import { Server } from 'node-static';
 
-import GLOBALS from '../shared/globals';
 import { Debug } from './debug';
 import { isDevelopment, resolveHtmlPath } from './util';
 import { Manager, CreateManager } from "./settingsManager";
+import { defaultSettings } from './settingsDefaults';
 
 import './events';
 import './apiEvents';
@@ -107,7 +107,7 @@ const createWindow = async () => {
     },
   });
 
-  CreateManager(mainWindow.webContents);
+  CreateManager(mainWindow.webContents, defaultSettings);
 
   mainWindow.removeMenu();
 

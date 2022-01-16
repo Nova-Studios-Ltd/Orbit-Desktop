@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import LoginForm from 'renderer/pages/Auth/LoginForm';
 import RegisterForm from 'renderer/pages/Auth/RegisterForm';
 import { ConductLogin, Manager, Navigate } from 'shared/helpers';
-import GLOBALS from 'shared/globals';
 
 interface IAuthPageProps {
   login?: boolean,

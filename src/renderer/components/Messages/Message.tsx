@@ -3,7 +3,6 @@ import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIc
 import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
 import { copyToClipboard, ipcRenderer, Manager } from 'shared/helpers';
-import GLOBALS from 'shared/globals';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';

@@ -3,7 +3,6 @@ import { Button } from '@mui/material';
 import { List as ListIcon } from '@mui/icons-material';
 import Header from 'renderer/components/Header/Header';
 import { Helmet } from 'react-helmet';
-import GLOBALS from 'shared/globals';
 import { Manager } from 'shared/helpers';
 
 interface IFriendsPageProps {

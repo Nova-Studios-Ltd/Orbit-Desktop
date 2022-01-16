@@ -102,6 +102,7 @@ export class SettingsManager {
   private _AppName: string = '';
   private _AppVersion: string = '';
   private _HomePath: string = '';
+  private _MessageCharacterLimit: number = 0;
 
   // Operational
   private _CurrentChannel: string = '';
@@ -171,6 +172,14 @@ export class SettingsManager {
     });
     ipcRenderer.invoke('HomePath').then((v: string) => {
       this._HomePath = v;
+      this.updates++;
+      if (this.updates >= 7) {
+        this.onReady();
+        this.onReady = () => {};
+      }
+    });
+    ipcRenderer.invoke('MessageCharacterLimit').then((v: string) => {
+      this._MessageCharacterLimit = v;
       this.updates++;
       if (this.updates >= 7) {
         this.onReady();

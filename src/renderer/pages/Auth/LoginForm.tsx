@@ -3,7 +3,6 @@ import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Authenticate, Navigate, ipcRenderer, Manager } from 'shared/helpers';
 import Credentials from 'structs/Credentials';
-import GLOBALS from 'shared/globals';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
