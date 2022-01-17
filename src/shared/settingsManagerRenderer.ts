@@ -178,7 +178,7 @@ export class SettingsManager {
         this.onReady = () => {};
       }
     });
-    ipcRenderer.invoke('MessageCharacterLimit').then((v: string) => {
+    ipcRenderer.invoke('MessageCharacterLimit').then((v: number) => {
       this._MessageCharacterLimit = v;
       this.updates++;
       if (this.updates >= 7) {
@@ -225,6 +225,7 @@ export class SettingsManager {
   get AppName() { return this._AppName; }
   get AppVersion() { return this._AppVersion; }
   get HomePath() { return this._HomePath; }
+  get MessageCharacterLimit() { return this._MessageCharacterLimit; }
   get UserData() { return this._UserData; }
 
   get CurrentChannel() { return this._CurrentChannel; }

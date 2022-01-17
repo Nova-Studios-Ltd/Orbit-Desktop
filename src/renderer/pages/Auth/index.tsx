@@ -21,20 +21,9 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
       return 0;
     })();
 
-    this.LoginInit = this.LoginInit.bind(this);
-    this.RegisterInit = this.RegisterInit.bind(this);
     this.GetRandomInt = this.GetRandomInt.bind(this);
     this.GenerateRandomColor = this.GenerateRandomColor.bind(this);
     this.HslToHex = this.HslToHex.bind(this);
-  }
-
-  LoginInit() {
-    ConductLogin();
-    //Navigate('/chat', null);
-  }
-
-  RegisterInit() {
-
   }
 
   GetRandomInt(min: number, max: number) {
@@ -60,7 +49,7 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
 
   render() {
     const title = this.formType == 1 ? 'Register' : 'Login';
-    const form = this.formType == 1 ? <RegisterForm init={this.RegisterInit}/> : <LoginForm init={this.LoginInit}/>;
+    const form = this.formType == 1 ? <RegisterForm /> : <LoginForm />;
     const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
     const AuthPageContainerClassNames = `Page Auth_Page_Container ${background}`;
 

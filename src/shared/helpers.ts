@@ -154,13 +154,13 @@ async function HandleWebsocket() {
 
 export async function ConductLogin() {
   if (GetHistoryState() != null && (GetHistoryState()).failed) return;
-  if (Manager.userData != null && Manager.userData.uuid.length > 0 && Manager.userData.token.length > 0) {
+  if (Manager.UserData != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token.length > 0) {
     ipcRenderer.send('GETUserChannels');
 
-    ipcRenderer.invoke('GETUser', userData.uuid).then(async (uData: IUserData) => {
+    ipcRenderer.invoke('GETUser', Manager.UserData.uuid).then(async (uData: IUserData) => {
       if (uData != undefined) {
-        userData.username = uData.username;
-        userData.discriminator = uData.discriminator;
+        Manager.UserData.username = uData.username;
+        Manager.UserData.discriminator = uData.discriminator;
 
         Manager.LoggedOut = false;
         HandleWebsocket();
