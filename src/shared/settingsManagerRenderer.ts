@@ -19,7 +19,6 @@ export class SyncedUserData {
       const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
       if (store != undefined)
         this.UserData.keystore = store;
-      console.log(this.UserData);
       this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     });
   }
@@ -66,7 +65,6 @@ export class SyncedUserData {
   }
 
   set keystore(v: Dictionary<string>) {
-    console.log(v);
     this.UserData.keystore = v;
     this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     this.SetUserdata();
@@ -93,7 +91,6 @@ export class SyncedUserData {
   SetUserdata() {
     if (this.UserData == undefined) return;
     ipcRenderer.send('SetUserdata', JSON.stringify(this.UserData));
-    console.log(JSON.stringify(this.UserData));
   }
 }
 
@@ -132,14 +129,12 @@ export class SettingsManager {
     // Userdata and Settings manage themselves
     ipcRenderer.invoke('GetUserdata').then((v: string) => {
       //this._UserData = new SyncedUserData(<UserData>JSON.parse(v));
-      console.log(v);
 
       const obj = JSON.parse(v);
       const uData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
       if (store != undefined)
         uData.keystore = store;
-      console.log(uData);
 
       this._UserData = new SyncedUserData(uData);
     });
@@ -178,7 +173,7 @@ export class SettingsManager {
         this.onReady = () => {};
       }
     });
-    ipcRenderer.invoke('MessageCharacterLimit').then((v: string) => {
+    ipcRenderer.invoke('MessageCharacterLimit').then((v: number) => {
       this._MessageCharacterLimit = v;
       this.updates++;
       if (this.updates >= 7) {

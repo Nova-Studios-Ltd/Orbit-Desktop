@@ -18,6 +18,7 @@ import HybridListItem from 'renderer/components/List/HybridListItem';
 import type { IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
 import AppIcon from '../../assets/icon.svg';
+import { Dictionary } from 'main/dictionary';
 
 interface IAppState {
   theme: Theme,

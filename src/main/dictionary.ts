@@ -10,6 +10,7 @@ export interface IDictionary<V> {
   forEach(callback: (pair: KeyValuePair<V>) => void) : void
 }
 
+
 export class KeyValuePair<V> {
   readonly Key: string;
   readonly Value: V;
@@ -24,13 +25,16 @@ export class Dictionary<V> implements IDictionary<V> {
   _dict: Indexable<V>;
   public OnUpdate?: () => void;
 
-  constructor(dict?: IDictionary<V>, onUpdate?: () => void) {
+  constructor(dict?: IDictionary<V> | Indexable<V>, onUpdate?: () => void) {
     this.OnUpdate = onUpdate;
     this._dict = {} as Indexable<V>;
     if (dict !== undefined)
-      dict.forEach((pair: KeyValuePair<V>) => {
-        this._dict[pair.Key] = pair.Value;
-      });
+      if (dict instanceof Dictionary)
+        dict.forEach((pair: KeyValuePair<V>) => {
+          this._dict[pair.Key] = pair.Value;
+        });
+      else
+        this._dict = <Indexable<V>>dict;
   }
 
   toJSON() {

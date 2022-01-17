@@ -109,6 +109,8 @@ const createWindow = async () => {
 
   CreateManager(mainWindow.webContents, defaultSettings);
 
+  console.log(Manager.ReadSetting<boolean>('t'));
+
   mainWindow.removeMenu();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));

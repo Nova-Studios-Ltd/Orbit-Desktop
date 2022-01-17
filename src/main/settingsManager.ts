@@ -2,12 +2,13 @@ import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Theme } from "types/enums";
 import UserData from "../structs/UserData";
-import { Dictionary } from "./dictionary";
+import { Dictionary, Indexable } from "./dictionary";
 
 class SettingsManager {
   // Settings, initalised at startup
   //Settings: {[key: string] : ({[key: string] : number | string | boolean} | number | string | boolean)};
   private Settings: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>;
+  private Operational: Dictionary<number | string | boolean>;
 
   // Userdata, initalised when users logs in
   UserData: UserData = new UserData();
@@ -34,6 +35,13 @@ class SettingsManager {
       this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(defaultSettings, () => {webContents.send('SettingsUpdated'); });
     else
       this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send('SettingsUpdated'); });
+
+    this.Operational = new Dictionary<number | string | boolean>(<Indexable<number | string | boolean>>{
+      'CurrentChannel': '',
+      'IsFocused': true,
+      'CloseToTray': false,
+      'LoggedOut': false
+    });
 
     // Userdata
     ipcMain.handle('GetUserdata', () => JSON.stringify(this.UserData));

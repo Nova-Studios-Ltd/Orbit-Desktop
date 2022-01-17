@@ -66,7 +66,6 @@ ipcMain.handle('GETKey', async (_event, user_uuid: string, key_user_uuid: string
 
 ipcMain.handle('GETKeystore', async (_event, user_uuid: string) => {
   const resp = await QueryWithAuthentication(`/User/${user_uuid}/Keystore`);
-  console.log(resp.payload);
   if (resp.status == 200) {
     const d = new Dictionary<string>();
     d._dict = <Indexable<string>>resp.payload;

@@ -1,6 +1,7 @@
 import { Theme } from '../types/enums';
-import { Dictionary } from './dictionary';
+import { Dictionary, Indexable } from './dictionary';
 
-export const defaultSettings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>();
-
-defaultSettings.setValue('Theme', Theme.Light);
+export const defaultSettings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(<Indexable<number | string | boolean | Dictionary<number | string | boolean>>>{
+  'Theme': Theme.Light,
+  'Test': 'Test'
+});
