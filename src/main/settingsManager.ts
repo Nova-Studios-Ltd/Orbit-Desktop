@@ -86,13 +86,13 @@ class SettingsManager {
     ipcMain.handle('Save', () => this.Save());
 
     ipcMain.on('ReadNumber', (event, key: string) => { event.returnValue = this.ReadNumber(key); });
-    ipcMain.on('WriteNumber', (_event, key: string, value: number) => this.WriteNumber(key, value));
+    ipcMain.on('WriteNumber', (_event, key: string, value: number) => this.WriteSettingNumber(key, value));
 
     ipcMain.on('ReadString', (event, key: string) => { event.returnValue = this.ReadString(key); });
-    ipcMain.on('WriteString', (_event, key: string, value: string) => this.WriteString(key, value));
+    ipcMain.on('WriteString', (_event, key: string, value: string) => this.WriteSettingString(key, value));
 
     ipcMain.on('ReadBoolean', (event, key: string) => { event.returnValue = this.ReadBoolean(key); });
-    ipcMain.on('WriteBoolean', (_event, key: string, value: boolean) => this.WriteBoolean(key, value));
+    ipcMain.on('WriteBoolean', (_event, key: string, value: boolean) => this.WriteSettingBoolean(key, value));
 
 
     ipcMain.on('ReadTableNumber', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableNumber(key, subkey); });
@@ -150,13 +150,13 @@ class SettingsManager {
   }
 
   // Write Functions
-  WriteNumber(key: string, value: number) {
+  WriteSettingNumber(key: string, value: number) {
     this.Settings.setValue(key, value);
   }
-  WriteBoolean(key: string, value: boolean) {
+  WriteSettingBoolean(key: string, value: boolean) {
     this.Settings.setValue(key, value);
   }
-  WriteString(key: string, value: string) {
+  WriteSettingString(key: string, value: string) {
     this.Settings.setValue(key, value);
   }
 
