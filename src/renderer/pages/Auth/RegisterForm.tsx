@@ -8,10 +8,6 @@ import Credentials from 'structs/Credentials';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormStatusType } from 'types/enums';
 
-interface IRegisterFormProps {
-  init: (form: RegisterForm) => void
-}
-
 interface IRegisterFormState {
   email: string,
   username: string,
@@ -20,12 +16,11 @@ interface IRegisterFormState {
   status: FormStatusTuple
 }
 
-class RegisterForm extends React.Component<IRegisterFormProps> {
+class RegisterForm extends React.Component {
   state: IRegisterFormState;
 
-  constructor(props: IRegisterFormProps) {
+  constructor(props: never) {
     super(props);
-    props.init(this);
 
     this.state = { email: '', username: '', password: '', address: '', status: new FormStatusTuple(undefined, undefined)}
 

@@ -220,6 +220,7 @@ export class SettingsManager {
   get AppName() { return this._AppName; }
   get AppVersion() { return this._AppVersion; }
   get HomePath() { return this._HomePath; }
+  get MessageCharacterLimit() { return this._MessageCharacterLimit; }
   get UserData() { return this._UserData; }
 
   get CurrentChannel() { return this._CurrentChannel; }

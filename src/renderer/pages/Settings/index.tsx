@@ -5,7 +5,7 @@ import { MD5 } from 'crypto-js';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
-import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin } from 'shared/helpers';
+import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from 'shared/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
@@ -73,8 +73,8 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     switch (event.currentTarget.id) {
       case 'darkTheme':
         this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
-          Manager.WriteNumber(this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
-          events.send('appThemeChanged', theme);
+          Manager.WriteNumber('Theme', this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          events.send('appThemeChanged', this.state.darkThemeEnabled);
         });
         break;
     }

@@ -8,10 +8,6 @@ import FormTextField from 'renderer/components/Form/FormTextField';
 import FormStatusTuple from 'structs/FormStatusTypes';
 import { FormAuthStatusType, FormStatusType } from 'types/enums';
 
-interface ILoginFormProps {
-  init: (form: LoginForm) => void
-}
-
 interface ILoginFormState {
   email: string,
   password: string,
@@ -19,12 +15,11 @@ interface ILoginFormState {
   status: FormStatusTuple
 }
 
-class LoginForm extends React.Component<ILoginFormProps> {
+class LoginForm extends React.Component {
   state: ILoginFormState;
 
-  constructor(props: ILoginFormProps) {
+  constructor(props: never) {
     super(props);
-    props.init(this);
 
     this.state = {email: '', password: '', address: '', status: new FormStatusTuple(undefined, undefined)}
 
