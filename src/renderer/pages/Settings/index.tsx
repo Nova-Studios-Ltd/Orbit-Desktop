@@ -5,7 +5,7 @@ import { MD5 } from 'crypto-js';
 import { Helmet } from 'react-helmet';
 import AppNotification from 'renderer/components/Notification/Notification';
 import Header from 'renderer/components/Header/Header';
-import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from 'shared/helpers';
+import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from 'renderer/helpers';
 import SettingsSection from 'renderer/components/Settings/SettingsSection';
 import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
@@ -49,7 +49,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.state = {
       avatarStateKey: MD5(Date.now().toString()).toString(),
       usernameStateKey: MD5(Date.now().toString()).toString(),
-      darkThemeEnabled: Boolean(Manager.ReadNumber('Theme')) || false,
+      darkThemeEnabled: Boolean(Manager.ReadNumber('Theme')) || true,
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
       editUsernameDialogField: Manager.UserData.username
@@ -103,7 +103,6 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   exitSettings() {
-    ConductLogin();
     Navigate('/chat', null);
   }
 

@@ -6,8 +6,6 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
 //import { autoUpdater } from 'electron-updater';
 import { sync as checkCommand } from 'command-exists';
-import http, { IncomingMessage, ServerResponse } from 'http';
-import { Server } from 'node-static';
 
 import { Debug } from './debug';
 import { isDevelopment, resolveHtmlPath } from './util';
@@ -35,25 +33,7 @@ const spotifyInstalled = checkCommand('spotify');
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-
-  Debug.Log(path.resolve(__dirname, '../renderer/'));
-  const server = new Server(path.resolve(__dirname, '../renderer/'));
-
-  http.createServer((request: IncomingMessage, response: ServerResponse) => {
-    request.addListener('end', () => {
-      // Be aware of memory caching
-      // Handles react router weridness
-      // Serves 'index.html' for any request of '/login'or '/register' etc.
-      // If the request url includes a filter it serves that file directly
-      Debug.Log(`Before: ${request.url}`);
-      if (!request.url?.includes('styles.css') && !request.url?.includes('style.css') && !request.url?.includes('renderer.js'))
-        request.url = resolveHtmlPath('index.html');
-      Debug.Log(`After: ${request.url}`);
-      server.serve(request, response);
-    }).resume();
-  }).listen(process.env.port || 1212);
-}
+  sourceMapSupport.install();}
 
 if (isDevelopment) {
   require('electron-debug')();
@@ -108,8 +88,6 @@ const createWindow = async () => {
   });
 
   CreateManager(mainWindow.webContents, defaultSettings);
-
-  console.log(Manager.ReadSetting<boolean>('t'));
 
   mainWindow.removeMenu();
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { session } from 'electron';
 import { createReadStream } from 'fs';
 import Axios from 'axios';
 import FormData from 'form-data';
@@ -7,6 +5,7 @@ import { basename } from 'path';
 import { createCipheriv } from 'crypto';
 import { PassThrough } from 'stream';
 import { ContentType } from '../types/enums';
+import { Manager } from './settingsManager';
 
 export class NCAPIResponse {
   status: number | undefined;
@@ -23,15 +22,10 @@ export class NCAPIResponse {
 }
 
 async function RetreiveToken() : Promise<string> {
-  const cookie = (await session.defaultSession.cookies.get({name: 'userData'}))[0].value;
-  const { token } = JSON.parse(cookie);
-  return token;
-}
-
-export async function SetCookie(cookieName: string, cookieData: string) : Promise<boolean> {
-  return new Promise((resolve) => {
-    session.defaultSession.cookies.set({url: 'http://localhost', name: cookieName, value: cookieData, expirationDate: new Date().getTime() + 30*24*60*60*1000 }).then(() => resolve(true)).catch(() => resolve(false))
-  });
+  if (Manager != null) {
+    return Manager.UserData.token;
+  }
+  return Promise.reject(new Error('Settings nanager was null'));
 }
 
 export async function QueryWithAuthentication(endpoint: string) : Promise<NCAPIResponse> {

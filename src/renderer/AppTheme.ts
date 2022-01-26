@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import { createTheme } from '@mui/material/styles';
-import { Manager } from 'shared/helpers';
+import { Manager } from 'renderer/helpers';
 import { Theme } from 'types/enums';
 
 const LightTheme = createTheme({
@@ -26,7 +26,7 @@ const DarkTheme = createTheme({
 export function AppTheme() {
   const theme = Manager.ReadNumber('Theme');
   if (theme != null) return Manager.ReadNumber('Theme') == Theme.Dark ? DarkTheme : LightTheme;
-  return LightTheme;
+  return DarkTheme;
 }
 
 export function AppStyles() {

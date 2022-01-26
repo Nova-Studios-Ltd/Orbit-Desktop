@@ -1,18 +1,15 @@
-import { ConductLogin, ipcRenderer, Navigate, SetAuth, RemoveCachedCredentials, SetCookie, Debug, Manager } from 'shared/helpers';
+import { ipcRenderer, Navigate, RemoveCachedCredentials, Debug, Manager } from 'renderer/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
-  SetCookie('userData', JSON.stringify({uuid, token}), 60);
-
+  Manager.UserData.uuid = uuid;
+  Manager.UserData.token = token;
   // Store Pub/Priv key
   ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
     if (result) {
       Debug.Success('Public key stored successfully');
-      SetAuth().then(() => {
-        ConductLogin()
-        Navigate('/chat', null);
-      });
+      Navigate('/chat', null);
     }
     else {
       Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');
