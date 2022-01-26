@@ -88,20 +88,20 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   async preloadChannel() {
-    if (Manager.CurrentChannel != null && Manager.CurrentChannel.length < 1) {
-      const lastOpenedChannel = Manager.ReadString("DefaultChannel");
+    if (Manager.ReadConst<string>("CurrentChannel") != null && Manager.ReadConst<string>("CurrentChannel").length < 1) {
+      const lastOpenedChannel = Manager.ReadSetting<string>("DefaultChannel");
       if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
-        Manager.CurrentChannel = lastOpenedChannel;
+        Manager.WriteConst("CurrentChannel", lastOpenedChannel);
         ipcRenderer.send('GETMessages', lastOpenedChannel);
       }
       else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
         ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID);
-        Manager.CurrentChannel = this.state.ChannelList.state.channels[0].channelID;
+        Manager.WriteConst("CurrentChannel", this.state.ChannelList.state.channels[0].channelID);
         setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
       }
     }
     else {
-      ipcRenderer.send('GETMessages', Manager.CurrentChannel);
+      ipcRenderer.send('GETMessages', Manager.ReadConst<string>("CurrentChannel"));
     }
   }
 

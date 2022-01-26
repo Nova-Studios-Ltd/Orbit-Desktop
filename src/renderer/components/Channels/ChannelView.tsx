@@ -32,7 +32,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
     this.state = {
       channels: [],
-      selectedChannel: Manager.CurrentChannel || Manager.ReadString("DefaultChannel") || '',
+      selectedChannel: Manager.ReadConst<string>("CurrentChannel") || Manager.ReadSetting<string>("DefaultChannel") || '',
       selectedTab: 0
     }
   }

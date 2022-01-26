@@ -132,7 +132,7 @@ class App extends React.Component {
 
     if (Manager != null) {
       if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
-        Manager.LoggedOut = false;
+        Manager.WriteConst("LoggedOut", false);
         HandleWebsocket();
         Navigate('/chat', null);
       }

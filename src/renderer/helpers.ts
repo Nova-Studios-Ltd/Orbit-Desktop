@@ -98,8 +98,8 @@ export async function HandleWebsocket() {
   };
   socket.onerror = () => {
     Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
-    if (reconnectAttempts > 4 || Manager.LoggedOut) {
-      Manager.LoggedOut = true;
+    if (reconnectAttempts > 4 || Manager.ReadConst<boolean>("LoggedOut")) {
+      Manager.WriteConst("LoggedOut", true);
       Navigate('/login', { failed: true });
       return;
     }
@@ -113,8 +113,8 @@ export async function HandleWebsocket() {
   };
   socket.onclose = () => {
     Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
-    if (reconnectAttempts > 4 || Manager.LoggedOut) {
-      Manager.LoggedOut = true;
+    if (reconnectAttempts > 4 || Manager.ReadConst<boolean>("LoggedOut")) {
+      Manager.WriteConst("LoggedOut", true);
       Navigate('/login', { failed: true });
       return;
     }
@@ -128,7 +128,8 @@ export function Authenticate(data: Credentials) {
 }
 
 export function RemoveCachedCredentials() {
-  Manager.LoggedOut = true;
+  //Manager.LoggedOut = true;
+  Manager.WriteConst("LoggedOut", true);
   ipcRenderer.send('logout');
 }
 
@@ -137,7 +138,8 @@ export function Register(data: Credentials) {
 }
 
 export function setDefaultChannel(channelID: string) {
-  Manager.ReadString("DefaultChannel").setItem('lastOpenedChannel', channelID);
+  //Manager.ReadString("DefaultChannel").setItem('lastOpenedChannel', channelID);
+  Manager.WriteSetting("DefaultChannel", channelID);
 }
 
 export function copyToClipboard(text: string) {
