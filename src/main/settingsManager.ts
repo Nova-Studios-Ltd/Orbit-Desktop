@@ -90,7 +90,7 @@ class SettingsManager {
     (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
   }
 
-  // Constants
+  // Operational Constants
   ReadConst<T>(key: string) : T {
     return <T><unknown>this.Operational.getValue(key);
   }
