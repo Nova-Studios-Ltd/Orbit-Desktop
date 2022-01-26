@@ -1,7 +1,7 @@
 import { Tab, Tabs, Typography } from '@mui/material';
 import React from 'react';
 import { MD5 } from 'crypto-js';
-import { Debug, Manager } from 'shared/helpers';
+import { Debug, Manager } from 'renderer/helpers';
 import { ChannelType } from 'types/enums';
 import Channel from './Channel';
 import type { IChannelUpdateProps } from './Channel';
@@ -32,7 +32,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
     this.state = {
       channels: [],
-      selectedChannel: Manager.currentChannel || localStorage.getItem('lastOpenedChannel') || '',
+      selectedChannel: Manager.CurrentChannel || Manager.ReadString("DefaultChannel") || '',
       selectedTab: 0
     }
   }

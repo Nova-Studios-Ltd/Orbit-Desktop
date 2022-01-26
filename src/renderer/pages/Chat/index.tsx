@@ -2,7 +2,7 @@ import React from 'react';
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
 import MessageCanvas from 'renderer/components/Messages/MessageCanvas';
-import { Debug, ipcRenderer, events, setDefaultChannel, Manager, RemoveCachedCredentials, Navigate } from 'shared/helpers';
+import { Debug, ipcRenderer, events, setDefaultChannel, Manager, RemoveCachedCredentials, Navigate } from 'renderer/helpers';
 import ChannelView from 'renderer/components/Channels/ChannelView';
 import Channel from 'renderer/components/Channels/Channel';
 import MessageInput from 'renderer/components/Messages/MessageInput';
@@ -89,7 +89,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
   async preloadChannel() {
     if (Manager.CurrentChannel != null && Manager.CurrentChannel.length < 1) {
-      const lastOpenedChannel = localStorage.getItem('lastOpenedChannel');
+      const lastOpenedChannel = Manager.ReadString("DefaultChannel");
       if (lastOpenedChannel != null && lastOpenedChannel != 'undefined') {
         Manager.CurrentChannel = lastOpenedChannel;
         ipcRenderer.send('GETMessages', lastOpenedChannel);

@@ -2,7 +2,7 @@ import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, 
 import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
-import { copyToClipboard, ipcRenderer, Manager } from 'shared/helpers';
+import { copyToClipboard, ipcRenderer, Manager } from 'renderer/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';

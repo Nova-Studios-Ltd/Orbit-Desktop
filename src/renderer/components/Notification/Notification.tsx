@@ -1,6 +1,6 @@
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { toast } from 'react-toastify';
-import { ipcRenderer, Manager } from 'shared/helpers';
+import { ipcRenderer, Manager } from 'renderer/helpers';
 import { Typography } from '@mui/material';
 
 export interface INotificationProps {

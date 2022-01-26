@@ -4,7 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { ConductLogin, copyToClipboard, Debug, events, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials, SetAuth } from 'shared/helpers';
+import { copyToClipboard, Debug, events, HandleWebsocket, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials } from 'renderer/helpers';
 import 'renderer/events';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
@@ -35,9 +35,7 @@ class App extends React.Component {
     super(props);
 
     Manager.onReady = () => {
-      console.log(Manager.HomePath);
-      Navigate(Manager.HomePath, null);
-      SetAuth();
+
     }
 
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
@@ -60,7 +58,6 @@ class App extends React.Component {
         if (event.type == 'click') {
           this.setState({ currentRoute: event.currentTarget.id });
           Navigate('/chat', null);
-          ConductLogin();
         }
         break;
       case 'friends':
@@ -119,7 +116,6 @@ class App extends React.Component {
 
   logout() {
     RemoveCachedCredentials();
-    Manager.LoggedOut = true;
     Navigate('/login', null);
   }
 
@@ -133,6 +129,17 @@ class App extends React.Component {
     events.on('appThemeChanged', () => {
       this.setState({ theme: AppTheme(), styles: AppStyles() });
     });
+
+    if (Manager != null) {
+      if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
+        Manager.LoggedOut = false;
+        HandleWebsocket();
+        Navigate('/chat', null);
+      }
+      else {
+        Navigate('/login', null);
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -177,12 +184,12 @@ class App extends React.Component {
       return <HybridListItem id={element.id} text={element.text} icon={element.icon} selected={(element.selectable && element.id == this.state.currentRoute)} onClick={element.onClick != null ? element.onClick : this.navigationDrawerItemClicked} onContextMenu={element.onContextMenu != null ? element.onContextMenu : this.navigationDrawerItemClicked} />
     }
 
-    const navigationDrawerListTopJSXArray = navigationItemsTop.map((element, index) => {
-      return mapSkeletonToListItem(element, index);
+    const navigationDrawerListTopJSXArray = navigationItemsTop.map((element) => {
+      return mapSkeletonToListItem(element);
     });
 
-    const navigationDrawerListBottomJSXArray = navigationItemsBottom.map((element, index) => {
-      return mapSkeletonToListItem(element, index);
+    const navigationDrawerListBottomJSXArray = navigationItemsBottom.map((element) => {
+      return mapSkeletonToListItem(element);
     });
 
     return (

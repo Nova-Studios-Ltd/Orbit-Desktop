@@ -1,4 +1,4 @@
-import { clipboard, dialog, ipcMain, session, Notification } from 'electron';
+import { clipboard, dialog, ipcMain, Notification } from 'electron';
 import { INotificationProps } from 'renderer/components/Notification/Notification';
 import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from 'fs';
 import type { AuthResponse } from 'types/NCAPIResponseMutations';
@@ -27,7 +27,6 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
 });
 
 ipcMain.on('logout', () => {
-  session.defaultSession.cookies.remove('http://localhost', 'userData');
   if (existsSync('keystore')) unlinkSync('keystore');
   if (existsSync('rsa')) unlinkSync('rsa');
   if (existsSync('rsa.pub')) unlinkSync('rsa.pub');

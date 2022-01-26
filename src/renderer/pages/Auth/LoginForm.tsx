@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from '@mui/material/';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Authenticate, Navigate, ipcRenderer, Manager } from 'shared/helpers';
+import { Authenticate, Navigate, ipcRenderer, Manager } from 'renderer/helpers';
 import Credentials from 'structs/Credentials';
 import AuthForm from 'renderer/components/Form/AuthForm';
 import FormTextField from 'renderer/components/Form/FormTextField';

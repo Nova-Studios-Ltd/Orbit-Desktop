@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react';
 import { Button, Card, Typography, Avatar, Menu, MenuItem, ButtonBase, Dialog, DialogContent, DialogActions, DialogTitle, IconButton, TextField } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import { ipcRenderer, Manager, setDefaultChannel } from 'shared/helpers';
+import { ipcRenderer, Manager, setDefaultChannel } from 'renderer/helpers';
 import { ChannelType } from 'types/enums';
 import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
 import FormTextField from 'renderer/components/Form/FormTextField';

@@ -1,11 +1,8 @@
 import { createBrowserHistory } from 'history';
 import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
-import UserData from 'structs/UserData';
 import { DebugLogger } from 'renderer/debugRenderer';
-import { IElectronRendererWindow, IUserData } from 'types/types';
-import { RSAMemoryKeyPair } from 'main/encryptionClasses';
-import { Dictionary } from 'main/dictionary';
+import { IElectronRendererWindow } from 'types/types';
 import { SettingsManager } from './settingsManagerRenderer';
 
 export const history = createBrowserHistory();
@@ -29,36 +26,10 @@ export function GetHistoryState() {
   return history.location.state as { failed: boolean };
 }
 
-export function GetCookie(cname: string) {
-  const name = `${cname}=`;
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const ca = decodedCookie.split(';');
-  for(let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return '';
-}
-
-export function SetCookie(name: string, value: string, days: number) {
-  let expires = "";
-  if (days) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days*24*60*60*1000));
-      expires = `; expires=${date.toUTCString()}`;
-  }
-  document.cookie = `${name}=${value || ""}${expires}; path=/`;
-}
-
 let reconnectAttempts = 1;
 let reconnect: NodeJS.Timeout;
 const timestepStates = [2500, 4000, 8000, 12000]
-async function HandleWebsocket() {
+export async function HandleWebsocket() {
   const userData = Manager.UserData;
   const {token} = userData;
   const {uuid} = userData;
@@ -152,57 +123,13 @@ async function HandleWebsocket() {
   };
 }
 
-export async function ConductLogin() {
-  if (GetHistoryState() != null && (GetHistoryState()).failed) return;
-  if (Manager.UserData != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token.length > 0) {
-    ipcRenderer.send('GETUserChannels');
-
-    ipcRenderer.invoke('GETUser', Manager.UserData.uuid).then(async (uData: IUserData) => {
-      if (uData != undefined) {
-        Manager.UserData.username = uData.username;
-        Manager.UserData.discriminator = uData.discriminator;
-
-        Manager.LoggedOut = false;
-        HandleWebsocket();
-      }
-    });
-  }
-  else {
-    Debug.Warn('UUID and Token not found, returning to login page.');
-    Navigate('/login', null);
-  }
-}
-
 export function Authenticate(data: Credentials) {
   return ipcRenderer.invoke('beginAuth', data, window.location.origin);
-}
-
-export async function SetAuth() {
-  const cookie = GetCookie('userData');
-  if (cookie.length > 0) {
-    const cookie_data = JSON.parse(GetCookie('userData'));
-    if (cookie_data != null) {
-      const { token, uuid } = cookie_data;
-      if (token != null && uuid != null) {
-        const userData = Manager.UserData;
-        if (userData == undefined) return;
-        userData.token = token;
-        userData.uuid = uuid;
-        userData.keyPair = new RSAMemoryKeyPair(await ipcRenderer.invoke('GetPrivkey'), await ipcRenderer.invoke('GetPubkey'));
-
-        // Request Keystore
-        await ipcRenderer.invoke('SaveKeystore', await ipcRenderer.invoke('GETKeystore', userData.uuid));
-
-        userData.keystore = await ipcRenderer.invoke("LoadKeystore");
-      }
-    }
-  }
 }
 
 export function RemoveCachedCredentials() {
   Manager.LoggedOut = true;
   ipcRenderer.send('logout');
-  //Manager.UserData = new UserData(undefined);
 }
 
 export function Register(data: Credentials) {
@@ -210,7 +137,7 @@ export function Register(data: Credentials) {
 }
 
 export function setDefaultChannel(channelID: string) {
-  localStorage.setItem('lastOpenedChannel', channelID);
+  Manager.ReadString("DefaultChannel").setItem('lastOpenedChannel', channelID);
 }
 
 export function copyToClipboard(text: string) {

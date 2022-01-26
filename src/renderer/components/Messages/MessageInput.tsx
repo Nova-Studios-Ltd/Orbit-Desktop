@@ -2,9 +2,9 @@ import React, { KeyboardEvent, ChangeEvent } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material/';
 import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { Debug, ipcRenderer } from 'shared/helpers';
+import { Debug, ipcRenderer } from 'renderer/helpers';
 import MessageAttachment from 'structs/MessageAttachment';
-import { Manager } from 'shared/helpers';
+import { Manager } from 'renderer/helpers';
 import AppNotification from '../Notification/Notification';
 
 interface IMessageInputProps {
