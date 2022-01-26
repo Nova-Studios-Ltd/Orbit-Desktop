@@ -1,6 +1,5 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { Theme } from "types/enums";
 import UserData from "../structs/UserData";
 import { Dictionary, Indexable } from "./dictionary";
 
@@ -18,12 +17,6 @@ class SettingsManager {
   readonly AppVersion: string = '3.0';
   readonly HomePath: string = '/login';
   readonly MessageCharacterLimit: number = 4000;
-
-  // Operational
-  CurrentChannel: string = '';
-  IsFocused: boolean = true;
-  CloseToTray: boolean = false;
-  LoggedOut: boolean = false;
 
   constructor(webContents: Electron.WebContents, defaultSettings?: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>) {
     if (existsSync('UserSettings.json')) {
@@ -52,15 +45,7 @@ class SettingsManager {
       const store = Dictionary.fromJSON<string>(JSON.stringify(<Dictionary<string>>obj.keystore));;
       if (store != undefined)
         this.UserData.keystore = store;
-      //console.log(this.UserData);
       webContents.send('UserdataUpdated', userData);
-    });
-
-    // Settings
-    ipcMain.handle('GetSettings', () => JSON.stringify(this.Settings));
-    ipcMain.on('SetSettings', (_event, settings: string) => {
-      this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>JSON.parse(settings);
-      this.Settings.OnUpdate = () => {webContents.send('SettingsUpdated'); };
     });
 
     // Constants
@@ -69,112 +54,52 @@ class SettingsManager {
     ipcMain.handle('HomePath', () => this.HomePath);
     ipcMain.handle('MessageCharacterLimit', () => this.MessageCharacterLimit);
 
-    // Operational
-    ipcMain.handle('GetCurrentChannel', () => this.CurrentChannel)
-    ipcMain.on('SetCurrentChannel', (_event, channel_uuid: string) => { this.CurrentChannel = channel_uuid; webContents.send('UpdateReady'); });
-
-    ipcMain.handle('GetIsFocused', () => this.IsFocused)
-    ipcMain.on('SetIsFocused', (_event, isFocused: boolean) => { this.IsFocused = isFocused; webContents.send('UpdateReady'); });
-
-    ipcMain.handle('GetCloseTray', () => this.CloseToTray)
-    ipcMain.on('SetCloseTray', (_event, closeToTray: boolean) => { this.CloseToTray = closeToTray; webContents.send('UpdateReady'); });
-
-    ipcMain.handle('GetLoggedOut', () => this.LoggedOut)
-    ipcMain.on('SetLoggedOut', (_event, loggedOut: boolean) => { this.LoggedOut = loggedOut; webContents.send('UpdateReady'); });
-
     // Save
-    ipcMain.handle('Save', () => this.Save());
+    ipcMain.handle('Save', () => this.SaveSettings());
 
-    ipcMain.on('ReadNumber', (event, key: string) => { event.returnValue = this.ReadNumber(key); });
-    ipcMain.on('WriteNumber', (_event, key: string, value: number) => this.WriteSettingNumber(key, value));
+    ipcMain.on('ReadSetting', (event, key: string) => { event.returnValue = this.ReadSetting(key); });
+    ipcMain.on('WriteSetting', (_event, key: string, value: number | string | boolean) => this.WriteSetting(key, value));
 
-    ipcMain.on('ReadString', (event, key: string) => { event.returnValue = this.ReadString(key); });
-    ipcMain.on('WriteString', (_event, key: string, value: string) => this.WriteSettingString(key, value));
+    ipcMain.on('ReadSettingTable', (event, key: string, subKey: string) => { event.returnValue = this.ReadSettingTable(key, subKey); });
+    ipcMain.on('WriteSettingTable', (_event, key: string, subKey: string, value: number | string | boolean) => this.WriteSettingTable(key, subKey, value));
 
-    ipcMain.on('ReadBoolean', (event, key: string) => { event.returnValue = this.ReadBoolean(key); });
-    ipcMain.on('WriteBoolean', (_event, key: string, value: boolean) => this.WriteSettingBoolean(key, value));
-
-
-    ipcMain.on('ReadTableNumber', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableNumber(key, subkey); });
-    ipcMain.on('WriteTableNumber', (_event, key: string, subKey:string, value: number) => this.WriteTableNumber(key, subKey, value));
-
-    ipcMain.on('ReadTableString', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableString(key, subkey); });
-    ipcMain.on('WriteTableString', (_event, key: string, subKey:string, value: string) => this.WriteTableString(key, subKey, value));
-
-    ipcMain.on('ReadTableBoolean', (event, key: string, subkey: string) => { event.returnValue = this.ReadTableBoolean(key, subkey); });
-    ipcMain.on('WriteTableBoolean', (_event, key: string, subKey:string, value: boolean) => this.WriteTableBoolean(key, subKey, value));
+    ipcMain.on('ReadConst', (event, key: string) => { event.returnValue = this.ReadConst(key); });
+    ipcMain.on('WriteConst', (_event, key: string, value: string | boolean | number) => this.WriteConst(key, value));
   }
 
   // Settings
-  // Read Functions
-  ReadNumber(key: string) : number | undefined {
-    if (typeof this.Settings.getValue(key) == 'number')
-      return <number>this.Settings.getValue(key);
-    return undefined;
-  }
-  ReadString(key: string) : string | undefined {
-    if (typeof this.Settings.getValue(key) == 'string')
-      return <string>this.Settings.getValue(key);
-    return undefined;
-  }
-  ReadBoolean(key: string) : boolean | undefined {
-    if (typeof this.Settings.getValue(key) == 'boolean')
-      return <boolean>this.Settings.getValue(key);
-    return undefined;
+  ReadSetting<T>(key: string) : T {
+    return <T><unknown>this.Settings.getValue(key);
   }
 
-  // Read Table Functions
-  ReadTableNumber(key: string, subKey: string) : number | undefined {
+  ReadSettingTable<T>(key: string, subKey: string) : T | undefined {
     if (this.Settings.getValue(key) instanceof Dictionary) {
       const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
       if (typeof sub.getValue(subKey)== 'number')
-      return <number>sub.getValue(subKey);
-    }
-    return undefined;
-  }
-  ReadTableString(key: string, subKey: string) : string | undefined {
-    if (this.Settings.getValue(key) instanceof Dictionary) {
-      const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey) == 'string')
-      return <string>sub.getValue(subKey);
-    }
-    return undefined;
-  }
-  ReadTableBoolean(key: string, subKey: string) : boolean | undefined {
-    if (this.Settings.getValue(key) instanceof Dictionary) {
-      const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey) == 'boolean')
-      return <boolean>sub.getValue(subKey);
+      return <T><unknown>sub.getValue(subKey);
     }
     return undefined;
   }
 
-  // Write Functions
-  WriteSettingNumber(key: string, value: number) {
-    this.Settings.setValue(key, value);
-  }
-  WriteSettingBoolean(key: string, value: boolean) {
-    this.Settings.setValue(key, value);
-  }
-  WriteSettingString(key: string, value: string) {
+  WriteSetting(key: string, value: number | string | boolean) {
     this.Settings.setValue(key, value);
   }
 
-  // Write Table Functions
-  WriteTableNumber(key: string, subKey: string, value: number) {
-    if (!this.Settings.containsKey(key)) this.Settings.setValue(subKey, new Dictionary<number|string|boolean>());
-    (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
-  }
-  WriteTableString(key: string, subKey: string, value: string) {
-    if (this.Settings.getValue(key) == undefined) this.Settings.setValue(key, new Dictionary<number|string|boolean>());
-    (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
-  }
-  WriteTableBoolean(key: string, subKey: string, value: boolean) {
+  WriteSettingTable(key: string, subKey: string, value: number | string | boolean) {
     if (!this.Settings.containsKey(key)) this.Settings.setValue(subKey, new Dictionary<number|string|boolean>());
     (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
   }
 
-  Save() : boolean {
+  // Constants
+  ReadConst<T>(key: string) : T {
+    return <T><unknown>this.Operational.getValue(key);
+  }
+
+  WriteConst(key: string, value: string | number | boolean) {
+    this.Operational.setValue(key, value);
+  }
+
+  SaveSettings() : boolean {
     try {
       writeFileSync('UserSettings.json', JSON.stringify(this.Settings));
       return true;

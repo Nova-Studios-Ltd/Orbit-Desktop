@@ -24,8 +24,8 @@ const DarkTheme = createTheme({
 });
 
 export function AppTheme() {
-  const theme = Manager.ReadNumber('Theme');
-  if (theme != null) return Manager.ReadNumber('Theme') == Theme.Dark ? DarkTheme : LightTheme;
+  const theme = Manager.ReadSetting<number>('Theme');
+  if (theme != null) return Manager.ReadSetting<number>('Theme') == Theme.Dark ? DarkTheme : LightTheme;
   return DarkTheme;
 }
 

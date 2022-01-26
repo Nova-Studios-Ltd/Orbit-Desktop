@@ -101,35 +101,15 @@ export class SettingsManager {
   private _HomePath: string = '';
   private _MessageCharacterLimit: number = 0;
 
-  // Operational
-  private _CurrentChannel: string = '';
-  private _IsFocused: boolean = true;
-  private _CloseToTray: boolean = false;
-  private _LoggedOut: boolean = false;
-
   private _UserData: SyncedUserData = new SyncedUserData(undefined);
-  private Settings: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>;
 
   onReady: () => void;
 
   constructor() {
-    this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>();
-    this.Update();
-
     this.onReady = () => {};
 
-    ipcRenderer.on('UpdateReady', this.Update);
-    ipcRenderer.on('SettingsUpdated', () => {
-      ipcRenderer.invoke('GetSettings').then((v: string) => {
-        this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>JSON.parse(v);
-        this.Settings.OnUpdate = () => {ipcRenderer.send('SetSettings', JSON.stringify(this.Settings)); }
-      });
-    });
-
-    // Userdata and Settings manage themselves
+    // Userdata manages itself
     ipcRenderer.invoke('GetUserdata').then((v: string) => {
-      //this._UserData = new SyncedUserData(<UserData>JSON.parse(v));
-
       const obj = JSON.parse(v);
       const uData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
@@ -137,83 +117,6 @@ export class SettingsManager {
         uData.keystore = store;
 
       this._UserData = new SyncedUserData(uData);
-    });
-
-    ipcRenderer.invoke('GetSettings').then((v: string) => {
-      this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>JSON.parse(v);
-      this.Settings.OnUpdate = () => {ipcRenderer.send('SetSettings', JSON.stringify(this.Settings)); }
-    });
-  }
-
-  updates: number = 0;
-
-  private Update() {
-    // Constants
-    ipcRenderer.invoke('AppName').then((v: string) => {
-      this._AppName = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('AppVersion').then((v: string) => {
-      this._AppVersion = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('HomePath').then((v: string) => {
-      this._HomePath = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('MessageCharacterLimit').then((v: number) => {
-      this._MessageCharacterLimit = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-
-    // Operational
-    ipcRenderer.invoke('GetCurrentChannel').then((v: string) => {
-      this._CurrentChannel = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('GetIsFocused').then((v: boolean) => {
-      this._IsFocused = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('GetCloseTray').then((v: boolean) => {
-      this._CloseToTray = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
-    });
-    ipcRenderer.invoke('GetLoggedOut').then((v: boolean) => {
-      this._LoggedOut = v;
-      this.updates++;
-      if (this.updates >= 7) {
-        this.onReady();
-        this.onReady = () => {};
-      }
     });
   }
 
@@ -223,74 +126,30 @@ export class SettingsManager {
   get MessageCharacterLimit() { return this._MessageCharacterLimit; }
   get UserData() { return this._UserData; }
 
-  get CurrentChannel() { return this._CurrentChannel; }
-  set CurrentChannel(v: string) {
-    this._CurrentChannel = v;
-    ipcRenderer.send('SetCurrentChannel', v);
-  }
-
-  get IsFocused() { return this._IsFocused; }
-  set IsFocused(v: boolean) {
-    this._IsFocused = v;
-    ipcRenderer.send('SetIsFocused', v);
-  }
-
-  get CloseToTray() { return this._CloseToTray; }
-  set CloseToTray(v: boolean) {
-    this._CloseToTray = v;
-    ipcRenderer.send('SetCloseToTray', v);
-  }
-
-  get LoggedOut() { return this._LoggedOut; }
-  set LoggedOut(v: boolean) {
-    this._LoggedOut = v;
-    ipcRenderer.send('SetLoggedOut', v);
-  }
-
-
   // Settings
-  // Read Functions
-  ReadNumber(key: string) : number | undefined {
-    return ipcRenderer.sendSync('ReadNumber', key);
-  }
-  ReadString(key: string) : string | undefined {
-    return ipcRenderer.sendSync('ReadString', key);
-  }
-  ReadBoolean(key: string) : boolean | undefined {
-    return ipcRenderer.sendSync('ReadBoolean', key);
+  ReadSetting<T>(key: string) : T {
+    return <T>ipcRenderer.sendSync('ReadSetting', key);
   }
 
-  // Read Table Functions
-  ReadTableNumber(key: string, subKey: string) : number | undefined {
-    return ipcRenderer.sendSync('ReadTableNumber', key, subKey);
-  }
-  ReadTableString(key: string, subKey: string) : string | undefined {
-    return ipcRenderer.sendSync('ReadTableString', key, subKey);
-  }
-  ReadTableBoolean(key: string, subKey: string) : boolean | undefined {
-    return ipcRenderer.sendSync('ReadTableBoolean', key, subKey);
+  ReadSettingTable<T>(key: string, subKey: string) : T | undefined {
+    return ipcRenderer.sendSync('ReadSettingTable', key, subKey);
   }
 
-  // Write Functions
-  WriteNumber(key: string, value: number) {
-    ipcRenderer.send('WriteNumber', key, value);
-  }
-  WriteBoolean(key: string, value: boolean) {
-    ipcRenderer.send('WriteNumber', key, value);
-  }
-  WriteString(key: string, value: string) {
-    ipcRenderer.send('WriteNumber', key, value);
+  WriteSetting(key: string, value: number | string | boolean) {
+    ipcRenderer.send('WriteSetting', key, value);
   }
 
-  // Write Table Functions
-  WriteTableNumber(key: string, subKey: string, value: number) {
-    ipcRenderer.send('WriteTableNumber', key, subKey, value);
+  WriteSettingTable(key: string, subKey: string, value: number | string | boolean) {
+    ipcRenderer.send('WriteSettingTable', key, subKey, value);
   }
-  WriteTableString(key: string, subKey: string, value: string) {
-    ipcRenderer.send('WriteTableString', key, subKey, value);
+
+  // Constants
+  ReadConst<T>(key: string) : T {
+    return <T>ipcRenderer.sendSync('ReadConst', key);
   }
-  WriteTableBoolean(key: string, subKey: string, value: boolean) {
-    ipcRenderer.send('WriteTableBoolean', key, subKey, value);
+
+  WriteConst(key: string, value: string | number | boolean) {
+    ipcRenderer.sendSync('WriteConst', key, value);
   }
 
   async Save() : Promise<boolean> {
