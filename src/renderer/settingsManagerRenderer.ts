@@ -155,7 +155,7 @@ export class SettingsManager {
   }
 
   WriteConst(key: string, value: string | number | boolean) {
-    ipcRenderer.sendSync('WriteConst', key, value);
+    ipcRenderer.send('WriteConst', key, value);
   }
 
   async Save() : Promise<boolean> {

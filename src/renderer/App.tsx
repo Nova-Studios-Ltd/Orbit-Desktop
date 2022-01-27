@@ -126,18 +126,17 @@ class App extends React.Component {
       this.setState({ theme: AppTheme(), styles: AppStyles() });
     });
 
-    /*if (Manager != null) {
+    if (Manager != null) {
       Manager.onReady = () => {
         if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
           Manager.WriteConst("LoggedOut", false);
-          HandleWebsocket();
           Navigate('/chat', null);
         }
         else {
           Navigate('/login', null);
         }
       }
-    }*/
+    }
     Navigate('/login', null);
   }
 
