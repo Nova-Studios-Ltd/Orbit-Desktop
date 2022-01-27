@@ -66,11 +66,13 @@ ipcRenderer.on('ChannelArchived', (channelID: string) => {
 }});
 
 ipcRenderer.on('clientFocused', async () => {
-  Manager.IsFocused = true;
+  Manager.WriteConst("IsFocused", true);
+  //Manager.IsFocused = true;
 });
 
 ipcRenderer.on('clientUnfocused', () => {
-  Manager.IsFocused = false;
+  Manager.WriteConst("IsFocused", true);
+  //Manager.IsFocused = false;
 });
 
 ipcRenderer.on('UserDeleted', (success: boolean) => {

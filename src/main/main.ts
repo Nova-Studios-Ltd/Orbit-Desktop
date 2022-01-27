@@ -109,7 +109,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (!Manager.CloseToTray) {
+    if (!Manager.ReadConst<boolean>("CloseToTray")) {
       app.quit();
     }
   });

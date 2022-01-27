@@ -437,7 +437,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('DELETEMessage', Manager.CurrentChannel, this.message_Id).then((result: boolean) => {
+    ipcRenderer.invoke('DELETEMessage', Manager.ReadConst<string>("CurrentChannel"), this.message_Id).then((result: boolean) => {
       if (result) {
         new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
@@ -457,7 +457,7 @@ export default class Message extends React.Component<IMessageProps> {
 
   submitEditedMessage() {
     if (this.state.editedMessage.length > 0) {
-      ipcRenderer.invoke('EDITMessage', Manager.CurrentChannel, this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv).then((result: boolean) => {
+      ipcRenderer.invoke('EDITMessage', Manager.ReadConst<string>("CurrentChannel"), this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv).then((result: boolean) => {
         if (result) {
           new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {

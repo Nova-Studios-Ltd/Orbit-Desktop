@@ -49,7 +49,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.state = {
       avatarStateKey: MD5(Date.now().toString()).toString(),
       usernameStateKey: MD5(Date.now().toString()).toString(),
-      darkThemeEnabled: Boolean(Manager.ReadNumber('Theme')) || true,
+      darkThemeEnabled: Boolean(Manager.ReadSetting<number>('Theme')) || true,
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
       editUsernameDialogField: Manager.UserData.username
@@ -73,7 +73,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     switch (event.currentTarget.id) {
       case 'darkTheme':
         this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
-          Manager.WriteNumber('Theme', this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          Manager.WriteSetting('Theme', this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
           events.send('appThemeChanged', this.state.darkThemeEnabled);
         });
         break;

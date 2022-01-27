@@ -111,7 +111,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
       ipcRenderer.on('GotMessages', (messages: IMessageProps[], channel_uuid: string) => this.onReceivedChannelData(messages, channel_uuid, false));
       ipcRenderer.on('GotMessagesWithArgs', (messages: IMessageProps[], channel_uuid: string) => {
-        if (Manager.CurrentChannel != channel_uuid) return;
+        if (Manager.ReadConst<string>("CurrentChannel") != channel_uuid) return;
         this.appendAllToCanvas(messages);
         this.requestedHistory = false;
       });
@@ -220,7 +220,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   onReceivedChannelData(messages: IMessageProps[], channel_uuid: string, isUpdate: boolean) {
     console.log(messages);
     this.setState({ IsChannelSelected: true });
-    if (Manager.CurrentChannel != channel_uuid) return;
+    if (Manager.ReadConst<string>("CurrentChannel") != channel_uuid) return;
     ipcRenderer.invoke('GETChannelName', channel_uuid).then((channelName) => {
       this.setState({ ChannelName: channelName });
     });
@@ -234,25 +234,25 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     for (let index = 0; index < messages.length; index++) {
       const message = messages[index];
       if (isUpdate && message.author_UUID != Manager.UserData.uuid) {
-        const selected = Manager.CurrentChannel == channel_uuid;
-        if (selected && Manager.IsFocused) {}
-        else if (!selected && Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
-        else if (selected && !Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
-        else if (!selected && !Manager.IsFocused) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
+        const selected = Manager.ReadConst<string>("CurrentChannel") == channel_uuid;
+        if (selected && Manager.ReadConst<boolean>("IsFocused")) {}
+        else if (!selected && Manager.ReadConst<boolean>("IsFocused")) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.app }).show();
+        else if (selected && !Manager.ReadConst<boolean>("IsFocused")) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.none }).show();
+        else if (!selected && !Manager.ReadConst<boolean>("IsFocused")) new AppNotification({ title: message.author, body: message.content, playSound: true, notificationType: NotificationStatusType.info, notificationAudience: NotificationAudienceType.both }).show();
       }
       this.appendToCanvas(message, isUpdate);
     }
   }
 
   onReceivedMessageEdit(channel_uuid: string, id: string, message: IMessageProps) {
-    if (Manager.CurrentChannel != channel_uuid) return;
+    if (Manager.ReadConst<string>("CurrentChannel") != channel_uuid) return;
     if (this.state.CanvasObject != null) {
       this.state.CanvasObject.edit(id, message);
     }
   }
 
   onReceivedMessageDelete(channel_uuid: string, message_id: string) {
-    if (Manager.CurrentChannel != channel_uuid) return;
+    if (Manager.ReadConst<string>("CurrentChannel") != channel_uuid) return;
     if (this.state.CanvasObject != null) {
       this.state.CanvasObject.remove(message_id);
     }
@@ -262,10 +262,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     const attachments = this.state.AttachmentList;
     if (message.length > 0 && attachments.length > 0 || message.length < 1 && attachments.length > 0)
     {
-      ipcRenderer.send('SENDMessage', Manager.CurrentChannel, message, attachments);
+      ipcRenderer.send('SENDMessage', Manager.ReadConst<string>("CurrentChannel"), message, attachments);
     }
     else if (message.length > 0) {
-      ipcRenderer.send('SENDMessage', Manager.CurrentChannel, message, []);
+      ipcRenderer.send('SENDMessage', Manager.ReadConst<string>("CurrentChannel"), message, []);
     }
     this.setState({ AttachmentList: [] });
   }
@@ -364,7 +364,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     if (parseInt(oldestMessageID, 10) <= 1) return;
     if (yIndex < 25 && !this.initLoad && !this.requestedHistory) {
       this.requestedHistory = true;
-      ipcRenderer.send('GETMessagesWithArgs', Manager.CurrentChannel, 30, oldestMessageID);
+      ipcRenderer.send('GETMessagesWithArgs', Manager.ReadConst<string>("CurrentChannel"), 30, oldestMessageID);
     }
   }
 
@@ -383,7 +383,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   Logout() {
     this.Unload();
     RemoveCachedCredentials();
-    Manager.LoggedOut = true;
+    Manager.WriteConst("LoggedOut", true);
     Navigate('/login', null);
   }
 
