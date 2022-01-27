@@ -34,10 +34,6 @@ class App extends React.Component {
   constructor(props: never) {
     super(props);
 
-    Manager.onReady = () => {
-
-    }
-
     this.navigationDrawerItemClicked = this.navigationDrawerItemClicked.bind(this);
     this.toggleNavigationDrawer = this.toggleNavigationDrawer.bind(this);
     this.onNavigationDrawerOpened = this.onNavigationDrawerOpened.bind(this);
@@ -130,16 +126,19 @@ class App extends React.Component {
       this.setState({ theme: AppTheme(), styles: AppStyles() });
     });
 
-    if (Manager != null) {
-      if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
-        Manager.WriteConst("LoggedOut", false);
-        HandleWebsocket();
-        Navigate('/chat', null);
+    /*if (Manager != null) {
+      Manager.onReady = () => {
+        if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
+          Manager.WriteConst("LoggedOut", false);
+          HandleWebsocket();
+          Navigate('/chat', null);
+        }
+        else {
+          Navigate('/login', null);
+        }
       }
-      else {
-        Navigate('/login', null);
-      }
-    }
+    }*/
+    Navigate('/login', null);
   }
 
   componentWillUnmount() {

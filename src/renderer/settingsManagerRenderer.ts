@@ -108,6 +108,11 @@ export class SettingsManager {
   constructor() {
     this.onReady = () => {};
 
+    this._AppName = ipcRenderer.sendSync("AppName");
+    this._AppVersion = ipcRenderer.sendSync("AppVersion");
+    this._HomePath = ipcRenderer.sendSync("HomePath");
+    this._MessageCharacterLimit = ipcRenderer.sendSync("MessageCharacterLimit");
+
     // Userdata manages itself
     ipcRenderer.invoke('GetUserdata').then((v: string) => {
       const obj = JSON.parse(v);
@@ -117,6 +122,7 @@ export class SettingsManager {
         uData.keystore = store;
 
       this._UserData = new SyncedUserData(uData);
+      this.onReady();
     });
   }
 

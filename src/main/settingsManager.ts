@@ -49,10 +49,10 @@ class SettingsManager {
     });
 
     // Constants
-    ipcMain.handle('AppName', () => this.AppName);
-    ipcMain.handle('AppVersion', () => this.AppVersion);
-    ipcMain.handle('HomePath', () => this.HomePath);
-    ipcMain.handle('MessageCharacterLimit', () => this.MessageCharacterLimit);
+    ipcMain.on('AppName', (event) => { event.returnValue = this.AppName; });
+    ipcMain.on('AppVersion', (event) => { event.returnValue = this.AppVersion; });
+    ipcMain.on('HomePath', (event) => { event.returnValue = this.HomePath; });
+    ipcMain.on('MessageCharacterLimit', (event) => { event.returnValue = this.MessageCharacterLimit; });
 
     // Save
     ipcMain.handle('Save', () => this.SaveSettings());
