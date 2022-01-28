@@ -23,7 +23,7 @@ export class NCAPIResponse {
 
 async function RetreiveToken() : Promise<string> {
   if (Manager != null) {
-    return Manager.UserData.token;
+    return Manager._UserData.token;
   }
   return Promise.reject(new Error('Settings nanager was null'));
 }

@@ -26,7 +26,7 @@ export default class AppNotification {
     this.title = props.title || '';
     this.body = props.body || '';
     this.playSound = props.playSound || false;
-    this.notificationAssetPath = props.notificationAssetPath || Manager.ReadString('NotificationAssetPath');
+    this.notificationAssetPath = props.notificationAssetPath || Manager.ReadSetting<string>('NotificationAssetPath');
     this.notificationType = props.notificationType || NotificationStatusType.default;
     this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
     this.onClick = props.onClick || (() => { });

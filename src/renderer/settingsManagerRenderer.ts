@@ -6,6 +6,7 @@ import { ipcRenderer } from "./helpers";
 
 export class SyncedUserData {
   UserData: UserData;
+  DontUpdate: boolean = false;
 
   constructor(userData?: UserData) {
     if (userData == undefined) this.UserData = new UserData();
@@ -21,6 +22,11 @@ export class SyncedUserData {
         this.UserData.keystore = store;
       this.UserData.keystore.OnUpdate = () => this.SetUserdata();
     });
+  }
+
+  Update() {
+    this.DontUpdate = false;
+    this.SetUserdata();
   }
 
   // Getters/Setters
@@ -89,7 +95,7 @@ export class SyncedUserData {
   }
 
   SetUserdata() {
-    if (this.UserData == undefined) return;
+    if (this.UserData == undefined || this.DontUpdate) return;
     ipcRenderer.send('SetUserdata', JSON.stringify(this.UserData));
   }
 }

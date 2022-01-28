@@ -1,20 +1,29 @@
-import { ipcRenderer, Navigate, RemoveCachedCredentials, Debug, Manager } from 'renderer/helpers';
+import { ipcRenderer, Navigate, RemoveCachedCredentials, Debug, Manager, FetchUserData } from 'renderer/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
+import { RSAMemoryKeyPair } from 'main/encryptionClasses';
+import { Dictionary } from 'main/dictionary';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
-  Manager.UserData.uuid = uuid;
-  Manager.UserData.token = token;
+  Manager.UserData.keyPair = new RSAMemoryKeyPair(privKey, pubKey);
+
   // Store Pub/Priv key
-  ipcRenderer.invoke('SetPubkey', pubKey).then((result: boolean) => {
-    if (result) {
-      Debug.Success('Public key stored successfully');
-      Navigate('/chat', null);
-    }
-    else {
-      Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');
-    }
-  })
+  if (await ipcRenderer.invoke('SetPrivkey', privKey) && ipcRenderer.invoke('SetPubkey', pubKey)) {
+
+    Debug.Success('Public/Private key store successfully');
+
+    Manager.WriteSettingTable('User', 'UUID', uuid);
+    Manager.WriteSettingTable('User', 'Token', token);
+    await Manager.Save();
+
+    await ipcRenderer.invoke('SaveKeystore', JSON.stringify(<Dictionary<string>>await ipcRenderer.invoke('GETKeystore', uuid)));
+
+    // HACK Also handles moving the client to the chat page, should probably change this
+    FetchUserData();
+  }
+  else {
+    Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');
+  }
 });
 
 ipcRenderer.on('UsernameUpdated', (result: boolean) => {

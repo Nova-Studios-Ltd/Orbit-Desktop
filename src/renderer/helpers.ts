@@ -3,7 +3,10 @@ import Credentials from 'structs/Credentials';
 import { UIEvents } from 'renderer/UIEvents';
 import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow } from 'types/types';
+import IUser from 'structs/IUser';
 import { SettingsManager } from './settingsManagerRenderer';
+import { Dictionary } from 'main/dictionary';
+import { RSAMemoryKeyPair } from 'main/encryptionClasses';
 
 export const history = createBrowserHistory();
 export const {ipcRenderer}: IElectronRendererWindow = window.electron;
@@ -123,6 +126,28 @@ export async function HandleWebsocket() {
   };
 }
 
+export async function FetchUserData() {
+  Manager.UserData.uuid = Manager.ReadSettingTable<string>('User', 'UUID') || '';
+  Manager.UserData.token = Manager.ReadSettingTable<string>('User', 'Token') || '';
+
+  // Load priv/pub
+  const priv = await ipcRenderer.invoke('GetPrivkey');
+  const pub = await ipcRenderer.invoke('GetPubkey');
+  Manager.UserData.keyPair = new RSAMemoryKeyPair(priv, pub);
+
+  // Load Keystore
+  Manager.UserData.keystore = <Dictionary<string>>Dictionary.fromJSON<string>(await ipcRenderer.invoke('LoadKeystore'));
+
+  ipcRenderer.invoke("GETUser", Manager.UserData.uuid).then((value: IUser) => {
+    //console.log(value);
+    Manager.UserData.username = value.username;
+    Manager.UserData.discriminator = value.discriminator;
+    Manager.UserData.avatarSrc = value.avatar;
+    HandleWebsocket();
+    Navigate('/chat', null);
+  });
+}
+
 export function Authenticate(data: Credentials) {
   return ipcRenderer.invoke('beginAuth', data, window.location.origin);
 }
@@ -130,6 +155,9 @@ export function Authenticate(data: Credentials) {
 export function RemoveCachedCredentials() {
   //Manager.LoggedOut = true;
   Manager.WriteConst("LoggedOut", true);
+  Manager.WriteSettingTable('User', 'UUID', '');
+  Manager.WriteSettingTable('User', 'Token', '');
+  Manager.Save();
   ipcRenderer.send('logout');
 }
 
