@@ -26,7 +26,7 @@ interface IChatPageProps {
 
 interface IChatPageState {
   CanvasObject?: MessageCanvas,
-  ChannelList?: ChannelView,
+  Channels: Channel[]
   ChannelName: string,
   IsChannelSelected: boolean,
   AttachmentList: Array<MessageAttachment>,
@@ -48,11 +48,11 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   constructor(props: IChatPageProps) {
     super(props);
     this.initCanvas = this.initCanvas.bind(this);
-    this.initChannelView = this.initChannelView.bind(this);
+    this.appendAllToCanvas = this.appendAllToCanvas.bind(this);
+    this.addChannel = this.addChannel.bind(this);
     this.updateChannel = this.updateChannel.bind(this);
     this.removeChannel = this.removeChannel.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
-    this.appendToCanvas = this.appendToCanvas.bind(this);
     this.onReceivedChannelData = this.onReceivedChannelData.bind(this);
     this.Unload = this.Unload.bind(this);
     this.openCreateChannelDialog = this.openCreateChannelDialog.bind(this);
@@ -71,7 +71,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
     this.state = {
       CanvasObject: undefined,
-      ChannelList: undefined,
+      Channels: [],
       ChannelName: '',
       IsChannelSelected: false,
       AttachmentList: [],
@@ -85,6 +85,25 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       ImageViewerSrc: '',
       ImageViewerDimensions: {width: 0, height: 0}
     };
+
+    ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
+    ipcRenderer.on('ChannelNameUpdated', (channelID: string, channelName: string) => {
+      if (channelID != null && channelName != null) this.updateChannel({ channelID, channelName, channelIcon: false });
+    });
+    ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
+      if (channelID != null) this.updateChannel({ channelID, channelIcon: true });
+    });
+    ipcRenderer.on('ChannelArchived', (channelID: string) => {
+      if (channelID != null) this.removeChannel(channelID);
+    });
+
+    events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+    events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
+    events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+
+    ipcRenderer.send('GETUserChannels');
+
+    this.preloadChannel();
   }
 
   async preloadChannel() {
@@ -94,10 +113,10 @@ export default class ChatPage extends React.Component<IChatPageProps> {
         Manager.WriteConst("CurrentChannel", lastOpenedChannel);
         ipcRenderer.send('GETMessages', lastOpenedChannel);
       }
-      else if (this.state.ChannelList != null && this.state.ChannelList.state != null && this.state.ChannelList.state.channels != null && this.state.ChannelList.state.channels.length > 0) {
-        ipcRenderer.send('GETMessages', this.state.ChannelList.state.channels[0].channelID);
-        Manager.WriteConst("CurrentChannel", this.state.ChannelList.state.channels[0].channelID);
-        setDefaultChannel(this.state.ChannelList.state.channels[0].channelID);
+      else if (this.state.Channels.length > 0) {
+        ipcRenderer.send('GETMessages', this.state.Channels[0].channelID);
+        Manager.WriteConst("CurrentChannel", this.state.Channels[0].channelID);
+        setDefaultChannel(this.state.Channels[0].channelID);
       }
     }
     else {
@@ -125,41 +144,60 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     }
   }
 
-  initChannelView(channelList: ChannelView) {
-    if (channelList != null) {
-      this.setState({ChannelList: channelList });
-      ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
-      ipcRenderer.on('ChannelNameUpdated', (channelID: string, channelName: string) => {
-        if (channelID != null && channelName != null) this.updateChannel({ channelID, channelName, channelIcon: false });
-      });
-      ipcRenderer.on('ChannelIconUpdated', (channelID: string) => {
-        if (channelID != null) this.updateChannel({ channelID, channelIcon: true });
-      });
-      ipcRenderer.on('ChannelArchived', (channelID: string) => {
-        if (channelID != null) this.removeChannel(channelID);
-      });
-
-      events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
-      events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
-      events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
-
-      // TODO Move this to a better place
-      ipcRenderer.send('GETUserChannels');
-    }
-    else {
-      Debug.Error('Failed to initialize ChannelView', 'from ChatPage initialization callback');
-    }
-  }
-
   async onReceivedChannels(data: string[]) {
     for (let channel = 0; channel < data.length; channel++) {
-      const c = await ipcRenderer.invoke('GETChannel', data[channel]);
-      if (c != undefined) this.addChannel(c);
+      ipcRenderer.invoke('GETChannel', data[channel]).then((channel: IChannelProps) => {
+        if (channel != undefined) this.addChannel(channel);
+      });
     }
   }
 
   onReceivedChannelInfo(channel: IChannelProps) {
     this.addChannel(channel);
+  }
+
+  addChannel(channel: IChannelProps) {
+    this.setState((prevState: IChatPageState) => {
+      const updatedChannels = prevState.Channels;
+      updatedChannels.push(new Channel(channel));
+      return { Channels: updatedChannels };
+    });
+  }
+
+  clearChannels() {
+    this.setState({ Channels: [] });
+  }
+
+  updateChannel(updatedChannelProps: IChannelUpdateProps) {
+    this.setState((prevState: IChatPageState) => {
+      if (updatedChannelProps != null && updatedChannelProps.channelID != null) {
+        const { Channels } = prevState;
+        for (let i = 0; i < Channels.length; i++) {
+          if (Channels[i].channelID == updatedChannelProps.channelID)
+          {
+            if (updatedChannelProps.channelName != null) {
+              Channels[i].channelName = updatedChannelProps.channelName;
+            }
+            if (updatedChannelProps.channelIcon) {
+              Channels[i].channelIcon = `${Channels[i].channelIcon}&${Date.now()}`;
+            }
+            return Channels;
+          }
+        }
+      }
+      return null;
+    });
+  }
+
+  removeChannel(channel_uuid: string) {
+    this.setState((prevState: IChatPageState) => {
+      const index = prevState.Channels.findIndex(e => e.channelID === channel_uuid);
+      if (index > -1) {
+        prevState.Channels.splice(index, 1);
+        return { channels: prevState.Channels };
+      }
+      return null;
+    });
   }
 
   appendToCanvas(message: IMessageProps, isUpdate: boolean) {
@@ -186,37 +224,6 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     const canvas = this.state.CanvasObject;
     if (canvas != null) {
       canvas.clear();
-    }
-  }
-
-  addChannel(channel: IChannelProps) {
-    const channelList = this.state.ChannelList;
-    if (channelList != null) {
-      channelList.addChannel(new Channel(channel));
-      this.preloadChannel();
-    }
-    else {
-      Debug.Error('ChannelView is null', 'when appending channel from ChatPage');
-    }
-  }
-
-  updateChannel(channel: IChannelUpdateProps) {
-    const channelList = this.state.ChannelList;
-    if (channelList != null) {
-      channelList.updateChannel(channel);
-    }
-    else {
-      Debug.Error('ChannelView is null', 'when editing channel from ChatPage');
-    }
-  }
-
-  removeChannel(channel_uuid: string) {
-    const channelList = this.state.ChannelList;
-    if (channelList != null) {
-      channelList.removeChannel(channel_uuid);
-    }
-    else {
-      Debug.Error('ChannelView is null', 'when removing channel from ChatPage');
     }
   }
 
@@ -391,9 +398,19 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   Unload() {
-    this.setState({ ChannelList: undefined, CanvasObject: undefined });
-    ipcRenderer.removeAllListeners('GotMessages');
+    this.setState({ CanvasObject: undefined });
     ipcRenderer.removeAllListeners('GotUserChannels');
+    ipcRenderer.removeAllListeners('ChannelNameUpdated');
+    ipcRenderer.removeAllListeners('ChannelIconUpdated');
+    ipcRenderer.removeAllListeners('ChannelArchived');
+    ipcRenderer.removeAllListeners('GotMessages');
+    ipcRenderer.removeAllListeners('GotMessagesWithArgs');
+    events.removeAllListeners('OnChannelCreated');
+    events.removeAllListeners('OnChannelDeleted');
+    events.removeAllListeners('OnChannelNewMember');
+    events.removeAllListeners('OnNewMessage');
+    events.removeAllListeners('OnMessageEdit');
+    events.removeAllListeners('OnMessageDelete');
   }
 
   componentWillUnmount() {
@@ -440,7 +457,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
             <Header caption='Channels' onClick={this.props.onNavigationDrawerOpened} icon={<ListIcon />}>
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
-            <ChannelView init={this.initChannelView} />
+            <ChannelView channels={this.state.Channels} />
           </div>
           <div className='Chat_Page_Body_Right'>
             <Header caption={this.state.ChannelName} icon={<ChatIcon />} />
