@@ -97,9 +97,9 @@ export default class Channel extends React.Component<IChannelProps> {
 
   async channelClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     if (this.props.onClick != null) this.props.onClick(event, this.channelID);
-    Manager.CurrentChannel = this.channelID;
+    Manager.WriteConst("CurrentChannel", this.channelID);
     setDefaultChannel(this.channelID);
-    ipcRenderer.send('GETMessages', Manager.CurrentChannel);
+    ipcRenderer.send('GETMessages', Manager.ReadConst<string>("CurrentChannel"));
   }
 
   async menuItemClicked(event: MouseEvent<HTMLLIElement>) {

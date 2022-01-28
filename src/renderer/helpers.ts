@@ -4,6 +4,8 @@ import { UIEvents } from 'renderer/UIEvents';
 import { DebugLogger } from 'renderer/debugRenderer';
 import { IElectronRendererWindow } from 'types/types';
 import { SettingsManager } from './settingsManagerRenderer';
+import UserData from 'structs/UserData';
+import IUser from 'structs/IUser';
 
 export const history = createBrowserHistory();
 export const {ipcRenderer}: IElectronRendererWindow = window.electron;
@@ -24,6 +26,17 @@ export function Navigate(path: string, data: unknown)
 
 export function GetHistoryState() {
   return history.location.state as { failed: boolean };
+}
+
+export function FetchUserData() {
+  Manager.UserData.uuid = Manager.ReadSettingTable<string>('User', 'UUID') || '';
+  Manager.UserData.token = Manager.ReadSettingTable<string>('User', 'Token') || '';
+  ipcRenderer.invoke("GETUser", Manager.UserData.uuid).then((value: IUser) => {
+    Manager.UserData.username = value.username;
+    Manager.UserData.discriminator = value.discriminator;
+    Manager.UserData.avatarSrc = value.avatar;
+    Navigate('/chat', null);
+  });
 }
 
 let reconnectAttempts = 1;
@@ -130,6 +143,9 @@ export function Authenticate(data: Credentials) {
 export function RemoveCachedCredentials() {
   //Manager.LoggedOut = true;
   Manager.WriteConst("LoggedOut", true);
+  Manager.WriteSettingTable('User', 'UUID', '');
+  Manager.WriteSettingTable('User', 'Token', '');
+  Manager.Save();
   ipcRenderer.send('logout');
 }
 

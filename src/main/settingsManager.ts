@@ -10,7 +10,7 @@ class SettingsManager {
   private Operational: Dictionary<number | string | boolean>;
 
   // Userdata, initalised when users logs in
-  UserData: UserData = new UserData();
+  _UserData: UserData = new UserData();
 
   // App Constants
   readonly AppName: string = 'Nova Chat';
@@ -37,14 +37,14 @@ class SettingsManager {
     });
 
     // Userdata
-    ipcMain.handle('GetUserdata', () => JSON.stringify(this.UserData));
+    ipcMain.handle('GetUserdata', () => JSON.stringify(this._UserData));
     ipcMain.on('SetUserdata', (_event, userData: string) => {
       console.log(userData);
       const obj = JSON.parse(userData);
-      this.UserData = <UserData>obj;
+      this._UserData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(<Dictionary<string>>obj.keystore));;
       if (store != undefined)
-        this.UserData.keystore = store;
+        this._UserData.keystore = store;
       webContents.send('UserdataUpdated', userData);
     });
 
@@ -67,6 +67,10 @@ class SettingsManager {
     ipcMain.on('WriteConst', (_event, key: string, value: string | boolean | number) => this.WriteConst(key, value));
   }
 
+  get UserData() : UserData {
+    return this._UserData;
+  }
+
   // Settings
   ReadSetting<T>(key: string) : T {
     return <T><unknown>this.Settings.getValue(key);
@@ -75,7 +79,6 @@ class SettingsManager {
   ReadSettingTable<T>(key: string, subKey: string) : T | undefined {
     if (this.Settings.getValue(key) instanceof Dictionary) {
       const sub = (<Dictionary<number|string|boolean>>this.Settings.getValue(key));
-      if (typeof sub.getValue(subKey)== 'number')
       return <T><unknown>sub.getValue(subKey);
     }
     return undefined;
@@ -86,7 +89,7 @@ class SettingsManager {
   }
 
   WriteSettingTable(key: string, subKey: string, value: number | string | boolean) {
-    if (!this.Settings.containsKey(key)) this.Settings.setValue(subKey, new Dictionary<number|string|boolean>());
+    if (!this.Settings.containsKey(key)) this.Settings.setValue(key, new Dictionary<number|string|boolean>());
     (<Dictionary<number|string|boolean>>this.Settings.getValue(key)).setValue(subKey, value);
   }
 

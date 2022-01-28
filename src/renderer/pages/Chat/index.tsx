@@ -142,6 +142,9 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
       events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
       events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+
+      // TODO Move this to a better place
+      ipcRenderer.send('GETUserChannels');
     }
     else {
       Debug.Error('Failed to initialize ChannelView', 'from ChatPage initialization callback');

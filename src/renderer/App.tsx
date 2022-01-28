@@ -4,7 +4,7 @@ import './App.global.css';
 import AuthPage from 'renderer/pages/Auth';
 import ChatPage from 'renderer/pages/Chat';
 import FriendsPage from 'renderer/pages/Friends';
-import { copyToClipboard, Debug, events, HandleWebsocket, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials } from 'renderer/helpers';
+import { copyToClipboard, Debug, events, FetchUserData, HandleWebsocket, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials } from 'renderer/helpers';
 import 'renderer/events';
 import { AppStyles, AppTheme } from 'renderer/AppTheme';
 import { ToastContainer } from 'react-toastify';
@@ -128,9 +128,12 @@ class App extends React.Component {
 
     if (Manager != null) {
       Manager.onReady = () => {
-        if (Manager.UserData.uuid != null && Manager.UserData.uuid.length > 0 && Manager.UserData.token != null && Manager.UserData.token.length > 0) {
+        const uuid = Manager.ReadSettingTable<string>('User', 'UUID');
+        const token = Manager.ReadSettingTable<string>('User', 'Token');
+        if (uuid != undefined && uuid != '' && token != undefined && token != '') {
           Manager.WriteConst("LoggedOut", false);
-          Navigate('/chat', null);
+          // HACK Also handles moving the client to the chat page, should probably change this
+          FetchUserData();
         }
         else {
           Navigate('/login', null);

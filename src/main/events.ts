@@ -17,7 +17,12 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
     if (resp.status == 200 && resp.payload != undefined && creds.password != undefined) {
       const login = resp.payload;
       const decryptedKey = DecryptUsingAES(creds.password, login.key);
-      writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
+
+      // Moved to endAuth ipc event in events.ts (render side)
+      //writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
+
+      event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token);
+
       Debug.Success(`User ${login.uuid} Logged In Successfully`);
       return FormAuthStatusType.success;
     }
@@ -151,9 +156,9 @@ ipcMain.handle('GetPubkey', async () : Promise<string> => {
   }
 });
 
-ipcMain.handle('SaveKeystore', async (_event, keys: Dictionary<string>) : Promise<boolean> => {
+ipcMain.handle('SaveKeystore', async (_event, keys: string) : Promise<boolean> => {
   try {
-    writeFileSync("keystore", JSON.stringify(keys));
+    writeFileSync("keystore", keys);
     return true;
   }
   catch (err) {
