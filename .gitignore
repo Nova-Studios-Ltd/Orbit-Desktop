@@ -34,3 +34,4 @@ keystore
 rsa
 .gitignore
 rsa.pub
+UserSettings.json

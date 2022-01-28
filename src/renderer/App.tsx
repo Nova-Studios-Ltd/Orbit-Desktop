@@ -179,10 +179,10 @@ class App extends React.Component {
 
     const mapSkeletonToListItem = (element: IHybridListItemSkeleton) => {
       if (element.isDivider) {
-        return <Divider />
+        return <Divider key={Date.now()} />
       }
 
-      return <HybridListItem id={element.id} text={element.text} icon={element.icon} selected={(element.selectable && element.id == this.state.currentRoute)} onClick={element.onClick != null ? element.onClick : this.navigationDrawerItemClicked} onContextMenu={element.onContextMenu != null ? element.onContextMenu : this.navigationDrawerItemClicked} />
+      return <HybridListItem key={element.id} id={element.id} text={element.text} icon={element.icon} selected={(element.selectable && element.id == this.state.currentRoute)} onClick={element.onClick != null ? element.onClick : this.navigationDrawerItemClicked} onContextMenu={element.onContextMenu != null ? element.onContextMenu : this.navigationDrawerItemClicked} />
     }
 
     const navigationDrawerListTopJSXArray = navigationItemsTop.map((element) => {

@@ -19,7 +19,6 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
   constructor(props: IChannelViewProps) {
     super(props);
-    this.clearChannels = this.clearChannels.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
     this.channelClicked = this.channelClicked.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -48,7 +47,7 @@ export default class ChannelView extends React.Component<IChannelViewProps> {
 
   render() {
     const channels = this.props.channels.map((c) => {
-      if (this.state.selectedTab == 0 ) {
+      if (this.state.selectedTab == 0) {
         if (c.channelType == ChannelType.User) return (<Channel key={MD5(`${c.channelID}_${c.channelName}_${c.channelIcon}`).toString()} isSelectedChannel={this.getSelectedChannel(c.channelID)} onClick={this.channelClicked} isGroup={c.channelType} channelName={c.channelName} table_Id={c.channelID} channelIcon={c.channelIcon} members={c.channelMembers} owner_UUID={c.channelOwner} />);
       }
       else if (this.state.selectedTab == 1) {

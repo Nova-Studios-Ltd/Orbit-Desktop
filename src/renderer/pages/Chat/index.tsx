@@ -85,9 +85,7 @@ export default class ChatPage extends React.Component<IChatPageProps> {
       ImageViewerSrc: '',
       ImageViewerDimensions: {width: 0, height: 0}
     };
-  }
 
-  componentDidMount() {
     ipcRenderer.on('GotUserChannels', (data: string[]) => this.onReceivedChannels(data));
     ipcRenderer.on('ChannelNameUpdated', (channelID: string, channelName: string) => {
       if (channelID != null && channelName != null) this.updateChannel({ channelID, channelName, channelIcon: false });
@@ -102,6 +100,8 @@ export default class ChatPage extends React.Component<IChatPageProps> {
     events.on('OnChannelCreated', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
     events.on('OnChannelDeleted', (channel_uuid: string) => this.removeChannel(channel_uuid));
     events.on('OnChannelNewMember', (channel_uuid: string) => this.onReceivedChannels([channel_uuid]));
+
+    ipcRenderer.send('GETUserChannels');
 
     this.preloadChannel();
   }
@@ -146,20 +146,21 @@ export default class ChatPage extends React.Component<IChatPageProps> {
 
   async onReceivedChannels(data: string[]) {
     for (let channel = 0; channel < data.length; channel++) {
-      const c = await ipcRenderer.invoke('GETChannel', data[channel]);
-      if (c != undefined) this.addChannel(c);
+      ipcRenderer.invoke('GETChannel', data[channel]).then((channel: IChannelProps) => {
+        if (channel != undefined) this.addChannel(channel);
+      });
     }
   }
 
-  onReceivedChannelInfo(channel: Channel) {
+  onReceivedChannelInfo(channel: IChannelProps) {
     this.addChannel(channel);
   }
 
-  addChannel(channel: Channel) {
+  addChannel(channel: IChannelProps) {
     this.setState((prevState: IChatPageState) => {
       const updatedChannels = prevState.Channels;
-      updatedChannels.push(channel);
-      this.setState({ Channels: updatedChannels });
+      updatedChannels.push(new Channel(channel));
+      return { Channels: updatedChannels };
     });
   }
 
@@ -397,9 +398,19 @@ export default class ChatPage extends React.Component<IChatPageProps> {
   }
 
   Unload() {
-    this.setState({ ChannelList: undefined, CanvasObject: undefined });
-    ipcRenderer.removeAllListeners('GotMessages');
+    this.setState({ CanvasObject: undefined });
     ipcRenderer.removeAllListeners('GotUserChannels');
+    ipcRenderer.removeAllListeners('ChannelNameUpdated');
+    ipcRenderer.removeAllListeners('ChannelIconUpdated');
+    ipcRenderer.removeAllListeners('ChannelArchived');
+    ipcRenderer.removeAllListeners('GotMessages');
+    ipcRenderer.removeAllListeners('GotMessagesWithArgs');
+    events.removeAllListeners('OnChannelCreated');
+    events.removeAllListeners('OnChannelDeleted');
+    events.removeAllListeners('OnChannelNewMember');
+    events.removeAllListeners('OnNewMessage');
+    events.removeAllListeners('OnMessageEdit');
+    events.removeAllListeners('OnMessageDelete');
   }
 
   componentWillUnmount() {
