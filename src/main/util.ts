@@ -1,4 +1,5 @@
 /* eslint import/prefer-default-export: off, import/no-mutable-exports: off */
+import path from 'path';
 import { URL } from 'url';
 
 export const isDevelopment = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';

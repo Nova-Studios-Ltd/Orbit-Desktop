@@ -5,9 +5,6 @@ import { RSAMemoryKeyPair } from 'main/encryptionClasses';
 import { Dictionary } from 'main/dictionary';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
-  // TODO Move all userdata loading to fetch userdata, passing keys with it, or reading from disk
-  Manager.UserData.uuid = uuid;
-  Manager.UserData.token = token;
   Manager.UserData.keyPair = new RSAMemoryKeyPair(privKey, pubKey);
 
   // Store Pub/Priv key
@@ -19,12 +16,10 @@ ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, 
     Manager.WriteSettingTable('User', 'Token', token);
     await Manager.Save();
 
+    await ipcRenderer.invoke('SaveKeystore', JSON.stringify(<Dictionary<string>>await ipcRenderer.invoke('GETKeystore', uuid)));
+
     // HACK Also handles moving the client to the chat page, should probably change this
     FetchUserData();
-
-    const keystore = <Dictionary<string>>await ipcRenderer.invoke('GETKeystore', uuid);
-    Manager.UserData.keystore = keystore;
-    await ipcRenderer.invoke('SaveKeystore', JSON.stringify(keystore));
   }
   else {
     Debug.Error('Unable to store public key. Aborting login...', 'when writing public key to file');
