@@ -1,11 +1,9 @@
 import { ipcRenderer, Navigate, RemoveCachedCredentials, Debug, Manager, FetchUserData } from 'renderer/helpers';
 import AppNotification from 'renderer/components/Notification/Notification';
 import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { RSAMemoryKeyPair } from 'main/encryptionClasses';
 import { Dictionary } from 'main/dictionary';
 
 ipcRenderer.on('endAuth', async (privKey: string, pubKey: string, uuid: string, token: string) => {
-  Manager.UserData.keyPair = new RSAMemoryKeyPair(privKey, pubKey);
 
   // Store Pub/Priv key
   if (await ipcRenderer.invoke('SetPrivkey', privKey) && ipcRenderer.invoke('SetPubkey', pubKey)) {
