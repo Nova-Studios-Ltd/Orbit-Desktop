@@ -56,7 +56,7 @@
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
       "gatekeeperAssess": false,
-      "artifactName": "${productName}-Mac-Latest.dmg"
+      "artifactName": "${productName}-Mac-${arch}-Latest.dmg"
     },
     "dmg": {
       "contents": [
