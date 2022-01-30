@@ -31,8 +31,8 @@ export default class HybridListItem extends React.Component<IHybridListItemProps
   constructor(props: IHybridListItemProps) {
     super(props);
     this.className = props.className || '';
-    this.id = props.id;
-    this.text = props.text;
+    this.id = props.id || '';
+    this.text = props.text || '';
     this.icon = props.icon || undefined;
   }
 

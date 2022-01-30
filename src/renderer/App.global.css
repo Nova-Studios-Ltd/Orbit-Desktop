@@ -24,4 +24,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin-left: 5px;
+  margin-right: 10px;
 }
