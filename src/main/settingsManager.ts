@@ -13,8 +13,8 @@ class SettingsManager {
   _UserData: UserData = new UserData();
 
   // App Constants
-  readonly AppName: string = 'Nova Chat';
-  readonly AppVersion: string = '3.0';
+  readonly AppName: string = 'Orbit';
+  readonly AppVersion: string = 'Alpha';
   readonly HomePath: string = '/login';
   readonly MessageCharacterLimit: number = 4000;
 
