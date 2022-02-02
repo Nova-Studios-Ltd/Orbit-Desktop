@@ -55,8 +55,7 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false,
-      "artifactName": "${productName}-Mac-Latest.dmg"
+      "gatekeeperAssess": false
     },
     "dmg": {
       "contents": [
@@ -70,7 +69,8 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "artifactName": "${productName}-Mac-${arch}-Latest.dmg"
     },
     "win": {
       "target": [
