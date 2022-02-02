@@ -306,13 +306,13 @@ export default class Message extends React.Component<IMessageProps> {
 
   mouseEnter(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
-      event.currentTarget.className = 'Message Message_Hover';
+      event.currentTarget.className = 'Message_Right Message_Hover';
     }
   }
 
   mouseLeave(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
-      event.currentTarget.className = 'Message';
+      event.currentTarget.className = 'Message_Right';
     }
   }
 
@@ -512,11 +512,11 @@ export default class Message extends React.Component<IMessageProps> {
     });
 
     return (
-      <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
+      <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu}>
         <div className='Message_Left'>
           <Avatar src={`${this.avatar}&${Date.now()}`} />
         </div>
-        <div className='Message_Right'>
+        <div className='Message_Right' onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
           <div className='Message_Right_Header'>
             <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
             <Typography className='Message_Timestamp' variant='subtitle2'>{this.timestamp}</Typography>

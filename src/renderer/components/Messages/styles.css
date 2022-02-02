@@ -30,6 +30,8 @@
   width: 100%;
   padding: 10px;
   border-radius: 10px;
+
+  transition: background-color 200ms linear;
 }
 
 .Message_Right_Header {
@@ -46,6 +48,10 @@
 
 .Message_Name {
 
+}
+
+.Message_Hover {
+  transition: background-color 200ms linear;
 }
 
 .Message_Timestamp, .Message_Timestamp_Edited {

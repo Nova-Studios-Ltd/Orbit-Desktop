@@ -17,7 +17,7 @@ import { DefaultTheme, Styles } from '@mui/styles';
 import HybridListItem from 'renderer/components/List/HybridListItem';
 import type { IHybridListItemSkeleton } from 'renderer/components/List/HybridListItem';
 import AppNotification from 'renderer/components/Notification/Notification';
-import AppIcon from '../../assets/icon.svg';
+import AppIcon from '../../assets/CrappyLogo.png';
 import { Dictionary } from 'main/dictionary';
 
 interface IAppState {
@@ -182,7 +182,7 @@ class App extends React.Component {
         return <Divider key={Date.now()} />
       }
 
-      return <HybridListItem key={element.id} id={element.id} text={element.text} icon={element.icon} selected={(element.selectable && element.id == this.state.currentRoute)} onClick={element.onClick != null ? element.onClick : this.navigationDrawerItemClicked} onContextMenu={element.onContextMenu != null ? element.onContextMenu : this.navigationDrawerItemClicked} />
+      return <HybridListItem key={element.id} id={element.id} className='NavigationDrawerListItem' text={element.text} icon={element.icon} selected={(element.selectable && element.id == this.state.currentRoute)} onClick={element.onClick != null ? element.onClick : this.navigationDrawerItemClicked} onContextMenu={element.onContextMenu != null ? element.onContextMenu : this.navigationDrawerItemClicked} />
     }
 
     const navigationDrawerListTopJSXArray = navigationItemsTop.map((element) => {
@@ -209,7 +209,7 @@ class App extends React.Component {
           pauseOnFocusLoss={false}
         />
         <NoInternetConnectionBanner />
-        <Drawer className='NavigationDrawer' anchor='left' open={this.state.navigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
+        <Drawer PaperProps={{ className: 'NavigationDrawer' }} anchor='left' open={this.state.navigationDrawerOpen} onClose={() => this.toggleNavigationDrawer(false)}>
           <List className='NavigationDrawerListTop'>
             <div className='NavigationDrawerBranding'>
               <img src={AppIcon} width='64' height='64' style={{ padding: 1, margin: 10 }} alt='App Logo'/>
