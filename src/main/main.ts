@@ -8,7 +8,7 @@ import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
 import { sync as checkCommand } from 'command-exists';
 
 import { Debug } from './debug';
-import { isDevelopment, resolveHtmlPath } from './util';
+import { getAssetPath, isDevelopment, resolveHtmlPath } from './util';
 import { Manager, CreateManager } from "./settingsManager";
 import { defaultSettings } from './settingsDefaults';
 
@@ -68,14 +68,6 @@ const createWindow = async () => {
   /*if (isDevelopment) {
     await installExtensions();
   }*/
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -177,7 +169,7 @@ app.whenReady().then(() => {
   }
 
   try {
-    tray = new Tray('assets/icon.png');
+    tray = new Tray(getAssetPath('icon.png'));
     const contextMenu = Menu.buildFromTemplate([
       { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
       { type: 'separator' },

@@ -5,10 +5,15 @@
 @import 'components/styles.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
 
-.NavigationDrawer .NavigationDrawerListTop .NavigationDrawerListBottom {
+.NavigationDrawer, .NavigationDrawerListTop, .NavigationDrawerListBottom {
   width: 15rem;
   display: flex;
   flex-direction: column;
+}
+
+.NavigationDrawer {
+  border-radius: 15px;
+  margin: 0.5rem;
 }
 
 .NavigationDrawerListTop {
@@ -17,6 +22,10 @@
 
 .NavigationDrawerListBottom {
   margin-top: auto !important;
+}
+
+.NavigationDrawerListItem {
+  border-radius: 15px;
 }
 
 .NavigationDrawerBranding {

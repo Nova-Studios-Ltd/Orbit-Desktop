@@ -7,8 +7,8 @@ const LightTheme = createTheme({
   palette: {
     mode: 'light',
     background: {
-      default: '#D9D9D9',
-      paper: '#ffffff',
+      default: '#FFFFFF',
+      paper: '#D9D9D9',
     },
   },
 });
@@ -17,9 +17,9 @@ const DarkTheme = createTheme({
   palette: {
     mode: 'dark',
     background: {
-      default: '#212121',
-      paper: '#292B2E',
-    },
+      default: '#292B2E',
+      paper: '#212121',
+    }
   },
 });
 
@@ -36,7 +36,7 @@ export function AppStyles() {
         height: '100%',
         overflow: 'hidden',
         margin: '0',
-        backgroundColor: AppTheme().palette.background.default,
+        backgroundColor: AppTheme().palette.background.paper,
       },
       '::-webkit-scrollbar': {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -56,10 +56,10 @@ export function AppStyles() {
       },
       '.FormContainer': {
         color: AppTheme().palette.text.primary,
-        backgroundColor: AppTheme().palette.background.paper,
+        backgroundColor: AppTheme().palette.background.default,
       },
       '.ChannelView': {
-        background: AppTheme().palette.background.default,
+        background: AppTheme().palette.background.paper,
       },
       '.SelectedChannel': {
         background: `${AppTheme().palette.mode == 'dark' ? AppTheme().palette.grey.A700 : AppTheme().palette.grey.A100} !important`,
@@ -68,28 +68,29 @@ export function AppStyles() {
         color: AppTheme().palette.text.primary,
       },
       '.Chat_Page_Bottom': {
-        background: AppTheme().palette.background.paper,
+        background: AppTheme().palette.background.default,
       },
       '.FileUploadSummary': {
-        background: AppTheme().palette.background.paper,
+        background: AppTheme().palette.background.default,
       },
       '.MessageCanvas': {
-        background: AppTheme().palette.background.paper,
+        background: AppTheme().palette.background.default,
       },
       '.Message': {
         color: AppTheme().palette.text.primary,
       },
       '.Message_Right': {
-        background: AppTheme().palette.background.default,
+        background: AppTheme().palette.background.paper,
       },
       '.Message_Hover': {
         backgroundColor: AppTheme().palette.action.hover,
       },
       '.Header': {
         color: AppTheme().palette.text.primary,
+        backgroundColor: AppTheme().palette.background.paper,
       },
       'Chat_Page_Bottom': {
-        backgroundColor: AppTheme().palette.background.default,
+        backgroundColor: AppTheme().palette.background.paper,
       },
       '.Settings_Section': {
         borderBottom: 10,
