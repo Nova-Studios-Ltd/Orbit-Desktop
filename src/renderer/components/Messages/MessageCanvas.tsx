@@ -6,9 +6,9 @@ import type { Dimensions } from "types/types";
 
 interface IMessageCanvasProps {
   messages: Message[],
+  isChannelSelected: boolean,
   onImageClick?: (src: string, dimensions: Dimensions) => void,
-  onCanvasScroll?: (yIndex: number, oldestMessageID: string) => void,
-  isChannelSelected: boolean
+  onCanvasScroll?: (yIndex: number, oldestMessageID: string) => void
 }
 
 interface IMessageCanvasState {

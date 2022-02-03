@@ -3,7 +3,7 @@ import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from "@mui/icons-material";
 import { Helmet } from "react-helmet";
 
-import { Debug, ipcRenderer, events, setDefaultChannel, Manager, RemoveCachedCredentials, Navigate } from "renderer/helpers";
+import { Debug, ipcRenderer, events, Manager, RemoveCachedCredentials, Navigate } from "renderer/helpers";
 
 import AppNotification from "renderer/components/Notification/Notification";
 import MessageCanvas from "renderer/components/Messages/MessageCanvas";
@@ -148,12 +148,11 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
       if (lastOpenedChannel != null && lastOpenedChannel != "undefined") {
         Manager.WriteConst("CurrentChannel", lastOpenedChannel);
         ipcRenderer.send("GETMessages", lastOpenedChannel);
-        Debug.Log("")
       }
       else if (this.state.Channels.length > 0) {
         ipcRenderer.send("GETMessages", this.state.Channels[0].channelID);
         Manager.WriteConst("CurrentChannel", this.state.Channels[0].channelID);
-        setDefaultChannel(this.state.Channels[0].channelID);
+        Manager.WriteSetting("DefaultChannel", this.state.Channels[0].channelID);
       }
     }
     else {
@@ -416,10 +415,11 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
 
   handleCreateChannelDialogChannelTypeChange(event: SelectChangeEvent<string>) {
     const channelType = () => {
+      Debug.Log(event.target.value);
       switch (event.target.value) {
-        case "0":
+        case 0:
           return ChannelType.User;
-        case "1":
+        case 1:
           return ChannelType.Group;
         default:
           return ChannelType.Default;
@@ -546,7 +546,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
             <Header caption="Channels" onClick={this.props.onNavigationDrawerOpened} icon={<ListIcon />}>
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
-            <ChannelView channels={this.state.Channels} onChannelClicked={this.onChannelClicked} />
+            <ChannelView channels={this.state.Channels} selectedChannel={this.state.SelectedChannel} onChannelClicked={this.onChannelClicked} />
           </div>
           <div className="Chat_Page_Body_Right">
             <Header caption={this.state.ChannelName} icon={<ChatIcon />} />

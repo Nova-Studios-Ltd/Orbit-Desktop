@@ -110,6 +110,7 @@ export default class MessageInput extends React.Component<IMessageInputProps, IM
         }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
+          className: "MessageInput",
           endAdornment: (
             <InputAdornment className={showMaxLength} position="end">
               {availableCharacterRemainder}
