@@ -79,9 +79,12 @@
       "artifactName": "${productName}-Win-Latest.exe"
     },
     "linux": {
-      "target": [
-        "AppImage"
-      ],
+      "target": {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
       "category": "Development",
       "artifactName": "${productName}-Linux-Latest.AppImage"
     },
