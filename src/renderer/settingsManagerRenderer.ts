@@ -13,7 +13,7 @@ export class SyncedUserData {
     else this.UserData = userData;
     if (this.UserData.keystore != undefined)
       this.UserData.keystore.OnUpdate = () => this.SetUserdata();
-    ipcRenderer.on('UserdataUpdated', (uData: string) =>
+    ipcRenderer.on("UserdataUpdated", (uData: string) =>
     {
       const obj = JSON.parse(uData);
       this.UserData = <UserData>obj;
@@ -96,15 +96,15 @@ export class SyncedUserData {
 
   SetUserdata() {
     if (this.UserData == undefined || this.DontUpdate) return;
-    ipcRenderer.send('SetUserdata', JSON.stringify(this.UserData));
+    ipcRenderer.send("SetUserdata", JSON.stringify(this.UserData));
   }
 }
 
 export class SettingsManager {
   // Constants
-  private _AppName: string = '';
-  private _AppVersion: string = '';
-  private _HomePath: string = '';
+  private _AppName: string = "";
+  private _AppVersion: string = "";
+  private _HomePath: string = "";
   private _MessageCharacterLimit: number = 0;
 
   private _UserData: SyncedUserData = new SyncedUserData(undefined);
@@ -120,7 +120,7 @@ export class SettingsManager {
     this._MessageCharacterLimit = ipcRenderer.sendSync("MessageCharacterLimit");
 
     // Userdata manages itself
-    ipcRenderer.invoke('GetUserdata').then((v: string) => {
+    ipcRenderer.invoke("GetUserdata").then((v: string) => {
       const obj = JSON.parse(v);
       const uData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(obj.keystore));;
@@ -140,32 +140,32 @@ export class SettingsManager {
 
   // Settings
   ReadSetting<T>(key: string) : T {
-    return <T>ipcRenderer.sendSync('ReadSetting', key);
+    return <T>ipcRenderer.sendSync("ReadSetting", key);
   }
 
   ReadSettingTable<T>(key: string, subKey: string) : T | undefined {
-    return ipcRenderer.sendSync('ReadSettingTable', key, subKey);
+    return ipcRenderer.sendSync("ReadSettingTable", key, subKey);
   }
 
   WriteSetting(key: string, value: number | string | boolean) {
-    ipcRenderer.send('WriteSetting', key, value);
+    ipcRenderer.send("WriteSetting", key, value);
   }
 
   WriteSettingTable(key: string, subKey: string, value: number | string | boolean) {
-    ipcRenderer.send('WriteSettingTable', key, subKey, value);
+    ipcRenderer.send("WriteSettingTable", key, subKey, value);
   }
 
   // Constants
   ReadConst<T>(key: string) : T {
-    return <T>ipcRenderer.sendSync('ReadConst', key);
+    return <T>ipcRenderer.sendSync("ReadConst", key);
   }
 
   WriteConst(key: string, value: string | number | boolean) {
-    ipcRenderer.send('WriteConst', key, value);
+    ipcRenderer.send("WriteConst", key, value);
   }
 
   async Save() : Promise<boolean> {
-    const v = await ipcRenderer.invoke('Save');
+    const v = await ipcRenderer.invoke("Save");
     return v;
   }
 }

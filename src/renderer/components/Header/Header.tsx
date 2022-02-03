@@ -1,5 +1,5 @@
-import React from 'react';
-import { Icon, IconButton, Typography } from '@mui/material';
+import React from "react";
+import { Icon, IconButton, Typography } from "@mui/material";
 
 interface IHeaderProps {
   caption?: string,
@@ -15,12 +15,12 @@ export default class Header extends React.Component<IHeaderProps> {
       if (this.props.icon != null) {
         if (this.props.onClick != null) {
           return (
-            <IconButton className='Header_IconButton' onClick={this.props.onClick}>{this.props.icon}</IconButton>
+            <IconButton className="Header_IconButton" onClick={this.props.onClick}>{this.props.icon}</IconButton>
           );
         }
 
         return (
-          <Icon className='Header_Icon'>{this.props.icon}</Icon>
+          <Icon className="Header_Icon">{this.props.icon}</Icon>
         );
 
       }
@@ -28,10 +28,10 @@ export default class Header extends React.Component<IHeaderProps> {
     }
 
     return(
-      <div className='Header'>
+      <div className="Header">
           <IconElement />
-          <Typography variant='h5' className='Header_Caption'>{this.props.caption}</Typography>
-          <div className='Header_Misc'>
+          <Typography variant="h5" className="Header_Caption">{this.props.caption}</Typography>
+          <div className="Header_Misc">
             {this.props.children}
           </div>
       </div>

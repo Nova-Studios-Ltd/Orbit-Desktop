@@ -1,5 +1,5 @@
-import React from 'react';
-import { Divider, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+import React from "react";
+import { Divider, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 
 export interface IHybridListItemProps {
   className?: string,
@@ -30,9 +30,9 @@ export default class HybridListItem extends React.Component<IHybridListItemProps
 
   constructor(props: IHybridListItemProps) {
     super(props);
-    this.className = props.className || '';
-    this.id = props.id || '';
-    this.text = props.text || '';
+    this.className = props.className || "";
+    this.id = props.id || "";
+    this.text = props.text || "";
     this.icon = props.icon || undefined;
   }
 

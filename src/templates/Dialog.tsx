@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, DialogTitle } from "@mui/material";
 
 
 <Dialog>

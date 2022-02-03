@@ -13,58 +13,58 @@ class SettingsManager {
   _UserData: UserData = new UserData();
 
   // App Constants
-  readonly AppName: string = 'Orbit';
-  readonly AppVersion: string = 'Alpha';
-  readonly HomePath: string = '/login';
+  readonly AppName: string = "Orbit";
+  readonly AppVersion: string = "Alpha";
+  readonly HomePath: string = "/login";
   readonly MessageCharacterLimit: number = 4000;
 
   constructor(webContents: Electron.WebContents, defaultSettings?: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>) {
-    if (existsSync('UserSettings.json')) {
-      const d = Dictionary.fromJSON<number | string | boolean | Dictionary<number | string | boolean>>(readFileSync('UserSettings.json', { encoding: 'utf-8'}));
-      if (d == undefined) this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send('SettingsUpdated'); });
+    if (existsSync("UserSettings.json")) {
+      const d = Dictionary.fromJSON<number | string | boolean | Dictionary<number | string | boolean>>(readFileSync("UserSettings.json", { encoding: "utf-8"}));
+      if (d == undefined) this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send("SettingsUpdated"); });
       this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>d;
     }
     else if (defaultSettings != undefined)
-      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(defaultSettings, () => {webContents.send('SettingsUpdated'); });
+      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(defaultSettings, () => {webContents.send("SettingsUpdated"); });
     else
-      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send('SettingsUpdated'); });
+      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send("SettingsUpdated"); });
 
     this.Operational = new Dictionary<number | string | boolean>(<Indexable<number | string | boolean>>{
-      'CurrentChannel': '',
-      'IsFocused': true,
-      'CloseToTray': false,
-      'LoggedOut': false
+      "CurrentChannel": "",
+      "IsFocused": true,
+      "CloseToTray": false,
+      "LoggedOut": false
     });
 
     // Userdata
-    ipcMain.handle('GetUserdata', () => JSON.stringify(this._UserData));
-    ipcMain.on('SetUserdata', (_event, userData: string) => {
+    ipcMain.handle("GetUserdata", () => JSON.stringify(this._UserData));
+    ipcMain.on("SetUserdata", (_event, userData: string) => {
       console.log(userData);
       const obj = JSON.parse(userData);
       this._UserData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(<Dictionary<string>>obj.keystore));;
       if (store != undefined)
         this._UserData.keystore = store;
-      webContents.send('UserdataUpdated', userData);
+      webContents.send("UserdataUpdated", userData);
     });
 
     // Constants
-    ipcMain.on('AppName', (event) => { event.returnValue = this.AppName; });
-    ipcMain.on('AppVersion', (event) => { event.returnValue = this.AppVersion; });
-    ipcMain.on('HomePath', (event) => { event.returnValue = this.HomePath; });
-    ipcMain.on('MessageCharacterLimit', (event) => { event.returnValue = this.MessageCharacterLimit; });
+    ipcMain.on("AppName", (event) => { event.returnValue = this.AppName; });
+    ipcMain.on("AppVersion", (event) => { event.returnValue = this.AppVersion; });
+    ipcMain.on("HomePath", (event) => { event.returnValue = this.HomePath; });
+    ipcMain.on("MessageCharacterLimit", (event) => { event.returnValue = this.MessageCharacterLimit; });
 
     // Save
-    ipcMain.handle('Save', () => this.SaveSettings());
+    ipcMain.handle("Save", () => this.SaveSettings());
 
-    ipcMain.on('ReadSetting', (event, key: string) => { event.returnValue = this.ReadSetting(key); });
-    ipcMain.on('WriteSetting', (_event, key: string, value: number | string | boolean) => this.WriteSetting(key, value));
+    ipcMain.on("ReadSetting", (event, key: string) => { event.returnValue = this.ReadSetting(key); });
+    ipcMain.on("WriteSetting", (_event, key: string, value: number | string | boolean) => this.WriteSetting(key, value));
 
-    ipcMain.on('ReadSettingTable', (event, key: string, subKey: string) => { event.returnValue = this.ReadSettingTable(key, subKey); });
-    ipcMain.on('WriteSettingTable', (_event, key: string, subKey: string, value: number | string | boolean) => this.WriteSettingTable(key, subKey, value));
+    ipcMain.on("ReadSettingTable", (event, key: string, subKey: string) => { event.returnValue = this.ReadSettingTable(key, subKey); });
+    ipcMain.on("WriteSettingTable", (_event, key: string, subKey: string, value: number | string | boolean) => this.WriteSettingTable(key, subKey, value));
 
-    ipcMain.on('ReadConst', (event, key: string) => { event.returnValue = this.ReadConst(key); });
-    ipcMain.on('WriteConst', (_event, key: string, value: string | boolean | number) => this.WriteConst(key, value));
+    ipcMain.on("ReadConst", (event, key: string) => { event.returnValue = this.ReadConst(key); });
+    ipcMain.on("WriteConst", (_event, key: string, value: string | boolean | number) => this.WriteConst(key, value));
   }
 
   get UserData() : UserData {
@@ -104,7 +104,7 @@ class SettingsManager {
 
   SaveSettings() : boolean {
     try {
-      writeFileSync('UserSettings.json', JSON.stringify(this.Settings));
+      writeFileSync("UserSettings.json", JSON.stringify(this.Settings));
       return true;
     }
     catch {

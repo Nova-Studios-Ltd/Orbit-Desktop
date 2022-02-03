@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextField } from '@mui/material';
+import React from "react";
+import { TextField } from "@mui/material";
 
 interface IChipTextFieldProps {
   id: string,
@@ -17,7 +17,7 @@ interface IChipTextFieldState {
   selectedItem: JSX.Element | undefined
 }
 
-export default class ChipTextField extends React.Component<IChipTextFieldProps> {
+export default class ChipTextField extends React.Component<IChipTextFieldProps, IChipTextFieldState> {
   id: string;
   classNames: string;
   label: string;
@@ -26,14 +26,13 @@ export default class ChipTextField extends React.Component<IChipTextFieldProps> 
   required?: boolean;
   sensitive?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  state: IChipTextFieldState;
 
   constructor(props: IChipTextFieldProps) {
     super(props);
-    this.id = props.id || '';
-    this.classNames = props.classNames || '';
-    this.label = props.label || '';
-    this.description = props.description || '';
+    this.id = props.id || "";
+    this.classNames = props.classNames || "";
+    this.label = props.label || "";
+    this.description = props.description || "";
     this.autoFocus = props.autoFocus || false;
     this.required = props.required || false;
     this.sensitive = props.sensitive || false;
@@ -41,10 +40,10 @@ export default class ChipTextField extends React.Component<IChipTextFieldProps> 
   }
 
   render() {
-    const fieldType = this.sensitive ? 'password' : 'text';
-    let finalClassNames = 'Generic_Form_Item Form_Text_Field';
+    const fieldType = this.sensitive ? "password" : "text";
+    let finalClassNames = "Generic_Form_Item Form_Text_Field";
     if (this.classNames.length > 0) {
-      finalClassNames = finalClassNames.concat(' ', this.classNames);
+      finalClassNames = finalClassNames.concat(" ", this.classNames);
     }
 
     return (

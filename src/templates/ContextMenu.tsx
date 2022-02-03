@@ -4,7 +4,7 @@ constructor(props) {
 
 async menuItemClicked(event: React.ReactElement<any, string | React.JSXElementConstructor<any>>) {
   switch(event.currentTarget.id) {
-    case '[Identifier]':
+    case "[Identifier]":
       break;
   }
 
@@ -18,13 +18,13 @@ closeContextMenu(event: any) {
 render() {
   return(
     <Menu
-      id='generic-menu'
+      id="generic-menu"
       anchorEl={this.state.anchorEl}
       open={this.state.open}
       onClose={this.closeContextMenu}
       >
 
-      <MenuItem id='[ReplaceWithIdentifier]' onClick={(event) => this.menuItemClicked(event)}>[Text]</MenuItem>
+      <MenuItem id="[ReplaceWithIdentifier]" onClick={(event) => this.menuItemClicked(event)}>[Text]</MenuItem>
     </Menu>
   );
 }

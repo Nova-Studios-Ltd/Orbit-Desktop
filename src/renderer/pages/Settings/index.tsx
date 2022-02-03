@@ -1,16 +1,16 @@
-import React, { ChangeEvent, MouseEvent } from 'react';
-import { Avatar, Button, Card, Dialog, DialogContent, DialogActions, DialogTitle, FormControlLabel, FormGroup, IconButton, Switch, Typography } from '@mui/material';
-import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from '@mui/icons-material';
-import { MD5 } from 'crypto-js';
-import { Helmet } from 'react-helmet';
-import AppNotification from 'renderer/components/Notification/Notification';
-import Header from 'renderer/components/Header/Header';
-import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from 'renderer/helpers';
-import SettingsSection from 'renderer/components/Settings/SettingsSection';
-import { NotificationAudienceType, NotificationStatusType, Theme } from 'types/enums';
-import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
-import { IOpenFileDialogResults } from 'types/types';
-import FormTextField from 'renderer/components/Form/FormTextField';
+import React, { ChangeEvent, MouseEvent } from "react";
+import { Avatar, Button, Card, Dialog, DialogContent, DialogActions, DialogTitle, FormControlLabel, FormGroup, IconButton, Switch, Typography } from "@mui/material";
+import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from "@mui/icons-material";
+import { MD5 } from "crypto-js";
+import { Helmet } from "react-helmet";
+import AppNotification from "renderer/components/Notification/Notification";
+import Header from "renderer/components/Header/Header";
+import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from "renderer/helpers";
+import SettingsSection from "renderer/components/Settings/SettingsSection";
+import { NotificationAudienceType, NotificationStatusType, Theme } from "types/enums";
+import YesNoDialog from "renderer/components/Dialogs/YesNoDialog";
+import { IOpenFileDialogResults } from "types/types";
+import FormTextField from "renderer/components/Form/FormTextField";
 
 interface ISettingsPageProps {
   onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
@@ -25,8 +25,7 @@ interface ISettingsPageState {
   editUsernameDialogField: string
 }
 
-export default class SettingsPage extends React.Component<ISettingsPageProps> {
-  state: ISettingsPageState;
+export default class SettingsPage extends React.Component<ISettingsPageProps, ISettingsPageState> {
 
   constructor(props: ISettingsPageProps) {
     super(props);
@@ -43,13 +42,13 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
     this.avatarUpdated = this.avatarUpdated.bind(this);
     this.usernameUpdated = this.usernameUpdated.bind(this);
 
-    ipcRenderer.on('AvatarSet', this.avatarUpdated);
-    ipcRenderer.on('UsernameUpdated', this.usernameUpdated);
+    ipcRenderer.on("AvatarSet", this.avatarUpdated);
+    ipcRenderer.on("UsernameUpdated", this.usernameUpdated);
 
     this.state = {
       avatarStateKey: MD5(Date.now().toString()).toString(),
       usernameStateKey: MD5(Date.now().toString()).toString(),
-      darkThemeEnabled: Boolean(Manager.ReadSetting<number>('Theme')),
+      darkThemeEnabled: Boolean(Manager.ReadSetting<number>("Theme")),
       confirmUserAccountDeletionDialogOpen: false,
       editUsernameDialogOpen: false,
       editUsernameDialogField: Manager.UserData.username
@@ -58,7 +57,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   handleClick(event: MouseEvent<HTMLButtonElement>) {
     switch (event.currentTarget.id) {
-      case 'deleteAccount':
+      case "deleteAccount":
         this.setState({ confirmUserAccountDeletionDialogOpen: true });
         break;
     }
@@ -71,18 +70,18 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   handleToggle(event: ChangeEvent<HTMLInputElement>) {
     switch (event.currentTarget.id) {
-      case 'darkTheme':
+      case "darkTheme":
         this.setState((prevState: ISettingsPageState) => ({ darkThemeEnabled: !prevState.darkThemeEnabled }), () => {
-          Manager.WriteSetting('Theme', this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
+          Manager.WriteSetting("Theme", this.state.darkThemeEnabled ? Theme.Dark : Theme.Light);
           Manager.Save();
-          events.send('appThemeChanged', this.state.darkThemeEnabled);
+          events.send("appThemeChanged", this.state.darkThemeEnabled);
         });
         break;
     }
   }
 
   deleteAccount() {
-    ipcRenderer.send('DELETEUser', Manager.UserData.uuid);
+    ipcRenderer.send("DELETEUser", Manager.UserData.uuid);
     this.closeUserAccountDeletionDialog();
   }
 
@@ -91,11 +90,11 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   closeChangeUsernameDialog() {
-    this.setState({ editUsernameDialogOpen: false, editUsernameDialogField: '' });
+    this.setState({ editUsernameDialogOpen: false, editUsernameDialogField: "" });
   }
 
   submitNewUsername() {
-    ipcRenderer.send('UPDATEUsername', Manager.UserData.uuid, this.state.editUsernameDialogField);
+    ipcRenderer.send("UPDATEUsername", Manager.UserData.uuid, this.state.editUsernameDialogField);
     this.closeChangeUsernameDialog();
   }
 
@@ -104,7 +103,7 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
   }
 
   exitSettings() {
-    Navigate('/chat', null);
+    Navigate("/chat", null);
   }
 
   async updateUserAvatar() {
@@ -126,51 +125,51 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
 
   render() {
     return(
-      <div className='Page Settings_Page_Container'>
+      <div className="Page Settings_Page_Container">
         <Helmet>
           <title>{`${Manager.AppName} ${Manager.AppVersion} - Settings`}</title>
         </Helmet>
-        <Header caption='Settings' icon={<SettingsIcon />}>
+        <Header caption="Settings" icon={<SettingsIcon />}>
           <IconButton onClick={this.exitSettings}><CloseIcon /></IconButton>
         </Header>
-        <div className='Settings_Page_InnerContainer'>
-          <SettingsSection title='User'>
-            <Card className='Settings_User_Section_Card'>
-              <IconButton className='OverlayContainer' onClick={this.updateUserAvatar}>
+        <div className="Settings_Page_InnerContainer">
+          <SettingsSection title="User">
+            <Card className="Settings_User_Section_Card">
+              <IconButton className="OverlayContainer" onClick={this.updateUserAvatar}>
                 <Avatar key={this.state.avatarStateKey} sx={{ width: 128, height: 128 }} src={`https://api.novastudios.tk/Media/Avatar/${Manager.UserData.uuid}?size=128&${Date.now()}`}/>
-                <AddIcon fontSize='large' className='Overlay'/>
+                <AddIcon fontSize="large" className="Overlay"/>
               </IconButton>
-              <Typography key={this.state.usernameStateKey} variant='h5'>{Manager.UserData.username}#{Manager.UserData.discriminator}</Typography>
+              <Typography key={this.state.usernameStateKey} variant="h5">{Manager.UserData.username}#{Manager.UserData.discriminator}</Typography>
               <Button onClick={this.openChangeUsernameDialog}>Edit Username</Button>
               <Button disabled>Change Password</Button>
               <Button disabled>Logout</Button>
             </Card>
           </SettingsSection>
-          <SettingsSection title='Appearance'>
+          <SettingsSection title="Appearance">
             <FormGroup>
-              <FormControlLabel label='Dark Theme' control={<Switch id='darkTheme' title='Dark Theme' onChange={this.handleToggle} checked={this.state.darkThemeEnabled} />} />
+              <FormControlLabel label="Dark Theme" control={<Switch id="darkTheme" title="Dark Theme" onChange={this.handleToggle} checked={this.state.darkThemeEnabled} />} />
             </FormGroup>
           </SettingsSection>
-          <SettingsSection title='Notifications'>
+          <SettingsSection title="Notifications">
 
           </SettingsSection>
-          <SettingsSection title='Accessibility'>
+          <SettingsSection title="Accessibility">
 
           </SettingsSection>
-          <SettingsSection title='Advanced'>
-            <Button className='Settings_Section_Item' variant='outlined' onClick={async () => {
+          <SettingsSection title="Advanced">
+            <Button className="Settings_Section_Item" variant="outlined" onClick={async () => {
               await copyToClipboard(Manager.UserData.token).then((result: boolean) => {
                 if (result) {
-                  new AppNotification({ body: 'Copied token to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+                  new AppNotification({ body: "Copied token to clipboard", notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
                 }
               });
             }}>Copy Token to Clipboard</Button>
-            <Button id='deleteAccount' className='Settings_Section_Item' variant='outlined' color='error' onClick={this.handleClick}>Delete Account</Button>
+            <Button id="deleteAccount" className="Settings_Section_Item" variant="outlined" color="error" onClick={this.handleClick}>Delete Account</Button>
           </SettingsSection>
           <Dialog open={this.state.editUsernameDialogOpen}>
             <DialogTitle>Change Username</DialogTitle>
-            <DialogContent sx={{ overflow: 'hidden' }}>
-              <FormTextField id='editUsernameDialogField' label='Username' placeholder='New Username' autoFocus value={this.state.editUsernameDialogField} onChange={this.handleChange}></FormTextField>
+            <DialogContent sx={{ overflow: "hidden" }}>
+              <FormTextField id="editUsernameDialogField" label="Username" placeholder="New Username" autoFocus value={this.state.editUsernameDialogField} onChange={this.handleChange}></FormTextField>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.closeChangeUsernameDialog}>Cancel</Button>
@@ -178,10 +177,10 @@ export default class SettingsPage extends React.Component<ISettingsPageProps> {
             </DialogActions>
           </Dialog>
           <YesNoDialog
-          title='Delete Account'
-          body='Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat.'
-          confirmButtonText='Delete'
-          denyButtonText='Cancel'
+          title="Delete Account"
+          body="Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat."
+          confirmButtonText="Delete"
+          denyButtonText="Cancel"
           onDeny={this.closeUserAccountDeletionDialog}
           onConfirm={this.deleteAccount}
           show={this.state.confirmUserAccountDeletionDialogOpen} />

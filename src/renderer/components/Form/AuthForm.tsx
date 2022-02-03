@@ -1,7 +1,7 @@
-import React, { FormEventHandler } from 'react';
-import FormStatusTuple from 'structs/FormStatusTypes';
-import FormStatusField from './FormStatusField';
-import FormHeader from './FormHeader';
+import React, { FormEventHandler } from "react";
+import FormStatusTuple from "structs/FormStatusTypes";
+import FormStatusField from "./FormStatusField";
+import FormHeader from "./FormHeader";
 
 interface IAuthFormProps {
   headerHeading?: string,
@@ -21,8 +21,8 @@ export default class AuthForm extends React.Component<IAuthFormProps> {
     super(props);
     this.handleSubmit = props.onSubmit;
 
-    this.headerHeading = props.headerHeading || '';
-    this.headerBody = props.headerBody || '';
+    this.headerHeading = props.headerHeading || "";
+    this.headerBody = props.headerBody || "";
     this.children = props.children;
 
     if (this.handleSubmit != null)
@@ -32,7 +32,7 @@ export default class AuthForm extends React.Component<IAuthFormProps> {
   render() {
     const { message, type } = this.props.status != null ? this.props.status : new FormStatusTuple(undefined, undefined);
     return(
-      <form className='FormContainer AuthForm_Container' onSubmit={this.handleSubmit}>
+      <form className="FormContainer AuthForm_Container" onSubmit={this.handleSubmit}>
         <FormHeader heading={this.headerHeading} body={this.headerBody} />
         <FormStatusField message={message} type={type} />
         {this.children}

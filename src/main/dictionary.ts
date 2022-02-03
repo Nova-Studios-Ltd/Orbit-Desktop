@@ -44,7 +44,7 @@ export class Dictionary<V> implements IDictionary<V> {
   static fromJSON<V>(json: string) : Dictionary<V> | undefined {
     const d = new Dictionary<V>();
     const dic = <Indexable<V>>JSON.parse(json, (key: string, value: any) => {
-      if (key != '' && value._dict != undefined)
+      if (key != "" && value._dict != undefined)
         return Dictionary.fromJSON(JSON.stringify(value));
       return value;
     })._dict;

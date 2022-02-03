@@ -2,7 +2,11 @@
 
 Programming Code (agreed upon standard)
 
-- String Literals: Use single quotes (' ')
+- Quotes
+  
+  - Everywhere: Double Quotes (" ")
+  - Import Statements: Single Quotes (' ')
+  - Template Literals: As Is (\` \`)
 
 Object Typing
 

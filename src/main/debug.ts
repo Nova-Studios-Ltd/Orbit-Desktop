@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import { LogContext, LogType } from "../types/enums";
 
 class DebugLogger {
-  private logBuffer: Array<string>;
+  private logBuffer: string[];
   events: EventEmitter;
 
   constructor() {
@@ -21,22 +21,22 @@ class DebugLogger {
     let _contextType = contextType;
     let _logType = logType;
     if (contextType == null) _contextType = LogContext.Default;
-    if (typeof(_message) != 'string') {
+    if (typeof(_message) != "string") {
       try {
         _message = JSON.stringify(_message)
       }
       catch {
-        _message = '!! LOGGING ERROR !! => Unable to stringify object to printable string';
+        _message = "!! LOGGING ERROR !! => Unable to stringify object to printable string";
         _logType = LogType.Error;
       }
     }
     let finalMessage = `[${_contextType}] ${_logType} => ${_message}`;
-    if (context != null && context?.length > 0) finalMessage = finalMessage.concat(' ', `(${context})`);
+    if (context != null && context?.length > 0) finalMessage = finalMessage.concat(" ", `(${context})`);
 
     finalMessage = `${new Date().toISOString()} ${finalMessage}`
 
     this.logBuffer.push(finalMessage);
-    this.events.emit('logEntryAdded', finalMessage, _logType);
+    this.events.emit("logEntryAdded", finalMessage, _logType);
   }
 
   Error(message: (string | unknown), context?: string) {

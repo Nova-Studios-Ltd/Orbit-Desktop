@@ -1,17 +1,17 @@
-import { clipboard, dialog, ipcMain, Notification } from 'electron';
-import { INotificationProps } from 'renderer/components/Notification/Notification';
-import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from 'fs';
-import type { AuthResponse } from 'types/NCAPIResponseMutations';
-import Credentials from '../structs/Credentials';
-import { Debug } from './debug';
-import { ContentType, FormAuthStatusType } from '../types/enums';
-import { PostWithoutAuthentication } from './NCAPI';
-import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from './encryptionUtils';
-import { Dictionary } from './dictionary';
+import { clipboard, dialog, ipcMain, Notification } from "electron";
+import { INotificationProps } from "renderer/components/Notification/Notification";
+import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from "fs";
+import type { AuthResponse } from "types/NCAPIResponseMutations";
+import Credentials from "../structs/Credentials";
+import { Debug } from "./debug";
+import { ContentType, FormAuthStatusType } from "../types/enums";
+import { PostWithoutAuthentication } from "./NCAPI";
+import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from "./encryptionUtils";
+import { Dictionary } from "./dictionary";
 
 
-ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
-  const a = await PostWithoutAuthentication('Login', ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
+ipcMain.handle("beginAuth", async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
+  const a = await PostWithoutAuthentication("Login", ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
     if (resp.status == 403 || resp.status == 404) return FormAuthStatusType.genericIncorrectUsernamePassword;
     if (resp.status == 500) return FormAuthStatusType.serverError;
     if (resp.status == 200 && resp.payload != undefined && creds.password != undefined) {
@@ -19,9 +19,9 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
       const decryptedKey = DecryptUsingAES(creds.password, login.key);
 
       // Moved to endAuth ipc event in events.ts (render side)
-      //writeFile("rsa", decryptedKey, () => event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token));
+      //writeFile("rsa", decryptedKey, () => event.sender.send("endAuth", decryptedKey, login.publicKey, login.uuid, login.token));
 
-      event.sender.send('endAuth', decryptedKey, login.publicKey, login.uuid, login.token);
+      event.sender.send("endAuth", decryptedKey, login.publicKey, login.uuid, login.token);
 
       Debug.Success(`User ${login.uuid} Logged In Successfully`);
       return FormAuthStatusType.success;
@@ -31,24 +31,24 @@ ipcMain.handle('beginAuth', async (event, creds: Credentials) : Promise<FormAuth
   return a;
 });
 
-ipcMain.on('logout', () => {
-  if (existsSync('keystore')) unlinkSync('keystore');
-  if (existsSync('rsa')) unlinkSync('rsa');
-  if (existsSync('rsa.pub')) unlinkSync('rsa.pub');
+ipcMain.on("logout", () => {
+  if (existsSync("keystore")) unlinkSync("keystore");
+  if (existsSync("rsa")) unlinkSync("rsa");
+  if (existsSync("rsa.pub")) unlinkSync("rsa.pub");
   Debug.Success("Logged out successfully");
 });
 
-ipcMain.handle('register', async (_event, creds: Credentials) : Promise<boolean> => {
+ipcMain.handle("register", async (_event, creds: Credentials) : Promise<boolean> => {
   if (creds.password == undefined) return false;
   const keypair = await GenerateRSAKeyPairAsync();
   const encryptedKey = await EncryptUsingAESAsync(creds.password, keypair.PrivateKey);
   const key = { priv: encryptedKey.content, privIV: encryptedKey.iv, pub: keypair.PublicKey };
-  const resp = await PostWithoutAuthentication('Register', ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email, key}));
+  const resp = await PostWithoutAuthentication("Register", ContentType.JSON, JSON.stringify({username: creds.username, password: creds.password, email: creds.email, key}));
   if (resp.status == 200) return true;
   return false;
 });
 
-ipcMain.handle('copyToClipboard', async (_, data: string) => {
+ipcMain.handle("copyToClipboard", async (_, data: string) => {
   try {
     clipboard.writeText(data);
     return true;
@@ -57,29 +57,29 @@ ipcMain.handle('copyToClipboard', async (_, data: string) => {
   }
 });
 
-ipcMain.handle('copyImageFromClipboard', async () => {
+ipcMain.handle("copyImageFromClipboard", async () => {
   try {
-    return clipboard.readImage().toPNG().toString('base64');
+    return clipboard.readImage().toPNG().toString("base64");
   }
   catch{
     return null;
   }
 });
 
-ipcMain.on('toast', (_, notification: INotificationProps) => {
+ipcMain.on("toast", (_, notification: INotificationProps) => {
   new Notification({ title: notification.title, body: notification.body }).show();
 });
 
-ipcMain.on('pickUploadFiles', (event) => {
-  dialog.showOpenDialog({ properties: ['openFile', 'multiSelections', 'showHiddenFiles'] }).then((r) => {
-    if (!r.canceled) event.sender.send('pickedUploadFiles', r.filePaths);
-  }).catch((e) => Debug.Error(e.message, 'when trying to retrieve paths from file picker for file uploading'));
+ipcMain.on("pickUploadFiles", (event) => {
+  dialog.showOpenDialog({ properties: ["openFile", "multiSelections", "showHiddenFiles"] }).then((r) => {
+    if (!r.canceled) event.sender.send("pickedUploadFiles", r.filePaths);
+  }).catch((e) => Debug.Error(e.message, "when trying to retrieve paths from file picker for file uploading"));
 });
 
-ipcMain.handle('OpenFile', async () => {
-  const result = await dialog.showOpenDialog({ properties: ['openFile', 'showHiddenFiles'], filters: [
-    { name: 'All Files', extensions: ['*'] },
-    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+ipcMain.handle("OpenFile", async () => {
+  const result = await dialog.showOpenDialog({ properties: ["openFile", "showHiddenFiles"], filters: [
+    { name: "All Files", extensions: ["*"] },
+    { name: "Images", extensions: ["jpg", "png", "gif"] }
   ] });
   if (!result.canceled) {
     const path = result.filePaths[0];
@@ -90,34 +90,34 @@ ipcMain.handle('OpenFile', async () => {
           const contents = readFileSync(path);
           return { path, contents };
         }
-        Debug.Error(`Requested file ${path} is too big (${size}) to load into buffer, but returning path anyways`, 'when picking file');
+        Debug.Error(`Requested file ${path} is too big (${size}) to load into buffer, but returning path anyways`, "when picking file");
         return { path };
       }
       catch {
-        Debug.Error(`Error reading file ${path} into buffer, but returning path anyways`, 'when picking file');
+        Debug.Error(`Error reading file ${path} into buffer, but returning path anyways`, "when picking file");
         return { path };
       }
     }
-    Debug.Error(`Requested file ${path} does not exist`, 'when picking file');
+    Debug.Error(`Requested file ${path} does not exist`, "when picking file");
   }
   return undefined;
 })
 
-ipcMain.handle('saveSetting', (_event, key: string, value: string | boolean | number) => {
-  // fs.writeFile('settings.json', );
+ipcMain.handle("saveSetting", (_event, key: string, value: string | boolean | number) => {
+  // fs.writeFile("settings.json", );
   // Store settings in an object andy, and serialize that to disk when you need to save, unless were gonna store like a gb of settings
   // You will have to rewrite the entire file anyways to update a single setting, unless you spend the time update just that location in the file
   // Perhaps make yourself a SettingsManager class that handles are the control logic
   // And these events, help keep this file cleaner maybe?
 });
 
-ipcMain.handle('retrieveSetting', (_event, key: string) => {
-  return 'Not Implemented';
+ipcMain.handle("retrieveSetting", (_event, key: string) => {
+  return "Not Implemented";
 });
 
 
 // Read/Write Priv/Pub key
-ipcMain.handle('SetPrivkey', async (_event, key: string) : Promise<boolean> => {
+ipcMain.handle("SetPrivkey", async (_event, key: string) : Promise<boolean> => {
   try {
     writeFileSync("rsa", key);
     return true;
@@ -127,18 +127,18 @@ ipcMain.handle('SetPrivkey', async (_event, key: string) : Promise<boolean> => {
   }
 });
 
-ipcMain.handle('GetPrivkey', async () : Promise<string> => {
+ipcMain.handle("GetPrivkey", async () : Promise<string> => {
   try {
-    return readFileSync('rsa', 'utf-8');
+    return readFileSync("rsa", "utf-8");
   }
   catch {
-    return '';
+    return "";
   }
 });
 
-ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
+ipcMain.handle("SetPubkey", async (_event, key: string) : Promise<boolean> => {
   try {
-    Debug.Log('Writing public key to file');
+    Debug.Log("Writing public key to file");
     writeFileSync("rsa.pub", key);
     return true;
   }
@@ -147,16 +147,16 @@ ipcMain.handle('SetPubkey', async (_event, key: string) : Promise<boolean> => {
   }
 });
 
-ipcMain.handle('GetPubkey', async () : Promise<string> => {
+ipcMain.handle("GetPubkey", async () : Promise<string> => {
   try {
-    return readFileSync('rsa.pub', 'utf-8');
+    return readFileSync("rsa.pub", "utf-8");
   }
   catch {
-    return '';
+    return "";
   }
 });
 
-ipcMain.handle('SaveKeystore', async (_event, keys: string) : Promise<boolean> => {
+ipcMain.handle("SaveKeystore", async (_event, keys: string) : Promise<boolean> => {
   try {
     writeFileSync("keystore", keys);
     return true;
@@ -166,18 +166,18 @@ ipcMain.handle('SaveKeystore', async (_event, keys: string) : Promise<boolean> =
   }
 });
 
-ipcMain.handle('LoadKeystore', async () : Promise<string> => {
+ipcMain.handle("LoadKeystore", async () : Promise<string> => {
   try {
     /*const d = new Dictionary<string>();
-    d._dict = <Indexable<string>>JSON.parse(readFileSync('keystore', 'utf-8'));*/
-    return readFileSync('keystore', 'utf-8');
+    d._dict = <Indexable<string>>JSON.parse(readFileSync("keystore", "utf-8"));*/
+    return readFileSync("keystore", "utf-8");
   }
   catch {
-    return '';
+    return "";
   }
 });
 
-ipcMain.handle('SHA256HASH', async (_event, data: string) => {
+ipcMain.handle("SHA256HASH", async (_event, data: string) => {
   const hash = await GenerateSHA256HashAsync(data);
   return hash;
 })

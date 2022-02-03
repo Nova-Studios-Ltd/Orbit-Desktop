@@ -32,19 +32,19 @@ export enum NotificationAudienceType {
 }
 
 export enum WebSocketMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  PATCH = 'PATCH'
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  PATCH = "PATCH"
 }
 
 export enum ContentType {
-  EMPTY = '',
-  JSON = 'application/json',
-  PNG = 'image/png',
-  FORMDATA = 'multipart/form-data',
-  TEXT = 'text/plain'
+  EMPTY = "",
+  JSON = "application/json",
+  PNG = "image/png",
+  FORMDATA = "multipart/form-data",
+  TEXT = "text/plain"
 }
 
 export enum ChannelType {
@@ -60,14 +60,14 @@ export enum Theme {
 }
 
 export enum LogContext {
-  Main = 'MAIN',
-  Renderer = 'RENDERER',
-  Default = 'UNKNOWN'
+  Main = "MAIN",
+  Renderer = "RENDERER",
+  Default = "UNKNOWN"
 }
 
 export enum LogType {
-  Success = 'SUCCESS',
-  Warn = 'WARNING',
-  Error = 'ERROR',
-  Info = 'INFO'
+  Success = "SUCCESS",
+  Warn = "WARNING",
+  Error = "ERROR",
+  Info = "INFO"
 }

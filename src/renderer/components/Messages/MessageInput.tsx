@@ -1,10 +1,10 @@
-import React, { KeyboardEvent, ChangeEvent } from 'react';
-import { IconButton, InputAdornment, TextField } from '@mui/material/';
-import { Send as SendIcon, Upload as UploadIcon } from '@mui/icons-material';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { Debug, ipcRenderer , Manager } from 'renderer/helpers';
-import MessageAttachment from 'structs/MessageAttachment';
-import AppNotification from '../Notification/Notification';
+import React, { KeyboardEvent, ChangeEvent } from "react";
+import { IconButton, InputAdornment, TextField } from "@mui/material/";
+import { Send as SendIcon, Upload as UploadIcon } from "@mui/icons-material";
+import { NotificationAudienceType, NotificationStatusType } from "types/enums";
+import { Debug, ipcRenderer , Manager } from "renderer/helpers";
+import MessageAttachment from "structs/MessageAttachment";
+import AppNotification from "../Notification/Notification";
 
 interface IMessageInputProps {
   onAddAttachment: (attachment: MessageAttachment) => void,
@@ -15,8 +15,7 @@ interface IMessageInputState {
   message: string
 }
 
-export default class MessageInput extends React.Component<IMessageInputProps> {
-  state: IMessageInputState;
+export default class MessageInput extends React.Component<IMessageInputProps, IMessageInputState> {
   ctrlPressed: boolean;
 
   constructor(props: IMessageInputProps) {
@@ -31,19 +30,19 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
     this.addedAttachment = this.addedAttachment.bind(this);
     this.messageSent = this.messageSent.bind(this);
 
-    ipcRenderer.on('pickedUploadFiles', this.addedAttachment);
-    ipcRenderer.on('MessageSent', this.messageSent);
+    ipcRenderer.on("pickedUploadFiles", this.addedAttachment);
+    ipcRenderer.on("MessageSent", this.messageSent);
 
     this.ctrlPressed = false;
 
-    this.state = { message: '' };
+    this.state = { message: "" };
   }
 
   messageSent(result: boolean) {
-    if (result) this.setMessageTo('');
+    if (result) this.setMessageTo("");
     else {
       // TODO Make this do something to the input box
-      new AppNotification({ title: 'Message Sent', body: 'Message failed to sent for a unknown reason, try sending the message again. If it fails restart the app and check your internet connection', playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+      new AppNotification({ title: "Message Sent", body: "Message failed to sent for a unknown reason, try sending the message again. If it fails restart the app and check your internet connection", playSound: false, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
     }
   }
 
@@ -57,7 +56,7 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
       this.props.onMessagePush(message);
     }
     else {
-      Debug.Error('forwardMessageCallback is null', 'when forwarding message to ChatPage from Messageinput');
+      Debug.Error("forwardMessageCallback is null", "when forwarding message to ChatPage from Messageinput");
     }
   }
 
@@ -66,16 +65,16 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
   }
 
   async handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.code == 'Enter') {
+    if (event.code == "Enter") {
       this.forwardMessage(this.state.message);
-      //this.setMessageTo('');
+      //this.setMessageTo("");
     }
     if (event.keyCode == 17 || event.keyCode == 91) {
       this.ctrlPressed = true;
     }
     if (event.keyCode == 86 && this.ctrlPressed) {
-      const a = new MessageAttachment(await ipcRenderer.invoke('copyImageFromClipboard'), true);
-      if (a.contents == '') return;
+      const a = new MessageAttachment(await ipcRenderer.invoke("copyImageFromClipboard"), true);
+      if (a.contents == "") return;
       this.props.onAddAttachment(a);
     }
   }
@@ -88,11 +87,11 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
 
   handleSendButtonClick() {
     this.forwardMessage(this.state.message);
-    //this.setMessageTo('');
+    //this.setMessageTo("");
   }
 
   handleUploadButtonClick() {
-    ipcRenderer.send('pickUploadFiles');
+    ipcRenderer.send("pickUploadFiles");
   }
 
   setMessageTo(text: string) {
@@ -101,23 +100,23 @@ export default class MessageInput extends React.Component<IMessageInputProps> {
 
   render() {
     const availableCharacterRemainder = Manager.MessageCharacterLimit - this.state.message.length;
-    const showMaxLength = availableCharacterRemainder > Manager.MessageCharacterLimit * 0.15 ? 'Hidden' : '';
+    const showMaxLength = availableCharacterRemainder > Manager.MessageCharacterLimit * 0.15 ? "Hidden" : "";
 
     return (
-      <div className='Chat_Page_Bottom'>
-        <IconButton className='Chat_IconButton' onClick={this.handleUploadButtonClick}><UploadIcon /></IconButton>
-        <TextField className='MessageInput' placeholder='Type your message here...' value={this.state.message} autoFocus onChange={this.handleChange} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} inputProps={{
+      <div className="Chat_Page_Bottom">
+        <IconButton className="Chat_IconButton" onClick={this.handleUploadButtonClick}><UploadIcon /></IconButton>
+        <TextField className="MessageInput" placeholder="Type your message here..." value={this.state.message} autoFocus onChange={this.handleChange} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} inputProps={{
           maxLength: Manager.MessageCharacterLimit,
         }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           endAdornment: (
-            <InputAdornment className={showMaxLength} position='end'>
+            <InputAdornment className={showMaxLength} position="end">
               {availableCharacterRemainder}
             </InputAdornment>
           )
         }} />
-        <IconButton className='Chat_IconButton' onClick={this.handleSendButtonClick}><SendIcon/></IconButton>
+        <IconButton className="Chat_IconButton" onClick={this.handleSendButtonClick}><SendIcon/></IconButton>
       </div>
     );
   }

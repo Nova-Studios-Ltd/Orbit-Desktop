@@ -1,13 +1,13 @@
-import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, Icon } from '@mui/material';
-import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from '@mui/icons-material';
-import React, { Ref } from 'react';
-import { MD5 } from 'crypto-js';
-import { copyToClipboard, ipcRenderer, Manager } from 'renderer/helpers';
-import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import FormTextField from 'renderer/components//Form/FormTextField';
-import MessageContent from 'structs/MessageContent';
-import { Dimensions } from 'types/types';
+import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, Icon } from "@mui/material";
+import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from "@mui/icons-material";
+import React, { Ref } from "react";
+import { MD5 } from "crypto-js";
+import { copyToClipboard, ipcRenderer, Manager } from "renderer/helpers";
+import AppNotification from "renderer/components/Notification/Notification";
+import { NotificationAudienceType, NotificationStatusType } from "types/enums";
+import FormTextField from "renderer/components//Form/FormTextField";
+import MessageContent from "structs/MessageContent";
+import { Dimensions } from "types/types";
 
 export interface IMessageProps {
   message_Id: string,
@@ -100,19 +100,19 @@ export class MessageImage extends React.Component<IMessageMediaProps> {
 
   render() {
     const styles = {
-      width: this.finalDimensions.width > 0 ? this.finalDimensions.width: '18rem',
-      height: this.finalDimensions.height > 0 ? this.finalDimensions.height: '30rem',
+      width: this.finalDimensions.width > 0 ? this.finalDimensions.width: "18rem",
+      height: this.finalDimensions.height > 0 ? this.finalDimensions.height: "30rem",
     }
 
     return (
-      <div className='Message_Content'>
-        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className='Message_Embed' style={styles}>
+      <div className="Message_Content">
+        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target="_blank" href={this.imageSrc}>{this.imageSrc}</Link></>}
+          <Card className="Message_Embed" style={styles}>
             <CardMedia
             onClick={this.onImageClick}
             onKeyDown={this.onImageClick}
-            className='Message_Embed_Content'
-            component='img'
+            className="Message_Embed_Content"
+            component="img"
             src={this.imageSrc}
           />
           </Card>
@@ -135,16 +135,16 @@ export class MessageVideo extends React.Component<IMessageMediaProps> {
 
   render() {
     const styles = {
-      marginBottom: '0.8rem'
+      marginBottom: "0.8rem"
     }
 
     return (
-      <div className='Message_Content' style={styles}>
-        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Embed' style={styles}>
+      <div className="Message_Content" style={styles}>
+        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target="_blank" href={this.videoSrc}>{this.videoSrc}</Link></>}
+          <Card className="Message_Embed" style={styles}>
             <CardMedia style={styles}
-            className='Message_Embed_Content'
-            component='video'
+            className="Message_Embed_Content"
+            component="video"
             src={this.videoSrc}
             controls
             />
@@ -174,18 +174,18 @@ export class MessageFile extends React.Component<IMessageMediaProps> {
 
   render() {
     return (
-      <div className='FileAttachmentContainer'>
-        <div className='FileAttachmentContainer_Left'>
-          <Icon className='FileAttachmentContainer_Left_Icon'>
+      <div className="FileAttachmentContainer">
+        <div className="FileAttachmentContainer_Left">
+          <Icon className="FileAttachmentContainer_Left_Icon">
             <FileIcon />
           </Icon>
         </div>
-        <div className='FileAttachmentContainer_Right'>
-          <div className='FileAttachmentContainer_Right_Text_Section'>
-            <Typography variant='subtitle1'>{this.filename}</Typography>
-            <Typography variant='caption'>{this.filesize} bytes</Typography>
+        <div className="FileAttachmentContainer_Right">
+          <div className="FileAttachmentContainer_Right_Text_Section">
+            <Typography variant="subtitle1">{this.filename}</Typography>
+            <Typography variant="caption">{this.filesize} bytes</Typography>
           </div>
-          <IconButton className='FileAttachmentContainer_Right_Download_Button' onClick={this.download}><DownloadIcon /></IconButton>
+          <IconButton className="FileAttachmentContainer_Right_Download_Button" onClick={this.download}><DownloadIcon /></IconButton>
         </div>
       </div>
     );
@@ -206,20 +206,19 @@ export class MessageEmbed extends React.Component<IMessageMediaProps> {
 
   render() {
     const styles = {
-      marginBottom: '0.8rem'
+      marginBottom: "0.8rem"
     }
     return (
-      <div className='Message_Content' style={styles}>
-        <Card className='Message_Embed' style={styles}>
-          <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
+      <div className="Message_Content" style={styles}>
+        <Card className="Message_Embed" style={styles}>
+          <iframe className="Message_Embed_Content" src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
         </Card>
       </div>
     );
   }
 }
 
-export default class Message extends React.Component<IMessageProps> {
-  state: IMessageState;
+export default class Message extends React.Component<IMessageProps, IMessageState> {
   message_Id: string;
   author_UUID: string;
   author: string;
@@ -239,7 +238,7 @@ export default class Message extends React.Component<IMessageProps> {
     super(props);
     this.message_Id = props.message_Id;
     this.author_UUID = props.author_UUID;
-    this.author = props.author || 'Unable to retreive author';
+    this.author = props.author || "Unable to retreive author";
     this.content = props.content;
     this.attachments = props.attachments;
     this.timestamp = props.timestamp.replace("T", " ");
@@ -252,7 +251,7 @@ export default class Message extends React.Component<IMessageProps> {
     this.iv = props.iv;
 
     this.state = {
-      editedMessage: '',
+      editedMessage: "",
       isEditing: false,
       hasNonLinkText: false,
       links: [],
@@ -282,17 +281,17 @@ export default class Message extends React.Component<IMessageProps> {
 
   menuItemClicked(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
     switch(event.currentTarget.id) {
-      case 'edit':
+      case "edit":
         this.setState({ editedMessage: this.content, isEditing: true });
         break;
-      case 'copy':
+      case "copy":
         copyToClipboard(this.content).then((result: boolean) => {
           if (result) {
-            new AppNotification({ body: 'Copied text to clipboard', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+            new AppNotification({ body: "Copied text to clipboard", notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
           }
         });
         break;
-      case 'delete':
+      case "delete":
         this.deleteMessage();
         break;
     }
@@ -306,31 +305,31 @@ export default class Message extends React.Component<IMessageProps> {
 
   mouseEnter(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
-      event.currentTarget.className = 'Message_Right Message_Hover';
+      event.currentTarget.className = "Message_Right Message_Hover";
     }
   }
 
   mouseLeave(event: React.MouseEvent<HTMLDivElement>) {
     if (event != null && event.currentTarget != null && event.currentTarget.className != null) {
-      event.currentTarget.className = 'Message_Right';
+      event.currentTarget.className = "Message_Right";
     }
   }
 
   async componentDidMount() {
     let containsNonLinkText = false;
     //const links = this.content.match(/(https:\/\/[\S]*)/g);
-    const links = this.content.split(' ');
+    const links = this.content.split(" ");
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'image', id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: 'image/jpeg'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: "image", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "image/jpeg"})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: 'video', id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: 'video/mp4'})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: "video", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "video/mp4"})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else {
-        attachmentContent.push(new MessageContent({type: 'file', id: attachment.contentUrl, url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
+        attachmentContent.push(new MessageContent({type: "file", id: attachment.contentUrl, url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
       }
     }
 
@@ -338,7 +337,7 @@ export default class Message extends React.Component<IMessageProps> {
       this.setState({hasNonLinkText: true, attachments: attachmentContent});
     }
 
-    const messageLinks = [] as Array<MessageContent>;
+    const messageLinks: MessageContent[] = [];
     for (let l = 0; l < links.length; l++) {
       const link = links[l];
       if (!this.validURL(link)) {
@@ -346,19 +345,19 @@ export default class Message extends React.Component<IMessageProps> {
       }
       else if (this.imageURL(link) || await this.checkImageHeader(link)) {
         const dims = await this.getImageSize(link);
-        messageLinks.push(new MessageContent({type: 'image', url: link, dimensions: {width: dims.width, height: dims.height}}));
+        messageLinks.push(new MessageContent({type: "image", url: link, dimensions: {width: dims.width, height: dims.height}}));
       }
       else if (this.videoURL(link) || await this.checkVideoHeader(link)) {
-        messageLinks.push(new MessageContent({type: 'video', url: link}));
+        messageLinks.push(new MessageContent({type: "video", url: link}));
       }
       else if (this.youtubeURL(link)) {
-        messageLinks.push(new MessageContent({type: 'youtube', url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
+        messageLinks.push(new MessageContent({type: "youtube", url: `https://www.youtube.com/embed/${this.getYoutubeVideoId(link)}`}));
       }
       else if (this.spotifyTrackURL(link)) {
-        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/track/${this.getSpotifyTrackId(link)}`}));
+        messageLinks.push(new MessageContent({type: "spotify", url: `https://open.spotify.com/embed/track/${this.getSpotifyTrackId(link)}`}));
       }
       else if (this.spotifyPlaylistURL(link)) {
-        messageLinks.push(new MessageContent({type: 'spotify', url: `https://open.spotify.com/embed/playlist/${this.getSpotifyPlaylistId(link)}`}));
+        messageLinks.push(new MessageContent({type: "spotify", url: `https://open.spotify.com/embed/playlist/${this.getSpotifyPlaylistId(link)}`}));
       }
       else {
         containsNonLinkText = true;
@@ -369,9 +368,9 @@ export default class Message extends React.Component<IMessageProps> {
 
   async checkImageHeader(url: string) {
     try {
-      const res = await fetch(url, {method: 'HEAD'});
+      const res = await fetch(url, {method: "HEAD"});
       const buff = await res.blob();
-      return buff.type.startsWith('image/');
+      return buff.type.startsWith("image/");
     }
     catch {return false;}
   }
@@ -387,27 +386,27 @@ export default class Message extends React.Component<IMessageProps> {
 
   getYoutubeVideoId(url: string) {
     const m = url.match(/(?<=v=)(.*(?=&)|.*(?=$)*)|(?<=e\/).*(?=$)/g);
-    if (m == null) return '';
+    if (m == null) return "";
     return m[0];
   }
 
   getSpotifyPlaylistId(url: string) {
     const m = url.match(/(?<=t\/)(.*(?=\?)|.*(?=$)*)/g);
-    if (m == null) return '';
+    if (m == null) return "";
     return m[0];
   }
 
   getSpotifyTrackId(url: string) {
     const m = url.match(/(?<=k\/)(.*(?=\?)|.*(?=$)*)/g);
-    if (m == null) return '';
+    if (m == null) return "";
     return m[0];
   }
 
   async checkVideoHeader(url: string) {
     try {
-      const res = await fetch(url, {method: 'HEAD'});
+      const res = await fetch(url, {method: "HEAD"});
       const buff = await res.blob();
-      return buff.type.startsWith('video/');
+      return buff.type.startsWith("video/");
     }
     catch {return false;}
   }
@@ -437,11 +436,11 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   deleteMessage() {
-    ipcRenderer.invoke('DELETEMessage', Manager.ReadConst<string>("CurrentChannel"), this.message_Id).then((result: boolean) => {
+    ipcRenderer.invoke("DELETEMessage", Manager.ReadConst<string>("CurrentChannel"), this.message_Id).then((result: boolean) => {
       if (result) {
-        new AppNotification({ body: 'Message deleted successfully', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+        new AppNotification({ body: "Message deleted successfully", notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
       } else {
-        new AppNotification({ body: 'Failed to delete message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+        new AppNotification({ body: "Failed to delete message", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
       }
     });
   }
@@ -457,11 +456,11 @@ export default class Message extends React.Component<IMessageProps> {
 
   submitEditedMessage() {
     if (this.state.editedMessage.length > 0) {
-      ipcRenderer.invoke('EDITMessage', Manager.ReadConst<string>("CurrentChannel"), this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv).then((result: boolean) => {
+      ipcRenderer.invoke("EDITMessage", Manager.ReadConst<string>("CurrentChannel"), this.message_Id, this.state.editedMessage, this.props.encryptedKeys, this.props.iv).then((result: boolean) => {
         if (result) {
-          new AppNotification({ body: 'Message updated', notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+          new AppNotification({ body: "Message updated", notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {
-          new AppNotification({ body: 'Unable to edit message', notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+          new AppNotification({ body: "Unable to edit message", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
         }
       });
     }
@@ -470,7 +469,7 @@ export default class Message extends React.Component<IMessageProps> {
   }
 
   resetMessageEdit(){
-    this.setState({ editedMessage: '', isEditing: false });
+    this.setState({ editedMessage: "", isEditing: false });
   }
 
   onImageClick(src: string, dimensions: Dimensions) {
@@ -479,70 +478,70 @@ export default class Message extends React.Component<IMessageProps> {
 
   render() {
     const messageContentObject = [] as JSX.Element[];
-    const editFormClassNames = this.state.isEditing ? 'Message_Edit' : 'Message_Edit Hidden';
+    const editFormClassNames = this.state.isEditing ? "Message_Edit" : "Message_Edit Hidden";
 
     if (this.state.hasNonLinkText) {
       const mes = this.content.split(/(https:\/\/[\S]*)/g);
       const messageParts = [] as JSX.Element[];
       mes.forEach(word => {
-        if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target='_blank' href={word}>{word}</Link>);
+        if (this.validURL(word)) messageParts.push(<Link key={MD5(word + Date.now().toString()).toString()} target="_blank" href={word}>{word}</Link>);
         else messageParts.push((word) as unknown as JSX.Element);
       });
 
-      messageContentObject.push(<Typography key={"MainMessage"} className='Message_Content'>{messageParts}</Typography>);
+      messageContentObject.push(<Typography key={"MainMessage"} className="Message_Content">{messageParts}</Typography>);
     }
 
     this.state.links.forEach(link => {
-      if (link.type == 'image')
+      if (link.type == "image")
         messageContentObject.push(<MessageImage key={MD5(link.url)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
-      else if (link.type == 'video')
+      else if (link.type == "video")
         messageContentObject.push(<MessageVideo key={MD5(link.url)} message={link.url} src={link.url} />);
-      else if (link.type == 'youtube')
+      else if (link.type == "youtube")
         messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
-      else if (link.type == 'spotify')
+      else if (link.type == "spotify")
         messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
     });
 
     this.state.attachments.forEach(link => {
-      if (link.type == 'image')
+      if (link.type == "image")
         messageContentObject.push(<MessageImage key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
-      else if (link.type == 'video')
+      else if (link.type == "video")
         messageContentObject.push(<MessageVideo key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} />);
-      else if (link.type == 'file')
+      else if (link.type == "file")
         messageContentObject.push(<MessageFile key={MD5(link.id)} message={link.filename} size={link.filesize} src={link.url} />);
     });
 
     return (
-      <div className='Message' ref={this.divRef} onContextMenu={this.openContextMenu}>
-        <div className='Message_Left'>
+      <div className="Message" ref={this.divRef} onContextMenu={this.openContextMenu}>
+        <div className="Message_Left">
           <Avatar src={`${this.avatar}&${Date.now()}`} />
         </div>
-        <div className='Message_Right' onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
-          <div className='Message_Right_Header'>
-            <Typography className='Message_Name' fontWeight='bold'>{this.author}</Typography>
-            <Typography className='Message_Timestamp' variant='subtitle2'>{this.timestamp}</Typography>
-            {this.edited ? <Typography className='Message_Timestamp_Edited' variant='subtitle2'>(Edited on {this.editedTimestamp})</Typography> : null }
+        <div className="Message_Right" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
+          <div className="Message_Right_Header">
+            <Typography className="Message_Name" fontWeight="bold">{this.author}</Typography>
+            <Typography className="Message_Timestamp" variant="subtitle2">{this.timestamp}</Typography>
+            {this.edited ? <Typography className="Message_Timestamp_Edited" variant="subtitle2">(Edited on {this.editedTimestamp})</Typography> : null }
           </div>
           {messageContentObject}
           <form className={editFormClassNames} onSubmit={(event) => { this.submitEditedMessage(); event.preventDefault();}}>
-            <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label='Edited Message' onChange={this.editMessageChanged} />
-            <IconButton className='Chat_IconButton' onClick={this.resetMessageEdit}><CloseIcon/></IconButton>
-            <IconButton className='Chat_IconButton' onClick={this.submitEditedMessage}><SendIcon/></IconButton>
+            <FormTextField id={`${this.message_Id}_EditField`} value={this.state.editedMessage} label="Edited Message" onChange={this.editMessageChanged} />
+            <IconButton className="Chat_IconButton" onClick={this.resetMessageEdit}><CloseIcon/></IconButton>
+            <IconButton className="Chat_IconButton" onClick={this.submitEditedMessage}><SendIcon/></IconButton>
           </form>
         </div>
         <Menu
-          id='message-context-menu'
-          anchorReference='anchorPosition'
+          id="message-context-menu"
+          anchorReference="anchorPosition"
           anchorPosition={{ top: this.state.anchorPos.y, left: this.state.anchorPos.x }}
           open={this.state.open}
           onClose={this.closeContextMenu}
           MenuListProps={{
-            'aria-labelledby': 'message-context-menu',
+            "aria-labelledby": "message-context-menu",
           }}
         >
-          { this.isOwnMessage() ? <MenuItem id='edit' onClick={(event) => this.menuItemClicked(event)}>Edit</MenuItem> : null }
-          <MenuItem id='copy' onClick={(event) => this.menuItemClicked(event)}>Copy</MenuItem>
-          { this.isOwnMessage() ? <MenuItem id='delete' onClick={(event) => this.menuItemClicked(event)}>Delete</MenuItem> : null }
+          { this.isOwnMessage() ? <MenuItem id="edit" onClick={(event) => this.menuItemClicked(event)}>Edit</MenuItem> : null }
+          <MenuItem id="copy" onClick={(event) => this.menuItemClicked(event)}>Copy</MenuItem>
+          { this.isOwnMessage() ? <MenuItem id="delete" onClick={(event) => this.menuItemClicked(event)}>Delete</MenuItem> : null }
         </Menu>
       </div>
     );
