@@ -31,7 +31,7 @@
   width: 100%;
   align-self: flex-end;
   border-top: 1rem solid transparent;
-  border-bottom: 1rem solid transparent;
+  border-bottom: 0.75rem solid transparent;
   display: flex;
   position: relative;
   bottom: 0;
