@@ -128,7 +128,6 @@ export default class Channel extends React.Component<IChannelProps, IChannelStat
           else {
             preview = this.channelIcon;
           }
-          console.log(preview);
           return { editDialogChannelIconPath: data.path, editDialogChannelIconPreview: preview }
         });
       }

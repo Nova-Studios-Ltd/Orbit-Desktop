@@ -39,7 +39,6 @@ class SettingsManager {
     // Userdata
     ipcMain.handle("GetUserdata", () => JSON.stringify(this._UserData));
     ipcMain.on("SetUserdata", (_event, userData: string) => {
-      console.log(userData);
       const obj = JSON.parse(userData);
       this._UserData = <UserData>obj;
       const store = Dictionary.fromJSON<string>(JSON.stringify(<Dictionary<string>>obj.keystore));;

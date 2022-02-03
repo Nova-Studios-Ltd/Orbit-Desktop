@@ -6,6 +6,7 @@ import { createCipheriv } from "crypto";
 import { PassThrough } from "stream";
 import { ContentType } from "../types/enums";
 import { Manager } from "./settingsManager";
+import { Debug } from "./debug";
 
 export class NCAPIResponse {
   status: number | undefined;
@@ -184,7 +185,6 @@ export async function PostFileWithAuthenticationAndEncryption(endpoint: string, 
   }
 }
 
-
 export async function PostBufferWithAuthenticationAndEncryption(endpoint: string, buffer: Buffer, key: string, iv: string) : Promise<NCAPIResponse> {
   try {
     const payload = new FormData();
@@ -205,11 +205,11 @@ export async function PostBufferWithAuthenticationAndEncryption(endpoint: string
       maxBodyLength: 20971520,
       maxContentLength: 20971520
     });
-    console.log(resp.status);
+    Debug.Log(resp.status, "Response from PostBufferWithAuthenticationAndEncryption");
     return new NCAPIResponse(resp.status, resp.statusText, resp.data);
   }
   catch (e) {
-    console.log(e);
+    Debug.Error(e, "Exception in PostBufferWithAuthenticationAndEncryption");
     return new NCAPIResponse(undefined, undefined, undefined, e);
   }
 }

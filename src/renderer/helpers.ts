@@ -139,12 +139,14 @@ export async function FetchUserData() {
   Manager.UserData.keystore = <Dictionary<string>>Dictionary.fromJSON<string>(await ipcRenderer.invoke("LoadKeystore"));
 
   ipcRenderer.invoke("GETUser", Manager.UserData.uuid).then((value: IUser) => {
-    //console.log(value);
-    Manager.UserData.username = value.username;
-    Manager.UserData.discriminator = value.discriminator;
-    Manager.UserData.avatarSrc = value.avatar;
-    HandleWebsocket();
-    Navigate("/chat", null);
+    if (value != null) {
+      if (value.username != null) Manager.UserData.username = value.username;
+      if (value.discriminator != null) Manager.UserData.discriminator = value.discriminator;
+      if (value.avatar != null) Manager.UserData.avatarSrc = value.avatar;
+
+      HandleWebsocket();
+      Navigate("/chat", null);
+    }
   });
 }
 

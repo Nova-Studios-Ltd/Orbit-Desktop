@@ -194,7 +194,7 @@ app.whenReady().then(() => {
   app.on("activate", () => {
     // On macOS it"s common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) createWindow().catch(console.log);
+    if (mainWindow === null) createWindow().catch(Debug.Log);
   });
 
 }).catch((e) => Debug.Error(e.message, "on app initialization"));
