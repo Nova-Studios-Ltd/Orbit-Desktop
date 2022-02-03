@@ -317,7 +317,6 @@ export default class Message extends React.Component<IMessageProps, IMessageStat
 
   async componentDidMount() {
     let containsNonLinkText = false;
-    //const links = this.content.match(/(https:\/\/[\S]*)/g);
     const links = this.content.split(" ");
     const attachmentContent = [];
     for (let a = 0; a < this.attachments.length; a++) {

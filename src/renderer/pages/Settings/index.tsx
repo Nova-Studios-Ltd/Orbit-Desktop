@@ -3,14 +3,16 @@ import { Avatar, Button, Card, Dialog, DialogContent, DialogActions, DialogTitle
 import { Close as CloseIcon, Settings as SettingsIcon, Add as AddIcon} from "@mui/icons-material";
 import { MD5 } from "crypto-js";
 import { Helmet } from "react-helmet";
-import AppNotification from "renderer/components/Notification/Notification";
+import { Manager, Navigate, copyToClipboard, ipcRenderer, events } from "renderer/helpers";
+
 import Header from "renderer/components/Header/Header";
-import { Manager, Navigate, copyToClipboard, ipcRenderer, ConductLogin, events } from "renderer/helpers";
-import SettingsSection from "renderer/components/Settings/SettingsSection";
-import { NotificationAudienceType, NotificationStatusType, Theme } from "types/enums";
 import YesNoDialog from "renderer/components/Dialogs/YesNoDialog";
-import { IOpenFileDialogResults } from "types/types";
 import FormTextField from "renderer/components/Form/FormTextField";
+import SettingsSection from "renderer/components/Settings/SettingsSection";
+import AppNotification from "renderer/components/Notification/Notification";
+
+import { NotificationAudienceType, NotificationStatusType, Theme } from "types/enums";
+import type { IOpenFileDialogResults } from "types/types";
 
 interface ISettingsPageProps {
   onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
