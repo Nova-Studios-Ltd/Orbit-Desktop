@@ -1,5 +1,6 @@
-import { Avatar, Card, CardMedia, IconButton, Link, Typography, Menu, MenuItem, Icon } from '@mui/material';
-import { Close as CloseIcon, Download as DownloadIcon, InsertDriveFile as FileIcon, Send as SendIcon } from '@mui/icons-material';
+/* eslint-disable import/no-cycle */
+import { Avatar, IconButton, Link, Typography, Menu, MenuItem } from '@mui/material';
+import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
 import { copyToClipboard, ipcRenderer, Manager } from 'renderer/helpers';
@@ -8,6 +9,10 @@ import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
 import { Dimensions } from 'types/types';
+import { MessageEmbed } from './Components/MessageEmbed';
+import { MessageFile } from './Components/MessageFile';
+import { MessageImage } from './Components/MessageImage';
+import { MessageVideo } from './Components/MessageVideo';
 
 export interface IMessageProps {
   message_Id: string,
@@ -44,178 +49,12 @@ interface IAttachmentProps {
   contentHeight: number
 }
 
-interface IMessageMediaProps {
+export interface IMessageMediaProps {
   message?: string,
   src: string,
   size?: number;
   dimensions?: Dimensions,
   onImageClick?: (src: string, dimensions: Dimensions) => void;
-}
-
-export class MessageImage extends React.Component<IMessageMediaProps> {
-  message?: string;
-  imageSrc: string;
-  dimensions: Dimensions;
-  desiredDimensions: Dimensions;
-  finalDimensions: Dimensions;
-
-  constructor(props: IMessageMediaProps) {
-    super(props);
-    this.message = props.message;
-    this.imageSrc = props.src;
-    this.dimensions = props.dimensions || {width: 0, height: 0};
-    this.desiredDimensions = {
-      width: 575,
-      height: 400
-    };
-
-    if (this.dimensions.width > 0 && this.dimensions.height > 0) {
-      const xRatio = this.dimensions.width / this.desiredDimensions.width;
-      const yRatio = this.dimensions.height / this.desiredDimensions.height;
-      const ratio = Math.max(xRatio, yRatio);
-      let nnx = Math.floor(this.dimensions.width / ratio);
-      let nny = Math.floor(this.dimensions.height / ratio);
-
-      if (this.dimensions.width < this.desiredDimensions.width && this.dimensions.height < this.desiredDimensions.height) {
-        nnx = this.dimensions.width;
-        nny = this.dimensions.height;
-      }
-
-      this.finalDimensions = {width: nnx, height: nny}
-    }
-    else {
-      this.finalDimensions = {
-        width: 0,
-        height: 0
-      };
-    }
-
-    this.onImageClick = this.onImageClick.bind(this);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onImageClick(_event: never) {
-    if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(this.imageSrc, this.dimensions);
-  }
-
-  render() {
-    const styles = {
-      width: this.finalDimensions.width > 0 ? this.finalDimensions.width: '18rem',
-      height: this.finalDimensions.height > 0 ? this.finalDimensions.height: '30rem',
-    }
-
-    return (
-      <div className='Message_Content'>
-        {this.message == this.imageSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.imageSrc}>{this.imageSrc}</Link></>}
-          <Card className='Message_Embed' style={styles}>
-            <CardMedia
-            onClick={this.onImageClick}
-            onKeyDown={this.onImageClick}
-            className='Message_Embed_Content'
-            component='img'
-            src={this.imageSrc}
-          />
-          </Card>
-      </div>
-    );
-  }
-}
-
-export class MessageVideo extends React.Component<IMessageMediaProps> {
-  message?: string;
-  videoSrc: string;
-  dimensions: Dimensions;
-
-  constructor(props: IMessageMediaProps) {
-    super(props);
-    this.message = props.message;
-    this.videoSrc = props.src;
-    this.dimensions = props.dimensions || {width: 600, height: 400};
-  }
-
-  render() {
-    const styles = {
-      marginBottom: '0.8rem'
-    }
-
-    return (
-      <div className='Message_Content' style={styles}>
-        {this.message == this.videoSrc ? null : <><Typography>{this.message}</Typography> <Link target='_blank' href={this.videoSrc}>{this.videoSrc}</Link></>}
-          <Card className='Message_Embed' style={styles}>
-            <CardMedia style={styles}
-            className='Message_Embed_Content'
-            component='video'
-            src={this.videoSrc}
-            controls
-            />
-          </Card>
-      </div>
-    );
-  }
-}
-
-export class MessageFile extends React.Component<IMessageMediaProps> {
-  filename?: string;
-  filesize?: number;
-  url: string;
-
-  constructor(props: IMessageMediaProps) {
-    super(props);
-    this.filename = props.message;
-    this.filesize = props.size;
-    this.url = props.src;
-
-    this.download = this.download.bind(this);
-  }
-
-  download() {
-    window.open(this.url);
-  }
-
-  render() {
-    return (
-      <div className='FileAttachmentContainer'>
-        <div className='FileAttachmentContainer_Left'>
-          <Icon className='FileAttachmentContainer_Left_Icon'>
-            <FileIcon />
-          </Icon>
-        </div>
-        <div className='FileAttachmentContainer_Right'>
-          <div className='FileAttachmentContainer_Right_Text_Section'>
-            <Typography variant='subtitle1'>{this.filename}</Typography>
-            <Typography variant='caption'>{this.filesize} bytes</Typography>
-          </div>
-          <IconButton className='FileAttachmentContainer_Right_Download_Button' onClick={this.download}><DownloadIcon /></IconButton>
-        </div>
-      </div>
-    );
-  }
-}
-
-export class MessageEmbed extends React.Component<IMessageMediaProps> {
-  message?: string;
-  videoSrc: string;
-  dimensions: Dimensions;
-
-  constructor(props: IMessageMediaProps) {
-    super(props);
-    this.message = props.message;
-    this.videoSrc = props.src;
-    this.dimensions = props.dimensions || {width: 600, height: 400};
-  }
-
-  render() {
-    const styles = {
-      marginBottom: '0.8rem'
-    }
-    return (
-      <div className='Message_Content' style={styles}>
-        <Card className='Message_Embed' style={styles}>
-          <iframe className='Message_Embed_Content' src={this.videoSrc} title={"Idiot"} frameBorder="0" allowFullScreen ></iframe>
-        </Card>
-      </div>
-    );
-  }
 }
 
 export default class Message extends React.Component<IMessageProps> {
