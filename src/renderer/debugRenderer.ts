@@ -15,7 +15,7 @@ export class DebugLogger {
   }
 
   private sendLogMessageToMain(message: (string | unknown), logType: LogType, context?: string) {
-    this.ipcRendererObject.send('logEntryFromRenderer', message, logType, context);
+    this.ipcRendererObject.send("logEntryFromRenderer", message, logType, context);
   }
 
   Error(message: (string | unknown), context?: string) {

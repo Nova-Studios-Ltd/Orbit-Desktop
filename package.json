@@ -79,9 +79,12 @@
       "artifactName": "${productName}-Win-Latest.exe"
     },
     "linux": {
-      "target": [
-        "AppImage"
-      ],
+      "target": {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
       "category": "Development",
       "artifactName": "${productName}-Linux-Latest.AppImage"
     },
@@ -232,6 +235,7 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.7",
     "@mui/styles": "^5.2.3",
+    "@types/react-transition-group": "^4.4.4",
     "axios": "^0.24.0",
     "command-exists": "^1.2.9",
     "crypto-js": "^4.1.1",
@@ -271,6 +275,6 @@
         }
       }
     ],
-    "singleQuote": true
+    "singleQuote": false
   }
 }

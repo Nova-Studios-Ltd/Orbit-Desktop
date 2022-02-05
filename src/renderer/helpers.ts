@@ -1,12 +1,12 @@
-import { createBrowserHistory } from 'history';
-import Credentials from 'structs/Credentials';
-import { UIEvents } from 'renderer/UIEvents';
-import { DebugLogger } from 'renderer/debugRenderer';
-import { IElectronRendererWindow } from 'types/types';
-import IUser from 'structs/IUser';
-import { SettingsManager } from './settingsManagerRenderer';
-import { Dictionary } from 'main/dictionary';
-import { RSAMemoryKeyPair } from 'main/encryptionClasses';
+import { createBrowserHistory } from "history";
+import Credentials from "structs/Credentials";
+import { UIEvents } from "renderer/UIEvents";
+import { DebugLogger } from "renderer/debugRenderer";
+import { IElectronRendererWindow } from "types/types";
+import IUser from "structs/IUser";
+import { SettingsManager } from "./settingsManagerRenderer";
+import { Dictionary } from "main/dictionary";
+import { RSAMemoryKeyPair } from "main/encryptionClasses";
 
 export const history = createBrowserHistory();
 export const {ipcRenderer}: IElectronRendererWindow = window.electron;
@@ -41,49 +41,49 @@ export async function HandleWebsocket() {
     const event = JSON.parse(data.data);
     switch (event.EventType) {
       case -1:
-        console.log('<Beat>');
-        //socket.send('<Beep>')
+        console.log("<Beat>");
+        //socket.send("<Beep>")
         break;
       case 0: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        const message = await ipcRenderer.invoke("GETMessage", event.Channel, event.Message);
         if (message == undefined) break;
-        events.send('OnNewMessage', message, event.Channel);
+        events.send("OnNewMessage", message, event.Channel);
         break;
       }
       case 1:
-        events.send('OnMessageDelete', event.Channel, event.Message);
+        events.send("OnMessageDelete", event.Channel, event.Message);
         break;
       case 2: {
-        const message = await ipcRenderer.invoke('GETMessage', event.Channel, event.Message);
+        const message = await ipcRenderer.invoke("GETMessage", event.Channel, event.Message);
         if (message == undefined) break;
-        events.send('OnMessageEdit', message, event.Channel, event.Message);
+        events.send("OnMessageEdit", message, event.Channel, event.Message);
         break;
       }
       case 3:
-        events.send('OnChannelCreated', event.Channel);
+        events.send("OnChannelCreated", event.Channel);
         break;
       case 4:
-        events.send('OnChannelDeleted', event.Channel);
+        events.send("OnChannelDeleted", event.Channel);
         break;
       case 5:
         break;
       case 6:
-        events.send('OnChannelNewMember', event.Channel);
+        events.send("OnChannelNewMember", event.Channel);
         break;
       case 7: { // New key in keystore
-        const key = await ipcRenderer.invoke('GETKey', userData.uuid, event.keyUserUUID);
+        const key = await ipcRenderer.invoke("GETKey", userData.uuid, event.keyUserUUID);
         userData.keystore.setValue(event.keyUserUUID, key);
-        await ipcRenderer.invoke('SaveKeystore', userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
         break;
       }
       case 8: { // Key removed from keystore
         userData.keystore.clear(event.keyUserUUID);
-        await ipcRenderer.invoke('SaveKeystore', userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
         break;
       }
       case 9: { // Re-request entire keystore
-        const keystore = await ipcRenderer.invoke('GETKeystore', userData.uuid);
-        await ipcRenderer.invoke('SaveKeystore', keystore);
+        const keystore = await ipcRenderer.invoke("GETKeystore", userData.uuid);
+        await ipcRenderer.invoke("SaveKeystore", keystore);
         userData.keystore = keystore;
         break;
       }
@@ -91,7 +91,7 @@ export async function HandleWebsocket() {
         // Trigger fake socket disconnect
         reconnectAttempts = event.Attempts;
         if (socket.onclose != null)
-          socket.onclose(new CloseEvent('Force-Close'));
+          socket.onclose(new CloseEvent("Force-Close"));
           socket.close();
           break;
       default:
@@ -103,7 +103,7 @@ export async function HandleWebsocket() {
     Debug.Error(`Socket closed unexpectedly.  Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || Manager.ReadConst<boolean>("LoggedOut")) {
       Manager.WriteConst("LoggedOut", true);
-      Navigate('/login', { failed: true });
+      Navigate("/login", { failed: true });
       return;
     }
     reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
@@ -118,7 +118,7 @@ export async function HandleWebsocket() {
     Debug.Warn(`Socket closed. Attempting reconnect in ${timestepStates[reconnectAttempts - 1] / 1000}s`);
     if (reconnectAttempts > 4 || Manager.ReadConst<boolean>("LoggedOut")) {
       Manager.WriteConst("LoggedOut", true);
-      Navigate('/login', { failed: true });
+      Navigate("/login", { failed: true });
       return;
     }
     reconnect = setTimeout(HandleWebsocket, timestepStates[reconnectAttempts - 1]);
@@ -127,49 +127,51 @@ export async function HandleWebsocket() {
 }
 
 export async function FetchUserData() {
-  Manager.UserData.uuid = Manager.ReadSettingTable<string>('User', 'UUID') || '';
-  Manager.UserData.token = Manager.ReadSettingTable<string>('User', 'Token') || '';
+  Manager.UserData.uuid = Manager.ReadSettingTable<string>("User", "UUID") || "";
+  Manager.UserData.token = Manager.ReadSettingTable<string>("User", "Token") || "";
 
   // Load priv/pub
-  const priv = await ipcRenderer.invoke('GetPrivkey');
-  const pub = await ipcRenderer.invoke('GetPubkey');
+  const priv = await ipcRenderer.invoke("GetPrivkey");
+  const pub = await ipcRenderer.invoke("GetPubkey");
   Manager.UserData.keyPair = new RSAMemoryKeyPair(priv, pub);
 
   // Load Keystore
-  Manager.UserData.keystore = <Dictionary<string>>Dictionary.fromJSON<string>(await ipcRenderer.invoke('LoadKeystore'));
+  Manager.UserData.keystore = <Dictionary<string>>Dictionary.fromJSON<string>(await ipcRenderer.invoke("LoadKeystore"));
 
   ipcRenderer.invoke("GETUser", Manager.UserData.uuid).then((value: IUser) => {
-    //console.log(value);
-    Manager.UserData.username = value.username;
-    Manager.UserData.discriminator = value.discriminator;
-    Manager.UserData.avatarSrc = value.avatar;
-    HandleWebsocket();
-    Navigate('/chat', null);
+    if (value != null) {
+      if (value.username != null) Manager.UserData.username = value.username;
+      if (value.discriminator != null) Manager.UserData.discriminator = value.discriminator;
+      if (value.avatar != null) Manager.UserData.avatarSrc = value.avatar;
+
+      HandleWebsocket();
+      Navigate("/chat", null);
+    }
   });
 }
 
 export function Authenticate(data: Credentials) {
-  return ipcRenderer.invoke('beginAuth', data, window.location.origin);
+  return ipcRenderer.invoke("beginAuth", data, window.location.origin);
 }
 
 export function RemoveCachedCredentials() {
   //Manager.LoggedOut = true;
   Manager.WriteConst("LoggedOut", true);
-  Manager.WriteSettingTable('User', 'UUID', '');
-  Manager.WriteSettingTable('User', 'Token', '');
+  Manager.WriteSettingTable("User", "UUID", "");
+  Manager.WriteSettingTable("User", "Token", "");
   Manager.Save();
-  ipcRenderer.send('logout');
+  ipcRenderer.send("logout");
 }
 
 export function Register(data: Credentials) {
-  return ipcRenderer.invoke('register', data);
+  return ipcRenderer.invoke("register", data);
 }
 
 export function setDefaultChannel(channelID: string) {
-  //Manager.ReadString("DefaultChannel").setItem('lastOpenedChannel', channelID);
+  //Manager.ReadString("DefaultChannel").setItem("lastOpenedChannel", channelID);
   Manager.WriteSetting("DefaultChannel", channelID);
 }
 
 export function copyToClipboard(text: string) {
-  return ipcRenderer.invoke('copyToClipboard', text);
+  return ipcRenderer.invoke("copyToClipboard", text);
 }

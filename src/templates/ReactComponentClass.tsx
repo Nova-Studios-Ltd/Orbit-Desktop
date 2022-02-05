@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface IReactComponentClassTemplateProps {
 
@@ -8,8 +8,7 @@ export interface IReactComponentClassTemplateState {
 
 }
 
-export default class ReactComponentClassTemplate extends React.Component<IReactComponentClassTemplateProps> {
-  state: IReactComponentClassTemplateState;
+export default class ReactComponentClassTemplate extends React.Component<IReactComponentClassTemplateProps, IReactComponentClassTemplateState> {
 
   constructor(props: IReactComponentClassTemplateProps) {
     super(props);

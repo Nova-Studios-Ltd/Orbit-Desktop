@@ -1,9 +1,9 @@
-@import 'pages/Auth/styles.css';
-@import 'pages/Chat/styles.css';
-@import 'pages/Friends/styles.css';
-@import 'pages/Settings/styles.css';
-@import 'components/styles.css';
-@import '~react-toastify/dist/ReactToastify.min.css';
+@import "pages/Auth/styles.css";
+@import "pages/Chat/styles.css";
+@import "pages/Friends/styles.css";
+@import "pages/Settings/styles.css";
+@import "components/styles.css";
+@import "~react-toastify/dist/ReactToastify.min.css";
 
 .NavigationDrawer, .NavigationDrawerListTop, .NavigationDrawerListBottom {
   width: 15rem;
@@ -14,6 +14,8 @@
 .NavigationDrawer {
   border-radius: 15px;
   margin: 0.5rem;
+  height: 100%;
+  height: -webkit-fill-available !important;
 }
 
 .NavigationDrawerListTop {

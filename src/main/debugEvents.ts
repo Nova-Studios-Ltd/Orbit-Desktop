@@ -1,9 +1,9 @@
-import { ipcMain, IpcMainEvent } from 'electron';
-import chalk from 'chalk';
-import { Debug } from './debug';
-import { LogContext, LogType } from '../types/enums';
+import { ipcMain, IpcMainEvent } from "electron";
+import chalk from "chalk";
+import { Debug } from "./debug";
+import { LogContext, LogType } from "../types/enums";
 
-Debug.events.on('logEntryAdded', (message: (string | unknown), logType: LogType) => {
+Debug.events.on("logEntryAdded", (message: (string | unknown), logType: LogType) => {
   switch (logType) {
     case LogType.Error:
       console.log(chalk.redBright.bold(message));
@@ -20,6 +20,6 @@ Debug.events.on('logEntryAdded', (message: (string | unknown), logType: LogType)
   }
 });
 
-ipcMain.on('logEntryFromRenderer', (_event: IpcMainEvent, message: (string | unknown), logType: LogType, context?: string) => {
+ipcMain.on("logEntryFromRenderer", (_event: IpcMainEvent, message: (string | unknown), logType: LogType, context?: string) => {
   Debug.appendToLog(message, logType, LogContext.Renderer, context);
 });

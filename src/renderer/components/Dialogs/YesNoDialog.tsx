@@ -1,6 +1,6 @@
-import React, { MouseEventHandler } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
-import { GrowTransition } from 'types/transitions';
+import React, { MouseEventHandler } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
+import { GrowTransition } from "types/transitions";
 
 interface IYesNoDialogProps {
   title: string,
@@ -22,10 +22,10 @@ export default class YesNoDialog extends React.Component<IYesNoDialogProps> {
 
   constructor(props: IYesNoDialogProps) {
     super(props);
-    this.title = props.title || 'Confirm Action';
-    this.body = props.body || 'Information about action';
-    this.confirmButtonText = props.confirmButtonText || 'OK';
-    this.denyButtonText = props.denyButtonText || 'Cancel';
+    this.title = props.title || "Confirm Action";
+    this.body = props.body || "Information about action";
+    this.confirmButtonText = props.confirmButtonText || "OK";
+    this.denyButtonText = props.denyButtonText || "Cancel";
     this.onConfirm = props.onConfirm;
     this.onDeny = props.onDeny;
   }
@@ -42,8 +42,8 @@ export default class YesNoDialog extends React.Component<IYesNoDialogProps> {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button id='denyButton' onClick={this.props.onDeny}>{this.denyButtonText}</Button>
-          <Button id='confirmButton' onClick={this.props.onConfirm}>{this.confirmButtonText}</Button>
+          <Button id="denyButton" onClick={this.props.onDeny}>{this.denyButtonText}</Button>
+          <Button id="confirmButton" onClick={this.props.onConfirm}>{this.confirmButtonText}</Button>
         </DialogActions>
       </Dialog>
     );

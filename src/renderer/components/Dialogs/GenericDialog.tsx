@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import React from "react";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 interface IGenericDialogProps {
   title: string,
@@ -12,7 +12,7 @@ export default class GenericDialog extends React.Component<IGenericDialogProps> 
 
   constructor(props: IGenericDialogProps) {
     super(props);
-    this.title = props.title || 'Title';
+    this.title = props.title || "Title";
   }
 
   render() {

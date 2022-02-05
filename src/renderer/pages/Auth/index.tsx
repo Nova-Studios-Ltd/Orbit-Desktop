@@ -1,8 +1,8 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
-import LoginForm from 'renderer/pages/Auth/LoginForm';
-import RegisterForm from 'renderer/pages/Auth/RegisterForm';
-import { Manager } from 'renderer/helpers';
+import React from "react";
+import { Helmet } from "react-helmet";
+import LoginForm from "renderer/pages/Auth/LoginForm";
+import RegisterForm from "renderer/pages/Auth/RegisterForm";
+import { Manager } from "renderer/helpers";
 
 interface IAuthPageProps {
   login?: boolean,
@@ -42,15 +42,15 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
     const f = (n: number) => {
       const k = (n + h / 30) % 12;
       const color = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-      return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix '0' if needed
+      return Math.round(255 * color).toString(16).padStart(2, "0");   // convert to Hex and prefix "0" if needed
     };
     return `#${f(0)}${f(8)}${f(4)}`;
   }
 
   render() {
-    const title = this.formType == 1 ? 'Register' : 'Login';
+    const title = this.formType == 1 ? "Register" : "Login";
     const form = this.formType == 1 ? <RegisterForm /> : <LoginForm />;
-    const background = this.formType == 1 ? 'Register_Page_Container_Type' : 'Login_Page_Container_Type' ;
+    const background = this.formType == 1 ? "Register_Page_Container_Type" : "Login_Page_Container_Type" ;
     const AuthPageContainerClassNames = `Page Auth_Page_Container ${background}`;
 
     const st = {
@@ -62,7 +62,7 @@ export default class AuthPage extends React.Component<IAuthPageProps> {
         <Helmet>
           <title>{`${Manager.AppName} ${Manager.AppVersion} - ${title}`}</title>
         </Helmet>
-        <div className='Auth_Page_Left' />
+        <div className="Auth_Page_Left" />
         {form}
       </div>
     );

@@ -1,66 +1,66 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import path from 'path';
-import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
-//import { autoUpdater } from 'electron-updater';
-import { sync as checkCommand } from 'command-exists';
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import path from "path";
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from "electron";
+//import { autoUpdater } from "electron-updater";
+import { sync as checkCommand } from "command-exists";
 
-import { Debug } from './debug';
-import { getAssetPath, isDevelopment, resolveHtmlPath } from './util';
+import { Debug } from "./debug";
+import { getAssetPath, isDevelopment, resolveHtmlPath } from "./util";
 import { Manager, CreateManager } from "./settingsManager";
-import { defaultSettings } from './settingsDefaults';
+import { defaultSettings } from "./settingsDefaults";
 
-import './events';
-import './apiEvents';
-import './debugEvents';
+import "./events";
+import "./apiEvents";
+import "./debugEvents";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 //let allowCompleteExit = false;
 
 // Check if spotify is installed
-const spotifyInstalled = checkCommand('spotify');
+const spotifyInstalled = checkCommand("spotify");
 
 /*export default class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
+    log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.checkForUpdatesAndNotify();
   }
 }*/
 
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
+if (process.env.NODE_ENV === "production") {
+  const sourceMapSupport = require("source-map-support");
   sourceMapSupport.install();}
 
 if (isDevelopment) {
-  require('electron-debug')();
+  require("electron-debug")();
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
+  const installer = require("electron-devtools-installer");
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = ["REACT_DEVELOPER_TOOLS"];
 
   return installer
     .default(
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((e: Error) => Debug.Error(e.message, 'when initializing extensions'));
+    .catch((e: Error) => Debug.Error(e.message, "when initializing extensions"));
 };
 
 function getSpotifyTrackId(url: string) {
   const m = url.match(/(?<=k\/)(.*(?=\?)|.*(?=$)*)/g);
-  if (m == null) return '';
+  if (m == null) return "";
   return m[0];
 }
 
 function getSpotifyPlaylistId(url: string) {
   const m = url.match(/(?<=t\/)(.*(?=\?)|.*(?=$)*)/g);
-  if (m == null) return '';
+  if (m == null) return "";
   return m[0];
 }
 
@@ -73,9 +73,9 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    icon: getAssetPath('icon.png'),
+    icon: getAssetPath("icon.png"),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -83,14 +83,14 @@ const createWindow = async () => {
 
   mainWindow.removeMenu();
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow.loadURL(resolveHtmlPath("index.html"));
 
   //mainWindow?.webContents.openDevTools();
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.on("ready-to-show", () => {
     if (!mainWindow) {
-      Debug.Error('mainWindow is not defined', '(when creating the window)');
-      throw new Error('"mainWindow" is not defined');
+      Debug.Error("mainWindow is not defined", "(when creating the window)");
+      throw new Error("'mainWindow' is not defined");
     }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
@@ -98,32 +98,32 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-    Debug.Success('Main Window Loaded');
+    Debug.Success("Main Window Loaded");
   });
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
     if (!Manager.ReadConst<boolean>("CloseToTray")) {
       app.quit();
     }
   });
 
-  mainWindow.on('focus', () => {
-    mainWindow?.webContents.send('clientFocused', true);
+  mainWindow.on("focus", () => {
+    mainWindow?.webContents.send("clientFocused", true);
   });
 
-  mainWindow.on('blur', () => {
-    mainWindow?.webContents.send('clientUnfocused', true);
+  mainWindow.on("blur", () => {
+    mainWindow?.webContents.send("clientUnfocused", true);
   });
 
-  // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
+  // Open urls in the user"s browser
+  mainWindow.webContents.on("new-window", (event, url) => {
     event.preventDefault();
     Debug.Log(`Opening file ${url} in default browser`);
-    if (url.includes('track') && spotifyInstalled) {
+    if (url.includes("track") && spotifyInstalled) {
       shell.openExternal(`spotify://track/${getSpotifyTrackId(url)}`);
     }
-    else if (url.includes('playlist') && spotifyInstalled) {
+    else if (url.includes("playlist") && spotifyInstalled) {
       shell.openExternal(`spotify://playlist/${getSpotifyPlaylistId(url)}`);
     }
     else {
@@ -140,15 +140,15 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
-ipcMain.on('openDevTools', () => {
+ipcMain.on("openDevTools", () => {
   mainWindow?.webContents.openDevTools();
 });
 
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   Manager.SaveSettings();
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
@@ -157,7 +157,7 @@ app.whenReady().then(() => {
   function resume() {
     if (mainWindow != null) {
       mainWindow?.show();
-      mainWindow?.webContents.send('trayResumeClient');
+      mainWindow?.webContents.send("trayResumeClient");
     }
     else {
       createWindow();
@@ -169,32 +169,32 @@ app.whenReady().then(() => {
   }
 
   try {
-    tray = new Tray(getAssetPath('icon.png'));
+    tray = new Tray(getAssetPath("icon.png"));
     const contextMenu = Menu.buildFromTemplate([
       { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
-      { type: 'separator' },
-      { label: 'Open', click: () => resume() },
-      { type: 'separator' },
-      { label: 'Exit', click: () => quit() }
+      { type: "separator" },
+      { label: "Open", click: () => resume() },
+      { type: "separator" },
+      { label: "Exit", click: () => quit() }
     ]);
-    tray.on('click', () => {
+    tray.on("click", () => {
       resume();
     });
-    tray.setToolTip('Nova Chat 3');
+    tray.setToolTip("Nova Chat 3");
     tray.setContextMenu(contextMenu);
   }
   catch {
-    Debug.Error('Unable to load tray icon');
+    Debug.Error("Unable to load tray icon");
   }
 
   createWindow().then(() => {
-    Debug.Success('App Loaded');
+    Debug.Success("App Loaded");
   });
 
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
+  app.on("activate", () => {
+    // On macOS it"s common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) createWindow().catch(console.log);
+    if (mainWindow === null) createWindow().catch(Debug.Log);
   });
 
-}).catch((e) => Debug.Error(e.message, 'on app initialization'));
+}).catch((e) => Debug.Error(e.message, "on app initialization"));

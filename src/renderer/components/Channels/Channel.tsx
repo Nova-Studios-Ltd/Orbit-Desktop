@@ -1,11 +1,11 @@
-import React, { MouseEvent } from 'react';
-import { Button, Card, Typography, Avatar, Menu, MenuItem, ButtonBase, Dialog, DialogContent, DialogActions, DialogTitle, IconButton, TextField } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
-import { ipcRenderer, Manager, setDefaultChannel } from 'renderer/helpers';
-import { ChannelType } from 'types/enums';
-import YesNoDialog from 'renderer/components/Dialogs/YesNoDialog';
-import FormTextField from 'renderer/components/Form/FormTextField';
-import { IOpenFileDialogResults } from 'types/types';
+import React, { MouseEvent } from "react";
+import { Button, Card, Typography, Avatar, Menu, MenuItem, ButtonBase, Dialog, DialogContent, DialogActions, DialogTitle, IconButton, TextField } from "@mui/material";
+import { Add as AddIcon } from "@mui/icons-material";
+import { ipcRenderer, Manager, setDefaultChannel } from "renderer/helpers";
+import { ChannelType } from "types/enums";
+import YesNoDialog from "renderer/components/Dialogs/YesNoDialog";
+import FormTextField from "renderer/components/Form/FormTextField";
+import { IOpenFileDialogResults } from "types/types";
 
 export interface IChannelProps {
   table_Id: string,
@@ -14,7 +14,7 @@ export interface IChannelProps {
   channelName: string,
   channelIcon?: string,
   members?: string[],
-  isSelectedChannel: boolean,
+  isSelected: boolean,
   onClick?: (event: React.MouseEvent<HTMLButtonElement>, channelID: string) => void
 }
 
@@ -37,8 +37,7 @@ interface IChannelState {
 }
 
 
-export default class Channel extends React.Component<IChannelProps> {
-  state: IChannelState;
+export default class Channel extends React.Component<IChannelProps, IChannelState> {
   channelName: string;
   channelType: ChannelType;
   channelID: string;
@@ -99,18 +98,18 @@ export default class Channel extends React.Component<IChannelProps> {
     if (this.props.onClick != null) this.props.onClick(event, this.channelID);
     Manager.WriteConst("CurrentChannel", this.channelID);
     setDefaultChannel(this.channelID);
-    ipcRenderer.send('GETMessages', Manager.ReadConst<string>("CurrentChannel"));
+    ipcRenderer.send("GETMessages", Manager.ReadConst<string>("CurrentChannel"));
   }
 
   async menuItemClicked(event: MouseEvent<HTMLLIElement>) {
     switch (event.currentTarget.id) {
-      case 'edit':
+      case "edit":
         this.setState({ editDialogOpen: true });
         break;
-      case 'hide':
-        ipcRenderer.send('ARCHIVEChannel', this.channelID);
+      case "hide":
+        ipcRenderer.send("ARCHIVEChannel", this.channelID);
         break;
-      case 'delete':
+      case "delete":
         this.setState({ confirmChannelDeletionDialogOpen: true });
         break;
     }
@@ -119,7 +118,7 @@ export default class Channel extends React.Component<IChannelProps> {
   }
 
   chooseChannelIcon() {
-    ipcRenderer.invoke('OpenFile').then((data: IOpenFileDialogResults) => {
+    ipcRenderer.invoke("OpenFile").then((data: IOpenFileDialogResults) => {
       if (data != undefined) {
         this.setState(() => {
           let preview = null;
@@ -129,7 +128,6 @@ export default class Channel extends React.Component<IChannelProps> {
           else {
             preview = this.channelIcon;
           }
-          console.log(preview);
           return { editDialogChannelIconPath: data.path, editDialogChannelIconPreview: preview }
         });
       }
@@ -161,10 +159,10 @@ export default class Channel extends React.Component<IChannelProps> {
   submitChannelEdits() {
     if (this.isOwner()) {
       if (this.state.editDialogChannelName != this.channelName) {
-        ipcRenderer.send('UPDATEChannelName', this.channelID, this.state.editDialogChannelName);
+        ipcRenderer.send("UPDATEChannelName", this.channelID, this.state.editDialogChannelName);
       }
       if (this.state.editDialogChannelIconPath != this.channelIcon) {
-        ipcRenderer.send('UPDATEChannelIcon', this.channelID, this.state.editDialogChannelIconPath);
+        ipcRenderer.send("UPDATEChannelIcon", this.channelID, this.state.editDialogChannelIconPath);
       }
     }
     this.closeChannelEditDialog();
@@ -173,47 +171,47 @@ export default class Channel extends React.Component<IChannelProps> {
   removeUserFromThisChannel() {
     if (this.channelType == ChannelType.Group)
       ipcRenderer.send(
-        'REMOVEChannelMember',
+        "REMOVEChannelMember",
         this.channelID,
         Manager.UserData.uuid
       );
-    else ipcRenderer.send('DELETEChannel', this.channelID);
+    else ipcRenderer.send("DELETEChannel", this.channelID);
     this.closeChannelDeletionDialog();
   }
 
   removeChannelIcon() {
-    ipcRenderer.send('REMOVEChannelIcon', this.channelID);
+    ipcRenderer.send("REMOVEChannelIcon", this.channelID);
   }
 
   render() {
     const LeaveChannelPromptTextGroup =
-      'You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!';
+      "You will no longer have access to this channel unless you are reinvited. If you are the last person in this channel, it will be permanently lost forever!";
     const LeaveChannelPromptTextUser =
-      'This will only delete your copy of the conversation and remove you from the channel. You will have to re-add the recipient to chat with them again.';
+      "This will only delete your copy of the conversation and remove you from the channel. You will have to re-add the recipient to chat with them again.";
     const LeaveChannelButtonText =
-      this.channelType == ChannelType.Group ? 'Leave' : 'Delete';
+      this.channelType == ChannelType.Group ? "Leave" : "Delete";
     const LeaveChannelPromptText =
       this.channelType == ChannelType.Group
         ? LeaveChannelPromptTextGroup
         : LeaveChannelPromptTextUser;
 
-    let channelClassNames = 'Channel';
-    if (this.props.isSelectedChannel) channelClassNames = channelClassNames.concat(' ', 'SelectedChannel')
+    let channelClassNames = "Channel";
+    if (this.props.isSelected) channelClassNames = channelClassNames.concat(" ", "SelectedChannel")
 
     const DialogActionButtons = () => {
       if (this.canEdit()) return (
         <div>
-          <Button id='cancelButton' onClick={this.closeChannelEditDialog}>
+          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
             Cancel
           </Button>
-          <Button id='editButton' onClick={this.submitChannelEdits}>
+          <Button id="editButton" onClick={this.submitChannelEdits}>
             Save
           </Button>
         </div>
       )
       return (
         <div>
-          <Button id='cancelButton' onClick={this.closeChannelEditDialog}>
+          <Button id="cancelButton" onClick={this.closeChannelEditDialog}>
             Close
           </Button>
         </div>
@@ -223,55 +221,55 @@ export default class Channel extends React.Component<IChannelProps> {
     return (
       <div className={channelClassNames}>
           <ButtonBase
-            className='ChannelInnerButtonBase'
+            className="ChannelInnerButtonBase"
             onClick={this.channelClicked}
             onContextMenu={this.channelRightClicked}
           >
-            <div className='ChannelInner'>
-              <div className='ChannelLeft'>
-                <Avatar className='ChannelIcon' src={this.channelIcon} />
+            <div className="ChannelInner">
+              <div className="ChannelLeft">
+                <Avatar className="ChannelIcon" src={this.channelIcon} />
               </div>
-              <div className='ChannelRight'>
-                <Typography className='ChannelCaption' variant='h6'>
+              <div className="ChannelRight">
+                <Typography className="ChannelCaption" variant="h6">
                   {this.channelName}
                 </Typography>
               </div>
             </div>
           </ButtonBase>
         <Menu
-          id='channel-dropdown-menu'
-          anchorReference='anchorPosition'
+          id="channel-dropdown-menu"
+          anchorReference="anchorPosition"
           anchorPosition={{ top: this.state.contextMenuAnchorPos.y, left: this.state.contextMenuAnchorPos.x }}
           open={this.state.contextMenuOpen}
           onClose={this.closeContextMenu}
         >
-          <MenuItem id='edit' onClick={this.menuItemClicked}>
+          <MenuItem id="edit" onClick={this.menuItemClicked}>
             Edit
           </MenuItem>
-          <MenuItem id='hide' onClick={this.menuItemClicked}>
+          <MenuItem id="hide" onClick={this.menuItemClicked}>
             Hide
           </MenuItem>
-          <MenuItem id='delete' onClick={this.menuItemClicked}>
+          <MenuItem id="delete" onClick={this.menuItemClicked}>
             {LeaveChannelButtonText}
           </MenuItem>
         </Menu>
         <Dialog open={this.state.editDialogOpen}>
           <DialogTitle>Edit Channel &quot;{this.channelName}&quot;</DialogTitle>
-          <DialogContent style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <IconButton className='OverlayContainer' disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
+          <DialogContent style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <IconButton className="OverlayContainer" disabled={!this.canEdit()} onClick={this.chooseChannelIcon}>
                 <Avatar
                   sx={{ width: 64, height: 64 }}
                   src={this.state.editDialogChannelIconPreview}
                 />
-                <AddIcon fontSize='large' className='Overlay' />
+                <AddIcon fontSize="large" className="Overlay" />
               </IconButton>
               {this.canEdit() ? <Button onClick={this.removeChannelIcon}>Remove Icon</Button> : undefined}
             </div>
             <div style={{ marginLeft: 10 }}>
-              <FormTextField disabled={!this.canEdit()} id='editDialogChannelName' label='Channel Name' placeholder='New Channel Name' value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
-              <FormTextField disabled id='editDialogChannelRecipients' label='Channel Recipients' value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
-              <FormTextField disabled label='Channel UUID' value={this.channelID}/>
+              <FormTextField disabled={!this.canEdit()} id="editDialogChannelName" label="Channel Name" placeholder="New Channel Name" value={this.state.editDialogChannelName} onChange={this.channelEditDialogChanged} />
+              <FormTextField disabled id="editDialogChannelRecipients" label="Channel Recipients" value={this.state.editDialogChannelRecipients} onChange={this.channelEditDialogChanged}/>
+              <FormTextField disabled label="Channel UUID" value={this.channelID}/>
             </div>
             </DialogContent>
           <DialogActions>
@@ -282,7 +280,7 @@ export default class Channel extends React.Component<IChannelProps> {
           title={`Confirm ${LeaveChannelButtonText} Channel`}
           body={LeaveChannelPromptText}
           confirmButtonText={LeaveChannelButtonText}
-          denyButtonText='Cancel'
+          denyButtonText="Cancel"
           onConfirm={this.removeUserFromThisChannel}
           onDeny={this.closeChannelDeletionDialog}
           show={this.state.confirmChannelDeletionDialogOpen}

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Typography } from '@mui/material';
-import { FormStatusType } from 'types/enums';
-import { AppTheme } from 'renderer/AppTheme';
+import React from "react";
+import { Typography } from "@mui/material";
+import { FormStatusType } from "types/enums";
+import { AppTheme } from "renderer/AppTheme";
 
 interface IFormStatusFieldProps {
   message?: string,
@@ -23,7 +23,7 @@ export default class FormStatusField extends React.Component<IFormStatusFieldPro
       case FormStatusType.success:
         return AppTheme().palette.success.main;
       default:
-        return '#000000'
+        return "#000000"
     }
   }
 
@@ -34,7 +34,7 @@ export default class FormStatusField extends React.Component<IFormStatusFieldPro
 
     return (
       <div>
-        <Typography className='Generic_Form_Item' variant='body1' style={styles}>{this.props.message}</Typography>
+        <Typography className="Generic_Form_Item" variant="body1" style={styles}>{this.props.message}</Typography>
       </div>
     );
   }

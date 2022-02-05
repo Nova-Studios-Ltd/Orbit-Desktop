@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { Box, FormControl, FormHelperText, InputLabel, Select, SelectChangeEvent} from '@mui/material';
+import React, { ReactNode } from "react";
+import { Box, FormControl, FormHelperText, InputLabel, Select, SelectChangeEvent} from "@mui/material";
 
 interface IFormDropdownProps {
   id: string,
@@ -17,13 +17,13 @@ export default class FormDropdown extends React.Component<IFormDropdownProps> {
   constructor(props: IFormDropdownProps) {
     super(props);
     this.id = props.id || Math.random().toString();
-    this.label = props.label || 'Label';
+    this.label = props.label || "Label";
     this.description = props.description;
   }
 
   render() {
     return(
-      <Box className='Generic_Form_Item'>
+      <Box className="Generic_Form_Item">
         <FormControl fullWidth id={this.id}>
           <InputLabel id={`${this.id}-label`}>{this.label}</InputLabel>
           <Select

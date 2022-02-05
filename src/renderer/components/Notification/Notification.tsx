@@ -1,7 +1,7 @@
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
-import { toast } from 'react-toastify';
-import { ipcRenderer, Manager } from 'renderer/helpers';
-import { Typography } from '@mui/material';
+import { NotificationAudienceType, NotificationStatusType } from "types/enums";
+import { toast } from "react-toastify";
+import { ipcRenderer, Manager } from "renderer/helpers";
+import { Typography } from "@mui/material";
 
 export interface INotificationProps {
   title?: string,
@@ -23,10 +23,10 @@ export default class AppNotification {
   readonly onClick: () => void;
 
   constructor(props: INotificationProps) {
-    this.title = props.title || '';
-    this.body = props.body || '';
+    this.title = props.title || "";
+    this.body = props.body || "";
     this.playSound = props.playSound || false;
-    this.notificationAssetPath = props.notificationAssetPath || Manager.ReadSetting<string>('NotificationAssetPath');
+    this.notificationAssetPath = props.notificationAssetPath || Manager.ReadSetting<string>("NotificationAssetPath");
     this.notificationType = props.notificationType || NotificationStatusType.default;
     this.notificationAudience = props.notificationAudience || NotificationAudienceType.app;
     this.onClick = props.onClick || (() => { });
@@ -36,9 +36,9 @@ export default class AppNotification {
     let toastElement = null;
     if (this.title != null && this.title.length > 0) {
       toastElement = (
-        <div className='Notification_Container' onClick={this.onClick}>
-          <Typography className='Notification_Title' variant='subtitle1'>{this.title}</Typography>
-          <Typography className='Notification_Body' variant='caption'>{this.body}</Typography>
+        <div className="Notification_Container" onClick={this.onClick}>
+          <Typography className="Notification_Title" variant="subtitle1">{this.title}</Typography>
+          <Typography className="Notification_Body" variant="caption">{this.body}</Typography>
         </div>
       );
     }
@@ -66,7 +66,7 @@ export default class AppNotification {
   }
 
   private sendSystemNotification() {
-    ipcRenderer.send('toast', this);
+    ipcRenderer.send("toast", this);
   }
 
   show() {

@@ -81,6 +81,7 @@
   flex-shrink: 0;
   flex: 1;
   box-sizing: border-box;
+  border-radius: 30px !important;
 }
 
 .FileUploadSummary {
