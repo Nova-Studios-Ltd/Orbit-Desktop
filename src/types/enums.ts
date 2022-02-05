@@ -47,6 +47,12 @@ export enum ContentType {
   TEXT = "text/plain"
 }
 
+export enum FriendState {
+  ACCEPTED = "Accepted",
+  PENDING = "Pending",
+  REQUEST = "Request"
+}
+
 export enum ChannelType {
   User = 0,
   Group = 1,

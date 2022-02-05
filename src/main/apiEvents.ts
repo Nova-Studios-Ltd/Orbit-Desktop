@@ -1,5 +1,5 @@
+/* eslint-disable no-restricted-imports */
 import { ipcMain } from "electron";
-import UserData from "structs/UserData";
 import type { IChannelProps } from "renderer/components/Channels/Channel";
 import type { IMessageProps } from "renderer/components/Messages/Message";
 import MessageAttachment from "structs/MessageAttachment";
@@ -7,13 +7,13 @@ import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
+import IUser from "structs/IUser";
 import { Manager } from "./settingsManager";
 import { Dictionary, Indexable } from "./dictionary";
-import { ContentType } from "../types/enums";
+import { ContentType, FriendState } from "../types/enums";
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from "./NCAPI";
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from "./encryptionUtils";
 import { AESMemoryEncryptData } from "./encryptionClasses";
-import IUser from "structs/IUser";
 
 // User
 ipcMain.handle("GETUser", async (_event, user_uuid: string) => {
@@ -80,6 +80,34 @@ ipcMain.handle("SETKey", async (_event, user_uuid: string, key_user_uuid: string
   if (resp.status == 200) return true;
   return false;
 });
+
+// Friend
+ipcMain.on("GETFriends", async (event, user_uuid: string, state = FriendState.ACCEPTED) => {
+  const resp = await QueryWithAuthentication(`/Friend/${user_uuid}/Friends?state=${state}`);
+  if (resp.status == 200) event.sender.send("GotFriends", resp.payload);
+});
+
+ipcMain.on("SENDRequest", async (event, user_uuid: string, request_uuid: string) => {
+  const resp = await PostWithAuthentication(`/Friend/${user_uuid}/Send/${request_uuid}`, ContentType.EMPTY, '');
+  // TODO Implement RequestSent handler
+  if (resp.status == 200) event.sender.send("RequestSent", true);
+  else event.sender.send("RequestSent", false);
+});
+
+ipcMain.on("AcceptRequest", async (event, user_uuid: string, request_uuid: string) => {
+  const resp = await PostWithAuthentication(`/Friend/${user_uuid}/Accept/${request_uuid}`, ContentType.EMPTY, '');
+  // TODO Implement RequestAccepted handler
+  if (resp.status == 200) event.sender.send("RequestAccepted", true);
+  else event.sender.send("RequestAccepted", false);
+});
+
+ipcMain.on("DeclineRequest", async (event, user_uuid: string, request_uuid: string) => {
+  const resp = await PostWithAuthentication(`/Friend/${user_uuid}/Decline/${request_uuid}`, ContentType.EMPTY, '');
+  // TODO Implement RequestDeclined handler
+  if (resp.status == 200) event.sender.send("RequestDeclined", true);
+  else event.sender.send("RequestDeclined", false);
+});
+
 
 // Messages
 ipcMain.handle("GETMessage", async (_event, channel_uuid: string, message_id: string) => {
