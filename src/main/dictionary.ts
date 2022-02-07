@@ -21,11 +21,18 @@ export class KeyValuePair<V> {
   }
 }
 
+export enum DictionaryKeyChange {
+  UPDATED = 0,
+  ADDED = 1,
+  REMOVED = 2,
+  EMPTY_DICTIONARY = 3
+}
+
 export class Dictionary<V> implements IDictionary<V> {
   _dict: Indexable<V>;
-  public OnUpdate?: () => void;
+  public OnUpdate?: (key: string, value: V, state: DictionaryKeyChange) => void;
 
-  constructor(dict?: IDictionary<V> | Indexable<V>, onUpdate?: () => void) {
+  constructor(dict?: IDictionary<V> | Indexable<V>, onUpdate?: (key: string, value: V, state: DictionaryKeyChange) => void) {
     this.OnUpdate = onUpdate;
     this._dict = {} as Indexable<V>;
     if (dict !== undefined)
@@ -43,6 +50,7 @@ export class Dictionary<V> implements IDictionary<V> {
 
   static fromJSON<V>(json: string) : Dictionary<V> | undefined {
     const d = new Dictionary<V>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dic = <Indexable<V>>JSON.parse(json, (key: string, value: any) => {
       if (key != "" && value._dict != undefined)
         return Dictionary.fromJSON(JSON.stringify(value));
@@ -58,18 +66,20 @@ export class Dictionary<V> implements IDictionary<V> {
   }
 
   setValue(key: string, value: V) : void {
+    const state = (key in this._dict)? DictionaryKeyChange.UPDATED : DictionaryKeyChange.ADDED;
     this._dict[key] = value;
-    if (this.OnUpdate != undefined) this.OnUpdate();
+    if (this.OnUpdate != undefined) this.OnUpdate(key, value, state);
   }
 
   empty() : void {
     this._dict = {} as Indexable<V>;
-    if (this.OnUpdate != undefined) this.OnUpdate();
+    if (this.OnUpdate != undefined) this.OnUpdate("", <V><unknown>undefined, DictionaryKeyChange.EMPTY_DICTIONARY);
   }
 
   clear(key: string) : boolean {
+    const v = this._dict[key];
     delete this._dict[key];
-    if (this.OnUpdate != undefined) this.OnUpdate();
+    if (this.OnUpdate != undefined) this.OnUpdate(key, v, DictionaryKeyChange.REMOVED);
     return true;
   }
 

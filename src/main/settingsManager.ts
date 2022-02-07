@@ -1,13 +1,16 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import UserData from "../structs/UserData";
-import { Dictionary, Indexable } from "./dictionary";
+import { Dictionary, DictionaryKeyChange, Indexable } from "./dictionary";
 
 class SettingsManager {
   // Settings, initalised at startup
   //Settings: {[key: string] : ({[key: string] : number | string | boolean} | number | string | boolean)};
   private Settings: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>;
   private Operational: Dictionary<number | string | boolean>;
+
+  // Events for Settings
+  private SettingsEvents: Dictionary<(value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void> = new Dictionary<(value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void>();
 
   // Userdata, initalised when users logs in
   _UserData: UserData = new UserData();
@@ -18,16 +21,21 @@ class SettingsManager {
   readonly HomePath: string = "/login";
   readonly MessageCharacterLimit: number = 4000;
 
+  // Other crap
+  private readonly WebContents: Electron.WebContents;
+
   constructor(webContents: Electron.WebContents, defaultSettings?: Dictionary<number | string | boolean | Dictionary<number | string | boolean>>) {
+    this.WebContents = webContents;
     if (existsSync("UserSettings.json")) {
       const d = Dictionary.fromJSON<number | string | boolean | Dictionary<number | string | boolean>>(readFileSync("UserSettings.json", { encoding: "utf-8"}));
-      if (d == undefined) this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send("SettingsUpdated"); });
+      if (d == undefined) this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, this.SettingsUpdate);
       this.Settings = <Dictionary<number | string | boolean | Dictionary<number | string | boolean>>>d;
+      this.Settings.OnUpdate = this.SettingsUpdate;
     }
     else if (defaultSettings != undefined)
-      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(defaultSettings, () => {webContents.send("SettingsUpdated"); });
+      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(defaultSettings, this.SettingsUpdate);
     else
-      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, () => {webContents.send("SettingsUpdated"); });
+      this.Settings = new Dictionary<number | string | boolean | Dictionary<number | string | boolean>>(undefined, this.SettingsUpdate);
 
     this.Operational = new Dictionary<number | string | boolean>(<Indexable<number | string | boolean>>{
       "CurrentChannel": "",
@@ -68,6 +76,19 @@ class SettingsManager {
 
   get UserData() : UserData {
     return this._UserData;
+  }
+
+  // Event
+  private SettingsUpdate(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) {
+    if (key in this.SettingsEvents) {
+      //if ()
+      this.SettingsEvents.getValue(key)(value, state);
+    }
+    this.WebContents.send("SettingsUpdated");
+  }
+
+  OnSettingChanged(key: string, func: (value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void) {
+    this.SettingsEvents.setValue(key, func);
   }
 
   // Settings
