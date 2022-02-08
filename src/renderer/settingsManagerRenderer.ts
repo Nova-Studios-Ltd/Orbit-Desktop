@@ -1,4 +1,4 @@
-import { Dictionary } from "main/dictionary";
+import { Dictionary, DictionaryKeyChange } from "main/dictionary";
 import { RSAMemoryKeyPair } from "main/encryptionClasses";
 import UserData from "structs/UserData";
 // eslint-disable-next-line import/no-cycle
@@ -137,6 +137,11 @@ export class SettingsManager {
   get HomePath() { return this._HomePath; }
   get MessageCharacterLimit() { return this._MessageCharacterLimit; }
   get UserData() { return this._UserData; }
+
+  OnSettingChanged(key: string, func: (key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void) {
+    ipcRenderer.send("OnSettingChanged", key);
+    ipcRenderer.on(key, func);
+  }
 
   // Settings
   ReadSetting<T>(key: string) : T {

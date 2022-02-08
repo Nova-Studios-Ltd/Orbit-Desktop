@@ -10,7 +10,8 @@ class SettingsManager {
   private Operational: Dictionary<number | string | boolean>;
 
   // Events for Settings
-  private SettingsEvents: Dictionary<(value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void> = new Dictionary<(value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void>();
+  private MainSettingsEvents: Dictionary<(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void> = new Dictionary<(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void>();
+  private RenderSettingsEvents: Dictionary<(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void> = new Dictionary<(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void>();
 
   // Userdata, initalised when users logs in
   _UserData: UserData = new UserData();
@@ -72,6 +73,9 @@ class SettingsManager {
 
     ipcMain.on("ReadConst", (event, key: string) => { event.returnValue = this.ReadConst(key); });
     ipcMain.on("WriteConst", (_event, key: string, value: string | boolean | number) => this.WriteConst(key, value));
+
+    // Events
+    ipcMain.on("OnSettingChanged", (_event, key: string) => this.IPCOnSettingChanged(key));
   }
 
   get UserData() : UserData {
@@ -80,15 +84,23 @@ class SettingsManager {
 
   // Event
   private SettingsUpdate(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) {
-    if (key in this.SettingsEvents) {
-      //if ()
-      this.SettingsEvents.getValue(key)(value, state);
+    if (this.MainSettingsEvents.containsKey(key)) {
+      this.MainSettingsEvents.getValue(key)(key, value, state);
+    }
+    if (this.RenderSettingsEvents.containsKey(key)) {
+      this.RenderSettingsEvents.getValue(key)(key, value, state);
     }
     this.WebContents.send("SettingsUpdated");
   }
 
-  OnSettingChanged(key: string, func: (value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void) {
-    this.SettingsEvents.setValue(key, func);
+  private IPCOnSettingChanged(key: string) {
+    this.RenderSettingsEvents.setValue(key, (k: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => {
+      this.WebContents.send(key, k, value, state);
+    });
+  }
+
+  OnSettingChanged(key: string, func: (key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) => void) {
+    this.MainSettingsEvents.setValue(key, func);
   }
 
   // Settings
