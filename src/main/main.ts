@@ -73,7 +73,7 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    icon: getAssetPath("icon.png"),
+    icon: getAssetPath("CrappyLogo.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -166,7 +166,7 @@ app.whenReady().then(() => {
   }
 
   try {
-    tray = new Tray(getAssetPath("icon.png"));
+    tray = new Tray(getAssetPath("CrappyLogo.png"));
     const contextMenu = Menu.buildFromTemplate([
       { label: `${Manager.ReadConst<string>("AppName")} (Version ${Manager.ReadConst<string>("AppVersion")})` },
       { type: "separator" },

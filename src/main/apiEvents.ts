@@ -390,6 +390,7 @@ ipcMain.handle("GETUserDataFromID", async (_event, user_ids: string[]) => {
     for (let i = 0; i < user_ids.length; i++) {
       const user_uuid = user_ids[i];
       const resp: UserQueryResponse = await QueryWithAuthentication(`/User/${user_uuid}`);
+      console.log(resp.payload.avatar);
       if (resp.status == 200 && resp.payload != undefined) user_dict.push({ userID: user_uuid, username: resp.payload.username, avatar: resp.payload.avatar });
     }
   }
