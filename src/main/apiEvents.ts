@@ -1,18 +1,20 @@
 /* eslint-disable no-restricted-imports */
-import { ipcMain } from "electron";
 import type { IChannelProps } from "renderer/components/Channels/Channel";
 // eslint-disable-next-line no-restricted-imports
 import type { IMessageProps } from "renderer/components/Messages/Message";
+import type { UserQueryResponse } from "types/NCAPIResponseMutations";
+
+import { ipcMain } from "electron";
 import MessageAttachment from "structs/MessageAttachment";
 import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
-import IUser from "types/types";
+import IUser, { UserIDNameTuple } from "types/types";
 import { Manager } from "./settingsManager";
 import { Dictionary, Indexable } from "./dictionary";
 import { ContentType, FriendState } from "../types/enums";
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from "./NCAPI";
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication, NCAPIResponse } from "./NCAPI";
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from "./encryptionUtils";
 import { AESMemoryEncryptData } from "./encryptionClasses";
 
@@ -380,4 +382,16 @@ ipcMain.handle("POSTChannelContent", async (_event, channel_uuid: string, file: 
   const resp = await PostFileWithAuthentication(`/Media/Channel/${channel_uuid}`, file);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
   return undefined;
+});
+
+ipcMain.handle("GETUserDataFromID", async (_event, user_ids: string[]) => {
+  const user_dict: UserIDNameTuple[] = [];
+  if (user_ids != null && user_ids.length > 0) {
+    for (let i = 0; i < user_ids.length; i++) {
+      const user_uuid = user_ids[i];
+      const resp: UserQueryResponse = await QueryWithAuthentication(`/User/${user_uuid}`);
+      if (resp.status == 200 && resp.payload != undefined) user_dict.push({ userID: user_uuid, username: resp.payload.username, avatar: resp.payload.avatar });
+    }
+  }
+  return user_dict;
 });

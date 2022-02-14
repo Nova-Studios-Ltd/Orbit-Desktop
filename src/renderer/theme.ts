@@ -29,7 +29,7 @@ export function AppTheme() {
   return DarkTheme;
 }
 
-export const AppStyles = makeStyles({
+export const AppStyles = () => makeStyles({
   "@global": {
     "#root, html, body": {
       height: "100%",
@@ -64,6 +64,9 @@ export const AppStyles = makeStyles({
       background: `${AppTheme().palette.mode == "dark" ? AppTheme().palette.grey.A700 : AppTheme().palette.grey.A100} !important`,
     },
     ".ChannelInner": {
+      color: AppTheme().palette.text.primary,
+    },
+    ".ChannelMemberListContainer": {
       color: AppTheme().palette.text.primary,
     },
     ".Chat_Page_Bottom": {

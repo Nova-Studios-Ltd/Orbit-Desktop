@@ -1,5 +1,6 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { Debug } from "./debug";
 import UserData from "../structs/UserData";
 import { Dictionary, DictionaryKeyChange, Indexable } from "./dictionary";
 
@@ -84,13 +85,18 @@ class SettingsManager {
 
   // Event
   private SettingsUpdate(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) {
-    if (this.MainSettingsEvents.containsKey(key)) {
-      this.MainSettingsEvents.getValue(key)(key, value, state);
+    if (this.MainSettingsEvents != null) {
+      if (this.MainSettingsEvents.containsKey(key)) {
+        this.MainSettingsEvents.getValue(key)(key, value, state);
+      }
+      if (this.RenderSettingsEvents.containsKey(key)) {
+        this.RenderSettingsEvents.getValue(key)(key, value, state);
+      }
+      this.WebContents.send("SettingsUpdated");
     }
-    if (this.RenderSettingsEvents.containsKey(key)) {
-      this.RenderSettingsEvents.getValue(key)(key, value, state);
+    else {
+      Debug.Error("MainSettingsEvents dictionary was undefined", "during SettingsUpdate event");
     }
-    this.WebContents.send("SettingsUpdated");
   }
 
   private IPCOnSettingChanged(key: string) {
