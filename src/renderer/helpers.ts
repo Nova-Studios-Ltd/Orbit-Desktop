@@ -3,7 +3,7 @@ import Credentials from "structs/Credentials";
 import { UIEvents } from "renderer/UIEvents";
 import { DebugLogger } from "renderer/debugRenderer";
 import { IElectronRendererWindow } from "types/types";
-import IUser from "structs/IUser";
+import IUser from "types/types";
 import { SettingsManager } from "./settingsManagerRenderer";
 import { Dictionary } from "main/dictionary";
 import { RSAMemoryKeyPair } from "main/encryptionClasses";

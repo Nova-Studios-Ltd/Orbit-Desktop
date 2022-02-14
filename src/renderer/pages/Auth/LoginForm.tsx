@@ -15,7 +15,7 @@ interface ILoginFormState {
   status: FormStatusTuple
 }
 
-class LoginForm extends React.Component<never, ILoginFormState> {
+class LoginForm extends React.Component<Record<string, never>, ILoginFormState> {
 
   constructor(props: never) {
     super(props);

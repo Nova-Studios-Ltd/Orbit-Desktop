@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import { FormStatusType } from "types/enums";
-import { AppTheme } from "renderer/AppTheme";
+import { AppTheme } from "renderer/theme";
 
 interface IFormStatusFieldProps {
   message?: string,

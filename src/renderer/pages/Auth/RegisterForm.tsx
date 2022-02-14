@@ -16,7 +16,7 @@ interface IRegisterFormState {
   status: FormStatusTuple
 }
 
-class RegisterForm extends React.Component<never, IRegisterFormState> {
+class RegisterForm extends React.Component<Record<string, never>, IRegisterFormState> {
 
   constructor(props: never) {
     super(props);

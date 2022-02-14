@@ -415,7 +415,6 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
 
   handleCreateChannelDialogChannelTypeChange(event: SelectChangeEvent<string>) {
     const channelType = () => {
-      Debug.Log(event.target.value);
       switch (event.target.value) {
         case 0:
           return ChannelType.User;

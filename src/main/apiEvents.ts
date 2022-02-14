@@ -1,13 +1,14 @@
 /* eslint-disable no-restricted-imports */
 import { ipcMain } from "electron";
 import type { IChannelProps } from "renderer/components/Channels/Channel";
+// eslint-disable-next-line no-restricted-imports
 import type { IMessageProps } from "renderer/components/Messages/Message";
 import MessageAttachment from "structs/MessageAttachment";
 import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
-import IUser from "structs/IUser";
+import IUser from "types/types";
 import { Manager } from "./settingsManager";
 import { Dictionary, Indexable } from "./dictionary";
 import { ContentType, FriendState } from "../types/enums";
