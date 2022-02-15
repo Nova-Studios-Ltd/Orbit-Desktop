@@ -73,17 +73,17 @@ export async function HandleWebsocket() {
       case 7: { // New key in keystore
         const key = await ipcRenderer.invoke("GETKey", userData.uuid, event.keyUserUUID);
         userData.keystore.setValue(event.keyUserUUID, key);
-        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(userData.keystore));
         break;
       }
       case 8: { // Key removed from keystore
         userData.keystore.clear(event.keyUserUUID);
-        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(userData.keystore));
         break;
       }
       case 9: { // Re-request entire keystore
         const keystore = await ipcRenderer.invoke("GETKeystore", userData.uuid);
-        await ipcRenderer.invoke("SaveKeystore", keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(keystore));
         userData.keystore = keystore;
         break;
       }
