@@ -8,6 +8,7 @@ import { Debug, ipcRenderer, events, Manager, RemoveCachedCredentials, Navigate 
 import AppNotification from "renderer/components/Notification/Notification";
 import MessageCanvas from "renderer/components/Messages/MessageCanvas";
 import ChannelView from "renderer/components/Channels/ChannelView";
+import ChannelMemberList from "renderer/components/Channels/ChannelMemberList";
 import Channel from "renderer/components/Channels/Channel";
 import Message from "renderer/components/Messages/Message";
 import MessageInput from "renderer/components/Messages/MessageInput";
@@ -86,6 +87,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
     this.openImageViewer = this.openImageViewer.bind(this);
     this.closeImageViewer = this.closeImageViewer.bind(this);
 
+    this.getSelectedChannel = this.getSelectedChannel.bind(this);
     this.isValidUsername = this.isValidUsername.bind(this);
     this.setSelectedChannel = this.setSelectedChannel.bind(this);
     this.Logout = this.Logout.bind(this);
@@ -469,6 +471,18 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
 
   /* Other */
 
+  getSelectedChannel() {
+    let returnedChannel: Channel | undefined;
+    if (this.state.Channels != null && this.state.SelectedChannel != null) {
+      this.state.Channels.forEach((channel) => {
+        if (channel.channelID === this.state.SelectedChannel) {
+          returnedChannel = channel;
+        }
+      });
+    }
+    return returnedChannel;
+  }
+
   isValidUsername(username: string) {
     return new RegExp(/^([\S]{1,})#([0-9]{4}$)/g).test(username);
   }
@@ -546,6 +560,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
             <ChannelView channels={this.state.Channels} selectedChannel={this.state.SelectedChannel} onChannelClicked={this.onChannelClicked} />
+            <ChannelMemberList channel={this.getSelectedChannel()}/>
           </div>
           <div className="Chat_Page_Body_Right">
             <Header caption={this.state.ChannelName} icon={<ChatIcon />} />

@@ -1,9 +1,13 @@
 import { Typography } from "@mui/material";
+import { People as PeopleIcon } from "@mui/icons-material";
 import React from "react";
 import { Debug, ipcRenderer } from "renderer/helpers";
 import { UserIDNameTuple } from "types/types";
+import Header from "renderer/components/Header/Header";
 import Channel from "./Channel";
 import ChannelMember from "./ChannelMember";
+
+import { Alignment, ChannelType } from "types/enums";
 
 export interface IChannelMemberListProps {
   channel: Channel | undefined;
@@ -32,16 +36,19 @@ export default class ChannelMemberList extends React.Component<IChannelMemberLis
   render() {
 
     const members = this.users.map((member) => {
-      return <ChannelMember userID={member.userID} username={member.username} avatar={member.avatar} />
+      return <ChannelMember key={`${Date.now}_${member.userID}`} userID={member.userID} username={member.username} avatar={member.avatar} />
     });
 
-    return (
-      <div className="ChannelMemberListContainer">
-        <Typography sx={{ color: "text.primary", alignSelf: "center" }} variant="h5">Channel Members</Typography>
-        <div className="ChannelMemberList">
-          {members}
+    if (this.props.channel != null && this.props.channel.channelType === ChannelType.Group) {
+      return (
+        <div className="ChannelMemberListContainer">
+          <Header caption="Channel Members" icon={<PeopleIcon />} />
+          <div className="ChannelMemberList">
+            {members}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return null;
   }
 }

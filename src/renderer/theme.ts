@@ -69,6 +69,9 @@ export const AppStyles = () => makeStyles({
     ".ChannelMemberListContainer": {
       color: AppTheme().palette.text.primary,
     },
+    ".ChannelMemberList": {
+      background: AppTheme().palette.background.paper,
+    },
     ".Chat_Page_Bottom": {
       background: AppTheme().palette.background.default,
     },

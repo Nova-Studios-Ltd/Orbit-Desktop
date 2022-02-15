@@ -3,7 +3,6 @@ import React from "react";
 import { MD5 } from "crypto-js";
 import { ChannelType } from "types/enums";
 import Channel from "./Channel";
-import ChannelMemberList from "./ChannelMemberList";
 
 interface IChannelViewProps {
   channels: Channel[],
@@ -12,7 +11,6 @@ interface IChannelViewProps {
 }
 
 interface IChannelViewState {
-  selectedChannelObject: Channel | undefined
   selectedTab: number
 }
 
@@ -23,11 +21,9 @@ export default class ChannelView extends React.Component<IChannelViewProps, ICha
     this.handleTabChange = this.handleTabChange.bind(this);
     this.isChannelListEmpty = this.isChannelListEmpty.bind(this);
     this.isChannelSelected = this.isChannelSelected.bind(this);
-    this.getSelectedChannel = this.getSelectedChannel.bind(this);
     this.channelClicked = this.channelClicked.bind(this);
 
     this.state = {
-      selectedChannelObject: undefined,
       selectedTab: 0
     }
   }
@@ -45,28 +41,9 @@ export default class ChannelView extends React.Component<IChannelViewProps, ICha
     return false;
   }
 
-  getSelectedChannel() {
-    let returnedChannel: Channel | undefined;
-    if (this.props.channels != null && this.props.selectedChannel != null) {
-      this.props.channels.forEach((channel) => {
-        if (channel.channelID === this.props.selectedChannel) {
-          returnedChannel = channel;
-        }
-      });
-    }
-    return returnedChannel;
-  }
-
   channelClicked(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, channelID: string) {
     if (this.props.onChannelClicked != null) {
       this.props.onChannelClicked(event, channelID);
-    }
-  }
-
-  componentDidUpdate(prevProps: IChannelViewProps) {
-    if (this.props.selectedChannel != null && this.props.selectedChannel !== prevProps.selectedChannel) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ selectedChannelObject: this.getSelectedChannel() });
     }
   }
 
@@ -103,7 +80,6 @@ export default class ChannelView extends React.Component<IChannelViewProps, ICha
         <div className="ChannelsContainer">
           {channels}
         </div>
-        <ChannelMemberList channel={this.state.selectedChannelObject}/>
         <PromptElement />
       </div>
     );
