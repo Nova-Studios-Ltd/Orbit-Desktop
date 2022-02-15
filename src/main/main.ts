@@ -15,6 +15,7 @@ import { defaultSettings } from "./settingsDefaults";
 import "./events";
 import "./apiEvents";
 import "./debugEvents";
+import { APPNAME, APPVERSION } from "./staticVariables";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -168,7 +169,7 @@ app.whenReady().then(() => {
   try {
     tray = new Tray(getAssetPath("CrappyLogo.png"));
     const contextMenu = Menu.buildFromTemplate([
-      { label: `${Manager.ReadConst<string>("AppName")} (Version ${Manager.ReadConst<string>("AppVersion")})` },
+      { label: `${APPNAME} (Version ${APPVERSION})` },
       { type: "separator" },
       { label: "Open", click: () => resume() },
       { type: "separator" },
@@ -177,7 +178,7 @@ app.whenReady().then(() => {
     tray.on("click", () => {
       resume();
     });
-    tray.setToolTip(Manager.ReadConst<string>("AppName"));
+    tray.setToolTip(APPNAME);
     tray.setContextMenu(contextMenu);
   }
   catch (error) {

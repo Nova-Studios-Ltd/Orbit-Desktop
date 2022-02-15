@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Debug } from "./debug";
 import UserData from "../structs/UserData";
 import { Dictionary, DictionaryKeyChange, Indexable } from "./dictionary";
+import { APPNAME, APPVERSION, HOMEPATH, MESSAGECHARACTERLIMIT } from "./staticVariables";
 
 class SettingsManager {
   // Settings, initalised at startup
@@ -18,10 +19,10 @@ class SettingsManager {
   _UserData: UserData = new UserData();
 
   // App Constants
-  readonly AppName: string = "Orbit";
-  readonly AppVersion: string = "Alpha";
-  readonly HomePath: string = "/login";
-  readonly MessageCharacterLimit: number = 4000;
+  readonly AppName: string = APPNAME;
+  readonly AppVersion: string = APPVERSION;
+  readonly HomePath: string = HOMEPATH;
+  readonly MessageCharacterLimit = MESSAGECHARACTERLIMIT;
 
   // Other crap
   private readonly WebContents: Electron.WebContents;

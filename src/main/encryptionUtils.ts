@@ -42,21 +42,35 @@ export async function EncryptUsingPubKeyAsync(pub: string, data: string) : Promi
   return publicEncrypt(pub, dataBuffer).toString("base64");
 }
 
-export function DecryptUsingPrivKey(priv: string, data: string) : string {
+export function DecryptUsingPrivKey(priv: string, data: string, message_id?: string) : string {
   if (data != null) {
     const dataBuffer = Buffer.from(data, "base64");
     return privateDecrypt(priv, dataBuffer).toString("utf-8");
   }
-  Debug.Error("Failed to decrypt message: buffer was empty");
+
+  if (message_id != null && message_id.length > 0) {
+    Debug.Error(`Failed to decrypt message with ID ${message_id}: buffer was empty`);
+  }
+  else {
+    Debug.Error(`Failed to decrypt message (ID unknown): buffer was empty`);
+  }
+
   return "";
 }
 
-export async function DecryptUsingPrivKeyAsync(priv: string, data: string) : Promise<string> {
+export async function DecryptUsingPrivKeyAsync(priv: string, data: string, message_id?: string) : Promise<string> {
   if (data != null) {
     const dataBuffer = Buffer.from(data, "base64");
     return privateDecrypt(priv, dataBuffer).toString("utf-8");
   }
-  Debug.Error("Failed to decrypt message: buffer was empty", "async");
+
+  if (message_id != null && message_id.length > 0) {
+    Debug.Error(`Failed to asynchronously decrypt message with ID ${message_id}: buffer was empty`);
+  }
+  else {
+    Debug.Error(`Failed to asynchronously decrypt message (ID Unknown): buffer was empty`);
+  }
+
   return "";
 }
 

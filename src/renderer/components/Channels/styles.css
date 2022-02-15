@@ -1,15 +1,14 @@
 .ChannelView {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0;
   width: 18rem;
-  height: 100%;
+  height: 0;
   padding: 0.2rem;
   margin: 0 0.5rem 0.75rem 0.5rem;
   border-radius: 15px;
   background: rgba(25, 25, 25, 0.1);
   box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .ChannelViewTabBar {
@@ -17,19 +16,28 @@
 }
 
 .ChannelsContainer {
-
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .ChannelMemberListContainer {
   display: flex;
   flex-direction: column;
-  margin-top: auto;
+  flex: 0.5 0 0;
+  height: 0;
 }
 
 .ChannelMemberList {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 18rem;
+  height: 0;
+  padding: 0.2rem;
+  margin: 0 0.5rem 0.75rem 0.5rem;
+  border-radius: 15px;
 }
 
 .Channel, .ChannelMember {
