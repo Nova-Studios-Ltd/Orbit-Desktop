@@ -1,0 +1,21 @@
+.Friend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.FriendLeft {
+
+}
+
+.FriendRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+}
+
+.FriendName {
+
+}

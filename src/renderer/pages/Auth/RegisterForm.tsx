@@ -63,7 +63,7 @@ class RegisterForm extends React.Component<Record<string, never>, IRegisterFormS
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody={`Register for a ${Manager.AppName} account.`} status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody={`Register for an ${Manager.AppName} account.`} status={this.state.status}>
         <FormTextField id="email" label="Email" placeholder="Your Email Address" description="This will be used when signing in, and for account-related operations." autoFocus required onChange={this.handleChange} />
         <FormTextField id="username" label="Username" placeholder="Your New username" required onChange={this.handleChange} />
         <FormTextField id="password" label="Password" placeholder="Your New password" required sensitive onChange={this.handleChange} />

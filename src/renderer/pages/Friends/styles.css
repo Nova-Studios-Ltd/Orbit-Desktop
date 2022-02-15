@@ -1,6 +1,16 @@
-.Friends_Page_Body {
+.Friends_Page_Container {
+
+}
+
+.Friends_Page_InnerContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 1rem;
+}
+
+.FriendsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
