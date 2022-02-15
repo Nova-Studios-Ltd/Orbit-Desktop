@@ -118,7 +118,7 @@ ipcMain.handle("GETMessage", async (_event, channel_uuid: string, message_id: st
   if (resp.status == 200 && resp.payload != undefined) {
     const userData = Manager._UserData;
     const rawMessage = <IMessageProps>resp.payload;
-    const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, rawMessage.encryptedKeys[userData.uuid]);
+    const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, rawMessage.encryptedKeys[userData.uuid], message_id);
     const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(rawMessage.iv, rawMessage.content));
     rawMessage.content = decryptedMessage;
     for (let a = 0; a < rawMessage.attachments.length; a++) {
@@ -151,7 +151,7 @@ ipcMain.on("GETMessagesWithArgs", async (event, channel_uuid: string, limit = 30
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
       const message = rawMessages[m];
-      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid]);
+      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid], message.message_Id);
       if (message.content.length != 0) {
         const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
         message.content = decryptedMessage;
@@ -187,7 +187,7 @@ ipcMain.on("GETMessages", async (event, channel_uuid: string) => {
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
       const message = rawMessages[m];
-      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid]);
+      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid], message.message_Id);
       if (key.length > 0) {
         if (message.content.length > 0) {
           const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
@@ -390,7 +390,6 @@ ipcMain.handle("GETUserDataFromID", async (_event, user_ids: string[]) => {
     for (let i = 0; i < user_ids.length; i++) {
       const user_uuid = user_ids[i];
       const resp: UserQueryResponse = await QueryWithAuthentication(`/User/${user_uuid}`);
-      console.log(resp.payload.avatar);
       if (resp.status == 200 && resp.payload != undefined) user_dict.push({ userID: user_uuid, username: resp.payload.username, avatar: resp.payload.avatar });
     }
   }

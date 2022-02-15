@@ -27,7 +27,7 @@ export default class FriendsPage extends React.Component<IFriendsPageProps, IFri
     return(
       <div className="Page">
         <Helmet>
-        <title>{`${Manager.AppName} ${Manager.AppVersion} - No Friends`}</title>
+        <title>{`${Manager.AppName} ${Manager.AppVersion} - Friendless`}</title>
         </Helmet>
         <Header caption="Friends" onClick={this.props.onNavigationDrawerOpened} icon={<ListIcon />} />
         <div className="Friends_Page_Body">
