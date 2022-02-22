@@ -19,6 +19,6 @@ export interface IYesNoDialogProps {
   show: boolean,
   confirmButtonText?: string,
   denyButtonText?: string,
-  onConfirm: React.MouseEvent<HTMLAnchorElement>,
-  onDeny: React.MouseEvent<HTMLAnchorElement>,
+  onConfirm?: React.MouseEventHandler<HTMLAnchorElement>,
+  onDeny?: React.MouseEventHandler<HTMLAnchorElement>,
 }

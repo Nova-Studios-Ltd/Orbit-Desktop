@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
 
 import type { IYesNoDialogProps } from "types/interfaces/components/propTypes/DialogComponentPropTypes";
+import { GrowTransition } from "types/transitions";
 
 export default class YesNoDialog extends React.Component<IYesNoDialogProps> {
   title: string;
@@ -19,22 +20,20 @@ export default class YesNoDialog extends React.Component<IYesNoDialogProps> {
 
   render() {
     return(
-      <Grow>
-        <Dialog open={this.props.show} closeAfterTransition>
-          <DialogTitle>
-            {this.title}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              {this.body}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button id="denyButton" onClick={this.props.onDeny}>{this.denyButtonText}</Button>
-            <Button id="confirmButton" onClick={this.props.onConfirm}>{this.confirmButtonText}</Button>
-          </DialogActions>
-        </Dialog>
-      </Grow>
+      <Dialog open={this.props.show} TransitionComponent={GrowTransition}>
+        <DialogTitle>
+          {this.title}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {this.body}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button id="denyButton" onClick={this.props.onDeny}>{this.denyButtonText}</Button>
+          <Button id="confirmButton" onClick={this.props.onConfirm}>{this.confirmButtonText}</Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }

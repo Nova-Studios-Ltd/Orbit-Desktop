@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface IElectronRendererWindow {
   ipcRenderer: {
     send: (channel: string, ...data: any[]) => void,

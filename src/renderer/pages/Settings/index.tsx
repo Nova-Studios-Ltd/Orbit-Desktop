@@ -172,8 +172,8 @@ export default class SettingsPage extends React.Component<ISettingsPageProps, IS
           body="Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat."
           confirmButtonText="Delete"
           denyButtonText="Cancel"
-          onDeny={(event: React.MouseEvent<HTMLAnchorElement>) => this.closeUserAccountDeletionDialog()}
-          onConfirm={(event: React.MouseEvent<HTMLAnchorElement>) => this.deleteAccount()}
+          onDeny={() => this.closeUserAccountDeletionDialog()}
+          onConfirm={() => this.deleteAccount()}
           show={this.state.confirmUserAccountDeletionDialogOpen} />
         </div>
       </div>
