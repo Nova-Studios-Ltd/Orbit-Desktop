@@ -1,8 +1,9 @@
-import { Dictionary, DictionaryKeyChange } from "main/dictionary";
-import { RSAMemoryKeyPair } from "main/encryptionClasses";
-import UserData from "structs/UserData";
+import { Dictionary, DictionaryKeyChange } from "shared/dictionary";
+import { RSAMemoryKeyPair } from "shared/encryptionClasses";
 // eslint-disable-next-line import/no-cycle
-import { ipcRenderer } from "./helpers";
+import { ipcRenderer } from "renderer/helpers";
+
+import UserData from "structs/UserData";
 
 export class SyncedUserData {
   UserData: UserData;

@@ -1,9 +1,10 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Debug } from "./debug";
-import UserData from "../structs/UserData";
-import { Dictionary, DictionaryKeyChange, Indexable } from "./dictionary";
+import { Dictionary, DictionaryKeyChange, Indexable } from "../shared/dictionary";
 import { APPNAME, APPVERSION, HOMEPATH, MESSAGECHARACTERLIMIT } from "./staticVariables";
+
+import UserData from "../structs/UserData";
 
 class SettingsManager {
   // Settings, initalised at startup

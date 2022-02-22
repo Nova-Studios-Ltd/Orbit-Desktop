@@ -7,35 +7,8 @@ import YesNoDialog from "renderer/components/Dialogs/YesNoDialog";
 import FormTextField from "renderer/components/Form/FormTextField";
 import { IOpenFileDialogResults } from "types/types";
 
-export interface IChannelProps {
-  table_Id: string,
-  owner_UUID?: string,
-  isGroup: ChannelType,
-  channelName: string,
-  channelIcon?: string,
-  members?: string[],
-  isSelected: boolean,
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>, channelID: string) => void
-}
-
-export interface IChannelUpdateProps {
-  channelID: string,
-  channelName?: string,
-  channelIcon?: boolean,
-  members?: string[],
-}
-
-interface IChannelState {
-  contextMenuAnchorPos: { x: 0, y: 0},
-  contextMenuOpen: boolean,
-  confirmChannelDeletionDialogOpen: boolean,
-  editDialogOpen: boolean,
-  editDialogChannelName: string,
-  editDialogChannelIconPath: string | undefined,
-  editDialogChannelIconPreview: string | undefined,
-  editDialogChannelRecipients: string
-}
-
+import type { IChannelProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
+import type { IChannelState } from "types/interfaces/components/states/ChannelComponentStates";
 
 export default class Channel extends React.Component<IChannelProps, IChannelState> {
   channelName: string;
@@ -284,7 +257,7 @@ export default class Channel extends React.Component<IChannelProps, IChannelStat
           onConfirm={this.removeUserFromThisChannel}
           onDeny={this.closeChannelDeletionDialog}
           show={this.state.confirmChannelDeletionDialogOpen}
-        ></YesNoDialog>
+        />
       </div>
     );
   }

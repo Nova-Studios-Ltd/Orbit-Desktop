@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grow, IconButton, MenuItem, SelectChangeEvent } from "@mui/material";
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from "@mui/icons-material";
 import { Helmet } from "react-helmet";
 
@@ -19,33 +19,12 @@ import FormDropdown from "renderer/components/Form/FormDropdown";
 import FileUploadSummary from "renderer/components/Messages/FileUploadSummary";
 import MessageAttachment from "structs/MessageAttachment";
 
-import { GrowTransition } from "types/transitions";
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from "types/enums";
-import type { IMessageProps } from "renderer/components/Messages/Message";
-import type { IChannelProps, IChannelUpdateProps } from "renderer/components/Channels/Channel";
+import type { IMessageProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { IChannelProps, IChannelUpdateProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
 import type { Dimensions } from "types/types";
-
-interface IChatPageProps {
-  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
-}
-
-interface IChatPageState {
-  Channels: Channel[]
-  ChannelName: string,
-  SelectedChannel: string,
-  IsChannelSelected: boolean,
-  Messages: Message[],
-  AttachmentList: MessageAttachment[],
-  CreateChannelDialogChannelName: string,
-  CreateChannelDialogRecipientsRaw: string,
-  CreateChannelDialogRecipients: {[username: string]: string},
-  CreateChannelDialogVisible: boolean,
-  CreateChannelDialogChannelType: ChannelType,
-  CreateChannelDialogRecipientAvatarSrc: string,
-  ImageViewerOpen: boolean,
-  ImageViewerSrc: string,
-  ImageViewerDimensions: Dimensions
-}
+import type { IChatPageProps } from "types/interfaces/pages/propTypes/ChatPagePropTypes";
+import type { IChatPageState } from "types/interfaces/pages/states/ChatPageStates";
 
 export default class ChatPage extends React.Component<IChatPageProps, IChatPageState> {
   initLoad: boolean;
@@ -526,7 +505,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
           return (
             <div key="CreateChannelDialogTypeGroup">
               <FormTextField key="CreateChannelDialogChannelName" id="CreateChannelDialogChannelName" label="Channel Name" description="The new name for the channel (can be changed later)." required value={this.state.CreateChannelDialogChannelName} onChange={this.handleFormChange} />
-              <FormTextField key="CreateChannelDialogRecipients" id="CreateChannelDialogRecipients" label="Recipients" description="Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321)." required value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
+              <FormTextField key="CreateChannelDialogRecipients" id="CreateChannelDialogRecipients" label="Recipients" description="Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Foo#1234 Bar#4321)." required value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
             </div>
           );
         case ChannelType.Default:
@@ -534,7 +513,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
         default:
           return (
             <div key="CreateChannelDialogTypeSingle" className="CreateChannelDialog_User_Items">
-              <FormTextField key="CreateChannelDialogRecipientsSingle" id="CreateChannelDialogRecipients" label="Recipient" description="The username and discriminator of the person you are trying to add. (e.g Eden#1234)" required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
+              <FormTextField key="CreateChannelDialogRecipientsSingle" id="CreateChannelDialogRecipients" label="Recipient" description="The username and discriminator of the person you are trying to add. (e.g Foo#1234)" required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
               <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className="CreateChannelDialog_User_Avatar"/>
             </div>
           );
@@ -570,19 +549,21 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
           </div>
         </div>
         <ImageViewer src={this.state.ImageViewerSrc} dimensions={this.state.ImageViewerDimensions} open={this.state.ImageViewerOpen} onDismiss={this.closeImageViewer} />
-        <Dialog id="createChannelDialog" open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
-          <DialogTitle>Create a Channel</DialogTitle>
-          <DialogContent>
-            <FormDropdown id="CreateChannelDialogType" value={this.state.CreateChannelDialogChannelType.toString()} onChange={this.handleCreateChannelDialogChannelTypeChange} label="Channel Type" description="Choose between a single user or group conversation.">
-              <MenuItem value={ChannelType.User}>User</MenuItem>
-              <MenuItem value={ChannelType.Group}>Group</MenuItem>
-            </FormDropdown>
-            {CreateChannelDialogElements()}
-          </DialogContent>
-          <DialogActions>
-            <Button id="cancelButton" onClick={this.closeCreateChannelDialog}>Cancel</Button>
-            <Button id="createButton" onClick={this.createChannelButtonClicked}>Create</Button>
-          </DialogActions>
+        <Dialog id="createChannelDialog" open={this.state.CreateChannelDialogVisible} closeAfterTransition>
+          <Grow>
+            <DialogTitle>Create a Channel</DialogTitle>
+            <DialogContent>
+              <FormDropdown id="CreateChannelDialogType" value={this.state.CreateChannelDialogChannelType.toString()} onChange={this.handleCreateChannelDialogChannelTypeChange} label="Channel Type" description="Choose between a single user or group conversation.">
+                <MenuItem value={ChannelType.User}>User</MenuItem>
+                <MenuItem value={ChannelType.Group}>Group</MenuItem>
+              </FormDropdown>
+              {CreateChannelDialogElements()}
+            </DialogContent>
+            <DialogActions>
+              <Button id="cancelButton" onClick={this.closeCreateChannelDialog}>Cancel</Button>
+              <Button id="createButton" onClick={this.createChannelButtonClicked}>Create</Button>
+            </DialogActions>
+          </Grow>
         </Dialog>
       </div>
     );

@@ -1,13 +1,8 @@
 import { Avatar, Typography } from "@mui/material";
 import React from "react";
 
-export interface IFriendProps {
-
-}
-
-export interface IFriendState {
-
-}
+import type { IFriendProps } from "types/interfaces/components/propTypes/FriendComponentPropTypes";
+import type { IFriendState } from "types/interfaces/components/states/FriendComponentStates";
 
 export default class Friend extends React.Component<IFriendProps, IFriendState> {
 

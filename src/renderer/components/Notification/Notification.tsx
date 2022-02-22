@@ -3,15 +3,7 @@ import { toast } from "react-toastify";
 import { ipcRenderer, Manager } from "renderer/helpers";
 import { Typography } from "@mui/material";
 
-export interface INotificationProps {
-  title?: string,
-  body?: string,
-  playSound?: boolean,
-  notificationAssetPath?: string,
-  notificationType?: NotificationStatusType,
-  notificationAudience?: NotificationAudienceType,
-  onClick?: () => void
-}
+import type { INotificationProps } from "types/interfaces/components/propTypes/NotificationComponentPropTypes";
 
 export default class AppNotification {
   readonly title?: string;

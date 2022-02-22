@@ -1,14 +1,11 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import LoginForm from "renderer/pages/Auth/LoginForm";
-import RegisterForm from "renderer/pages/Auth/RegisterForm";
 import { Manager } from "renderer/helpers";
 
-interface IAuthPageProps {
-  login?: boolean,
-  register?: boolean,
-  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
-}
+import LoginForm from "renderer/pages/Auth/LoginForm";
+import RegisterForm from "renderer/pages/Auth/RegisterForm";
+
+import type { IAuthPageProps } from "types/interfaces/pages/propTypes/AuthPagePropTypes";
 
 export default class AuthPage extends React.Component<IAuthPageProps> {
   formType: number;

@@ -1,6 +1,6 @@
 import { publicEncrypt, privateDecrypt, generateKeyPairSync, createCipheriv, randomBytes, createDecipheriv, createHash } from "crypto";
 import { Debug } from "./debug";
-import { AESMemoryEncryptData, RSAMemoryKeyPair } from "./encryptionClasses";
+import { AESMemoryEncryptData, RSAMemoryKeyPair } from "../shared/encryptionClasses";
 
 export function GenerateRSAKeyPair(): RSAMemoryKeyPair {
   const keypair = generateKeyPairSync("rsa", {

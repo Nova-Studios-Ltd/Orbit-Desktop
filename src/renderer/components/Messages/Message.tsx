@@ -1,64 +1,23 @@
-/* eslint-disable import/no-cycle */
+import React, { Ref } from 'react';
 import { Avatar, IconButton, Link, Typography, Menu, MenuItem } from '@mui/material';
 import { Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
-import React, { Ref } from 'react';
 import { MD5 } from 'crypto-js';
 import { copyToClipboard, ipcRenderer, Manager } from 'renderer/helpers';
+
 import AppNotification from 'renderer/components/Notification/Notification';
-import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import FormTextField from 'renderer/components//Form/FormTextField';
 import MessageContent from 'structs/MessageContent';
+import MessageEmbed from 'renderer/components/Messages/subcomponents/MessageEmbed';
+import MessageFile from 'renderer/components/Messages/subcomponents/MessageFile';
+import MessageImage from 'renderer/components/Messages/subcomponents/MessageImage';
+import MessageVideo from 'renderer/components/Messages/subcomponents/MessageVideo';
+
+import { NotificationAudienceType, NotificationStatusType } from 'types/enums';
 import { Dimensions } from 'types/types';
-import { MessageEmbed } from './Components/MessageEmbed';
-import { MessageFile } from './Components/MessageFile';
-import { MessageImage } from './Components/MessageImage';
-import { MessageVideo } from './Components/MessageVideo';
+import type { IAttachmentProps, IMessageProps } from 'types/interfaces/components/propTypes/MessageComponentPropTypes';
+import type { IMessageState } from 'types/interfaces/components/states/MessageComponentStates';
 
-export interface IMessageProps {
-  message_Id: string,
-  author_UUID: string,
-  author: string,
-  content: string,
-  iv: string,
-  encryptedKeys: { [key: string] : string; },
-  timestamp: string,
-  editedTimestamp: string,
-  edited: boolean,
-  avatar: string,
-  attachments: IAttachmentProps[],
-  onUpdate: () => void;
-  onImageClick?: (src: string, dimensions: Dimensions) => void;
-}
-
-interface IMessageState {
-  editedMessage: string,
-  isEditing: boolean,
-  hasNonLinkText: boolean,
-  links: MessageContent[],
-  attachments: MessageContent[],
-  anchorPos: { x: number, y: number},
-  open: boolean
-}
-
-interface IAttachmentProps {
-  contentUrl: string,
-  content: Uint8Array,
-  filename: string,
-  size: number,
-  contentWidth: number,
-  contentHeight: number
-}
-
-export interface IMessageMediaProps {
-  message?: string,
-  src: string,
-  size?: number;
-  dimensions?: Dimensions,
-  onImageClick?: (src: string, dimensions: Dimensions) => void;
-}
-
-export default class Message extends React.Component<IMessageProps> {
-  state: IMessageState;
+export default class Message extends React.Component<IMessageProps, IMessageState> {
   message_Id: string;
   author_UUID: string;
   author: string;
@@ -162,13 +121,13 @@ export default class Message extends React.Component<IMessageProps> {
     for (let a = 0; a < this.attachments.length; a++) {
       const attachment = this.attachments[a];
       if (await this.checkImageHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: "image", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "image/jpeg"})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: "image", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "image/jpeg"})), content: attachment.content, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else if(await this.checkVideoHeader(attachment.contentUrl)) {
-        attachmentContent.push(new MessageContent({type: "video", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "video/mp4"})), filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
+        attachmentContent.push(new MessageContent({type: "video", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content], {type: "video/mp4"})), content: attachment.content, filename: attachment.filename, filesize: attachment.size, dimensions: {width: attachment.contentWidth, height: attachment.contentHeight}}));
       }
       else {
-        attachmentContent.push(new MessageContent({type: "file", id: attachment.contentUrl, url: attachment.contentUrl, filename: attachment.filename, filesize: attachment.size }));
+        attachmentContent.push(new MessageContent({type: "file", id: attachment.contentUrl, url: URL.createObjectURL(new Blob([attachment.content])), content: attachment.content, filename: attachment.filename, filesize: attachment.size }));
       }
     }
 
@@ -331,23 +290,27 @@ export default class Message extends React.Component<IMessageProps> {
     }
 
     this.state.links.forEach(link => {
+      const key = link.id != null ? link.id : MD5((Math.random() * Date.now()).toString()).toString();
+
       if (link.type == "image")
-        messageContentObject.push(<MessageImage key={MD5(link.url)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
+        messageContentObject.push(<MessageImage key={key} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == "video")
-        messageContentObject.push(<MessageVideo key={MD5(link.url)} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageVideo key={key} message={link.url} src={link.url} />);
       else if (link.type == "youtube")
-        messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={key} message={link.url} src={link.url} />);
       else if (link.type == "spotify")
-        messageContentObject.push(<MessageEmbed key={MD5(link.url)} message={link.url} src={link.url} />);
+        messageContentObject.push(<MessageEmbed key={key} message={link.url} src={link.url} />);
     });
 
     this.state.attachments.forEach(link => {
+      const key = link.id != null ? link.id : MD5((Math.random() * Date.now()).toString()).toString();
+
       if (link.type == "image")
-        messageContentObject.push(<MessageImage key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
+        messageContentObject.push(<MessageImage key={key} message={link.url} content={link.content} src={link.url} dimensions={link.dimensions} onImageClick={this.onImageClick} />);
       else if (link.type == "video")
-        messageContentObject.push(<MessageVideo key={MD5(link.id)} message={link.url} src={link.url} dimensions={link.dimensions} />);
+        messageContentObject.push(<MessageVideo key={key} message={link.url} content={link.content} src={link.url} dimensions={link.dimensions} />);
       else if (link.type == "file")
-        messageContentObject.push(<MessageFile key={MD5(link.id)} message={link.filename} size={link.filesize} src={link.url} />);
+        messageContentObject.push(<MessageFile key={key} message={link.filename} content={link.content} size={link.filesize} src={link.url} />);
     });
 
     return (

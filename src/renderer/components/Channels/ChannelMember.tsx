@@ -1,11 +1,7 @@
 import { Avatar, ButtonBase, Typography } from "@mui/material";
 import React from "react";
 
-export interface IChannelMemberProps {
-  userID: string;
-  username: string;
-  avatar: string;
-}
+import type { IChannelMemberProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
 
 export default class ChannelMember extends React.Component<IChannelMemberProps> {
   render() {
