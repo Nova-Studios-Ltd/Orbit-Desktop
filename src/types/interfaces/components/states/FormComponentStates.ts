@@ -1,7 +1,7 @@
 import type FormStatusTuple from "structs/FormStatusTypes";
 
 export interface IChipTextFieldState {
-  selectedItem: JSX.Element | undefined
+
 }
 
 export interface ILoginFormState {

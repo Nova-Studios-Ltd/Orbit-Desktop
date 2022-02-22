@@ -45,15 +45,6 @@ export default class ChipTextField extends React.Component<IChipTextFieldProps, 
         variant="outlined"
         autoFocus={this.autoFocus}
         onChange={this.onChange}
-        inputProps={{
-          startAdornment: () => {
-            if (this.state.selectedItem != null) {
-              this.state.selectedItem.map(item => {
-                <Chip />
-              });
-            }
-          }
-        }}
       />
     );
   }
