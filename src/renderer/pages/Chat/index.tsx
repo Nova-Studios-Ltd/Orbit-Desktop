@@ -19,6 +19,7 @@ import FormDropdown from "renderer/components/Form/FormDropdown";
 import FileUploadSummary from "renderer/components/Messages/FileUploadSummary";
 import MessageAttachment from "structs/MessageAttachment";
 
+import { GrowTransition } from "types/transitions";
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from "types/enums";
 import type { IMessageProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
 import type { IChannelProps, IChannelUpdateProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
@@ -549,21 +550,19 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
           </div>
         </div>
         <ImageViewer src={this.state.ImageViewerSrc} dimensions={this.state.ImageViewerDimensions} open={this.state.ImageViewerOpen} onDismiss={this.closeImageViewer} />
-        <Dialog id="createChannelDialog" open={this.state.CreateChannelDialogVisible} closeAfterTransition>
-          <Grow>
-            <DialogTitle>Create a Channel</DialogTitle>
-            <DialogContent>
-              <FormDropdown id="CreateChannelDialogType" value={this.state.CreateChannelDialogChannelType.toString()} onChange={this.handleCreateChannelDialogChannelTypeChange} label="Channel Type" description="Choose between a single user or group conversation.">
-                <MenuItem value={ChannelType.User}>User</MenuItem>
-                <MenuItem value={ChannelType.Group}>Group</MenuItem>
-              </FormDropdown>
-              {CreateChannelDialogElements()}
-            </DialogContent>
-            <DialogActions>
-              <Button id="cancelButton" onClick={this.closeCreateChannelDialog}>Cancel</Button>
-              <Button id="createButton" onClick={this.createChannelButtonClicked}>Create</Button>
-            </DialogActions>
-          </Grow>
+        <Dialog id="createChannelDialog" open={this.state.CreateChannelDialogVisible} TransitionComponent={GrowTransition}>
+          <DialogTitle>Create a Channel</DialogTitle>
+          <DialogContent>
+            <FormDropdown id="CreateChannelDialogType" value={this.state.CreateChannelDialogChannelType.toString()} onChange={this.handleCreateChannelDialogChannelTypeChange} label="Channel Type" description="Choose between a single user or group conversation.">
+              <MenuItem value={ChannelType.User}>User</MenuItem>
+              <MenuItem value={ChannelType.Group}>Group</MenuItem>
+            </FormDropdown>
+            {CreateChannelDialogElements()}
+          </DialogContent>
+          <DialogActions>
+            <Button id="cancelButton" onClick={this.closeCreateChannelDialog}>Cancel</Button>
+            <Button id="createButton" onClick={this.createChannelButtonClicked}>Create</Button>
+          </DialogActions>
         </Dialog>
       </div>
     );

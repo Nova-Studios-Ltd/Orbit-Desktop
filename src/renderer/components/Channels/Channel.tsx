@@ -255,8 +255,8 @@ export default class Channel extends React.Component<IChannelProps, IChannelStat
           body={LeaveChannelPromptText}
           confirmButtonText={LeaveChannelButtonText}
           denyButtonText="Cancel"
-          onConfirm={() => this.removeUserFromThisChannel}
-          onDeny={() => this.closeChannelDeletionDialog}
+          onConfirm={() => this.removeUserFromThisChannel()}
+          onDeny={() => this.closeChannelDeletionDialog()}
         />
       </div>
     );
