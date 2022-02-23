@@ -10,7 +10,7 @@ import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
-import IUser, { UserIDNameTuple } from "types/types";
+import { IUser, UserIDNameTuple } from "types/types";
 import { Manager } from "./settingsManager";
 import { Dictionary, Indexable } from "./dictionary";
 import { ContentType, FriendState } from "../types/enums";
