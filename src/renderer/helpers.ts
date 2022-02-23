@@ -1,12 +1,16 @@
 import { createBrowserHistory } from "history";
-import Credentials from "structs/Credentials";
 import { UIEvents } from "renderer/UIEvents";
 import { DebugLogger } from "renderer/debugRenderer";
-import { IElectronRendererWindow } from "types/types";
-import IUser from "types/types";
-import { SettingsManager } from "./settingsManagerRenderer";
-import { Dictionary } from "main/dictionary";
-import { RSAMemoryKeyPair } from "main/encryptionClasses";
+import { Dictionary } from "shared/dictionary";
+import { RSAMemoryKeyPair } from "shared/encryptionClasses";
+// eslint-disable-next-line import/no-cycle
+import { SettingsManager } from "renderer/settingsManagerRenderer";
+
+import Credentials from "structs/Credentials";
+
+import type { IElectronRendererWindow } from "types/interfaces/ElectronRendererTypes";
+import { IUser } from "types/interfaces/UserDataTypes";
+
 
 export const history = createBrowserHistory();
 export const {ipcRenderer}: IElectronRendererWindow = window.electron;

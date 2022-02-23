@@ -1,25 +1,30 @@
 import { Icon, Typography, IconButton } from "@mui/material";
 import React from "react";
-import {Download as DownloadIcon, InsertDriveFile as FileIcon } from '@mui/icons-material';
-// eslint-disable-next-line import/no-cycle
-import { IMessageMediaProps } from "../Message";
+import { Download as DownloadIcon, InsertDriveFile as FileIcon } from '@mui/icons-material';
+import { Debug, ipcRenderer } from "renderer/helpers";
 
-export class MessageFile extends React.Component<IMessageMediaProps> {
+import type { IMessageMediaProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+
+export default class MessageFile extends React.Component<IMessageMediaProps> {
   filename?: string;
   filesize?: number;
+  content?: Uint8Array;
   url: string;
 
   constructor(props: IMessageMediaProps) {
     super(props);
     this.filename = props.message;
     this.filesize = props.size;
+    this.content = props.content;
     this.url = props.src;
 
     this.download = this.download.bind(this);
   }
 
   download() {
-    window.open(this.url);
+    if (this.content != null) {
+      ipcRenderer.invoke("WriteDataToDisk", this.content).catch(() => Debug.Log(`Unable to download file ${this.filename}`, "content was undefined"));
+    }
   }
 
   render() {

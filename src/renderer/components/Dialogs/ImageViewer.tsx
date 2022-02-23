@@ -1,13 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import type { Dimensions } from "types/types";
 
-interface IImageViewerProps {
-  src: string,
-  dimensions: Dimensions,
-  open: boolean,
-  onDismiss: () => void
-}
+import type { IImageViewerProps } from "types/interfaces/components/propTypes/DialogComponentPropTypes";
 
 export default class ImageViewer extends React.Component<IImageViewerProps> {
   render() {

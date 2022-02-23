@@ -3,21 +3,16 @@ import { People as PeopleIcon } from "@mui/icons-material";
 import React from "react";
 import { Debug, ipcRenderer } from "renderer/helpers";
 import { UserIDNameTuple } from "types/types";
+import { Alignment, ChannelType } from "types/enums";
+
+import type { IChannelMemberListProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
+
 import Header from "renderer/components/Header/Header";
 import Channel from "./Channel";
 import ChannelMember from "./ChannelMember";
 
-import { Alignment, ChannelType } from "types/enums";
 
-export interface IChannelMemberListProps {
-  channel: Channel | undefined;
-}
-
-export interface IChannelMemberListState {
-
-}
-
-export default class ChannelMemberList extends React.Component<IChannelMemberListProps, IChannelMemberListState> {
+export default class ChannelMemberList extends React.Component<IChannelMemberListProps> {
   users: UserIDNameTuple[] = [];
 
   componentDidUpdate(prevProps: IChannelMemberListProps) {

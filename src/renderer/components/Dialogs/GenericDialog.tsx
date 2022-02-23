@@ -1,11 +1,7 @@
 import React from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
-interface IGenericDialogProps {
-  title: string,
-  children: JSX.Element | JSX.Element[],
-  actions: JSX.Element | JSX.Element[]
-}
+import type { IGenericDialogProps } from "types/interfaces/components/propTypes/DialogComponentPropTypes";
 
 export default class GenericDialog extends React.Component<IGenericDialogProps> {
   title: string;

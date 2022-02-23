@@ -3,15 +3,7 @@ import { toast } from "react-toastify";
 import { ipcRenderer, Manager } from "renderer/helpers";
 import { Typography } from "@mui/material";
 
-export interface INotificationProps {
-  title?: string,
-  body?: string,
-  playSound?: boolean,
-  notificationAssetPath?: string,
-  notificationType?: NotificationStatusType,
-  notificationAudience?: NotificationAudienceType,
-  onClick?: () => void
-}
+import type { INotificationProps } from "types/interfaces/components/propTypes/NotificationComponentPropTypes";
 
 export default class AppNotification {
   readonly title?: string;
@@ -36,7 +28,8 @@ export default class AppNotification {
     let toastElement = null;
     if (this.title != null && this.title.length > 0) {
       toastElement = (
-        <div className="Notification_Container" onClick={this.onClick}>
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
+        <div role="alert" className="Notification_Container" onClick={this.onClick}>
           <Typography className="Notification_Title" variant="subtitle1">{this.title}</Typography>
           <Typography className="Notification_Body" variant="caption">{this.body}</Typography>
         </div>

@@ -11,21 +11,10 @@ import FormTextField from "renderer/components/Form/FormTextField";
 import SettingsSection from "renderer/components/Settings/SettingsSection";
 import AppNotification from "renderer/components/Notification/Notification";
 
+import type { ISettingsPageProps } from "types/interfaces/pages/propTypes/SettingsPagePropTypes";
+import type { ISettingsPageState } from "types/interfaces/pages/states/SettingsPageStates";
 import { NotificationAudienceType, NotificationStatusType, Theme } from "types/enums";
-import type { IOpenFileDialogResults } from "types/types";
-
-interface ISettingsPageProps {
-  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
-}
-
-interface ISettingsPageState {
-  avatarStateKey: string,
-  usernameStateKey: string,
-  darkThemeEnabled: boolean,
-  confirmUserAccountDeletionDialogOpen: boolean,
-  editUsernameDialogOpen: boolean,
-  editUsernameDialogField: string
-}
+import type { IOpenFileDialogResults } from "types/interfaces/MiscTypes";
 
 export default class SettingsPage extends React.Component<ISettingsPageProps, ISettingsPageState> {
 
@@ -183,8 +172,8 @@ export default class SettingsPage extends React.Component<ISettingsPageProps, IS
           body="Your account will be immediately erased from our system and you will have to create a new account to be able to use our service. Your message history will be lost. However, messages you have already sent will stay until the respective channel(s) are deleted. Thank you for using Nova Chat."
           confirmButtonText="Delete"
           denyButtonText="Cancel"
-          onDeny={this.closeUserAccountDeletionDialog}
-          onConfirm={this.deleteAccount}
+          onDeny={() => this.closeUserAccountDeletionDialog()}
+          onConfirm={() => this.deleteAccount()}
           show={this.state.confirmUserAccountDeletionDialogOpen} />
         </div>
       </div>

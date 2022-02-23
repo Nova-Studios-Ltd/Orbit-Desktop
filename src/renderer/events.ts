@@ -1,7 +1,7 @@
 import { ipcRenderer, Navigate, RemoveCachedCredentials, Debug, Manager, FetchUserData } from "renderer/helpers";
 import AppNotification from "renderer/components/Notification/Notification";
 import { NotificationAudienceType, NotificationStatusType } from "types/enums";
-import { Dictionary } from "main/dictionary";
+import { Dictionary } from "shared/dictionary";
 
 ipcRenderer.on("endAuth", async (privKey: string, pubKey: string, uuid: string, token: string) => {
 

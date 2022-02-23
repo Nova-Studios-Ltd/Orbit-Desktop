@@ -1,6 +1,6 @@
 import type { IUserData } from "types/types";
-import { Dictionary } from "../main/dictionary";
-import { RSAMemoryKeyPair } from "../main/encryptionClasses";
+import { Dictionary } from "../shared/dictionary";
+import { RSAMemoryKeyPair } from "../shared/encryptionClasses";
 
 export default class UserData {
   username: string;

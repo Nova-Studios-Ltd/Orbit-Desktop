@@ -1,19 +1,14 @@
 import React from "react";
 import { Button, Typography } from "@mui/material";
 import { List as ListIcon } from "@mui/icons-material";
-import Header from "renderer/components/Header/Header";
 import { Helmet } from "react-helmet";
 import { Manager } from "renderer/helpers";
 
+import Header from "renderer/components/Header/Header";
 import Friend from "renderer/components/Friends/Friend";
 
-interface IFriendsPageProps {
-  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
-}
-
-interface IFriendsPageState {
-
-}
+import type { IFriendsPageProps } from "types/interfaces/pages/propTypes/FriendPagePropTypes";
+import type { IFriendsPageState } from "types/interfaces/pages/states/FriendsPageStates";
 
 export default class FriendsPage extends React.Component<IFriendsPageProps, IFriendsPageState> {
 

@@ -1,11 +1,7 @@
 import { Typography } from "@mui/material";
-import React, { ReactNode } from "react";
+import React from "react";
 
-interface ISettingsSectionProps {
-  title?: string,
-  className?: string,
-  children?: JSX.Element | ReactNode
-}
+import type { ISettingsSectionProps } from "types/interfaces/components/propTypes/SettingsComponentPropTypes";
 
 export default class SettingsSection extends React.Component<ISettingsSectionProps> {
   title: string;

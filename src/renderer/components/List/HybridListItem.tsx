@@ -1,26 +1,7 @@
 import React from "react";
 import { Divider, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 
-export interface IHybridListItemProps {
-  className?: string,
-  id?: string,
-  text?: string,
-  icon?: JSX.Element,
-  selected?: boolean,
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
-  onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
-}
-
-export interface IHybridListItemSkeleton {
-  className?: string,
-  id?: string,
-  text?: string,
-  icon?: JSX.Element,
-  selectable?: boolean,
-  isDivider?: boolean,
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
-  onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void
-}
+import type { IHybridListItemProps } from "types/interfaces/components/propTypes/ListComponentPropTypes";
 
 export default class HybridListItem extends React.Component<IHybridListItemProps> {
   className?: string;

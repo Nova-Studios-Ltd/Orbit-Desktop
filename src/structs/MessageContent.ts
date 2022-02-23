@@ -4,6 +4,7 @@ import type { Dimensions } from "types/types";
 interface IMessageContent {
   type: string,
   url: string,
+  content?: Uint8Array
   filename?: string,
   filesize?: number,
   dimensions?: Dimensions,
@@ -13,6 +14,7 @@ interface IMessageContent {
 export default class MessageContent extends React.Component {
   type: string;
   url: string;
+  content?: Uint8Array
   filename?: string;
   filesize?: number;
   dimensions?: Dimensions;
@@ -22,6 +24,7 @@ export default class MessageContent extends React.Component {
     super(props);
     this.type = props.type;
     this.url = props.url;
+    this.content = props.content;
     this.filename = props.filename;
     this.filesize = props.filesize;
     this.dimensions = props.dimensions;

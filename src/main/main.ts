@@ -11,11 +11,11 @@ import { Debug } from "./debug";
 import { getAssetPath, isDevelopment, resolveHtmlPath } from "./util";
 import { Manager, CreateManager } from "./settingsManager";
 import { defaultSettings } from "./settingsDefaults";
+import { APPNAME, APPVERSION } from "./staticVariables";
 
 import "./events";
 import "./apiEvents";
 import "./debugEvents";
-import { APPNAME, APPVERSION } from "./staticVariables";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;

@@ -1,22 +1,21 @@
-/* eslint-disable no-restricted-imports */
-import type { IChannelProps } from "renderer/components/Channels/Channel";
-// eslint-disable-next-line no-restricted-imports
-import type { IMessageProps } from "renderer/components/Messages/Message";
-import type { UserQueryResponse } from "types/NCAPIResponseMutations";
-
 import { ipcMain } from "electron";
 import MessageAttachment from "structs/MessageAttachment";
 import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
-import { IUser, UserIDNameTuple } from "types/types";
+
+import { IUser, UserIDNameTuple } from "types/interfaces/UserDataTypes";
+import type { IChannelProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
+import type { IMessageProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { UserQueryResponse } from "types/interfaces/NCAPIResponseMutations";
+
+import { AESMemoryEncryptData } from "../shared/encryptionClasses";
 import { Manager } from "./settingsManager";
-import { Dictionary, Indexable } from "./dictionary";
+import { Dictionary, Indexable } from "../shared/dictionary";
 import { ContentType, FriendState } from "../types/enums";
 import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication, NCAPIResponse } from "./NCAPI";
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from "./encryptionUtils";
-import { AESMemoryEncryptData } from "./encryptionClasses";
 
 // User
 ipcMain.handle("GETUser", async (_event, user_uuid: string) => {

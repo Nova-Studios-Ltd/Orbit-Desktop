@@ -2,17 +2,11 @@ import { Tab, Tabs, Typography } from "@mui/material";
 import React from "react";
 import { MD5 } from "crypto-js";
 import { ChannelType } from "types/enums";
+
+import type { IChannelViewProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
+import type { IChannelViewState } from "types/interfaces/components/states/ChannelComponentStates";
+
 import Channel from "./Channel";
-
-interface IChannelViewProps {
-  channels: Channel[],
-  selectedChannel?: string,
-  onChannelClicked?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, channelID: string) => void
-}
-
-interface IChannelViewState {
-  selectedTab: number
-}
 
 export default class ChannelView extends React.Component<IChannelViewProps, IChannelViewState> {
 
