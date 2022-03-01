@@ -3,7 +3,10 @@ import { app } from "electron";
 import path from "path";
 import { URL } from "url";
 
+const os = require("os");
+
 export const isDevelopment = process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true";
+export const homeDir = os.homedir();
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (isDevelopment) {

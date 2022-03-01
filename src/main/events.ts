@@ -11,6 +11,7 @@ import { Dictionary } from "../shared/dictionary";
 import { Debug } from "./debug";
 import { PostWithoutAuthentication } from "./NCAPI";
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from "./encryptionUtils";
+import { homeDir } from "./util";
 
 ipcMain.handle("beginAuth", async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const a = await PostWithoutAuthentication("Login", ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
@@ -184,6 +185,17 @@ ipcMain.handle("SHA256HASH", async (_event, data: string) => {
   return hash;
 })
 
-ipcMain.handle("WriteDataToDisk", async (_event, data: Uint8Array) => {
-  Debug.Log(`Pseudodownloading file with content size ${data.length}`);
+ipcMain.handle("WriteDataToDisk", async (_event, data: Uint8Array, filename?: string) => {
+  Debug.Log(`User requested to write file "${filename}" with content size ${data.length} to disk`);
+
+  const result = await dialog.showSaveDialog({ properties: ["createDirectory", "showOverwriteConfirmation"], defaultPath: `${homeDir}/${filename != null ? filename : ""}`});
+  if (result != null && result.filePath) {
+    writeFileSync(result.filePath, Buffer.from(data));
+    Debug.Success(`Successfully wrote file "${filename}" with content size ${data.length} to disk`);
+    return true;
+  }
+
+  Debug.Error(`Unable to write file "${filename}" with content size ${data.length} to disk`, "user cancelled operation");
+
+  return false;
 });
