@@ -3,8 +3,9 @@ import React from "react";
 import { Download as DownloadIcon, InsertDriveFile as FileIcon } from '@mui/icons-material';
 import { Debug, ipcRenderer } from "renderer/helpers";
 
-import type { IMessageMediaProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
 import AppNotification from "renderer/components/Notification/Notification";
+
+import type { IMessageMediaProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
 import { NotificationAudienceType, NotificationStatusType } from "types/enums";
 
 export default class MessageFile extends React.Component<IMessageMediaProps> {
@@ -29,9 +30,12 @@ export default class MessageFile extends React.Component<IMessageMediaProps> {
         if (result) {
           new AppNotification({ title: "File Saved", body: `Successfully saved "${this.filename}" to file`, notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
         } else {
-          new AppNotification({ title: "Unable to Save File", body: `Failed to save "${this.filename}" to file`, notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+          new AppNotification({ title: "Unable to Save File", body: "Disk write operation failed", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
         }
       });
+    }
+    else {
+      new AppNotification({ title: "Unable to Save File", body: "File content was undefined (that probably isn't supposed to happen)", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
     }
   }
 

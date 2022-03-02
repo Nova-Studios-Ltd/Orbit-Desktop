@@ -1,10 +1,11 @@
 /*@import "Channels/styles.css";*/
 /*@import "Messages/styles.css";*/
 @import "Channels/styles.css";
+@import "Dialogs/styles.css";
 @import "Form/styles.css";
+@import "Friends/styles.css";
 @import "Header/styles.css";
+@import "List/styles.css";
 @import "Messages/styles.css";
 @import "Notification/styles.css";
-@import "Dialogs/styles.css";
 @import "Settings/styles.css";
-@import "Friends/styles.css";

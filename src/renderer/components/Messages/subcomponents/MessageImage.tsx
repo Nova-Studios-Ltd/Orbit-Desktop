@@ -1,11 +1,16 @@
 import { Typography, Card, CardMedia } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Dimensions } from "types/types";
+import { Debug, ipcRenderer } from "renderer/helpers";
 
+import AppNotification from "renderer/components/Notification/Notification";
+
+import { NotificationAudienceType, NotificationStatusType } from "types/enums";
+import { Dimensions } from "types/types";
 import type { IMessageMediaProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
 
 export default class MessageImage extends React.Component<IMessageMediaProps> {
+  content?: Uint8Array;
   message?: string;
   imageSrc: string;
   dimensions: Dimensions;
@@ -15,6 +20,7 @@ export default class MessageImage extends React.Component<IMessageMediaProps> {
   constructor(props: IMessageMediaProps) {
     super(props);
     this.message = props.message;
+    this.content = props.content;
     this.imageSrc = props.src;
     this.dimensions = props.dimensions || {width: 0, height: 0};
     this.desiredDimensions = {
@@ -44,11 +50,26 @@ export default class MessageImage extends React.Component<IMessageMediaProps> {
     }
 
     this.onImageClick = this.onImageClick.bind(this);
+    this.download = this.download.bind(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onImageClick(_event: never) {
     if (this.props != null && this.props.onImageClick != null) this.props.onImageClick(this.imageSrc, this.dimensions);
+  }
+
+  download() {
+    if (this.content != null) {
+      ipcRenderer.invoke("WriteDataToDisk", this.content, this.imageSrc).catch(() => Debug.Log(`Unable to save image "${this.imageSrc}"`, "content was undefined")).then((result: boolean) => {
+        if (result) {
+          new AppNotification({ title: "Image Saved", notificationType: NotificationStatusType.success, notificationAudience: NotificationAudienceType.app }).show();
+        } else {
+          new AppNotification({ title: "Unable to Save Image", body: "Disk write operation failed", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+        }
+      });
+    } else {
+      new AppNotification({ title: "Unable to Save Image", body: "Image content was empty (was it a URL?)", notificationType: NotificationStatusType.error, notificationAudience: NotificationAudienceType.app }).show();
+    }
   }
 
   render() {
