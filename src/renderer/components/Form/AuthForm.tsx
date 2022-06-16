@@ -1,15 +1,10 @@
 import React, { FormEventHandler } from "react";
 import FormStatusTuple from "structs/FormStatusTypes";
+
+import type { IAuthFormProps } from "types/interfaces/components/propTypes/FormComponentPropTypes";
+
 import FormStatusField from "./FormStatusField";
 import FormHeader from "./FormHeader";
-
-interface IAuthFormProps {
-  headerHeading?: string,
-  headerBody?: string,
-  status?: FormStatusTuple,
-  onSubmit?: FormEventHandler<HTMLFormElement>,
-  children?: JSX.Element | JSX.Element[]
-}
 
 export default class AuthForm extends React.Component<IAuthFormProps> {
   headerHeading?: string;

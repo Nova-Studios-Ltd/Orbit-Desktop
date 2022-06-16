@@ -1,7 +1,10 @@
 import { ipcMain } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { Debug } from "./debug";
+import { Dictionary, DictionaryKeyChange, Indexable } from "../shared/dictionary";
+import { APPNAME, APPVERSION, HOMEPATH, MESSAGECHARACTERLIMIT } from "./staticVariables";
+
 import UserData from "../structs/UserData";
-import { Dictionary, DictionaryKeyChange, Indexable } from "./dictionary";
 
 class SettingsManager {
   // Settings, initalised at startup
@@ -17,10 +20,10 @@ class SettingsManager {
   _UserData: UserData = new UserData();
 
   // App Constants
-  readonly AppName: string = "Orbit";
-  readonly AppVersion: string = "Alpha";
-  readonly HomePath: string = "/login";
-  readonly MessageCharacterLimit: number = 4000;
+  readonly AppName: string = APPNAME;
+  readonly AppVersion: string = APPVERSION;
+  readonly HomePath: string = HOMEPATH;
+  readonly MessageCharacterLimit = MESSAGECHARACTERLIMIT;
 
   // Other crap
   private readonly WebContents: Electron.WebContents;
@@ -84,13 +87,18 @@ class SettingsManager {
 
   // Event
   private SettingsUpdate(key: string, value: number | string | boolean | Dictionary<number | string | boolean>, state: DictionaryKeyChange) {
-    if (this.MainSettingsEvents.containsKey(key)) {
-      this.MainSettingsEvents.getValue(key)(key, value, state);
+    if (this.MainSettingsEvents != null) {
+      if (this.MainSettingsEvents.containsKey(key)) {
+        this.MainSettingsEvents.getValue(key)(key, value, state);
+      }
+      if (this.RenderSettingsEvents.containsKey(key)) {
+        this.RenderSettingsEvents.getValue(key)(key, value, state);
+      }
+      this.WebContents.send("SettingsUpdated");
     }
-    if (this.RenderSettingsEvents.containsKey(key)) {
-      this.RenderSettingsEvents.getValue(key)(key, value, state);
+    else {
+      Debug.Error("MainSettingsEvents dictionary was undefined", "during SettingsUpdate event");
     }
-    this.WebContents.send("SettingsUpdated");
   }
 
   private IPCOnSettingChanged(key: string) {

@@ -1,21 +1,8 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { Chip, TextField } from "@mui/material";
 
-interface IChipTextFieldProps {
-  id: string,
-  label: string,
-  value?: string,
-  classNames?: string,
-  description?: string,
-  autoFocus?: boolean,
-  required?: boolean,
-  sensitive?: boolean,
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
-
-interface IChipTextFieldState {
-  selectedItem: JSX.Element | undefined
-}
+import type { IChipTextFieldProps } from "types/interfaces/components/propTypes/FormComponentPropTypes"
+import type { IChipTextFieldState } from "types/interfaces/components/states/FormComponentStates";
 
 export default class ChipTextField extends React.Component<IChipTextFieldProps, IChipTextFieldState> {
   id: string;
@@ -58,15 +45,6 @@ export default class ChipTextField extends React.Component<IChipTextFieldProps, 
         variant="outlined"
         autoFocus={this.autoFocus}
         onChange={this.onChange}
-        inputProps={{
-          startAdornment: () => {
-            if (this.state.selectedItem != null) {
-              this.state.selectedItem.map(item => {
-                <Chip />
-              });
-            }
-          }
-        }}
       />
     );
   }

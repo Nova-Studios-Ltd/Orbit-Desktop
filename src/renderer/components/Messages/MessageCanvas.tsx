@@ -1,19 +1,10 @@
 import { Typography } from "@mui/material";
 import React, { RefObject, UIEvent } from "react";
 import Message from "renderer/components/Messages/Message";
-import type { IMessageProps } from "renderer/components/Messages/Message";
 import type { Dimensions } from "types/types";
 
-interface IMessageCanvasProps {
-  messages: Message[],
-  isChannelSelected: boolean,
-  onImageClick?: (src: string, dimensions: Dimensions) => void,
-  onCanvasScroll?: (yIndex: number, oldestMessageID: string) => void
-}
-
-interface IMessageCanvasState {
-
-}
+import type { IMessageCanvasProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { IMessageCanvasState } from "types/interfaces/components/states/MessageComponentStates";
 
 export default class MessageCanvas extends React.Component<IMessageCanvasProps, IMessageCanvasState> {
   bottomDivRef?: RefObject<HTMLDivElement>;

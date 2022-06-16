@@ -5,6 +5,10 @@
 @import "components/styles.css";
 @import "~react-toastify/dist/ReactToastify.min.css";
 
+.Page {
+  overflow-y: auto;
+}
+
 .NavigationDrawer, .NavigationDrawerListTop, .NavigationDrawerListBottom {
   width: 15rem;
   display: flex;

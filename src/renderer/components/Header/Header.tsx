@@ -1,16 +1,14 @@
 import React from "react";
 import { Icon, IconButton, Typography } from "@mui/material";
 
-interface IHeaderProps {
-  caption?: string,
-  icon?: JSX.Element,
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void,
-  children?: JSX.Element | JSX.Element[]
-}
+import type { IHeaderProps } from "types/interfaces/components/propTypes/HeaderComponentPropTypes";
 
 export default class Header extends React.Component<IHeaderProps> {
 
   render() {
+
+    const classNames = `Header ${this.props.className}`;
+
     const IconElement = () => {
       if (this.props.icon != null) {
         if (this.props.onClick != null) {
@@ -27,13 +25,13 @@ export default class Header extends React.Component<IHeaderProps> {
       return null;
     }
 
-    return(
-      <div className="Header">
-          <IconElement />
-          <Typography variant="h5" className="Header_Caption">{this.props.caption}</Typography>
-          <div className="Header_Misc">
-            {this.props.children}
-          </div>
+    return (
+      <div className={classNames} style={this.props.style}>
+        <IconElement />
+        <Typography variant="h5" className="Header_Caption">{this.props.caption}</Typography>
+        <div className="Header_Misc">
+          {this.props.children}
+        </div>
       </div>
     );
   }

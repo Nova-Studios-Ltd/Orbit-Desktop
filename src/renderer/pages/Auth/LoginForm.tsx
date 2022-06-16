@@ -2,20 +2,17 @@ import React, { ChangeEvent } from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from "@mui/material/";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import { Authenticate, Navigate, ipcRenderer, Manager } from "renderer/helpers";
-import Credentials from "structs/Credentials";
+
 import AuthForm from "renderer/components/Form/AuthForm";
 import FormTextField from "renderer/components/Form/FormTextField";
+
+import Credentials from "structs/Credentials";
 import FormStatusTuple from "structs/FormStatusTypes";
 import { FormAuthStatusType, FormStatusType } from "types/enums";
 
-interface ILoginFormState {
-  email: string,
-  password: string,
-  address: string,
-  status: FormStatusTuple
-}
+import type { ILoginFormState } from "types/interfaces/components/states/FormComponentStates";
 
-class LoginForm extends React.Component<never, ILoginFormState> {
+class LoginForm extends React.Component<Record<string, never>, ILoginFormState> {
 
   constructor(props: never) {
     super(props);

@@ -1,19 +1,21 @@
-/* eslint-disable no-restricted-imports */
 import { ipcMain } from "electron";
-import type { IChannelProps } from "renderer/components/Channels/Channel";
-import type { IMessageProps } from "renderer/components/Messages/Message";
 import MessageAttachment from "structs/MessageAttachment";
 import sizeOf from "image-size";
 import { PassThrough } from "stream";
 import { createDecipheriv } from "crypto";
 import { readFileSync } from "fs";
-import IUser from "structs/IUser";
+
+import { IUser, UserIDNameTuple } from "types/interfaces/UserDataTypes";
+import type { IChannelProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
+import type { IMessageProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { UserQueryResponse } from "types/interfaces/NCAPIResponseMutations";
+
+import { AESMemoryEncryptData } from "../shared/encryptionClasses";
 import { Manager } from "./settingsManager";
-import { Dictionary, Indexable } from "./dictionary";
+import { Dictionary, Indexable } from "../shared/dictionary";
 import { ContentType, FriendState } from "../types/enums";
-import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication } from "./NCAPI";
+import { DeleteWithAuthentication, PostWithAuthentication, QueryWithAuthentication, PutWithAuthentication, PostFileWithAuthenticationAndEncryption, PostBufferWithAuthenticationAndEncryption, PatchWithAuthentication, PostFileWithAuthentication, GETWithAuthentication, NCAPIResponse } from "./NCAPI";
 import { DecryptUsingAES, DecryptUsingPrivKey, DecryptUsingPrivKeyAsync, EncryptUsingAES, EncryptUsingAESAsync, EncryptUsingPubKey, GenerateKey } from "./encryptionUtils";
-import { AESMemoryEncryptData } from "./encryptionClasses";
 
 // User
 ipcMain.handle("GETUser", async (_event, user_uuid: string) => {
@@ -115,7 +117,7 @@ ipcMain.handle("GETMessage", async (_event, channel_uuid: string, message_id: st
   if (resp.status == 200 && resp.payload != undefined) {
     const userData = Manager._UserData;
     const rawMessage = <IMessageProps>resp.payload;
-    const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, rawMessage.encryptedKeys[userData.uuid]);
+    const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, rawMessage.encryptedKeys[userData.uuid], message_id);
     const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(rawMessage.iv, rawMessage.content));
     rawMessage.content = decryptedMessage;
     for (let a = 0; a < rawMessage.attachments.length; a++) {
@@ -148,7 +150,7 @@ ipcMain.on("GETMessagesWithArgs", async (event, channel_uuid: string, limit = 30
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
       const message = rawMessages[m];
-      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid]);
+      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid], message.message_Id);
       if (message.content.length != 0) {
         const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
         message.content = decryptedMessage;
@@ -184,7 +186,7 @@ ipcMain.on("GETMessages", async (event, channel_uuid: string) => {
     const decryptedMessages = [] as IMessageProps[];
     for (let m = 0; m < rawMessages.length; m++) {
       const message = rawMessages[m];
-      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid]);
+      const key = DecryptUsingPrivKey(userData.keyPair.PrivateKey, message.encryptedKeys[userData.uuid], message.message_Id);
       if (key.length > 0) {
         if (message.content.length > 0) {
           const decryptedMessage = DecryptUsingAES(key, new AESMemoryEncryptData(message.iv, message.content));
@@ -379,4 +381,16 @@ ipcMain.handle("POSTChannelContent", async (_event, channel_uuid: string, file: 
   const resp = await PostFileWithAuthentication(`/Media/Channel/${channel_uuid}`, file);
   if (resp.status == 200 && resp.payload != undefined) return resp.payload;
   return undefined;
+});
+
+ipcMain.handle("GETUserDataFromID", async (_event, user_ids: string[]) => {
+  const user_dict: UserIDNameTuple[] = [];
+  if (user_ids != null && user_ids.length > 0) {
+    for (let i = 0; i < user_ids.length; i++) {
+      const user_uuid = user_ids[i];
+      const resp: UserQueryResponse = await QueryWithAuthentication(`/User/${user_uuid}`);
+      if (resp.status == 200 && resp.payload != undefined) user_dict.push({ userID: user_uuid, username: resp.payload.username, avatar: resp.payload.avatar });
+    }
+  }
+  return user_dict;
 });

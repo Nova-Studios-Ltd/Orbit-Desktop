@@ -1,15 +1,14 @@
 .ChannelView {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0;
   width: 18rem;
-  height: 100%;
+  height: 0;
   padding: 0.2rem;
   margin: 0 0.5rem 0.75rem 0.5rem;
   border-radius: 15px;
   background: rgba(25, 25, 25, 0.1);
   box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .ChannelViewTabBar {
@@ -17,10 +16,31 @@
 }
 
 .ChannelsContainer {
-
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-.Channel {
+.ChannelMemberListContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 0.5 0 0;
+  height: 0;
+}
+
+.ChannelMemberList {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 18rem;
+  height: 0;
+  padding: 0.2rem;
+  margin: 0 0.5rem 0.75rem 0.5rem;
+  border-radius: 15px;
+}
+
+.Channel, .ChannelMember {
   height: 50px;
   margin: 0.15rem 0.15rem 0.25rem 0.15rem;
   position: relative;
@@ -37,7 +57,7 @@
   border-radius: 10px;
 }
 
-.ChannelInner {
+.ChannelInner, .ChannelMemberInner {
   width: 100%;
   height: 100%;
   display: flex;
@@ -48,26 +68,26 @@
   box-shadow: none;
 }
 
-.ChannelInnerButtonBase {
+.ChannelInnerButtonBase, .ChannelMemberInnerButtonBase {
   width: 100%;
   height: 100%;
 }
 
-.ChannelLeft {
+.ChannelLeft, .ChannelMemberLeft {
   margin-left: 5px;
 }
 
-.ChannelRight {
+.ChannelRight, .ChannelMemberRight {
   margin-left: 5px;
   padding: 5px;
   align-self: center;
 }
 
-.ChannelIcon {
+.ChannelIcon, .ChannelMemberIcon {
 
 }
 
-.ChannelCaption {
+.ChannelCaption, .ChannelMemberCaption {
 
 }
 

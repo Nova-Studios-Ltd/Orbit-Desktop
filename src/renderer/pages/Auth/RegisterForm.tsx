@@ -1,22 +1,17 @@
 import React, { ChangeEvent } from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Button, Typography, Link } from "@mui/material/";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
+import { Navigate, Register, ipcRenderer, Manager } from "renderer/helpers";
+
 import AuthForm from "renderer/components/Form/AuthForm";
 import FormTextField from "renderer/components/Form/FormTextField";
-import { Navigate, Register, ipcRenderer, Manager } from "renderer/helpers";
+
 import Credentials from "structs/Credentials";
 import FormStatusTuple from "structs/FormStatusTypes";
 import { FormStatusType } from "types/enums";
+import type { IRegisterFormState } from "types/interfaces/components/states/FormComponentStates";
 
-interface IRegisterFormState {
-  email: string,
-  username: string,
-  password: string,
-  address: string,
-  status: FormStatusTuple
-}
-
-class RegisterForm extends React.Component<never, IRegisterFormState> {
+class RegisterForm extends React.Component<Record<string, never>, IRegisterFormState> {
 
   constructor(props: never) {
     super(props);
@@ -63,7 +58,7 @@ class RegisterForm extends React.Component<never, IRegisterFormState> {
     const AdvancedOptionsAccordionStyles = `Generic_Form_Item Login_Form_AdvancedOptionsAccordion`;
 
     return (
-      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody={`Register for a ${Manager.AppName} account.`} status={this.state.status}>
+      <AuthForm onSubmit={this.handleSubmit} headerHeading={`${Manager.AppName} ${Manager.AppVersion}`} headerBody={`Register for an ${Manager.AppName} account.`} status={this.state.status}>
         <FormTextField id="email" label="Email" placeholder="Your Email Address" description="This will be used when signing in, and for account-related operations." autoFocus required onChange={this.handleChange} />
         <FormTextField id="username" label="Username" placeholder="Your New username" required onChange={this.handleChange} />
         <FormTextField id="password" label="Password" placeholder="Your New password" required sensitive onChange={this.handleChange} />

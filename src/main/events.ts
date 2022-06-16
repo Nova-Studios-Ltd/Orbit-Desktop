@@ -1,14 +1,17 @@
 import { clipboard, dialog, ipcMain, Notification } from "electron";
-import { INotificationProps } from "renderer/components/Notification/Notification";
 import { unlinkSync, readFileSync, writeFileSync, existsSync, writeFile, statSync } from "fs";
-import type { AuthResponse } from "types/NCAPIResponseMutations";
-import Credentials from "../structs/Credentials";
-import { Debug } from "./debug";
+
+import type { AuthResponse } from "types/interfaces/NCAPIResponseMutations";
+import type { INotificationProps } from "types/interfaces/components/propTypes/NotificationComponentPropTypes";
 import { ContentType, FormAuthStatusType } from "../types/enums";
+
+import Credentials from "../structs/Credentials";
+import { Dictionary } from "../shared/dictionary";
+
+import { Debug } from "./debug";
 import { PostWithoutAuthentication } from "./NCAPI";
 import { DecryptUsingAES, EncryptUsingAESAsync, GenerateRSAKeyPairAsync, GenerateSHA256HashAsync } from "./encryptionUtils";
-import { Dictionary } from "./dictionary";
-
+import { homeDir } from "./util";
 
 ipcMain.handle("beginAuth", async (event, creds: Credentials) : Promise<FormAuthStatusType> => {
   const a = await PostWithoutAuthentication("Login", ContentType.JSON, JSON.stringify({password: creds.password, email: creds.email})).then((resp: AuthResponse) => {
@@ -185,4 +188,17 @@ ipcMain.handle("SHA256HASH", async (_event, data: string) => {
 ipcMain.handle("dumb", async (_event, data: string) => {
   //return Buffer.from("7pFQdDWuEP+su5xmjdKqNQ==", "base64").toString("utf-8");
   return Buffer.from("Test", "utf-8").toString("base64");
+ipcMain.handle("WriteDataToDisk", async (_event, data: Uint8Array, filename?: string) => {
+  Debug.Log(`User requested to write file "${filename}" with content size ${data.length} to disk`);
+
+  const result = await dialog.showSaveDialog({ properties: ["createDirectory", "showOverwriteConfirmation"], defaultPath: `${homeDir}/${filename != null ? filename : ""}`});
+  if (result != null && result.filePath) {
+    writeFileSync(result.filePath, Buffer.from(data));
+    Debug.Success(`Successfully wrote file "${filename}" with content size ${data.length} to disk`);
+    return true;
+  }
+
+  Debug.Error(`Unable to write file "${filename}" with content size ${data.length} to disk`, "user cancelled operation");
+
+  return false;
 });

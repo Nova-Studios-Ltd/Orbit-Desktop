@@ -1,12 +1,16 @@
 import { createBrowserHistory } from "history";
-import Credentials from "structs/Credentials";
 import { UIEvents } from "renderer/UIEvents";
 import { DebugLogger } from "renderer/debugRenderer";
-import { IElectronRendererWindow } from "types/types";
-import IUser from "structs/IUser";
-import { SettingsManager } from "./settingsManagerRenderer";
-import { Dictionary } from "main/dictionary";
-import { RSAMemoryKeyPair } from "main/encryptionClasses";
+import { Dictionary } from "shared/dictionary";
+import { RSAMemoryKeyPair } from "shared/encryptionClasses";
+// eslint-disable-next-line import/no-cycle
+import { SettingsManager } from "renderer/settingsManagerRenderer";
+
+import Credentials from "structs/Credentials";
+
+import type { IElectronRendererWindow } from "types/interfaces/ElectronRendererTypes";
+import { IUser } from "types/interfaces/UserDataTypes";
+
 
 export const history = createBrowserHistory();
 export const {ipcRenderer}: IElectronRendererWindow = window.electron;
@@ -73,17 +77,17 @@ export async function HandleWebsocket() {
       case 7: { // New key in keystore
         const key = await ipcRenderer.invoke("GETKey", userData.uuid, event.keyUserUUID);
         userData.keystore.setValue(event.keyUserUUID, key);
-        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(userData.keystore));
         break;
       }
       case 8: { // Key removed from keystore
         userData.keystore.clear(event.keyUserUUID);
-        await ipcRenderer.invoke("SaveKeystore", userData.keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(userData.keystore));
         break;
       }
       case 9: { // Re-request entire keystore
         const keystore = await ipcRenderer.invoke("GETKeystore", userData.uuid);
-        await ipcRenderer.invoke("SaveKeystore", keystore);
+        await ipcRenderer.invoke("SaveKeystore", JSON.stringify(keystore));
         userData.keystore = keystore;
         break;
       }

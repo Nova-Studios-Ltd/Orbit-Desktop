@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grow, IconButton, MenuItem, SelectChangeEvent } from "@mui/material";
 import { Add as PlusIcon, Chat as ChatIcon , List as ListIcon } from "@mui/icons-material";
 import { Helmet } from "react-helmet";
 
@@ -8,6 +8,7 @@ import { Debug, ipcRenderer, events, Manager, RemoveCachedCredentials, Navigate 
 import AppNotification from "renderer/components/Notification/Notification";
 import MessageCanvas from "renderer/components/Messages/MessageCanvas";
 import ChannelView from "renderer/components/Channels/ChannelView";
+import ChannelMemberList from "renderer/components/Channels/ChannelMemberList";
 import Channel from "renderer/components/Channels/Channel";
 import Message from "renderer/components/Messages/Message";
 import MessageInput from "renderer/components/Messages/MessageInput";
@@ -20,31 +21,11 @@ import MessageAttachment from "structs/MessageAttachment";
 
 import { GrowTransition } from "types/transitions";
 import { ChannelType, NotificationAudienceType, NotificationStatusType } from "types/enums";
-import type { IMessageProps } from "renderer/components/Messages/Message";
-import type { IChannelProps, IChannelUpdateProps } from "renderer/components/Channels/Channel";
+import type { IMessageProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { IChannelProps, IChannelUpdateProps } from "types/interfaces/components/propTypes/ChannelComponentPropTypes";
 import type { Dimensions } from "types/types";
-
-interface IChatPageProps {
-  onNavigationDrawerOpened: (event: React.MouseEvent<HTMLButtonElement>, open?: boolean) => void
-}
-
-interface IChatPageState {
-  Channels: Channel[]
-  ChannelName: string,
-  SelectedChannel: string,
-  IsChannelSelected: boolean,
-  Messages: Message[],
-  AttachmentList: MessageAttachment[],
-  CreateChannelDialogChannelName: string,
-  CreateChannelDialogRecipientsRaw: string,
-  CreateChannelDialogRecipients: {[username: string]: string},
-  CreateChannelDialogVisible: boolean,
-  CreateChannelDialogChannelType: ChannelType,
-  CreateChannelDialogRecipientAvatarSrc: string,
-  ImageViewerOpen: boolean,
-  ImageViewerSrc: string,
-  ImageViewerDimensions: Dimensions
-}
+import type { IChatPageProps } from "types/interfaces/pages/propTypes/ChatPagePropTypes";
+import type { IChatPageState } from "types/interfaces/pages/states/ChatPageStates";
 
 export default class ChatPage extends React.Component<IChatPageProps, IChatPageState> {
   initLoad: boolean;
@@ -86,6 +67,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
     this.openImageViewer = this.openImageViewer.bind(this);
     this.closeImageViewer = this.closeImageViewer.bind(this);
 
+    this.getSelectedChannel = this.getSelectedChannel.bind(this);
     this.isValidUsername = this.isValidUsername.bind(this);
     this.setSelectedChannel = this.setSelectedChannel.bind(this);
     this.Logout = this.Logout.bind(this);
@@ -415,7 +397,6 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
 
   handleCreateChannelDialogChannelTypeChange(event: SelectChangeEvent<string>) {
     const channelType = () => {
-      Debug.Log(event.target.value);
       switch (event.target.value) {
         case 0:
           return ChannelType.User;
@@ -470,6 +451,18 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
 
   /* Other */
 
+  getSelectedChannel() {
+    let returnedChannel: Channel | undefined;
+    if (this.state.Channels != null && this.state.SelectedChannel != null) {
+      this.state.Channels.forEach((channel) => {
+        if (channel.channelID === this.state.SelectedChannel) {
+          returnedChannel = channel;
+        }
+      });
+    }
+    return returnedChannel;
+  }
+
   isValidUsername(username: string) {
     return new RegExp(/^([\S]{1,})#([0-9]{4}$)/g).test(username);
   }
@@ -513,7 +506,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
           return (
             <div key="CreateChannelDialogTypeGroup">
               <FormTextField key="CreateChannelDialogChannelName" id="CreateChannelDialogChannelName" label="Channel Name" description="The new name for the channel (can be changed later)." required value={this.state.CreateChannelDialogChannelName} onChange={this.handleFormChange} />
-              <FormTextField key="CreateChannelDialogRecipients" id="CreateChannelDialogRecipients" label="Recipients" description="Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Eden#1234 Aiden#4321)." required value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
+              <FormTextField key="CreateChannelDialogRecipients" id="CreateChannelDialogRecipients" label="Recipients" description="Space separated list of the people you are trying to add by usernames and their discriminators. (e.g Foo#1234 Bar#4321)." required value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
             </div>
           );
         case ChannelType.Default:
@@ -521,7 +514,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
         default:
           return (
             <div key="CreateChannelDialogTypeSingle" className="CreateChannelDialog_User_Items">
-              <FormTextField key="CreateChannelDialogRecipientsSingle" id="CreateChannelDialogRecipients" label="Recipient" description="The username and discriminator of the person you are trying to add. (e.g Eden#1234)" required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
+              <FormTextField key="CreateChannelDialogRecipientsSingle" id="CreateChannelDialogRecipients" label="Recipient" description="The username and discriminator of the person you are trying to add. (e.g Foo#1234)" required autoFocus value={this.state.CreateChannelDialogRecipientsRaw} onChange={this.handleFormChange} />
               <Avatar src={this.state.CreateChannelDialogRecipientAvatarSrc} className="CreateChannelDialog_User_Avatar"/>
             </div>
           );
@@ -547,6 +540,7 @@ export default class ChatPage extends React.Component<IChatPageProps, IChatPageS
               <IconButton onClick={this.openCreateChannelDialog}><PlusIcon /></IconButton>
             </Header>
             <ChannelView channels={this.state.Channels} selectedChannel={this.state.SelectedChannel} onChannelClicked={this.onChannelClicked} />
+            <ChannelMemberList channel={this.getSelectedChannel()}/>
           </div>
           <div className="Chat_Page_Body_Right">
             <Header caption={this.state.ChannelName} icon={<ChatIcon />} />

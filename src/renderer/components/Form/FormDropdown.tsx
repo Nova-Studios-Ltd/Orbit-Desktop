@@ -1,13 +1,7 @@
-import React, { ReactNode } from "react";
-import { Box, FormControl, FormHelperText, InputLabel, Select, SelectChangeEvent} from "@mui/material";
+import React from "react";
+import { Box, FormControl, FormHelperText, InputLabel, Select } from "@mui/material";
 
-interface IFormDropdownProps {
-  id: string,
-  label: string,
-  description?: string,
-  value: string | undefined,
-  onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void;
-}
+import type { IFormDropdownProps } from "types/interfaces/components/propTypes/FormComponentPropTypes";
 
 export default class FormDropdown extends React.Component<IFormDropdownProps> {
   id: string;

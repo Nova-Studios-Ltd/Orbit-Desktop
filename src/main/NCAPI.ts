@@ -4,9 +4,10 @@ import FormData from "form-data";
 import { basename } from "path";
 import { createCipheriv } from "crypto";
 import { PassThrough } from "stream";
-import { ContentType } from "../types/enums";
 import { Manager } from "./settingsManager";
 import { Debug } from "./debug";
+
+import { ContentType } from "../types/enums";
 
 export class NCAPIResponse {
   status: number | undefined;

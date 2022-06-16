@@ -4,31 +4,31 @@ import "./App.global.css";
 import AuthPage from "renderer/pages/Auth";
 import ChatPage from "renderer/pages/Chat";
 import FriendsPage from "renderer/pages/Friends";
-import { copyToClipboard, Debug, events, FetchUserData, HandleWebsocket, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials } from "renderer/helpers";
+import { copyToClipboard, events, FetchUserData, history, ipcRenderer, Manager, Navigate, RemoveCachedCredentials } from "renderer/helpers";
 import "renderer/events";
-import { AppStyles, AppTheme } from "renderer/AppTheme";
+import { AppStyles, AppTheme } from "renderer/theme";
 import { ToastContainer } from "react-toastify";
 import SettingsPage from "renderer/pages/Settings";
-import { Avatar, ClassNameMap, Divider, DividerProps, Drawer, List, ThemeProvider, Typography } from "@mui/material";
+import { Avatar, ClassNameMap, Divider, Drawer, List, Theme, ThemeProvider, Typography } from "@mui/material";
 import { BugReport as BugIcon, Chat as ChatIcon, Logout as LogoutIcon, People as PeopleIcon, Refresh as RefreshIcon, Settings as SettingsIcon } from "@mui/icons-material";
-import { Theme, NotificationAudienceType, NotificationStatusType } from "types/enums";
+import { NotificationAudienceType, NotificationStatusType } from "types/enums";
 import { GlobalStyles } from "@mui/styled-engine";
-import { DefaultTheme, Styles } from "@mui/styles";
 import HybridListItem from "renderer/components/List/HybridListItem";
-import type { IHybridListItemSkeleton } from "renderer/components/List/HybridListItem";
 import AppNotification from "renderer/components/Notification/Notification";
-import AppIcon from "../../assets/CrappyLogo.png";
-import { Dictionary } from "main/dictionary";
+
+import type { IHybridListItemSkeleton } from "types/interfaces/ComponentSkeletons";
+
+import AppIcon from "./Logo.png";
 
 interface IAppState {
   theme: Theme,
-  styles: Styles<DefaultTheme, ClassNameMap<"@global">>,
+  styles: ClassNameMap<"@global">
   isConnectedToInternet: boolean,
   navigationDrawerOpen: boolean,
   currentRoute: string
 }
 
-class App extends React.Component<never, IAppState> {
+class App extends React.Component<Record<string, never>, IAppState> {
 
   constructor(props: never) {
     super(props);
@@ -40,7 +40,7 @@ class App extends React.Component<never, IAppState> {
 
     this.state = {
       theme: AppTheme(),
-      styles: AppStyles(),
+      styles: AppStyles,
       isConnectedToInternet: true,
       navigationDrawerOpen: false,
       currentRoute: "chat"
@@ -140,6 +140,10 @@ class App extends React.Component<never, IAppState> {
       }
     }
     Navigate("/login", null);
+  }
+
+  componentDidUpdate(prevProps: never, prevState: IAppState) {
+
   }
 
   componentWillUnmount() {

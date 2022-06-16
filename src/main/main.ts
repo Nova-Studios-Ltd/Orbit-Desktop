@@ -11,6 +11,7 @@ import { Debug } from "./debug";
 import { getAssetPath, isDevelopment, resolveHtmlPath } from "./util";
 import { Manager, CreateManager } from "./settingsManager";
 import { defaultSettings } from "./settingsDefaults";
+import { APPNAME, APPVERSION } from "./staticVariables";
 
 import "./events";
 import "./apiEvents";
@@ -81,7 +82,7 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    icon: getAssetPath("icon.png"),
+    icon: getAssetPath("CrappyLogo.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -93,12 +94,10 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath("index.html"));
 
-  //mainWindow?.webContents.openDevTools();
-
   mainWindow.on("ready-to-show", () => {
     if (!mainWindow) {
-      Debug.Error("mainWindow is not defined", "(when creating the window)");
-      throw new Error("'mainWindow' is not defined");
+      Debug.Error("mainWindow is undefined", "(when creating the window)");
+      throw new Error("'mainWindow' is undefined");
     }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
@@ -140,7 +139,6 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
   // AppUpdater();
 };
 
@@ -177,9 +175,9 @@ app.whenReady().then(() => {
   }
 
   try {
-    tray = new Tray(getAssetPath("icon.png"));
+    tray = new Tray(getAssetPath("CrappyLogo.png"));
     const contextMenu = Menu.buildFromTemplate([
-      { label: `${Manager.AppName} (Version ${Manager.AppVersion})` },
+      { label: `${APPNAME} (Version ${APPVERSION})` },
       { type: "separator" },
       { label: "Open", click: () => resume() },
       { type: "separator" },
@@ -188,11 +186,11 @@ app.whenReady().then(() => {
     tray.on("click", () => {
       resume();
     });
-    tray.setToolTip("Nova Chat 3");
+    tray.setToolTip(APPNAME);
     tray.setContextMenu(contextMenu);
   }
-  catch {
-    Debug.Error("Unable to load tray icon");
+  catch (error) {
+    Debug.Error("Unable to load tray icon", String(error));
   }
 
   createWindow().then(() => {

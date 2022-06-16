@@ -1,12 +1,9 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import { FormStatusType } from "types/enums";
-import { AppTheme } from "renderer/AppTheme";
+import { AppTheme } from "renderer/theme";
 
-interface IFormStatusFieldProps {
-  message?: string,
-  type?: FormStatusType
-}
+import type { IFormStatusFieldProps } from "types/interfaces/components/propTypes/FormComponentPropTypes";
 
 export default class FormStatusField extends React.Component<IFormStatusFieldProps> {
   getType()

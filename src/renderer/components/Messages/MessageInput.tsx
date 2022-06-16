@@ -3,17 +3,12 @@ import { IconButton, InputAdornment, TextField } from "@mui/material/";
 import { Send as SendIcon, Upload as UploadIcon } from "@mui/icons-material";
 import { NotificationAudienceType, NotificationStatusType } from "types/enums";
 import { Debug, ipcRenderer , Manager } from "renderer/helpers";
+
+import type { IMessageInputProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+import type { IMessageInputState } from "types/interfaces/components/states/MessageComponentStates";
+
 import MessageAttachment from "structs/MessageAttachment";
 import AppNotification from "../Notification/Notification";
-
-interface IMessageInputProps {
-  onAddAttachment: (attachment: MessageAttachment) => void,
-  onMessagePush: (message: string) => void
-}
-
-interface IMessageInputState {
-  message: string
-}
 
 export default class MessageInput extends React.Component<IMessageInputProps, IMessageInputState> {
   ctrlPressed: boolean;

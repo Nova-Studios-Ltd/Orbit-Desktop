@@ -77,3 +77,9 @@ export enum LogType {
   Error = "ERROR",
   Info = "INFO"
 }
+
+export enum Alignment {
+  Left,
+  Right,
+  Center
+}

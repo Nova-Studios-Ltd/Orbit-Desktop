@@ -1,5 +1,6 @@
 import type { IpcRenderer } from "electron";
-import { LogContext, LogType } from "types/enums";
+
+import { LogType } from "types/enums";
 
 export class DebugLogger {
   private ipcRendererObject: IpcRenderer;

@@ -1,9 +1,10 @@
 import { Card } from "@mui/material";
 import React from "react";
 import { Dimensions } from "types/types";
-import { IMessageMediaProps } from "../Message";
 
-export class MessageEmbed extends React.Component<IMessageMediaProps> {
+import type { IMessageMediaProps } from "types/interfaces/components/propTypes/MessageComponentPropTypes";
+
+export default class MessageEmbed extends React.Component<IMessageMediaProps> {
   message?: string;
   videoSrc: string;
   dimensions: Dimensions;
