@@ -7,9 +7,9 @@
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "start": "npm run build && electron ./dist/main.js",
-    "package-win": "npm run build && electron-builder build --win --publish never",
-    "package-linux": "npm run build && electron-builder build --linux --publish never",
-    "package-mac": "npm run build && electron-builder build --mac --publish never"
+    "package-win": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --win --publish never",
+    "package-linux": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --linux --publish never",
+    "package-mac": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --mac --publish never"
   },
   "repository": "https://github.com/electron/electron-quick-start-typescript",
   "keywords": [
@@ -29,7 +29,5 @@
     "eslint": "^7.32.0",
     "typescript": "^4.7.2"
   },
-  "dependencies": {
-    "electron-builder": "^23.0.3"
-  }
+  "dependencies": {}
 }
