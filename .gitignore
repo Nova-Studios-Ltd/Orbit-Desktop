@@ -35,3 +35,4 @@ rsa
 .gitignore
 rsa.pub
 UserSettings.json
+dist/

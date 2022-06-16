@@ -1,20 +1,17 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import "./API";
-import { InitAPI } from "./API";
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
+    height: 750,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
-    width: 800,
+    width: 1000,
     autoHideMenuBar: true,
   });
-
-  InitAPI();
 
   // Load the homepage
   mainWindow.loadURL("https://live.orbit.novastudios.tk");
@@ -44,3 +41,4 @@ app.on("window-all-closed", () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+require("./API");
