@@ -15,6 +15,7 @@ import { defaultSettings } from "./settingsDefaults";
 import "./events";
 import "./apiEvents";
 import "./debugEvents";
+import { DecryptUsingAES, EncryptUsingAES, GenerateKey, GenerateSHA256Hash } from "./encryptionUtils";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -30,6 +31,13 @@ const spotifyInstalled = checkCommand("spotify");
     autoUpdater.checkForUpdatesAndNotify();
   }
 }*/
+
+const d = EncryptUsingAES(GenerateSHA256Hash("hello"), GenerateKey(32))
+console.log(d.content);
+console.log(d.iv);
+console.log(Buffer.from(DecryptUsingAES(GenerateSHA256Hash("hello"), d), "base64").length);
+//DecryptUsingAES(GenerateSHA256Hash("hello"))
+
 
 if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");

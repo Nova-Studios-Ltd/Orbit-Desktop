@@ -181,3 +181,8 @@ ipcMain.handle("SHA256HASH", async (_event, data: string) => {
   const hash = await GenerateSHA256HashAsync(data);
   return hash;
 })
+
+ipcMain.handle("dumb", async (_event, data: string) => {
+  //return Buffer.from("7pFQdDWuEP+su5xmjdKqNQ==", "base64").toString("utf-8");
+  return Buffer.from("Test", "utf-8").toString("base64");
+});

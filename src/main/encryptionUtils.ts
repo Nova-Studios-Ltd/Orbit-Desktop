@@ -77,6 +77,7 @@ export async function EncryptUsingAESAsync(key: string, data: string, init_iv?: 
 export function DecryptUsingAES(key: string, data: AESMemoryEncryptData) : string {
   const decipher = createDecipheriv("aes-256-ctr", Buffer.from(key, "base64"), Buffer.from(data.iv, "base64"));
   const decrypted = Buffer.concat([decipher.update(Buffer.from(data.content, "base64")), decipher.final()])
+  console.log(`${decrypted.length.toString()}Test`);
   return decrypted.toString();
 }
 
