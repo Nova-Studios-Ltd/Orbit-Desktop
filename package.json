@@ -186,8 +186,8 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "NovaChat3",
+    "appId": "novastudios.orbit.app",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -222,18 +222,24 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "artifactName": "${productName}-Mac-${arch}-Latest.dmg"
     },
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "artifactName": "${productName}-Win-Latest.exe"
     },
     "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "category": "Development"
+      "target": {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
+      "category": "Development",
+      "artifactName": "${productName}-Linux-Latest.AppImage"
     },
     "directories": {
       "app": "release/app",
