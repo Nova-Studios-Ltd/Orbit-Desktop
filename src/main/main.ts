@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import "./API";
+import CommandlineArgs from "./cmdArgs";
 
 function createWindow() {
   // Create the browser window.
@@ -14,7 +15,9 @@ function createWindow() {
   });
 
   // Load the homepage
-  mainWindow.loadURL("https://live.orbit.novastudios.tk");
+  const args = new CommandlineArgs(process.argv, "--");
+  //mainWindow.loadURL("https://live.orbit.novastudios.tk");
+  mainWindow.loadURL("http://localhost:3000");
 }
 
 // This method will be called when Electron has finished
