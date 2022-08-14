@@ -21,8 +21,8 @@ export default class CommandlineArgs {
         return this.Arguments.containsKey(key);
     }
 
-    getArgument(key: string) : string {
-        if (this.hasArgument(key)) return "";
+    getArgument(key: string) : string | undefined {
+        if (this.hasArgument(key)) return undefined;
         return this.Arguments.getValue(key);
     }
 }

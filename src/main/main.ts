@@ -16,8 +16,10 @@ function createWindow() {
 
   // Load the homepage
   const args = new CommandlineArgs(process.argv, "--");
-  mainWindow.loadURL("https://live.orbit.novastudios.tk");
-  //mainWindow.loadURL("http://localhost:3000");
+  if (args.hasArgument("experimental"))
+    mainWindow.loadURL(args.getArgument("domain") || "https://live.orbit.novastudios.tk");
+  else
+    mainWindow.loadURL("https://orbit.novastudios.tk");
 }
 
 // This method will be called when Electron has finished

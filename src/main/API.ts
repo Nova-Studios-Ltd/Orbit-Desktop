@@ -1,7 +1,7 @@
-import { ipcMain, dialog, app, clipboard, Notification } from "electron";
+import { ipcMain, dialog, app, clipboard, Notification, nativeImage } from "electron";
 import { existsSync, lstatSync, readFileSync, writeFile } from "fs";
 import { basename } from "path";
-import path = require("path");
+import path from "path";
 
 /**
  * Class respresenting a uploaded file
@@ -33,8 +33,9 @@ ipcMain.handle("UploadFile", async () : Promise<NCFile[]> => {
 
 // Handle file download request. Writes directly to downloads.
 ipcMain.on("SaveFile", (_, file: Uint8Array, filename: string) => {
-    writeFile(path.join(app.getPath("downloads"), `${Date.now()}-${filename}`), file, () => {});
-    // TODO Maybe show a notification on save complete?
+    writeFile(path.join(app.getPath("downloads"), `${Date.now()}-${filename}`), file, () => {
+        new Notification({ title: "File Saved", body: `File ${Date.now()}-${filename} saved to your downloads folder!`}).show();
+    });
 });
 
 ipcMain.handle("GetClipboard", async () : Promise<NCFile | string> => {
@@ -51,6 +52,11 @@ ipcMain.handle("GetClipboard", async () : Promise<NCFile | string> => {
     return new NCFile(clipboard.readImage().toPNG(), "", "Unknown.png");
 });
 
-ipcMain.on("TriggerNotif", async (_, title: string, body: string, icon?: Uint8Array) => {
-    new Notification({ title: title, body: body }).show();
+ipcMain.handle("WriteTextClipboard", async (_, text: string) => {
+    clipboard.writeText(text);
+    return true;
+});
+
+ipcMain.on("TriggerNotif", async (_, title: string, body: string, icon: Uint8Array) => {
+    new Notification({ title: title, body: body, icon: nativeImage.createFromBuffer(Buffer.from(icon))}).show();
 });
