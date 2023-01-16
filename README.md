@@ -22,7 +22,6 @@ cd orbit-desktop
 npm install
 npm start
 ```
-The client will then be available at http://localhost:3000/
 
 Build:
 ```
