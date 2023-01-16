@@ -30,11 +30,6 @@ npm install
 npm build
 ```
 
-# Questions:
-Q: Will there be a Docker image?
-
-A: I plan to package the API, SQL Database, and Client into a easy to setup docker image
-
 ## Roadmap
 TODO: Add trello board
 
