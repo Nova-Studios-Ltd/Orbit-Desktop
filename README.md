@@ -9,7 +9,7 @@ Orbit, a self-hosted communication platform designed with anonymity and privacy 
 - NPM
 
 ## Getting the sources
-Download a zipped version [here](https://github.com/Nova-Studios-Ltd/Orbit-Desktop/archive/refs/heads/master.zip
+Download a zipped version [here](https://github.com/Nova-Studios-Ltd/Orbit-Desktop/archive/refs/heads/master.zip)
 or clone via HTTPS:
 ```
 git clone https://github.com/Nova-Studios-Ltd/Orbit-Desktop.git
